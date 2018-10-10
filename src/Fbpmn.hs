@@ -3,5 +3,5 @@ module Fbpmn
        ) where
 
 someFunc :: IO ()
-someFunc = putStrLn ("someFunc" :: String)
+someFunc = putStrLn ("fBPMN: formal tools for BPMN" :: Text)
 
