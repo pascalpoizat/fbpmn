@@ -1,0 +1,40 @@
+sudo: true
+language: haskell
+
+git:
+  depth: 5
+
+cache:
+  directories:
+  
+  - "$HOME/.stack"
+  - "$TRAVIS_BUILD_DIR/.stack-work"
+
+matrix:
+  include:
+
+  
+  - ghc: 8.4.3
+    env: GHCVER='8.4.3' STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml"
+    os: linux
+    addons:
+      apt:
+        packages:
+        - libgmp-dev
+  
+
+install:
+  - mkdir -p ~/.local/bin
+  - export PATH="$HOME/.local/bin:$PATH"
+  - travis_retry curl -L 'https://www.stackage.org/stack/linux-x86_64' | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+  - stack --version
+  - stack setup --no-terminal --install-cabal 2.0.1.0
+  - stack ghc -- --version
+  - stack build --only-dependencies --no-terminal
+script:
+  - stack build --test --bench --no-run-benchmarks --no-terminal --ghc-options=-Werror
+
+
+notifications:
+  email: false
+
