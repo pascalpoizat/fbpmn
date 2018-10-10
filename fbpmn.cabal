@@ -114,7 +114,8 @@ benchmark fbpmn-benchmark
                        -fwarn-missing-signatures
                        -fwarn-name-shadowing
   build-depends:       base-noprelude
-                     , gauge
+                     --, gauge
+                     , criterion
                      , fbpmn
                      , relude
   default-language:    Haskell2010
