@@ -1,0 +1,126 @@
+cabal-version:       1.24
+name:                fbpmn
+version:             0.0.0
+description:         formal tools for BPMN
+synopsis:            formal tools for BPMN
+homepage:            https://github.com/pascalpoizat/fbpmn
+bug-reports:         https://github.com/pascalpoizat/fbpmn/issues
+license:             Apache-2.0
+license-file:        LICENSE
+author:              Pascal Poizat
+maintainer:          pascal.poizat@gmail.com
+copyright:           2018 Pascal Poizat
+category:            Utility
+build-type:          Simple
+extra-doc-files:     README.md
+                   , CHANGELOG.md
+tested-with:         GHC == 8.4.3
+
+source-repository head
+  type:                git
+  location:            https://github.com/pascalpoizat/fbpmn.git
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Fbpmn
+                       Prelude
+  ghc-options:         -Wall
+                       warn-unused-imports
+                       warn-incomplete-uni-patterns
+                       warn-incomplete-patterns
+                       warn-overlapping-patterns
+                       warn-missing-signatures
+                       warn-name-shadowing
+  build-depends:       base-noprelude
+                     , relude
+  default-language:    Haskell2010
+  default-extensions:  DeriveGeneric
+                       GeneralizedNewtypeDeriving
+                       LambdaCase
+                       OverloadedStrings
+                       RecordWildCards
+                       ScopedTypeVariables
+                       TypeApplications
+                       NoImplicitPrelude
+
+executable fbpmn
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  ghc-options:         -Wall
+                       -threaded
+                       -rtsopts
+                       -with-rtsopts=-N
+                       warn-unused-imports
+                       warn-incomplete-uni-patterns
+                       warn-incomplete-patterns
+                       warn-overlapping-patterns
+                       warn-missing-signatures
+                       warn-name-shadowing
+  build-depends:       base-noprelude
+                     , fbpmn
+                     , relude
+  default-language:    Haskell2010
+  default-extensions:  DeriveGeneric
+                       GeneralizedNewtypeDeriving
+                       LambdaCase
+                       OverloadedStrings
+                       RecordWildCards
+                       ScopedTypeVariables
+                       TypeApplications
+                       NoImplicitPrelude
+
+test-suite fbpmn-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  ghc-options:         -Wall
+                       -threaded
+                       -rtsopts
+                       -with-rtsopts=-N
+                       warn-unused-imports
+                       warn-incomplete-uni-patterns
+                       warn-incomplete-patterns
+                       warn-overlapping-patterns
+                       warn-missing-signatures
+                       warn-name-shadowing
+  build-depends:       base-noprelude
+                     , fbpmn
+                     , relude
+  default-language:    Haskell2010
+  default-extensions:  DeriveGeneric
+                       GeneralizedNewtypeDeriving
+                       LambdaCase
+                       OverloadedStrings
+                       RecordWildCards
+                       ScopedTypeVariables
+                       TypeApplications
+                       NoImplicitPrelude
+
+benchmark fbpmn-benchmark
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      benchmark
+  main-is:             Main.hs
+  ghc-options:         -Wall
+                       -threaded
+                       -rtsopts
+                       -with-rtsopts=-N
+                       warn-unused-imports
+                       warn-incomplete-uni-patterns
+                       warn-incomplete-patterns
+                       warn-overlapping-patterns
+                       warn-missing-signatures
+                       warn-name-shadowing
+  build-depends:       base-noprelude
+                     , gauge
+                     , fbpmn
+                     , relude
+  default-language:    Haskell2010
+  default-extensions:  DeriveGeneric
+                       GeneralizedNewtypeDeriving
+                       LambdaCase
+                       OverloadedStrings
+                       RecordWildCards
+                       ScopedTypeVariables
+                       TypeApplications
+                       NoImplicitPrelude
+
