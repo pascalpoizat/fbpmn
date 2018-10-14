@@ -60,19 +60,27 @@ data BpmnGraph = BpmnGraph { nodes :: [Node]
                            , catE :: Edge -> Maybe EdgeType
                            , sourceE :: Edge -> Maybe Node
                            , targetE :: Edge -> Maybe Node
+                           , nameN :: Node -> Maybe Name
 }
 
 --
 -- nodesT
+-- nodesT g t = [ n | n <- nodes g, cat n == Just t ] where cat = catN g
 --
 nodesT :: BpmnGraph -> NodeType -> [Node]
-nodesT g t = [ n | n <- nodes g, cat n == Just t ] where cat = catN g
+nodesT g t = filter' (nodes g) (catN g) (== Just t)
 
 --
 -- nodesE
 --
 edgesT :: BpmnGraph -> EdgeType -> [Edge]
-edgesT g t = [ e | e <- edges g, cat e == Just t ] where cat = catE g
+edgesT g t = filter' (edges g) (catE g) (== Just t)
+
+--
+-- helper
+--
+filter' :: [a] -> (a-> m b) -> (m b -> Bool) -> [a]
+filter' xs f p = filter (p . f) xs
 
 --
 -- in
