@@ -42,6 +42,11 @@ type Process = Int
 type Id = Text
 
 --
+-- Names
+--
+type Name = Text
+
+--
 -- Nodes
 --
 type Node = Id
