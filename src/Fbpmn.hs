@@ -15,13 +15,13 @@ import System.IO.Error (IOError,catchIOError,isDoesNotExistError)
 --
 
 {-|
-Generate the JSON representation for a component instance.
+Generate the JSON representation for a BPMN Graph.
 -}
 genJSON :: BpmnGraph -> BS.ByteString
 genJSON = encode
 
 {-|
-Read a component instance from a JSON file.
+Read a BPMN Graph from a JSON file.
 -}
 readFromJSON :: FilePath -> IO (Maybe BpmnGraph)
 readFromJSON p = (decode <$> BS.readFile p) `catchIOError` handler
@@ -36,7 +36,7 @@ readFromJSON p = (decode <$> BS.readFile p) `catchIOError` handler
       pure Nothing
 
 {-|
-Write a component instance to a JSON file.
+Write a BPMN Graph to a JSON file.
 -}
 writeToJSON :: FilePath -> BpmnGraph -> IO ()
 writeToJSON p = BS.writeFile p . encode
