@@ -4,6 +4,7 @@ import           Test.Tasty.HUnit
 -- import           Test.Tasty.SmallCheck as SC
 import           Test.Tasty.Runners.Html
 
+import           Data.Map.Strict                ( fromList )
 import           Fbpmn
 import           Examples                       ( g1 )
 
@@ -27,7 +28,8 @@ uIsValidGraph = testGroup
   , testCase "missing catE" $ isValidGraph g0b @?= False
   , testCase "missing sourceE" $ isValidGraph g0c @?= False
   , testCase "missing targetE" $ isValidGraph g0d @?= False
-  , testCase "all ok" $ isValidGraph g1 @?= True]
+  , testCase "all ok" $ isValidGraph g1 @?= True
+  ]
 
 uNodesT :: TestTree
 uNodesT = testGroup
@@ -66,7 +68,8 @@ uOutN = testGroup
 --
 
 g0a :: BpmnGraph
-g0a = mkGraph "g0a"
+g0a = mkGraph
+  "g0a"
   ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
@@ -81,9 +84,11 @@ g0a = mkGraph "g0a"
     , ("T1a"     , AbstractTask)
     , ("T2a"     , AbstractTask)
     , ("T1b"     , AbstractTask)
-    , ("T2b"     , AbstractTask)
+    , ( "T2b"
+      , AbstractTask
+      )
 --    , ("JoinAnd" , AndGateway)
-    , ("End"     , NoneEndEvent)
+    , ("End", NoneEndEvent)
     ]
   catE = fromList
     [ ("e1"  , NormalSequenceFlow)
@@ -118,7 +123,8 @@ g0a = mkGraph "g0a"
   name = fromList []
 
 g0b :: BpmnGraph
-g0b = mkGraph "g0b"
+g0b = mkGraph
+  "g0b"
   ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
@@ -142,7 +148,9 @@ g0b = mkGraph "g0b"
     , ("es+a", NormalSequenceFlow)
     , ("es+b", NormalSequenceFlow)
     , ("e2a" , NormalSequenceFlow)
-    , ("e2b" , NormalSequenceFlow)
+    , ( "e2b"
+      , NormalSequenceFlow
+      )
 --    , ("ej+a", NormalSequenceFlow)
     , ("ej+b", NormalSequenceFlow)
     , ("e3"  , NormalSequenceFlow)
@@ -170,7 +178,8 @@ g0b = mkGraph "g0b"
   name = fromList []
 
 g0c :: BpmnGraph
-g0c = mkGraph "g0c"
+g0c = mkGraph
+  "g0c"
   ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
@@ -204,7 +213,9 @@ g0c = mkGraph "g0c"
     , ("es+a", "SplitAnd")
     , ("es+b", "SplitAnd")
     , ("e2a" , "T1a")
-    , ("e2b" , "T1b")
+    , ( "e2b"
+      , "T1b"
+      )
 --    , ("ej+a", "T2a")
     , ("ej+b", "T2b")
     , ("e3"  , "JoinAnd")
@@ -222,7 +233,8 @@ g0c = mkGraph "g0c"
   name = fromList []
 
 g0d :: BpmnGraph
-g0d = mkGraph "g0d"
+g0d = mkGraph
+  "g0d"
   ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
@@ -266,7 +278,9 @@ g0d = mkGraph "g0d"
     , ("es+a", "T1a")
     , ("es+b", "T1b")
     , ("e2a" , "T2a")
-    , ("e2b" , "T2b")
+    , ( "e2b"
+      , "T2b"
+      )
 --    , ("ej+a", "JoinAnd")
     , ("ej+b", "JoinAnd")
     , ("e3"  , "End")
