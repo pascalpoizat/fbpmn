@@ -66,7 +66,7 @@ uOutN = testGroup
 --
 
 g0a :: BpmnGraph
-g0a = mkGraph
+g0a = mkGraph "g0a"
   ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
@@ -118,7 +118,7 @@ g0a = mkGraph
   name = fromList []
 
 g0b :: BpmnGraph
-g0b = mkGraph
+g0b = mkGraph "g0b"
   ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
@@ -170,7 +170,7 @@ g0b = mkGraph
   name = fromList []
 
 g0c :: BpmnGraph
-g0c = mkGraph
+g0c = mkGraph "g0c"
   ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
@@ -222,7 +222,7 @@ g0c = mkGraph
   name = fromList []
 
 g0d :: BpmnGraph
-g0d = mkGraph
+g0d = mkGraph "g0d"
   ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN

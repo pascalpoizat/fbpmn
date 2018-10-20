@@ -1,7 +1,7 @@
-module Examples
-where
+module Examples where
 
-import Fbpmn
+import           Fbpmn
+import           Data.Map.Strict                ( fromList )
 
 --
 -- g1
@@ -10,6 +10,7 @@ import Fbpmn
 --
 g1 :: BpmnGraph
 g1 = mkGraph
+  "g1"
   ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN

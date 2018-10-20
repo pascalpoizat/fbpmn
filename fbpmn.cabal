@@ -24,7 +24,6 @@ library
   hs-source-dirs:      src
   exposed-modules:     Fbpmn
                        Examples
-                       Prelude
   ghc-options:         -Wall
                        -fwarn-unused-imports
                        -fwarn-incomplete-uni-patterns
@@ -32,8 +31,7 @@ library
                        -fwarn-overlapping-patterns
                        -fwarn-missing-signatures
                        -fwarn-name-shadowing
-  build-depends:       base-noprelude
-                     , relude
+  build-depends:       base
                      , aeson
                      , bytestring
                      , containers
@@ -59,9 +57,8 @@ executable fbpmn
                        -fwarn-overlapping-patterns
                        -fwarn-missing-signatures
                        -fwarn-name-shadowing
-  build-depends:       base-noprelude
-                     , fbpmn
-                     , relude
+  build-depends:       fbpmn
+                     , base
                      , aeson
                      , bytestring
                      , containers
@@ -88,9 +85,8 @@ test-suite fbpmn-test
                        -fwarn-overlapping-patterns
                        -fwarn-missing-signatures
                        -fwarn-name-shadowing
-  build-depends:       base-noprelude
-                     , fbpmn
-                     , relude
+  build-depends:       fbpmn
+                     , base
                      , aeson
                      , bytestring
                      , containers
@@ -123,11 +119,9 @@ benchmark fbpmn-benchmark
                        -fwarn-overlapping-patterns
                        -fwarn-missing-signatures
                        -fwarn-name-shadowing
-  build-depends:       base-noprelude
-                     --, gauge
-                     , criterion
+  build-depends:       criterion
                      , fbpmn
-                     , relude
+                     , base
                      , aeson
                      , bytestring
                      , containers

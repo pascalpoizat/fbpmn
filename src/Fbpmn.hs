@@ -1,46 +1,53 @@
-{-# LANGUAGE DeriveGeneric #-}
 module Fbpmn where
 
+import           Data.List                      ( intercalate )
+import           Data.Maybe                     ( isNothing )
+import           GHC.Generics
+import qualified Data.ByteString.Lazy          as BS
+                                                ( ByteString
+                                                , writeFile
+                                                , readFile
+                                                )
 import           Data.Aeson                     ( encode
                                                 , decode
                                                 , FromJSON
                                                 , ToJSON
                                                 )
---import qualified Data.ByteString.Lazy          as BS
-import Data.Map.Strict ((!?))
-import System.IO.Error (IOError,catchIOError,isDoesNotExistError)
-
---
--- JSON IO
---
+import           Data.Map.Strict                ( Map
+                                                , (!?)
+                                                )
+import           System.IO.Error                ( IOError
+                                                , catchIOError
+                                                , isDoesNotExistError
+                                                )
 
 {-|
 Generate the JSON representation for a BPMN Graph.
 -}
-genJSON :: BpmnGraph -> LByteString
+genJSON :: BpmnGraph -> BS.ByteString
 genJSON = encode
 
 {-|
 Read a BPMN Graph from a JSON file.
 -}
 readFromJSON :: FilePath -> IO (Maybe BpmnGraph)
-readFromJSON p = (decode . encodeUtf8 <$> readFile p) `catchIOError` handler
+readFromJSON p = (decode <$> BS.readFile p) `catchIOError` handler
  where
 
   handler :: IOError -> IO (Maybe BpmnGraph)
   handler e
     | isDoesNotExistError e = do
-      putTextLn "file not found"
+      putStrLn "file not found"
       pure Nothing
     | otherwise = do
-      putTextLn "unknown error"
+      putStrLn "unknown error"
       pure Nothing
 
 {-|
 Write a BPMN Graph to a JSON file.
 -}
 writeToJSON :: FilePath -> BpmnGraph -> IO ()
-writeToJSON p = writeFile p . decodeUtf8 . encode
+writeToJSON p = BS.writeFile p . encode
 
 {-|
 Write a BPMN Graph to an SMT file.
@@ -49,24 +56,108 @@ writeToSMT :: FilePath -> BpmnGraph -> IO ()
 writeToSMT p = writeFile p . encodeBpmnGraphToSmt
 
 {-|
+Write a BPMN Graph to a TLA+ file.
+-}
+writeToTLA :: FilePath -> BpmnGraph -> IO ()
+writeToTLA p = writeFile p . encodeBpmnGraphToTla
+
+{-|
 Transform a BPMN Graph to an SMT description.
 
 The solution is to use a model to text transformation.
 TODO: In terms of typing, it would be better to use a model to model transformation (first).
 -}
-encodeBpmnGraphToSmt :: BpmnGraph -> Text
+encodeBpmnGraphToSmt :: BpmnGraph -> String
 encodeBpmnGraphToSmt g = unlines
   [ "; BPMN Graph encoded using fBPMN\n"
   , encodeBpmnGraphNodesToSmt g
   , "; end of encoding"
   ]
 
-encodeBpmnGraphNodesToSmt :: BpmnGraph -> Text
+encodeBpmnGraphNodesToSmt :: BpmnGraph -> String
 encodeBpmnGraphNodesToSmt g = "; Process node declarations\n"
   <> unlines (nodeToNodeDeclaration g <$> nodes g)
  where
-  nodeToNodeDeclaration :: BpmnGraph -> Node -> Text
-  nodeToNodeDeclaration g n = "(declare-fun " <> n <> " () (Array Int Int))"
+  nodeToNodeDeclaration :: BpmnGraph -> Node -> String
+  nodeToNodeDeclaration _ n = "(declare-fun " <> n <> " () (Array Int Int))"
+
+{-|
+Transform a BPMN Graph to a TLA specification.
+-}
+encodeBpmnGraphToTla :: BpmnGraph -> String
+encodeBpmnGraphToTla g =
+  unlines
+    $   [ encodeBpmnGraphHeadToTla
+        , encodeBpmnGraphProcessDeclToTla
+        , encodeBpmnGraphContainRelToTla
+        , encodeBpmnGraphNodeDeclToTla
+        , encodeBpmnGraphFlowDeclToTla
+        , encodeBpmnGraphEdgeDeclToTla
+        , encodeBpmnGraphMsgDeclToTla
+        , encodeBpmnGraphCatNToTla
+        , encodeBpmnGraphCatEToTla
+        ]
+    <*> [g]
+
+encodeBpmnGraphHeadToTla :: BpmnGraph -> String
+encodeBpmnGraphHeadToTla g = unlines
+  [ "---------------- MODULE " <> name g <> " ----------------"
+  , ""
+  , "EXTENDS TLC, PWSTypes"
+  , ""
+  , "VARIABLES nodemarks, edgemarks, net"
+  , ""
+  , "var == <<nodemarks, edgemarks, net>>"
+  ]
+
+-- TODO: extend with multiple processes
+encodeBpmnGraphProcessDeclToTla :: BpmnGraph -> String
+encodeBpmnGraphProcessDeclToTla _ = "TopProcess == { \"" <> "Process" <> "\" }"
+
+encodeBpmnGraphContainRelToTla :: BpmnGraph -> String
+encodeBpmnGraphContainRelToTla _ = unlines []
+
+encodeBpmnGraphNodeDeclToTla :: BpmnGraph -> String
+encodeBpmnGraphNodeDeclToTla _ = unlines []
+
+encodeBpmnGraphFlowDeclToTla :: BpmnGraph -> String
+encodeBpmnGraphFlowDeclToTla g = unlines
+  [ encodeBpmnGraphFlowDeclToTla' "NormalSeqFlowEdge" sequenceFlows g
+  , encodeBpmnGraphFlowDeclToTla' "MsgFlowEdge"       messageFlows  g
+  , "Edge == NormalSeqFlowEdge \\union MsgFlowEdge"
+  ]
+
+encodeBpmnGraphFlowDeclToTla' :: String
+                              -> (BpmnGraph -> [Edge])
+                              -> BpmnGraph
+                              -> String
+encodeBpmnGraphFlowDeclToTla' kindName flowFilter g =
+  kindName <> " == {\n" <> (intercalate ",\n" flowDecls) <> "\t}\n"
+ where
+  flowDecls :: [String]
+  flowDecls = flowToSeqFlowDeclaration <$> flowFilter g
+  flowToSeqFlowDeclaration :: Edge -> String
+  flowToSeqFlowDeclaration e =
+    case
+        do
+          sourceNode <- sourceE g !? e
+          targetNode <- targetE g !? e
+          pure (sourceNode, targetNode)
+      of
+        Nothing      -> ""
+        Just (n, n') -> "\t<<\"" <> show n <> "\", \"" <> show n' <> "\">>"
+
+encodeBpmnGraphEdgeDeclToTla :: BpmnGraph -> String
+encodeBpmnGraphEdgeDeclToTla _ = unlines []
+
+encodeBpmnGraphMsgDeclToTla :: BpmnGraph -> String
+encodeBpmnGraphMsgDeclToTla _ = unlines []
+
+encodeBpmnGraphCatNToTla :: BpmnGraph -> String
+encodeBpmnGraphCatNToTla _ = unlines []
+
+encodeBpmnGraphCatEToTla :: BpmnGraph -> String
+encodeBpmnGraphCatEToTla _ = unlines []
 
 --
 -- Node types
@@ -90,7 +181,8 @@ isTask n = n `elem` [AbstractTask, SendTask, ReceiveTask]
 isTaskN :: BpmnGraph -> Node -> Maybe Bool
 isTaskN g = isInGraph g catN isTask
 
-isInGraph :: (Ord a) => BpmnGraph
+isInGraph :: (Ord a)
+          => BpmnGraph
           -> (BpmnGraph -> Map a b)
           -> (b -> Bool)
           -> a
@@ -110,7 +202,7 @@ instance FromJSON EdgeType
 --
 -- Messages
 --
-type Message = Text
+type Message = String
 
 --
 -- Processes
@@ -120,12 +212,12 @@ type Process = Int
 --
 -- XML Ids
 --
-type Id = Text
+type Id = String
 
 --
 -- Names
 --
-type Name = Text
+type Name = String
 
 --
 -- Nodes
@@ -140,7 +232,8 @@ type Edge = Id
 --
 -- BPMN Graph
 --
-data BpmnGraph = BpmnGraph { nodes :: [Node]
+data BpmnGraph = BpmnGraph { name :: String
+                           , nodes :: [Node]
                            , edges :: [Edge]
                            , catN :: Map Node NodeType
                            , catE :: Map Edge EdgeType
@@ -152,7 +245,8 @@ data BpmnGraph = BpmnGraph { nodes :: [Node]
 instance ToJSON BpmnGraph
 instance FromJSON BpmnGraph
 
-mkGraph :: [Node]
+mkGraph :: String
+        -> [Node]
         -> [Edge]
         -> Map Node NodeType
         -> Map Node EdgeType
@@ -160,29 +254,51 @@ mkGraph :: [Node]
         -> Map Edge Node
         -> Map Node Name
         -> BpmnGraph
-mkGraph ns es catN catE sourceE targetE nameN =
-  let graph = BpmnGraph ns es catN catE sourceE targetE nameN in graph
+mkGraph n ns es catN catE sourceE targetE nameN =
+  let graph = BpmnGraph n ns es catN catE sourceE targetE nameN in graph
 
 --
--- nodesT
--- nodesT g t = [ n | n <- nodes g, cat n == Just t ] where cat = catN g
+-- nodesT for one type
 --
 nodesT :: BpmnGraph -> NodeType -> [Node]
 nodesT g t = filter' (nodes g) (catN g) (== Just t)
 
 --
--- nodesE
+-- nodesT for several types
+--
+nodesTs :: BpmnGraph -> [NodeType] -> [Node]
+nodesTs g ts = concat $ nodesT g <$> ts
+
+--
+-- nodesE for one type
 --
 edgesT :: BpmnGraph -> EdgeType -> [Edge]
 edgesT g t = filter' (edges g) (catE g) (== Just t)
 
 --
+-- nodesE for several types
+--
+edgesTs :: BpmnGraph -> [EdgeType] -> [Edge]
+edgesTs g ts = concat $ edgesT g <$> ts
+
+--
+-- sequence flows
+--
+sequenceFlows :: BpmnGraph -> [Edge]
+sequenceFlows g =
+  edgesTs g [NormalSequenceFlow, ConditionalSequenceFlow, DefaultSequenceFlow]
+
+--
+-- message flows
+--
+messageFlows :: BpmnGraph -> [Edge]
+messageFlows g = edgesT g MessageFlow
+
+--
 -- helper
 --
 filter' :: (Ord a) => [a] -> (Map a b) -> (Maybe b -> Bool) -> [a]
-filter' xs f p = filter p' xs
-  where
-    p' x = p $ f !? x
+filter' xs f p = filter p' xs where p' x = p $ f !? x
 
 --
 -- in
@@ -194,7 +310,8 @@ inN g n = [ e | e <- edges g, target !? e == Just n ] where target = targetE g
 -- out
 --
 outN :: BpmnGraph -> Node -> [Edge]
-outN g n = [ e | e <- edges g, source !? e == Just n ] where source = sourceE g
+outN g n = [ e | e <- edges g, source !? e == Just n ]
+  where source = sourceE g
 
 --
 -- inT
@@ -229,7 +346,7 @@ allEdgesHave = allDefF edges
 
 allDefF :: (Ord a, Foldable t, Functor t)
         => (BpmnGraph -> t a)
-        -> (BpmnGraph -> Map a  b)
+        -> (BpmnGraph -> Map a b)
         -> BpmnGraph
         -> Bool
 allDefF h f g = allDef (h g) f g
@@ -239,5 +356,4 @@ allDef :: (Ord a, Foldable t, Functor t)
        -> (BpmnGraph -> Map a b)
        -> BpmnGraph
        -> Bool
-allDef xs f g = not $ any isNothing $ (m !?) <$> xs
-  where m = f g
+allDef xs f g = not $ any isNothing $ (m !?) <$> xs where m = f g
