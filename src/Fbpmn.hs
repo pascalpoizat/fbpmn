@@ -6,7 +6,7 @@ import           Data.Aeson                     ( encode
                                                 , FromJSON
                                                 , ToJSON
                                                 )
-import qualified Data.ByteString.Lazy          as BS
+--import qualified Data.ByteString.Lazy          as BS
 import Data.Map.Strict ((!?))
 import System.IO.Error (IOError,catchIOError,isDoesNotExistError)
 
@@ -17,15 +17,16 @@ import System.IO.Error (IOError,catchIOError,isDoesNotExistError)
 {-|
 Generate the JSON representation for a BPMN Graph.
 -}
-genJSON :: BpmnGraph -> BS.ByteString
+genJSON :: BpmnGraph -> LByteString
 genJSON = encode
 
 {-|
 Read a BPMN Graph from a JSON file.
 -}
 readFromJSON :: FilePath -> IO (Maybe BpmnGraph)
-readFromJSON p = (decode <$> BS.readFile p) `catchIOError` handler
+readFromJSON p = (decode . encodeUtf8 <$> readFile p) `catchIOError` handler
  where
+
   handler :: IOError -> IO (Maybe BpmnGraph)
   handler e
     | isDoesNotExistError e = do
@@ -39,7 +40,33 @@ readFromJSON p = (decode <$> BS.readFile p) `catchIOError` handler
 Write a BPMN Graph to a JSON file.
 -}
 writeToJSON :: FilePath -> BpmnGraph -> IO ()
-writeToJSON p = BS.writeFile p . encode
+writeToJSON p = writeFile p . decodeUtf8 . encode
+
+{-|
+Write a BPMN Graph to an SMT file.
+-}
+writeToSMT :: FilePath -> BpmnGraph -> IO ()
+writeToSMT p = writeFile p . encodeBpmnGraphToSmt
+
+{-|
+Transform a BPMN Graph to an SMT description.
+
+The solution is to use a model to text transformation.
+TODO: In terms of typing, it would be better to use a model to model transformation (first).
+-}
+encodeBpmnGraphToSmt :: BpmnGraph -> Text
+encodeBpmnGraphToSmt g = unlines
+  [ "; BPMN Graph encoded using fBPMN\n"
+  , encodeBpmnGraphNodesToSmt g
+  , "; end of encoding"
+  ]
+
+encodeBpmnGraphNodesToSmt :: BpmnGraph -> Text
+encodeBpmnGraphNodesToSmt g = "; Process node declarations\n"
+  <> unlines (nodeToNodeDeclaration g <$> nodes g)
+ where
+  nodeToNodeDeclaration :: BpmnGraph -> Node -> Text
+  nodeToNodeDeclaration g n = "(declare-fun " <> n <> " () (Array Int Int))"
 
 --
 -- Node types
