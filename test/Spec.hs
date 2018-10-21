@@ -5,8 +5,10 @@ import           Test.Tasty.HUnit
 import           Test.Tasty.Runners.Html
 
 import           Data.Map.Strict                ( fromList )
-import           Fbpmn
-import           Examples                       ( g0, g1 )
+import           Fbpmn.Model
+import           Examples                       ( g0
+                                                , g1
+                                                )
 
 main :: IO ()
 main = defaultMainWithIngredients (htmlRunner : defaultIngredients) test
@@ -87,7 +89,9 @@ g0a = mkGraph
     , ("T1a"     , AbstractTask)
     , ("T2a"     , AbstractTask)
     , ("T1b"     , AbstractTask)
-    , ( "T2b"    , AbstractTask)
+    , ( "T2b"
+      , AbstractTask
+      )
 --    , ("JoinAnd" , AndGateway)
     , ("End", NoneEndEvent)
     ]
@@ -149,7 +153,9 @@ g0b = mkGraph
     , ("es+a", NormalSequenceFlow)
     , ("es+b", NormalSequenceFlow)
     , ("e2a" , NormalSequenceFlow)
-    , ( "e2b", NormalSequenceFlow)
+    , ( "e2b"
+      , NormalSequenceFlow
+      )
 --    , ("ej+a", NormalSequenceFlow)
     , ("ej+b", NormalSequenceFlow)
     , ("e3"  , NormalSequenceFlow)
@@ -212,7 +218,9 @@ g0c = mkGraph
     , ("es+a", "SplitAnd")
     , ("es+b", "SplitAnd")
     , ("e2a" , "T1a")
-    , ( "e2b", "T1b")
+    , ( "e2b"
+      , "T1b"
+      )
 --    , ("ej+a", "T2a")
     , ("ej+b", "T2b")
     , ("e3"  , "JoinAnd")
@@ -275,7 +283,9 @@ g0d = mkGraph
     , ("es+a", "T1a")
     , ("es+b", "T1b")
     , ("e2a" , "T2a")
-    , ( "e2b", "T2b")
+    , ( "e2b"
+      , "T2b"
+      )
 --    , ("ej+a", "JoinAnd")
     , ("ej+b", "JoinAnd")
     , ("e3"  , "End")

@@ -1,7 +1,9 @@
 module Examples where
 
-import           Fbpmn
-import Data.Map.Strict (Map, fromList)
+import           Fbpmn.Model
+import           Data.Map.Strict                ( Map
+                                                , fromList
+                                                )
 
 models' :: [BpmnGraph]
 models' = [g0, g1]

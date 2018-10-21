@@ -1,7 +1,7 @@
 -- import Gauge.Main
 import           Criterion.Main
 
-import           Fbpmn
+import           Fbpmn.Model
 import           Examples                       ( g1 )
 
 main :: IO ()

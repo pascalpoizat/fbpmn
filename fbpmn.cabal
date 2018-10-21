@@ -22,7 +22,10 @@ source-repository head
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Fbpmn
+  exposed-modules:     Fbpmn.Model
+                       Fbpmn.IO.Json
+                       Fbpmn.IO.Smt
+                       Fbpmn.IO.Tla
                        Examples
   ghc-options:         -Wall
                        -fwarn-unused-imports
