@@ -6,7 +6,7 @@ import           Test.Tasty.Runners.Html
 
 import           Data.Map.Strict                ( fromList )
 import           Fbpmn
-import           Examples                       ( g1 )
+import           Examples                       ( g0, g1 )
 
 main :: IO ()
 main = defaultMainWithIngredients (htmlRunner : defaultIngredients) test
@@ -24,7 +24,10 @@ unittests =
 uIsValidGraph :: TestTree
 uIsValidGraph = testGroup
   "Unit tests for isValidGraph"
-  [ testCase "missing catN" $ isValidGraph g0a @?= False
+  [ testCase "wrong message flow" $ isValidGraph g0 @?= True
+  , testCase "wrong message flow" $ isValidGraph g0e1 @?= False
+  , testCase "wrong message flow" $ isValidGraph g0e2 @?= False
+  , testCase "missing catN" $ isValidGraph g0a @?= False
   , testCase "missing catE" $ isValidGraph g0b @?= False
   , testCase "missing sourceE" $ isValidGraph g0c @?= False
   , testCase "missing targetE" $ isValidGraph g0d @?= False
@@ -84,9 +87,7 @@ g0a = mkGraph
     , ("T1a"     , AbstractTask)
     , ("T2a"     , AbstractTask)
     , ("T1b"     , AbstractTask)
-    , ( "T2b"
-      , AbstractTask
-      )
+    , ( "T2b"    , AbstractTask)
 --    , ("JoinAnd" , AndGateway)
     , ("End", NoneEndEvent)
     ]
@@ -148,9 +149,7 @@ g0b = mkGraph
     , ("es+a", NormalSequenceFlow)
     , ("es+b", NormalSequenceFlow)
     , ("e2a" , NormalSequenceFlow)
-    , ( "e2b"
-      , NormalSequenceFlow
-      )
+    , ( "e2b", NormalSequenceFlow)
 --    , ("ej+a", NormalSequenceFlow)
     , ("ej+b", NormalSequenceFlow)
     , ("e3"  , NormalSequenceFlow)
@@ -213,9 +212,7 @@ g0c = mkGraph
     , ("es+a", "SplitAnd")
     , ("es+b", "SplitAnd")
     , ("e2a" , "T1a")
-    , ( "e2b"
-      , "T1b"
-      )
+    , ( "e2b", "T1b")
 --    , ("ej+a", "T2a")
     , ("ej+b", "T2b")
     , ("e3"  , "JoinAnd")
@@ -278,12 +275,71 @@ g0d = mkGraph
     , ("es+a", "T1a")
     , ("es+b", "T1b")
     , ("e2a" , "T2a")
-    , ( "e2b"
-      , "T2b"
-      )
+    , ( "e2b", "T2b")
 --    , ("ej+a", "JoinAnd")
     , ("ej+b", "JoinAnd")
     , ("e3"  , "End")
     ]
   name = fromList []
 
+g0e1 :: BpmnGraph
+g0e1 = mkGraph "g0e1"
+               ["NSE1", "NSE2", "ST1", "RT2", "NEE1", "NEE2"]
+               ["a", "b", "c", "d", "m"]
+               catN
+               catE
+               source
+               target
+               name
+ where
+  catN = fromList
+    [ ("NSE1", NoneStartEvent)
+    , ("NSE2", NoneStartEvent)
+    , ("ST1" , SendTask)
+    , ("RT2" , ReceiveTask)
+    , ("NEE1", NoneEndEvent)
+    , ("NEE2", NoneEndEvent)
+    ]
+  catE = fromList
+    [ ("a", NormalSequenceFlow)
+    , ("b", NormalSequenceFlow)
+    , ("c", NormalSequenceFlow)
+    , ("d", NormalSequenceFlow)
+    , ("m", MessageFlow)
+    ]
+  source = fromList
+    [("a", "NSE1"), ("b", "ST1"), ("c", "NSE2"), ("d", "RT2"), ("m", "NSE1")]
+  target = fromList
+    [("a", "ST1"), ("b", "NEE1"), ("c", "RT2"), ("d", "NEE2"), ("m", "RT2")]
+  name = fromList []
+
+g0e2 :: BpmnGraph
+g0e2 = mkGraph "g0e2"
+               ["NSE1", "NSE2", "ST1", "RT2", "NEE1", "NEE2"]
+               ["a", "b", "c", "d", "m"]
+               catN
+               catE
+               source
+               target
+               name
+ where
+  catN = fromList
+    [ ("NSE1", NoneStartEvent)
+    , ("NSE2", NoneStartEvent)
+    , ("ST1" , SendTask)
+    , ("RT2" , ReceiveTask)
+    , ("NEE1", NoneEndEvent)
+    , ("NEE2", NoneEndEvent)
+    ]
+  catE = fromList
+    [ ("a", NormalSequenceFlow)
+    , ("b", NormalSequenceFlow)
+    , ("c", NormalSequenceFlow)
+    , ("d", NormalSequenceFlow)
+    , ("m", MessageFlow)
+    ]
+  source = fromList
+    [("a", "NSE1"), ("b", "ST1"), ("c", "NSE2"), ("d", "RT2"), ("m", "ST1")]
+  target = fromList
+    [("a", "ST1"), ("b", "NEE1"), ("c", "RT2"), ("d", "NEE2"), ("m", "NEE2")]
+  name = fromList []

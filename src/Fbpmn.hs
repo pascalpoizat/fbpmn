@@ -1,5 +1,6 @@
 module Fbpmn where
 
+import           Data.Monoid                    ( All(..) )
 import           Data.List                      ( intercalate )
 import           Data.Maybe                     ( isNothing )
 import           GHC.Generics
@@ -87,20 +88,20 @@ Transform a BPMN Graph to a TLA specification.
 encodeBpmnGraphToTla :: BpmnGraph -> String
 encodeBpmnGraphToTla g =
   unlines
-    $   [ encodeBpmnGraphHeadToTla
+    $   [ encodeBpmnGraphHeaderToTla
         , encodeBpmnGraphProcessDeclToTla
         , encodeBpmnGraphContainRelToTla
         , encodeBpmnGraphNodeDeclToTla
         , encodeBpmnGraphFlowDeclToTla
-        , encodeBpmnGraphEdgeDeclToTla
         , encodeBpmnGraphMsgDeclToTla
         , encodeBpmnGraphCatNToTla
         , encodeBpmnGraphCatEToTla
+        , encodeBpmnGraphFooterToTla
         ]
     <*> [g]
 
-encodeBpmnGraphHeadToTla :: BpmnGraph -> String
-encodeBpmnGraphHeadToTla g = unlines
+encodeBpmnGraphHeaderToTla :: BpmnGraph -> String
+encodeBpmnGraphHeaderToTla g = unlines
   [ "---------------- MODULE " <> name g <> " ----------------"
   , ""
   , "EXTENDS TLC, PWSTypes"
@@ -108,6 +109,19 @@ encodeBpmnGraphHeadToTla g = unlines
   , "VARIABLES nodemarks, edgemarks, net"
   , ""
   , "var == <<nodemarks, edgemarks, net>>"
+  ]
+
+encodeBpmnGraphFooterToTla :: BpmnGraph -> String
+encodeBpmnGraphFooterToTla g = unlines
+  [ ""
+  , "WF == INSTANCE PWSWellFormed"
+  , "ASSUME WF!WellFormedness"
+  , ""
+  , "INSTANCE PWSSemantics"
+  , ""
+  , "Spec == Init /\\ [][Next]_var /\\ WF_var(Next)"
+  , ""
+  , "================================================================"
   ]
 
 -- TODO: extend with multiple processes
@@ -132,7 +146,7 @@ encodeBpmnGraphFlowDeclToTla' :: String
                               -> BpmnGraph
                               -> String
 encodeBpmnGraphFlowDeclToTla' kindName flowFilter g =
-  kindName <> " == {\n" <> (intercalate ",\n" flowDecls) <> "\t}\n"
+  kindName <> " == {\n" <> intercalate ",\n" flowDecls <> "\t}\n"
  where
   flowDecls :: [String]
   flowDecls = flowToSeqFlowDeclaration <$> flowFilter g
@@ -145,19 +159,37 @@ encodeBpmnGraphFlowDeclToTla' kindName flowFilter g =
           pure (sourceNode, targetNode)
       of
         Nothing      -> ""
-        Just (n, n') -> "\t<<\"" <> show n <> "\", \"" <> show n' <> "\">>"
-
-encodeBpmnGraphEdgeDeclToTla :: BpmnGraph -> String
-encodeBpmnGraphEdgeDeclToTla _ = unlines []
+        Just (n, n') -> "\t<<\"" <> n <> "\", \"" <> n' <> "\">>"
 
 encodeBpmnGraphMsgDeclToTla :: BpmnGraph -> String
 encodeBpmnGraphMsgDeclToTla _ = unlines []
 
 encodeBpmnGraphCatNToTla :: BpmnGraph -> String
-encodeBpmnGraphCatNToTla _ = unlines []
+encodeBpmnGraphCatNToTla g = "CatN == "
+  <> intercalate "\n@@ " (nodeToNodeCatDecl <$> nodes g)
+ where
+  nodeToNodeCatDecl :: Node -> String
+  nodeToNodeCatDecl n = case catN g !? n of
+    Nothing -> ""
+    Just c  -> "\"" <> n <> "\"" <> " :> " <> toTLA c
 
 encodeBpmnGraphCatEToTla :: BpmnGraph -> String
-encodeBpmnGraphCatEToTla _ = unlines []
+encodeBpmnGraphCatEToTla _ = unlines
+  [ "CatE == [ e \\in Edge |->"
+  , "  IF e \\in NormalSeqFlowEdge THEN NormalSeqFlow"
+  , "  ELSE MsgFlow"
+  ]
+
+toTLA :: NodeType -> String
+toTLA AbstractTask = "AbstractTask"
+toTLA SendTask = "SendTask"
+toTLA ReceiveTask = "ReceiveTask"
+toTLA SubProcess = "SubProcess"
+toTLA XorGateway = "ExclusiveOr"
+toTLA OrGateway = "InclusiveOr"
+toTLA AndGateway = "Parallel"
+toTLA NoneStartEvent = "StartEvent"
+toTLA NoneEndEvent = "EndEvent"
 
 --
 -- Node types
@@ -331,12 +363,30 @@ outT g n t = [ e1 | e1 <- edgesT g t, e2 <- outN g n, e1 == e2 ]
 isValidGraph :: BpmnGraph -> Bool
 isValidGraph g =
   and
-    $   [ allNodesHave catN
-        , allEdgesHave catE
-        , allEdgesHave sourceE
-        , allEdgesHave targetE
+    $   [ allNodesHave catN -- \forall n \in N . n \in dom(catN)
+        , allEdgesHave catE -- \forall e \in E . e \in dom(catE) 
+        , allEdgesHave sourceE -- \forall e \in E . e \in dom(sourceE)
+        , allEdgesHave targetE -- \forall e \in E . e \in dom(targetE)
+        , allValidMessageFlow -- \forall m in E^{MessageFlow} . sourceE(e) \in E^{SendTask} /\ target(e) \in E^{ReceiveTask}
         ]
     <*> [g]
+
+isValidMessageFlow :: BpmnGraph -> Edge -> Bool
+isValidMessageFlow g mf =
+  case
+      do
+        source <- sourceE g !? mf
+        target <- targetE g !? mf
+        cats   <- catN g !? source
+        catt   <- catN g !? target
+        pure (cats, catt)
+    of
+      Nothing       -> False
+      Just (cs, ct) -> cs == SendTask && ct == ReceiveTask
+
+allValidMessageFlow :: BpmnGraph -> Bool
+allValidMessageFlow g =
+  getAll $ foldMap (All . isValidMessageFlow g) $ messageFlows g
 
 allNodesHave :: (BpmnGraph -> Map Node b) -> BpmnGraph -> Bool
 allNodesHave = allDefF nodes

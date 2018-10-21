@@ -1,8 +1,6 @@
 import           Fbpmn
-import           Examples                       ( g1 )
-import           Data.Map.Strict                ( Map
-                                                , fromList
-                                                , keys
+import           Examples                       ( models )
+import           Data.Map.Strict                ( keys
                                                 , (!?)
                                                 )
 
@@ -15,9 +13,6 @@ data Command = Quit          -- quit REPL
              | Json String   -- save current graph as JSON
              | Smt String    -- save current graph as SMT
              | Tla String    -- save current graph as TLA+
-
-examples :: Map String BpmnGraph
-examples = fromList [("g1", g1)]
 
 main :: IO ()
 main = repl ("()", Nothing)
@@ -44,9 +39,9 @@ repl (p, g) = do
         print g'
         repl (p, g)
     Just List -> do
-      print $ keys examples
+      print $ keys models
       repl (p, g)
-    Just (Import name) -> case examples !? name of
+    Just (Import name) -> case models !? name of
       Nothing -> do
         putStrLn "unknown example"
         repl (p, g)

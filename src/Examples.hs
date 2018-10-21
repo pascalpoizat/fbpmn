@@ -1,7 +1,49 @@
 module Examples where
 
 import           Fbpmn
-import           Data.Map.Strict                ( fromList )
+import Data.Map.Strict (Map, fromList)
+
+models' :: [BpmnGraph]
+models' = [g0, g1]
+
+models :: Map String BpmnGraph
+models = fromList $ f <$> models' where f g = (name g, g)
+
+--
+-- g0
+--
+-- SEND/RECEIVE
+--
+g0 :: BpmnGraph
+g0 = mkGraph "g0"
+             ["NSE1", "NSE2", "ST1", "RT2", "NEE1", "NEE2"]
+             ["a", "b", "c", "d", "m"]
+             catN
+             catE
+             source
+             target
+             name
+ where
+  catN = fromList
+    [ ("NSE1", NoneStartEvent)
+    , ("NSE2", NoneStartEvent)
+    , ("ST1" , SendTask)
+    , ("RT2" , ReceiveTask)
+    , ("NEE1", NoneEndEvent)
+    , ("NEE2", NoneEndEvent)
+    ]
+  catE = fromList
+    [ ("a", NormalSequenceFlow)
+    , ("b", NormalSequenceFlow)
+    , ("c", NormalSequenceFlow)
+    , ("d", NormalSequenceFlow)
+    , ("m", MessageFlow)
+    ]
+  source = fromList
+    [("a", "NSE1"), ("b", "ST1"), ("c", "NSE2"), ("d", "RT2"), ("m", "ST1")]
+  target = fromList
+    [("a", "ST1"), ("b", "NEE1"), ("c", "RT2"), ("d", "NEE2"), ("m", "RT2")]
+  name = fromList []
 
 --
 -- g1
