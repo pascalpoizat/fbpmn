@@ -14,16 +14,12 @@ Transform a BPMN Graph to an SMT description.
 The solution is to use a model to text transformation.
 TODO: In terms of typing, it would be better to use a model to model transformation (first).
 -}
-encodeBpmnGraphToSmt :: BpmnGraph -> String
-encodeBpmnGraphToSmt g = unlines
-  [ "; BPMN Graph encoded using fBPMN\n"
-  , encodeBpmnGraphNodesToSmt g
-  , "; end of encoding"
-  ]
+encodeBpmnGraphToSmt :: BpmnGraph -> Text
+encodeBpmnGraphToSmt = encodeBpmnGraphNodesToSmt
 
-encodeBpmnGraphNodesToSmt :: BpmnGraph -> String
-encodeBpmnGraphNodesToSmt g = "; Process node declarations\n"
-  <> unlines (nodeToNodeDeclaration g <$> nodes g)
+encodeBpmnGraphNodesToSmt :: BpmnGraph -> Text
+encodeBpmnGraphNodesToSmt g = unlines (nodeToNodeDeclaration <$> nodes g)
  where
-  nodeToNodeDeclaration :: BpmnGraph -> Node -> String
-  nodeToNodeDeclaration _ n = "(declare-fun " <> n <> " () (Array Int Int))"
+  nodeToNodeDeclaration :: Node -> Text
+  nodeToNodeDeclaration n = "(declare-fun " <> show n <> "() (Array Int Int))"
+

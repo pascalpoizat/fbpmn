@@ -3,9 +3,9 @@ module Fbpmn.Model where
 import           Data.Aeson                     ( FromJSON
                                                 , ToJSON
                                                 )
-import           Data.Monoid                    ( All(..) )
-import           Data.Maybe                     ( isNothing )
-import           GHC.Generics
+-- import           Data.Monoid                    ( All(..) )
+-- import           Data.Maybe                     ( isNothing )
+-- import           GHC.Generics
 import           Data.Map.Strict                ( Map
                                                 , (!?)
                                                 )
@@ -84,7 +84,7 @@ type Edge = Id
 --
 -- BPMN Graph
 --
-data BpmnGraph = BpmnGraph { name :: String
+data BpmnGraph = BpmnGraph { name :: Text
                            , nodes :: [Node]
                            , edges :: [Edge]
                            , catN :: Map Node NodeType
@@ -97,7 +97,7 @@ data BpmnGraph = BpmnGraph { name :: String
 instance ToJSON BpmnGraph
 instance FromJSON BpmnGraph
 
-mkGraph :: String
+mkGraph :: Text
         -> [Node]
         -> [Edge]
         -> Map Node NodeType

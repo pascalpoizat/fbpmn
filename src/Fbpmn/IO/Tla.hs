@@ -1,8 +1,11 @@
+{-# LANGUAGE QuasiQuotes #-}
 module Fbpmn.IO.Tla where
 
+import qualified Data.Text         as T
 import           Fbpmn.Model
-import           Data.List                      ( intercalate )
-import           Data.Map.Strict                ( (!?) )
+import           NeatInterpolation (text)
+-- import           Data.List                      ( intercalate )
+import           Data.Map.Strict   ((!?))
 
 {-|
 Write a BPMN Graph to a TLA+ file.
@@ -13,7 +16,7 @@ writeToTLA p = writeFile p . encodeBpmnGraphToTla
 {-|
 Transform a BPMN Graph to a TLA specification.
 -}
-encodeBpmnGraphToTla :: BpmnGraph -> String
+encodeBpmnGraphToTla :: BpmnGraph -> Text
 encodeBpmnGraphToTla g =
   unlines
     $   [ encodeBpmnGraphHeaderToTla
@@ -28,18 +31,20 @@ encodeBpmnGraphToTla g =
         ]
     <*> [g]
 
-encodeBpmnGraphHeaderToTla :: BpmnGraph -> String
-encodeBpmnGraphHeaderToTla g = unlines
-  [ "---------------- MODULE " <> name g <> " ----------------"
-  , ""
-  , "EXTENDS TLC, PWSTypes"
-  , ""
-  , "VARIABLES nodemarks, edgemarks, net"
-  , ""
-  , "var == <<nodemarks, edgemarks, net>>"
-  ]
+encodeBpmnGraphHeaderToTla :: BpmnGraph -> Text
+encodeBpmnGraphHeaderToTla g =
+  [text|---------------- MODULE $n ----------------
 
-encodeBpmnGraphFooterToTla :: BpmnGraph -> String
+  EXTENDS TLC, PWSTypes
+
+  VARIABLES nodemarks, edgemarks, net
+
+  var == <<nodemarks, edgemarks, net>>
+  |]
+  where
+    n = name g
+
+encodeBpmnGraphFooterToTla :: BpmnGraph -> Text
 encodeBpmnGraphFooterToTla _ = unlines
   [ ""
   , "WF == INSTANCE PWSWellFormed"
@@ -53,32 +58,30 @@ encodeBpmnGraphFooterToTla _ = unlines
   ]
 
 -- TODO: extend with multiple processes
-encodeBpmnGraphProcessDeclToTla :: BpmnGraph -> String
+encodeBpmnGraphProcessDeclToTla :: BpmnGraph -> Text
 encodeBpmnGraphProcessDeclToTla _ = "TopProcess == { \"" <> "Process" <> "\" }"
 
-encodeBpmnGraphContainRelToTla :: BpmnGraph -> String
+encodeBpmnGraphContainRelToTla :: BpmnGraph -> Text
 encodeBpmnGraphContainRelToTla _ = unlines []
 
-encodeBpmnGraphNodeDeclToTla :: BpmnGraph -> String
+encodeBpmnGraphNodeDeclToTla :: BpmnGraph -> Text
 encodeBpmnGraphNodeDeclToTla _ = unlines []
 
-encodeBpmnGraphFlowDeclToTla :: BpmnGraph -> String
+encodeBpmnGraphFlowDeclToTla :: BpmnGraph -> Text
 encodeBpmnGraphFlowDeclToTla g = unlines
   [ encodeBpmnGraphFlowDeclToTla' "NormalSeqFlowEdge" sequenceFlows g
   , encodeBpmnGraphFlowDeclToTla' "MsgFlowEdge"       messageFlows  g
   , "Edge == NormalSeqFlowEdge \\union MsgFlowEdge"
   ]
 
-encodeBpmnGraphFlowDeclToTla' :: String
+encodeBpmnGraphFlowDeclToTla' :: Text
                               -> (BpmnGraph -> [Edge])
                               -> BpmnGraph
-                              -> String
-encodeBpmnGraphFlowDeclToTla' kindName flowFilter g =
-  kindName <> " == {\n" <> intercalate ",\n" flowDecls <> "\t}\n"
+                              -> Text
+encodeBpmnGraphFlowDeclToTla' k flowFilter g = [text|$k == {$fs}|]
  where
-  flowDecls :: [String]
+  fs = T.intercalate "," flowDecls
   flowDecls = flowToSeqFlowDeclaration <$> flowFilter g
-  flowToSeqFlowDeclaration :: Edge -> String
   flowToSeqFlowDeclaration e =
     case
         do
@@ -87,28 +90,34 @@ encodeBpmnGraphFlowDeclToTla' kindName flowFilter g =
           pure (sourceNode, targetNode)
       of
         Nothing      -> ""
-        Just (n, n') -> "\t<<\"" <> n <> "\", \"" <> n' <> "\">>"
+        Just (n, m) -> let
+                          n' = show n
+                          m' = show m in [text|  <<$n', $m'>>|]
 
-encodeBpmnGraphMsgDeclToTla :: BpmnGraph -> String
+encodeBpmnGraphMsgDeclToTla :: BpmnGraph -> Text
 encodeBpmnGraphMsgDeclToTla _ = unlines []
 
-encodeBpmnGraphCatNToTla :: BpmnGraph -> String
-encodeBpmnGraphCatNToTla g = "CatN == "
-  <> intercalate "\n@@ " (nodeToNodeCatDecl <$> nodes g)
+encodeBpmnGraphCatNToTla :: BpmnGraph -> Text
+encodeBpmnGraphCatNToTla g = 
+  [text|CatN ==
+    $ns|]
  where
-  nodeToNodeCatDecl :: Node -> String
+  ns = T.intercalate "@@ " (nodeToNodeCatDecl <$> nodes g)
   nodeToNodeCatDecl n = case catN g !? n of
     Nothing -> ""
-    Just c  -> "\"" <> n <> "\"" <> " :> " <> toTLA c
+    Just c  -> [text|$n' :> $c'|] 
+      where
+        c' = toTLA c
+        n' = show n
 
-encodeBpmnGraphCatEToTla :: BpmnGraph -> String
-encodeBpmnGraphCatEToTla _ = unlines
-  [ "CatE == [ e \\in Edge |->"
-  , "  IF e \\in NormalSeqFlowEdge THEN NormalSeqFlow"
-  , "  ELSE MsgFlow"
-  ]
+encodeBpmnGraphCatEToTla :: BpmnGraph -> Text
+encodeBpmnGraphCatEToTla _ =
+  [text|CatE == [ e \in Edge |->
+                    IF e \in NormalSeqFlowEdge THEN NormalSeqFlow
+                    ELSE MsgFlow
+                ]|]
 
-toTLA :: NodeType -> String
+toTLA :: NodeType -> Text
 toTLA AbstractTask   = "AbstractTask"
 toTLA SendTask       = "SendTask"
 toTLA ReceiveTask    = "ReceiveTask"

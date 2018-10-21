@@ -30,10 +30,10 @@ readFromJSON p = (decode <$> BS.readFile p) `catchIOError` handler
   handler :: IOError -> IO (Maybe BpmnGraph)
   handler e
     | isDoesNotExistError e = do
-      putStrLn "file not found"
+      putTextLn "file not found"
       pure Nothing
     | otherwise = do
-      putStrLn "unknown error"
+      putTextLn "unknown error"
       pure Nothing
 
 {-|

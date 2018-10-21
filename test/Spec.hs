@@ -4,7 +4,6 @@ import           Test.Tasty.HUnit
 -- import           Test.Tasty.SmallCheck as SC
 import           Test.Tasty.Runners.Html
 
-import           Data.Map.Strict                ( fromList )
 import           Fbpmn.Model
 import           Examples                       ( g0
                                                 , g1

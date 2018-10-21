@@ -1,14 +1,11 @@
 module Examples where
 
 import           Fbpmn.Model
-import           Data.Map.Strict                ( Map
-                                                , fromList
-                                                )
 
 models' :: [BpmnGraph]
 models' = [g0, g1]
 
-models :: Map String BpmnGraph
+models :: Map Text BpmnGraph
 models = fromList $ f <$> models' where f g = (name g, g)
 
 --
