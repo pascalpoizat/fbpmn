@@ -23,6 +23,7 @@ source-repository head
 library
   hs-source-dirs:      src
   exposed-modules:     Fbpmn.Model
+                       Fbpmn.Helper
                        Fbpmn.IO.Json
                        Fbpmn.IO.Smt
                        Fbpmn.IO.Tla

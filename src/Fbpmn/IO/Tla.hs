@@ -3,9 +3,10 @@ module Fbpmn.IO.Tla where
 
 import qualified Data.Text         as T
 import           Fbpmn.Model
+import           Fbpmn.Helper
 import           NeatInterpolation (text)
 -- import           Data.List                      ( intercalate )
-import           Data.Map.Strict   ((!?), keys)
+import           Data.Map.Strict   ((!?))
 
 {-|
 Write a BPMN Graph to a TLA+ file.
@@ -84,12 +85,6 @@ encodeBpmnGraphContainRelToTla g =
       where
         sn = show n
         sns = T.intercalate ", " $ show <$> ns
-
-mapMap :: Ord a => (a -> Maybe b -> Maybe c) -> Map a b -> [c]
-mapMap g m = catMaybes $ mapMapElement g m <$> keys m
-
-mapMapElement :: Ord a => (a -> Maybe b -> Maybe c) -> Map a b -> a -> Maybe c
-mapMapElement g m k = g k (m !? k)
 
 encodeBpmnGraphNodeDeclToTla :: BpmnGraph -> Text
 encodeBpmnGraphNodeDeclToTla g =
