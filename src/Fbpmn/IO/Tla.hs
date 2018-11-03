@@ -5,7 +5,7 @@ import qualified Data.Text         as T
 import           Fbpmn.Model
 import           NeatInterpolation (text)
 -- import           Data.List                      ( intercalate )
-import           Data.Map.Strict   ((!?))
+import           Data.Map.Strict   ((!?), keys)
 
 {-|
 Write a BPMN Graph to a TLA+ file.
@@ -58,15 +58,49 @@ encodeBpmnGraphFooterToTla _ =
   ================================================================
   |]
 
--- TODO: extend with multiple processes
 encodeBpmnGraphProcessDeclToTla :: BpmnGraph -> Text
-encodeBpmnGraphProcessDeclToTla _ = "TopProcess == { \"" <> "Process" <> "\" }"
+encodeBpmnGraphProcessDeclToTla g =
+  [text|
+    TopProcess == { $ps }
+  |]
+  where
+    ps = T.intercalate "," procDecls
+    procDecls = show <$> nodesT g Process
 
 encodeBpmnGraphContainRelToTla :: BpmnGraph -> Text
-encodeBpmnGraphContainRelToTla _ = unlines []
+encodeBpmnGraphContainRelToTla g =
+  [text|
+    ContainRel ==
+      $crs
+  |]
+  where
+    crs = T.intercalate "@@ " $ mapMap showRel (containN g)
+    showRel :: Node -> Maybe [Node] -> Maybe Text
+    showRel _ Nothing = Nothing
+    showRel n (Just ns) =
+      Just [text|
+        $sn :> { $sns }
+      |]
+      where
+        sn = show n
+        sns = T.intercalate ", " $ show <$> ns
+
+mapMap :: Ord a => (a -> Maybe b -> Maybe c) -> Map a b -> [c]
+mapMap g m = catMaybes $ mapMapElement g m <$> keys m
+
+mapMapElement :: Ord a => (a -> Maybe b -> Maybe c) -> Map a b -> a -> Maybe c
+mapMapElement g m k = g k (m !? k)
 
 encodeBpmnGraphNodeDeclToTla :: BpmnGraph -> Text
-encodeBpmnGraphNodeDeclToTla _ = unlines []
+encodeBpmnGraphNodeDeclToTla g =
+  [text|
+    Node == {
+      $ns
+    }
+  |]
+  where
+    ns = T.intercalate "," nodeDecls
+    nodeDecls = show <$> nodes g
 
 encodeBpmnGraphFlowDeclToTla :: BpmnGraph -> Text
 encodeBpmnGraphFlowDeclToTla g = unlines
@@ -137,3 +171,4 @@ toTLA OrGateway      = "InclusiveOr"
 toTLA AndGateway     = "Parallel"
 toTLA NoneStartEvent = "StartEvent"
 toTLA NoneEndEvent   = "EndEvent"
+toTLA Process        = "SubProcess"

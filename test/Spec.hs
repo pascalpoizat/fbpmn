@@ -74,16 +74,19 @@ uOutN = testGroup
 g0a :: BpmnGraph
 g0a = mkGraph
   "g0a"
-  ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
+  ["Process", "Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
   catE
   source
   target
   name
+  containN
+  containE
  where
   catN = fromList
-    [ ("Start"   , NoneStartEvent)
+    [ ("Process" , Process)
+    , ("Start"   , NoneStartEvent)
     , ("SplitAnd", AndGateway)
     , ("T1a"     , AbstractTask)
     , ("T2a"     , AbstractTask)
@@ -125,20 +128,25 @@ g0a = mkGraph
     , ("e3"  , "End")
     ]
   name = fromList []
+  containN = fromList [("Process", [])]
+  containE = fromList [("Process", [])]
 
 g0b :: BpmnGraph
 g0b = mkGraph
   "g0b"
-  ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
+  ["Process", "Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
   catE
   source
   target
   name
+  containN
+  containE
  where
   catN = fromList
-    [ ("Start"   , NoneStartEvent)
+    [ ("Process" , Process)
+    , ("Start"   , NoneStartEvent)
     , ("SplitAnd", AndGateway)
     , ("T1a"     , AbstractTask)
     , ("T2a"     , AbstractTask)
@@ -180,20 +188,25 @@ g0b = mkGraph
     , ("e3"  , "End")
     ]
   name = fromList []
+  containN = fromList [("Process", [])]
+  containE = fromList [("Process", [])]
 
 g0c :: BpmnGraph
 g0c = mkGraph
   "g0c"
-  ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
+  ["Process", "Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
   catE
   source
   target
   name
+  containN
+  containE
  where
   catN = fromList
-    [ ("Start"   , NoneStartEvent)
+    [ ("Process" , Process)
+    , ("Start"   , NoneStartEvent)
     , ("SplitAnd", AndGateway)
     , ("T1a"     , AbstractTask)
     , ("T2a"     , AbstractTask)
@@ -235,20 +248,25 @@ g0c = mkGraph
     , ("e3"  , "End")
     ]
   name = fromList []
+  containN = fromList [("Process", [])]
+  containE = fromList [("Process", [])]
 
 g0d :: BpmnGraph
 g0d = mkGraph
   "g0d"
-  ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
+  ["Process", "Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
   catE
   source
   target
   name
+  containN
+  containE
  where
   catN = fromList
-    [ ("Start"   , NoneStartEvent)
+    [ ("Process" , Process)
+    , ("Start"   , NoneStartEvent)
     , ("SplitAnd", AndGateway)
     , ("T1a"     , AbstractTask)
     , ("T2a"     , AbstractTask)
@@ -290,19 +308,25 @@ g0d = mkGraph
     , ("e3"  , "End")
     ]
   name = fromList []
+  containN = fromList [("Process", [])]
+  containE = fromList [("Process", [])]
 
 g0e1 :: BpmnGraph
 g0e1 = mkGraph "g0e1"
-               ["NSE1", "NSE2", "ST1", "RT2", "NEE1", "NEE2"]
+               ["Sender", "Receiver", "NSE1", "NSE2", "ST1", "RT2", "NEE1", "NEE2"]
                ["a", "b", "c", "d", "m"]
                catN
                catE
                source
                target
                name
+               containN
+               containE
  where
   catN = fromList
-    [ ("NSE1", NoneStartEvent)
+    [ ("Sender" , Process)
+    , ("Receiver" , Process)
+    , ("NSE1", NoneStartEvent)
     , ("NSE2", NoneStartEvent)
     , ("ST1" , SendTask)
     , ("RT2" , ReceiveTask)
@@ -321,19 +345,26 @@ g0e1 = mkGraph "g0e1"
   target = fromList
     [("a", "ST1"), ("b", "NEE1"), ("c", "RT2"), ("d", "NEE2"), ("m", "RT2")]
   name = fromList []
+  containN = fromList
+    [("Sender", ["NSE1", "ST1", "NEE1"]), ("Receiver", ["NSE2", "RT2", "NEE2"])]
+  containE = fromList [("Sender", ["a", "b"]), ("Receiver", ["c", "d"])]
 
 g0e2 :: BpmnGraph
 g0e2 = mkGraph "g0e2"
-               ["NSE1", "NSE2", "ST1", "RT2", "NEE1", "NEE2"]
+               ["Sender", "Receiver", "NSE1", "NSE2", "ST1", "RT2", "NEE1", "NEE2"]
                ["a", "b", "c", "d", "m"]
                catN
                catE
                source
                target
                name
+               containN
+               containE
  where
   catN = fromList
-    [ ("NSE1", NoneStartEvent)
+    [ ("Sender" , Process)
+    , ("Receiver" , Process)
+    , ("NSE1", NoneStartEvent)
     , ("NSE2", NoneStartEvent)
     , ("ST1" , SendTask)
     , ("RT2" , ReceiveTask)
@@ -352,3 +383,6 @@ g0e2 = mkGraph "g0e2"
   target = fromList
     [("a", "ST1"), ("b", "NEE1"), ("c", "RT2"), ("d", "NEE2"), ("m", "NEE2")]
   name = fromList []
+  containN = fromList
+    [("Sender", ["NSE1", "ST1", "NEE1"]), ("Receiver", ["NSE2", "RT2", "NEE2"])]
+  containE = fromList [("Sender", ["a", "b"]), ("Receiver", ["c", "d"])]

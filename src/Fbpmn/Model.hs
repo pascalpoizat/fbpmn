@@ -8,6 +8,7 @@ import           Data.Aeson                     ( FromJSON
 -- import           GHC.Generics
 import           Data.Map.Strict                ( Map
                                                 , (!?)
+                                                , keys
                                                 )
 
 --
@@ -22,6 +23,7 @@ data NodeType = AbstractTask
               | AndGateway
               | NoneStartEvent
               | NoneEndEvent
+              | Process -- for top-level processes
   deriving (Eq, Show, Generic)
 instance ToJSON NodeType
 instance FromJSON NodeType
@@ -84,14 +86,16 @@ type Edge = Id
 --
 -- BPMN Graph
 --
-data BpmnGraph = BpmnGraph { name :: Text
-                           , nodes :: [Node]
-                           , edges :: [Edge]
-                           , catN :: Map Node NodeType
-                           , catE :: Map Edge EdgeType
-                           , sourceE :: Map Edge Node
-                           , targetE :: Map Edge Node
-                           , nameN :: Map Node Name
+data BpmnGraph = BpmnGraph { name     :: Text -- name of the model
+                           , nodes    :: [Node] -- nodes (including sub-processes and top-level processes)
+                           , edges    :: [Edge] -- edges
+                           , catN     :: Map Node NodeType -- gives the category of a node
+                           , catE     :: Map Edge EdgeType -- gives the category of an edge
+                           , sourceE  :: Map Edge Node -- gives the source of an edge
+                           , targetE  :: Map Edge Node -- gives the target of an edge
+                           , nameN    :: Map Node Name -- gives the name of a node
+                           , containN :: Map Node [Node] -- gives the nodes directly contained in a node n (n must be a subprocess or a process)
+                           , containE :: Map Node [Edge] -- gives the edges (not the messageFlows) directly contained in a node n (n must be a subprocess of a process)
 }
   deriving (Eq, Show, Generic)
 instance ToJSON BpmnGraph
@@ -105,9 +109,13 @@ mkGraph :: Text
         -> Map Edge Node
         -> Map Edge Node
         -> Map Node Name
+        -> Map Node [Node]
+        -> Map Node [Edge]
         -> BpmnGraph
-mkGraph n ns es catN catE sourceE targetE nameN =
-  let graph = BpmnGraph n ns es catN catE sourceE targetE nameN in graph
+mkGraph n ns es catN catE sourceE targetE nameN containN containE =
+  let graph =
+        BpmnGraph n ns es catN catE sourceE targetE nameN containN containE
+  in  graph
 
 --
 -- nodesT for one type
@@ -188,8 +196,30 @@ isValidGraph g =
         , allEdgesHave sourceE -- \forall e \in E . e \in dom(sourceE)
         , allEdgesHave targetE -- \forall e \in E . e \in dom(targetE)
         , allValidMessageFlow -- \forall m in E^{MessageFlow} . sourceE(e) \in E^{SendTask} /\ target(e) \in E^{ReceiveTask}
+        , allValidSubProcess -- \forall n \in N^{SubProcess} \union N^{Process} . n \in dom(containN) \wedge n \in dom(containE)
+        , allValidContainers -- \forall n \in dom(containN) \union dom(containE) . n \in N^{SubProcess} \union N^{Process}
         ]
     <*> [g]
+
+isValidContainer :: BpmnGraph -> Node -> Bool
+isValidContainer g n = n `elem` nodesTs g [SubProcess, Process]
+
+allValidContainers :: BpmnGraph -> Bool
+allValidContainers g = getAll $ foldMap (All . isValidContainer g) ns
+ where
+  ns  = keysN ++ keysE
+  keysN = keys $ containN g
+  keysE = keys $ containE g
+
+isValidSubProcess :: BpmnGraph -> Node -> Bool
+isValidSubProcess g n = n `elem` dom_containN && n `elem` dom_containE
+ where
+  dom_containN = keys $ containN g
+  dom_containE = keys $ containE g
+
+allValidSubProcess :: BpmnGraph -> Bool
+allValidSubProcess g = getAll $ foldMap (All . isValidSubProcess g) ns
+  where ns = nodesTs g [SubProcess, Process]
 
 isValidMessageFlow :: BpmnGraph -> Edge -> Bool
 isValidMessageFlow g mf =

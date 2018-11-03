@@ -14,22 +14,27 @@ models = fromList $ f <$> models' where f g = (name g, g)
 -- SEND/RECEIVE
 --
 g0 :: BpmnGraph
-g0 = mkGraph "g0"
-             ["NSE1", "NSE2", "ST1", "RT2", "NEE1", "NEE2"]
-             ["a", "b", "c", "d", "m"]
-             catN
-             catE
-             source
-             target
-             name
+g0 = mkGraph
+  "g0"
+  ["Sender", "Receiver", "NSE1", "NSE2", "ST1", "RT2", "NEE1", "NEE2"]
+  ["a", "b", "c", "d", "m"]
+  catN
+  catE
+  source
+  target
+  name
+  containN
+  containE
  where
   catN = fromList
-    [ ("NSE1", NoneStartEvent)
-    , ("NSE2", NoneStartEvent)
-    , ("ST1" , SendTask)
-    , ("RT2" , ReceiveTask)
-    , ("NEE1", NoneEndEvent)
-    , ("NEE2", NoneEndEvent)
+    [ ("Sender"  , Process)
+    , ("Receiver", Process)
+    , ("NSE1"    , NoneStartEvent)
+    , ("NSE2"    , NoneStartEvent)
+    , ("ST1"     , SendTask)
+    , ("RT2"     , ReceiveTask)
+    , ("NEE1"    , NoneEndEvent)
+    , ("NEE2"    , NoneEndEvent)
     ]
   catE = fromList
     [ ("a", NormalSequenceFlow)
@@ -42,7 +47,10 @@ g0 = mkGraph "g0"
     [("a", "NSE1"), ("b", "ST1"), ("c", "NSE2"), ("d", "RT2"), ("m", "ST1")]
   target = fromList
     [("a", "ST1"), ("b", "NEE1"), ("c", "RT2"), ("d", "NEE2"), ("m", "RT2")]
-  name = fromList []
+  name     = fromList []
+  containN = fromList
+    [("Sender", ["NSE1", "ST1", "NEE1"]), ("Receiver", ["NSE2", "RT2", "NEE2"])]
+  containE = fromList [("Sender", ["a", "b"]), ("Receiver", ["c", "d"])]
 
 --
 -- g1
@@ -52,16 +60,19 @@ g0 = mkGraph "g0"
 g1 :: BpmnGraph
 g1 = mkGraph
   "g1"
-  ["Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
+  ["Process", "Start", "SplitAnd", "T1a", "T1b", "T2a", "T2b", "JoinAnd", "End"]
   ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"]
   catN
   catE
   source
   target
   name
+  containN
+  containE
  where
   catN = fromList
-    [ ("Start"   , NoneStartEvent)
+    [ ("Process" , Process)
+    , ("Start"   , NoneStartEvent)
     , ("SplitAnd", AndGateway)
     , ("T1a"     , AbstractTask)
     , ("T2a"     , AbstractTask)
@@ -101,4 +112,6 @@ g1 = mkGraph
     , ("e3"  , "End")
     ]
   name = fromList []
+  containN = fromList [("Process", ["Start","End","SplitAnd","JoinAnd","T1a","T1b","T2a","T2b"])]
+  containE = fromList [("Process", ["e1","es+a","es+b","e2a","e2b","ej+a","ej+b","e3"])]
 
