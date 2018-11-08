@@ -25,7 +25,7 @@ unittests =
 uIsValidGraph :: TestTree
 uIsValidGraph = testGroup
   "Unit tests for isValidGraph"
-  [ testCase "wrong message flow" $ isValidGraph g0 @?= True
+  [ testCase "all ok" $ isValidGraph g0 @?= True
   , testCase "wrong message flow" $ isValidGraph g0e1 @?= False
   , testCase "wrong message flow" $ isValidGraph g0e2 @?= False
   , testCase "missing catN" $ isValidGraph g0a @?= False
@@ -83,6 +83,8 @@ g0a = mkGraph
   name
   containN
   containE
+  []
+  (fromList [])
  where
   catN = fromList
     [ ("Process" , Process)
@@ -143,6 +145,8 @@ g0b = mkGraph
   name
   containN
   containE
+  []
+  (fromList [])
  where
   catN = fromList
     [ ("Process" , Process)
@@ -203,6 +207,8 @@ g0c = mkGraph
   name
   containN
   containE
+  []
+  (fromList [])
  where
   catN = fromList
     [ ("Process" , Process)
@@ -263,6 +269,8 @@ g0d = mkGraph
   name
   containN
   containE
+  []
+  (fromList [])
  where
   catN = fromList
     [ ("Process" , Process)
@@ -322,7 +330,9 @@ g0e1 = mkGraph "g0e1"
                name
                containN
                containE
- where
+               ["message"]
+               (fromList [("ST1", ["message"]), ("RT1", ["message"])])
+              where
   catN = fromList
     [ ("Sender" , Process)
     , ("Receiver" , Process)
@@ -360,6 +370,8 @@ g0e2 = mkGraph "g0e2"
                name
                containN
                containE
+               ["message"]
+               (fromList [("ST1", ["message"]), ("RT1", ["message"])])
  where
   catN = fromList
     [ ("Sender" , Process)

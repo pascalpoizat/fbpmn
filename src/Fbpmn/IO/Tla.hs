@@ -130,7 +130,7 @@ encodeBpmnGraphFlowDeclToTla' k flowFilter g =
                           m' = show m in [text|<<$n', $m'>>|]
 
 encodeBpmnGraphMsgDeclToTla :: BpmnGraph -> Text
-encodeBpmnGraphMsgDeclToTla _ = unlines []
+encodeBpmnGraphMsgDeclToTla _ = unlines [] -- TODO:
 
 encodeBpmnGraphCatNToTla :: BpmnGraph -> Text
 encodeBpmnGraphCatNToTla g = 

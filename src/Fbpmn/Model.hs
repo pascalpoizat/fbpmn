@@ -96,6 +96,8 @@ data BpmnGraph = BpmnGraph { name     :: Text -- name of the model
                            , nameN    :: Map Node Name -- gives the name of a node
                            , containN :: Map Node [Node] -- gives the nodes directly contained in a node n (n must be a subprocess or a process)
                            , containE :: Map Node [Edge] -- gives the edges (not the messageFlows) directly contained in a node n (n must be a subprocess of a process)
+                           , messages :: [Message] -- gives all messages types
+                           , messageN :: Map Node [Message] -- message types associated to nodes (for now, only for SendTasks and ReceiveTasks)
 }
   deriving (Eq, Show, Generic)
 instance ToJSON BpmnGraph
@@ -111,10 +113,12 @@ mkGraph :: Text
         -> Map Node Name
         -> Map Node [Node]
         -> Map Node [Edge]
+        -> [Message]
+        -> Map Node [Message]
         -> BpmnGraph
-mkGraph n ns es catN catE sourceE targetE nameN containN containE =
+mkGraph n ns es catN catE sourceE targetE nameN containN containE messages messageN =
   let graph =
-        BpmnGraph n ns es catN catE sourceE targetE nameN containN containE
+        BpmnGraph n ns es catN catE sourceE targetE nameN containN containE messages messageN
   in  graph
 
 --
@@ -198,8 +202,21 @@ isValidGraph g =
         , allValidMessageFlow -- \forall m in E^{MessageFlow} . sourceE(e) \in E^{SendTask} /\ target(e) \in E^{ReceiveTask}
         , allValidSubProcess -- \forall n \in N^{SubProcess} \union N^{Process} . n \in dom(containN) \wedge n \in dom(containE)
         , allValidContainers -- \forall n \in dom(containN) \union dom(containE) . n \in N^{SubProcess} \union N^{Process}
+        , allValidMessageNodes -- \forall n \in N^{SendTask} \union N^{ReceiveTask} . n \in dom(messageN)
+        , allValidMessagesForNodes -- \forall n \in dom(messageN) . \forall m \in messageN(n) . m \in messages
         ]
     <*> [g]
+
+allValidMessagesForNodes :: BpmnGraph -> Bool
+allValidMessagesForNodes _ = True -- TODO:
+
+isValidMessageNode :: BpmnGraph -> Node -> Bool
+isValidMessageNode g n = n `elem` dom_messageN
+  where dom_messageN = keys $ messageN g
+
+allValidMessageNodes :: BpmnGraph -> Bool
+allValidMessageNodes g = getAll $ foldMap (All . isValidMessageNode g) ns
+  where ns = nodesTs g [SendTask, ReceiveTask]
 
 isValidContainer :: BpmnGraph -> Node -> Bool
 isValidContainer g n = n `elem` nodesTs g [SubProcess, Process]

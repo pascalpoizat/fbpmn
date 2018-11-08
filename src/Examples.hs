@@ -25,6 +25,8 @@ g0 = mkGraph
   name
   containN
   containE
+  messages
+  messageN
  where
   catN = fromList
     [ ("Sender"  , Process)
@@ -51,6 +53,8 @@ g0 = mkGraph
   containN = fromList
     [("Sender", ["NSE1", "ST1", "NEE1"]), ("Receiver", ["NSE2", "RT2", "NEE2"])]
   containE = fromList [("Sender", ["a", "b"]), ("Receiver", ["c", "d"])]
+  messages = ["message"]
+  messageN = fromList [("ST1", ["message"]), ("RT2", ["message"])]
 
 --
 -- g1
@@ -69,6 +73,8 @@ g1 = mkGraph
   name
   containN
   containE
+  messages
+  messageN
  where
   catN = fromList
     [ ("Process" , Process)
@@ -111,7 +117,14 @@ g1 = mkGraph
     , ("ej+b", "JoinAnd")
     , ("e3"  , "End")
     ]
-  name = fromList []
-  containN = fromList [("Process", ["Start","End","SplitAnd","JoinAnd","T1a","T1b","T2a","T2b"])]
-  containE = fromList [("Process", ["e1","es+a","es+b","e2a","e2b","ej+a","ej+b","e3"])]
+  name     = fromList []
+  containN = fromList
+    [ ( "Process"
+      , ["Start", "End", "SplitAnd", "JoinAnd", "T1a", "T1b", "T2a", "T2b"]
+      )
+    ]
+  containE = fromList
+    [("Process", ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"])]
+  messages = []
+  messageN = fromList []
 
