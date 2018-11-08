@@ -130,7 +130,26 @@ encodeBpmnGraphFlowDeclToTla' k flowFilter g =
                           m' = show m in [text|<<$n', $m'>>|]
 
 encodeBpmnGraphMsgDeclToTla :: BpmnGraph -> Text
-encodeBpmnGraphMsgDeclToTla _ = unlines [] -- TODO:
+encodeBpmnGraphMsgDeclToTla g =
+  [text|
+    Message == { $msgs }
+
+    LOCAL msgtype0 ==
+      $mts
+
+    msgtype == [ n \in Node |->
+      IF n \in DOMAIN msgtype0 THEN msgtype0[n]
+      ELSE {} ]
+  |]
+  where
+    msgs = T.intercalate ", " (show <$> messages g)
+    mts = T.intercalate "@@ " (nodeToMsgTypeForNode <$> nodesTs g [SendTask, ReceiveTask])
+    nodeToMsgTypeForNode n = case messageN g !? n of
+      Nothing -> ""
+      Just ms -> [text|$n' :> { $ms' }|]
+        where
+          ms' = T.intercalate ", " (show <$> ms)
+          n' = show n
 
 encodeBpmnGraphCatNToTla :: BpmnGraph -> Text
 encodeBpmnGraphCatNToTla g = 
