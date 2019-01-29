@@ -22,7 +22,10 @@ data NodeType = AbstractTask
               | OrGateway
               | AndGateway
               | NoneStartEvent
+              | MessageStartEvent
               | NoneEndEvent
+              | TerminateEndEvent
+              | MessageEndEvent
               | Process -- for top-level processes
   deriving (Eq, Show, Generic)
 instance ToJSON NodeType

@@ -21,7 +21,6 @@ encodeBpmnGraphToTla :: BpmnGraph -> Text
 encodeBpmnGraphToTla g =
   unlines
     $   [ encodeBpmnGraphHeaderToTla
-        , encodeBpmnGraphProcessDeclToTla
         , encodeBpmnGraphContainRelToTla
         , encodeBpmnGraphNodeDeclToTla
         , encodeBpmnGraphFlowDeclToTla
@@ -58,15 +57,6 @@ encodeBpmnGraphFooterToTla _ =
   
   ================================================================
   |]
-
-encodeBpmnGraphProcessDeclToTla :: BpmnGraph -> Text
-encodeBpmnGraphProcessDeclToTla g =
-  [text|
-    TopProcess == { $ps }
-  |]
-  where
-    ps = T.intercalate "," procDecls
-    procDecls = show <$> nodesT g Process
 
 encodeBpmnGraphContainRelToTla :: BpmnGraph -> Text
 encodeBpmnGraphContainRelToTla g =
@@ -183,6 +173,9 @@ toTLA SubProcess     = "SubProcess"
 toTLA XorGateway     = "ExclusiveOr"
 toTLA OrGateway      = "InclusiveOr"
 toTLA AndGateway     = "Parallel"
-toTLA NoneStartEvent = "StartEvent"
-toTLA NoneEndEvent   = "EndEvent"
-toTLA Process        = "SubProcess"
+toTLA NoneStartEvent = "NoneStartEvent"
+toTLA MessageStartEvent = "MessageStartEvent"
+toTLA NoneEndEvent      = "NoneEndEvent"
+toTLA TerminateEndEvent = "TerminateEndEvent"
+toTLA MessageEndEvent   = "MessageEndEvent"
+toTLA Process           = "Process"
