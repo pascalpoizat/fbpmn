@@ -164,13 +164,7 @@ For this do:
 4. save it in JSON format using `json <filepath>`
 5. quit using `quit`
 
-If you find the JSON output is hard to read, you may use:
-
-```shell
-json_pp -f json -t json < filename
-```
-
-To render it more nicely before edition.
+If you find the JSON output is hard to read, you may use different IDEs or pretty-printers to render it nicely before edition.
 
 ## Verification
 
