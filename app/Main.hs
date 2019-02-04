@@ -8,6 +8,7 @@ import           Data.Map.Strict                ( keys
                                                 )
 
 data Command = Quit        -- quit REPL
+             | Help        -- list commands
              | List        -- list internal examples
              | Show        -- show current graph
              | Import Text -- load current graph from internal examples
@@ -33,6 +34,18 @@ repl (p, g) = do
     Nothing -> do
       putTextLn "unknown command"
       repl (p, g)
+    Just Help -> do
+                  putTextLn $ unlines ["quit (quit REPL)"
+                                      ,"help (list commands)"
+                                      ,"list (list internal examples)"
+                                      ,"show (show current graph)"
+                                      ,"import (load current graph from internal examples)"
+                                      ,"load (load current graph from JSON and verify file)"
+                                      ,"bpmn (save current graph as BPMN)"
+                                      ,"json (save current graph as JSON)"
+                                      ,"smt (save current graph as SMT)"
+                                      ,"tla (save current graph as TLA)"]
+                  repl (p, g)
     Just Quit -> putTextLn "goodbye"
     Just Show -> case g of
       Nothing -> do
@@ -91,6 +104,7 @@ repl (p, g) = do
 
 parse :: [Text] -> IO (Maybe Command)
 parse ("quit" : _) = pure $ Just Quit
+parse ("help" : _) = pure $ Just Help
 parse ("show" : _) = pure $ Just Show
 parse ("list" : _) = pure $ Just List
 parse ["import"  ] = do
