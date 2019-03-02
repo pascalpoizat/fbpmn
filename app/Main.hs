@@ -1,4 +1,5 @@
 import           Fbpmn.Model
+import           Fbpmn.IO.Bpmn
 import           Fbpmn.IO.Json
 import           Fbpmn.IO.Smt
 import           Fbpmn.IO.Tla
@@ -13,7 +14,7 @@ data Command = Quit        -- quit REPL
              | Show        -- show current graph
              | Import Text -- load current graph from internal examples
              | Load Text   -- load current graph from JSON and verify file
-             | Bpmn Text   -- save current graph as BPMN
+             | Bpmn Text   -- load current graph as BPMN
              | Json Text   -- save current graph as JSON
              | Smt Text    -- save current graph as SMT
              | Tla Text    -- save current graph as TLA+
@@ -35,17 +36,19 @@ repl (p, g) = do
       putTextLn "unknown command"
       repl (p, g)
     Just Help -> do
-                  putTextLn $ unlines ["quit (quit REPL)"
-                                      ,"help (list commands)"
-                                      ,"list (list internal examples)"
-                                      ,"show (show current graph)"
-                                      ,"import (load current graph from internal examples)"
-                                      ,"load (load current graph from JSON and verify file)"
-                                      ,"bpmn (save current graph as BPMN)"
-                                      ,"json (save current graph as JSON)"
-                                      ,"smt (save current graph as SMT)"
-                                      ,"tla (save current graph as TLA)"]
-                  repl (p, g)
+      putTextLn $ unlines
+        [ "quit (quit REPL)"
+        , "help (list commands)"
+        , "list (list internal examples)"
+        , "show (show current graph)"
+        , "import (load current graph from internal examples)"
+        , "load (load current graph from JSON and verify file)"
+        , "bpmn (load current graph as BPMN)"
+        , "json (save current graph as JSON)"
+        , "smt (save current graph as SMT)"
+        , "tla (save current graph as TLA)"
+        ]
+      repl (p, g)
     Just Quit -> putTextLn "goodbye"
     Just Show -> case g of
       Nothing -> do
@@ -71,9 +74,19 @@ repl (p, g) = do
       Just g' -> do
         writeToJSON (toString path) g'
         repl (p, g)
-    Just (Bpmn _) -> do
-      putTextLn "not yet implemented"
-      repl (p, g)
+    Just (Bpmn path) -> do
+      loadres <- readFromBPMN (toString path)
+      case loadres of
+        Nothing -> do
+          putTextLn "wrong file"
+          repl (p, g)
+        Just graph -> if isValidGraph graph
+          then do
+            putTextLn "graph is correct"
+            repl ("(" <> path <> ")", Just graph)
+          else do
+            putTextLn "graph is incorrect"
+            repl (p, g)
     Just (Smt path) -> case g of
       Nothing -> do
         putTextLn "no graph loaded"
