@@ -43,6 +43,7 @@ library
                      , bytestring
                      , containers
                      , neat-interpolation
+                     , optparse-applicative
                      , text
                      , xml
   default-language:    Haskell2010
@@ -74,6 +75,7 @@ executable fbpmn
                      , bytestring
                      , containers
                      , neat-interpolation
+                     , optparse-applicative
                      , text
                      , xml
   default-language:    Haskell2010
@@ -106,6 +108,7 @@ test-suite fbpmn-test
                      , bytestring
                      , containers
                      , neat-interpolation
+                     , optparse-applicative
                      , text
                      , xml
                      , tasty >= 0.11.3

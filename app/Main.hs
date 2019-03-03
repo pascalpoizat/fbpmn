@@ -1,3 +1,4 @@
+import           Options.Applicative
 import           Fbpmn.Model
 import           Fbpmn.IO.Bpmn
 import           Fbpmn.IO.Json
@@ -8,19 +9,131 @@ import           Data.Map.Strict                ( keys
                                                 , (!?)
                                                 )
 
-data Command = Quit        -- quit REPL
-             | Help        -- list commands
-             | List        -- list internal examples
-             | Show        -- show current graph
-             | Import Text -- load current graph from internal examples
-             | Load Text   -- load current graph from JSON and verify file
-             | Bpmn Text   -- load current graph as BPMN
-             | Json Text   -- save current graph as JSON
-             | Smt Text    -- save current graph as SMT
-             | Tla Text    -- save current graph as TLA+
+data RCommand = RQuit        -- quit REPL
+             | RHelp        -- list commands
+             | RList        -- list internal examples
+             | RShow        -- show current graph
+             | RImport Text -- load current graph from internal examples
+             | RLoad Text   -- load current graph from JSON and verify file
+             | RBpmn Text   -- load current graph as BPMN
+             | RJson Text   -- save current graph as JSON
+             | RSmt Text    -- save current graph as SMT
+             | RTla Text    -- save current graph as TLA+
+
+fversion :: Text
+fversion = "0.1"
+
+fname :: Text
+fname = "fbpmn"
+
+toolversion :: Text
+toolversion = fname <> " " <> fversion
+
+data Suffix = JsonSuffix | BpmnSuffix | TlaSuffix
+  deriving (Eq)
+
+jsonSuffix :: Text
+jsonSuffix = ".json"
+
+bpmnSuffix :: Text
+bpmnSuffix = ".bpmn"
+
+tlaSuffix :: Text
+tlaSuffix = ".tla"
+
+newtype Options = Options
+  { optCommand :: Command
+  }
+
+data Command
+  = CVersion
+  | CRepl
+  | CJson2Tla { optPath :: Text }
+  | CBpmn2Json { optPath :: Text }
+  | CBpmn2Tla { optPath :: Text }
+
+parserOptions :: Parser Options
+parserOptions = Options <$> subparser
+  (  command "version" (info (pure CVersion) (progDesc "prints the version"))
+  <> command "repl"    (info (pure CRepl) (progDesc "launches the REPL"))
+  <> command
+       "json2tla"
+       (info parserJson2Tla
+             (progDesc "transforms a collaboration from JSON to TLA+")
+       )
+  <> command
+       "bpmn2json"
+       (info parserBpmn2Json
+             (progDesc "transforms a collaboration from BPMN to BPMN")
+       )
+  <> command
+       "bpmn2tla"
+       (info parserBpmn2Tla
+             (progDesc "transforms a collaboration from BPMN to TLA+")
+       )
+  )
+
+parserJson2Tla :: Parser Command
+parserJson2Tla = CJson2Tla <$> argument
+  str
+  (  metavar "PATH"
+  <> help "path to the input model in JSON format (without .json suffix)"
+  )
+
+parserBpmn2Json :: Parser Command
+parserBpmn2Json = CBpmn2Json <$> argument
+  str
+  (  metavar "PATH"
+  <> help "path to the input model in BPMN format (without .bpmn suffix)"
+  )
+
+parserBpmn2Tla :: Parser Command
+parserBpmn2Tla = CBpmn2Tla <$> argument
+  str
+  (  metavar "PATH"
+  <> help "path to the input model in BPMN format (without .bpmn suffix)"
+  )
+
+run :: Options -> IO ()
+run (Options CVersion      ) = putStrLn toolversion
+run (Options CRepl         ) = repl ("()", Nothing)
+run (Options (CJson2Tla  p)) = json2tla p
+run (Options (CBpmn2Json p)) = bpmn2json p
+run (Options (CBpmn2Tla  p)) = bpmn2tla p
+
+transform :: Text
+          -> Text
+          -> (String -> IO (Maybe BpmnGraph))
+          -> (String -> BpmnGraph -> IO ())
+          -> Text
+          -> IO ()
+transform sourceSuffix targetSuffix mreader mwriter path = do
+  loadres <- mreader (toString $ path <> sourceSuffix)
+  case loadres of
+    Nothing    -> putTextLn "wrong file"
+    Just graph -> if isValidGraph graph
+      then do
+        mwriter (toString $ path <> targetSuffix) graph
+        putTextLn "transformation done"
+      else putTextLn "graph is incorrect"
+
+json2tla :: Text -> IO ()
+json2tla = transform jsonSuffix tlaSuffix readFromJSON writeToTLA
+
+bpmn2json :: Text -> IO ()
+bpmn2json = transform bpmnSuffix jsonSuffix readFromBPMN writeToJSON
+
+bpmn2tla :: Text -> IO ()
+bpmn2tla = transform bpmnSuffix tlaSuffix readFromBPMN writeToTLA
 
 main :: IO ()
-main = repl ("()", Nothing)
+main = run =<< execParser opts
+ where
+  opts = info
+    (parserOptions <**> helper)
+    (fullDesc <> progDesc "formal transformations for BPMN models" <> header
+      (toString toolversion)
+    )
 
 {-|
 The REPL.
@@ -30,12 +143,12 @@ repl :: (Text, Maybe BpmnGraph) -> IO ()
 repl (p, g) = do
   putStrLn $ p <> " > "
   rawinput <- getLine
-  command  <- parse (words rawinput)
-  case command of
+  rcommand <- rparse (words rawinput)
+  case rcommand of
     Nothing -> do
       putTextLn "unknown command"
       repl (p, g)
-    Just Help -> do
+    Just RHelp -> do
       putTextLn $ unlines
         [ "quit (quit REPL)"
         , "help (list commands)"
@@ -49,32 +162,32 @@ repl (p, g) = do
         , "tla (save current graph as TLA)"
         ]
       repl (p, g)
-    Just Quit -> putTextLn "goodbye"
-    Just Show -> case g of
+    Just RQuit -> putTextLn "goodbye"
+    Just RShow -> case g of
       Nothing -> do
         putTextLn "no graph loaded"
         repl (p, g)
       Just g' -> do
         print g'
         repl (p, g)
-    Just List -> do
+    Just RList -> do
       print $ keys models
       repl (p, g)
-    Just (Import name) -> case models !? name of
+    Just (RImport name) -> case models !? name of
       Nothing -> do
         putTextLn "unknown example"
         repl (p, g)
       Just g' -> do
         putTextLn "example loaded"
         repl (name, Just g')
-    Just (Json path) -> case g of
+    Just (RJson path) -> case g of
       Nothing -> do
         putTextLn "no graph loaded"
         repl (p, g)
       Just g' -> do
         writeToJSON (toString path) g'
         repl (p, g)
-    Just (Bpmn path) -> do
+    Just (RBpmn path) -> do
       loadres <- readFromBPMN (toString path)
       case loadres of
         Nothing -> do
@@ -87,21 +200,21 @@ repl (p, g) = do
           else do
             putTextLn "graph is incorrect"
             repl (p, g)
-    Just (Smt path) -> case g of
+    Just (RSmt path) -> case g of
       Nothing -> do
         putTextLn "no graph loaded"
         repl (p, g)
       Just g' -> do
         writeToSMT (toString path) g'
         repl (p, g)
-    Just (Tla path) -> case g of
+    Just (RTla path) -> case g of
       Nothing -> do
         putTextLn "no graph loaded"
         repl (p, g)
       Just g' -> do
         writeToTLA (toString path) g'
         repl (p, g)
-    Just (Load path) -> do
+    Just (RLoad path) -> do
       loadres <- readFromJSON (toString path)
       case loadres of
         Nothing -> do
@@ -115,33 +228,33 @@ repl (p, g) = do
             putTextLn "graph is incorrect"
             repl (p, g)
 
-parse :: [Text] -> IO (Maybe Command)
-parse ("quit" : _) = pure $ Just Quit
-parse ("help" : _) = pure $ Just Help
-parse ("show" : _) = pure $ Just Show
-parse ("list" : _) = pure $ Just List
-parse ["import"  ] = do
+rparse :: [Text] -> IO (Maybe RCommand)
+rparse ("quit" : _) = pure $ Just RQuit
+rparse ("help" : _) = pure $ Just RHelp
+rparse ("show" : _) = pure $ Just RShow
+rparse ("list" : _) = pure $ Just RList
+rparse ["import"  ] = do
   putTextLn "missing example name"
   pure Nothing
-parse ["json"] = do
+rparse ["json"] = do
   putTextLn "missing file path"
   pure Nothing
-parse ["bpmn"] = do
+rparse ["bpmn"] = do
   putTextLn "missing file path"
   pure Nothing
-parse ["smt"] = do
+rparse ["smt"] = do
   putTextLn "missing file path"
   pure Nothing
-parse ["tla"] = do
+rparse ["tla"] = do
   putTextLn "missing file path"
   pure Nothing
-parse ["load"] = do
+rparse ["load"] = do
   putTextLn "missing file path"
   pure Nothing
-parse ("import" : name : _) = pure $ Just (Import name)
-parse ("json"   : path : _) = pure $ Just (Json path)
-parse ("bpmn"   : path : _) = pure $ Just (Bpmn path)
-parse ("smt"    : path : _) = pure $ Just (Smt path)
-parse ("tla"    : path : _) = pure $ Just (Tla path)
-parse ("load"   : path : _) = pure $ Just (Load path)
-parse _                     = pure Nothing
+rparse ("import" : name : _) = pure $ Just (RImport name)
+rparse ("json"   : path : _) = pure $ Just (RJson path)
+rparse ("bpmn"   : path : _) = pure $ Just (RBpmn path)
+rparse ("smt"    : path : _) = pure $ Just (RSmt path)
+rparse ("tla"    : path : _) = pure $ Just (RTla path)
+rparse ("load"   : path : _) = pure $ Just (RLoad path)
+rparse _                     = pure Nothing
