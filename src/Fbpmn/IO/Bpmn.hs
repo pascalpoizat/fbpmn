@@ -20,20 +20,54 @@ nA s = QName s Nothing Nothing
 nE :: String -> QName
 nE s = QName s (Just uri) (Just "bpmn")
 
-nId :: QName
-nId = nA "id"
+getId :: Element -> Maybe String
+getId e = findAttr (nA "id") e
 
-nName :: QName
-nName = nA "name"
+-- for the time being all start events are treated as NSE
+-- (in the BPMN loading only, it is correct in the JSON loading)
+pSE :: QName -> Bool
+pSE = (== nE "startEvent")
 
-nCollaboration :: QName
-nCollaboration = nE "collaboration"
+-- for the time being all end events are treated as NEE
+-- (in the BPMN loading only, it is correct in the JSON loading)
+pEE :: QName -> Bool
+pEE = (== nE "endEvent")
 
-nParticipant :: QName
-nParticipant = nE "participant"
+pOR :: QName -> Bool
+pOR = (== nE "inclusiveGateway")
 
-nMessageFlow :: QName
-nMessageFlow = nE "messageFlow"
+pAND :: QName -> Bool
+pAND = (== nE "parallelGateway")
+
+pXOR :: QName -> Bool
+pXOR = (== nE "exclusiveGateway")
+
+pG :: QName -> Bool
+pG q = pOR q || pAND q || pXOR q
+
+pST :: QName -> Bool
+pST = (== nE "sendTask")
+
+pRT :: QName -> Bool
+pRT = (== nE "receiveTask")
+
+pAT :: QName -> Bool
+pAT = (== nE "task")
+
+pT :: QName -> Bool
+pT q = pAT q || pST q || pRT q
+
+pN :: QName -> Bool
+pN q = pT q || pSE q || pEE q || pG q
+
+pMF :: QName -> Bool
+pMF = (== nE "messageFlow")
+
+pSF :: QName -> Bool
+pSF = (== nE "sequenceFlow")
+
+pE :: QName -> Bool
+pE q = pMF q || pSF q
 
 {-|
 An experimental BPMN reading.
@@ -44,16 +78,18 @@ Enhancements:
 -}
 decode :: [Content] -> Maybe BpmnGraph
 decode cs = do
-  es <- pure $ onlyElems cs
-  c  <- listToMaybe $ concatMap (findElements nCollaboration) es
-  n  <- findAttr nId c
-  ps <- pure $ findElements nParticipant c
-  mfs <- pure $ findElements nMessageFlow c
-  ms <- sequence $ findAttr nName <$> mfs
+  elems <- pure $ onlyElems cs
+  c  <- listToMaybe $ concatMap (findElements (nE "collaboration")) elems
+  ns <- pure $ concatMap (filterElementsName pN) elems
+  es <- pure $ concatMap (filterElementsName pE) elems
+  name  <- getId c
+  -- ps <- pure $ findElements (nE "participant") c
+  mfs <- pure $ filterElementsName pMF c
+  ms <- sequence $ findAttr (nA "name") <$> mfs
   Just
-    (mkGraph (toText n)
-             [] -- TODO:
-             [] -- TODO:
+    (mkGraph (toText name)
+             (catMaybes $ getId <$> ns) -- TODO: missing process nodes
+             (catMaybes $ getId <$> es)
              M.empty -- TODO:
              M.empty -- TODO:
              M.empty -- TODO:
