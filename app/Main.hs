@@ -64,7 +64,7 @@ parserOptions = Options <$> subparser
   <> command
        "bpmn2json"
        (info parserBpmn2Json
-             (progDesc "transforms a collaboration from BPMN to BPMN")
+             (progDesc "transforms a collaboration from BPMN to JSON")
        )
   <> command
        "bpmn2tla"
@@ -94,36 +94,38 @@ parserBpmn2Tla = CBpmn2Tla <$> argument
   <> help "path to the input model in BPMN format (without .bpmn suffix)"
   )
 
+-- no validation needed from BPMN since we build the graph ourselves
 run :: Options -> IO ()
 run (Options CVersion      ) = putStrLn toolversion
 run (Options CRepl         ) = repl ("()", Nothing)
-run (Options (CJson2Tla  p)) = json2tla p
-run (Options (CBpmn2Json p)) = bpmn2json p
-run (Options (CBpmn2Tla  p)) = bpmn2tla p
+run (Options (CJson2Tla  p)) = json2tla True p
+run (Options (CBpmn2Json p)) = bpmn2json False p
+run (Options (CBpmn2Tla  p)) = bpmn2tla False p
 
 transform :: Text
           -> Text
           -> (String -> IO (Maybe BpmnGraph))
           -> (String -> BpmnGraph -> IO ())
+          -> Bool
           -> Text
           -> IO ()
-transform sourceSuffix targetSuffix mreader mwriter path = do
+transform sourceSuffix targetSuffix mreader mwriter withValidation path = do
   loadres <- mreader (toString $ path <> sourceSuffix)
   case loadres of
     Nothing    -> putTextLn "wrong file"
-    Just graph -> if isValidGraph graph
+    Just graph -> if not withValidation || isValidGraph graph
       then do
         mwriter (toString $ path <> targetSuffix) graph
         putTextLn "transformation done"
       else putTextLn "graph is incorrect"
 
-json2tla :: Text -> IO ()
+json2tla :: Bool -> Text -> IO ()
 json2tla = transform jsonSuffix tlaSuffix readFromJSON writeToTLA
 
-bpmn2json :: Text -> IO ()
+bpmn2json :: Bool -> Text -> IO ()
 bpmn2json = transform bpmnSuffix jsonSuffix readFromBPMN writeToJSON
 
-bpmn2tla :: Text -> IO ()
+bpmn2tla :: Bool -> Text -> IO ()
 bpmn2tla = transform bpmnSuffix tlaSuffix readFromBPMN writeToTLA
 
 main :: IO ()
