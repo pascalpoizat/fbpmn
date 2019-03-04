@@ -17,10 +17,13 @@ import           Data.Map.Strict                ( Map
 data NodeType = AbstractTask
               | SendTask
               | ReceiveTask
+              | ThrowMessageIntermediateEvent
+              | CatchMessageIntermediateEvent
               | SubProcess
               | XorGateway
               | OrGateway
               | AndGateway
+              | EventBasedGateway
               | NoneStartEvent
               | MessageStartEvent
               | NoneEndEvent
@@ -119,10 +122,20 @@ mkGraph :: Text
         -> [Message]
         -> Map Node [Message]
         -> BpmnGraph
-mkGraph n ns es catN catE sourceE targetE nameN containN containE messages messageN =
-  let graph =
-        BpmnGraph n ns es catN catE sourceE targetE nameN containN containE messages messageN
-  in  graph
+mkGraph n ns es catN catE sourceE targetE nameN containN containE messages messageN
+  = let graph = BpmnGraph n
+                          ns
+                          es
+                          catN
+                          catE
+                          sourceE
+                          targetE
+                          nameN
+                          containN
+                          containE
+                          messages
+                          messageN
+    in  graph
 
 --
 -- nodesT for one type
@@ -205,7 +218,7 @@ isValidGraph g =
         , allValidMessageFlow -- \forall m in E^{MessageFlow} . sourceE(e) \in E^{SendTask} /\ target(e) \in E^{ReceiveTask}
         , allValidSubProcess -- \forall n \in N^{SubProcess} \union N^{Process} . n \in dom(containN) \wedge n \in dom(containE)
         , allValidContainers -- \forall n \in dom(containN) \union dom(containE) . n \in N^{SubProcess} \union N^{Process}
-        , allValidMessageNodes -- \forall n \in N^{SendTask} \union N^{ReceiveTask} . n \in dom(messageN)
+        , allValidMessageNodes -- \forall n \in N^{ST,RT,TMIE,CMIE,MSE,MEE} . n \in dom(messageN)
         , allValidMessagesForNodes -- \forall n \in dom(messageN) . \forall m \in messageN(n) . m \in messages
         ]
     <*> [g]
@@ -219,7 +232,16 @@ isValidMessageNode g n = n `elem` dom_messageN
 
 allValidMessageNodes :: BpmnGraph -> Bool
 allValidMessageNodes g = getAll $ foldMap (All . isValidMessageNode g) ns
-  where ns = nodesTs g [SendTask, ReceiveTask]
+ where
+  ns = nodesTs
+    g
+    [ SendTask
+    , ReceiveTask
+    , ThrowMessageIntermediateEvent
+    , CatchMessageIntermediateEvent
+    , MessageStartEvent
+    , MessageEndEvent
+    ]
 
 isValidContainer :: BpmnGraph -> Node -> Bool
 isValidContainer g n = n `elem` nodesTs g [SubProcess, Process]
@@ -227,7 +249,7 @@ isValidContainer g n = n `elem` nodesTs g [SubProcess, Process]
 allValidContainers :: BpmnGraph -> Bool
 allValidContainers g = getAll $ foldMap (All . isValidContainer g) ns
  where
-  ns  = keysN ++ keysE
+  ns    = keysN ++ keysE
   keysN = keys $ containN g
   keysE = keys $ containE g
 
@@ -251,8 +273,10 @@ isValidMessageFlow g mf =
         catt   <- catN g !? target
         pure (cats, catt)
     of
-      Nothing       -> False
-      Just (cs, ct) -> cs == SendTask && ct == ReceiveTask
+      Nothing -> False
+      Just (cs, ct) ->
+        (cs == SendTask || cs == ThrowMessageIntermediateEvent || cs == MessageEndEvent)
+          && (ct == ReceiveTask || ct == CatchMessageIntermediateEvent || ct == MessageStartEvent)
 
 allValidMessageFlow :: BpmnGraph -> Bool
 allValidMessageFlow g =

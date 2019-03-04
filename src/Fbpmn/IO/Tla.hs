@@ -133,7 +133,12 @@ encodeBpmnGraphMsgDeclToTla g =
   |]
   where
     msgs = T.intercalate ", " (show <$> messages g)
-    mts = T.intercalate "@@ " (nodeToMsgTypeForNode <$> nodesTs g [SendTask, ReceiveTask])
+    mts = T.intercalate "@@ " (nodeToMsgTypeForNode <$> nodesTs g [ SendTask
+                                                                  , ReceiveTask
+                                                                  , ThrowMessageIntermediateEvent
+                                                                  , CatchMessageIntermediateEvent
+                                                                  , MessageStartEvent
+                                                                  , MessageEndEvent])
     nodeToMsgTypeForNode n = case messageN g !? n of
       Nothing -> ""
       Just ms -> [text|$n' :> { $ms' }|]
@@ -169,10 +174,13 @@ toTLA :: NodeType -> Text
 toTLA AbstractTask   = "AbstractTask"
 toTLA SendTask       = "SendTask"
 toTLA ReceiveTask    = "ReceiveTask"
+toTLA ThrowMessageIntermediateEvent = "ThrowMessageIntermediateEvent"
+toTLA CatchMessageIntermediateEvent = "CatchMessageIntermediateEvent"
 toTLA SubProcess     = "SubProcess"
 toTLA XorGateway     = "ExclusiveOr"
 toTLA OrGateway      = "InclusiveOr"
 toTLA AndGateway     = "Parallel"
+toTLA EventBasedGateway = "EventBasedGateway"
 toTLA NoneStartEvent = "NoneStartEvent"
 toTLA MessageStartEvent = "MessageStartEvent"
 toTLA NoneEndEvent      = "NoneEndEvent"
