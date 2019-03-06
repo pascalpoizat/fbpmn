@@ -78,7 +78,7 @@ XorGateway | OrGateway | AndGateway | EventBasedGateway |
 NoneStartEvent | MessageStartEvent | NoneEndEvent | TerminateEndEvent | MessageEndEvent
 ```
 
-Edge catagories are:
+Edge categories are:
 
 ```
 NormalSequenceFlow | ConditionalSequenceFlow | DefaultSequenceFlow | MessageFlow
@@ -107,7 +107,7 @@ The generated TLA+ file will be saved in the same directory as the input file.
 quit (quit REPL)
 load (load current graph from JSON and verify file)
 json (save current graph as JSON)
-tla (save current graph as TLA+)
+tla  (save current graph as TLA+)
 ```
 
 In the REPL you have to specify the full name of the files (including the `.json` or `.tla` suffix), and you can chose to generate the TLA+ representation of a collaboration in the directory you want.
