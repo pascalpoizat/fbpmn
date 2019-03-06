@@ -1,4 +1,4 @@
----------------- MODULE 001-client-supplier ----------------
+---------------- MODULE 001ClientSupplier ----------------
 
 EXTENDS TLC, PWSTypes
 
@@ -6,10 +6,10 @@ VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
   "Client" :> { "cStart", "cEnd", "cSendCommand", "cStoreRequest", "cReceiveInvoice", "cReceiveGoods" }
-  @@ "Supplier" :> { "sStart", "sPar1", "sPart2", "sEnd", "sReceiveCommand", "sPrepareCommand", "sInvoiceManagement", "sShipCommand", "sSendInvoice" }
+  @@ "Supplier" :> { "sStart", "sPar1", "sPar2", "sEnd", "sReceiveCommand", "sPrepareCommand", "sInvoiceManagement", "sShipCommand", "sSendInvoice" }
 
 Node == {
-  "Supplier","sStart","sPar1","sPart2","sEnd","sReceiveCommand","sPrepareCommand","sInvoiceManagement","sShipCommand","sSendInvoice","Client","cStart","cEnd","cSendCommand","cStoreRequest","cReceiveInvoice","cReceiveGoods"
+  "Supplier","sStart","sPar1","sPar2","sEnd","sReceiveCommand","sPrepareCommand","sInvoiceManagement","sShipCommand","sSendInvoice","Client","cStart","cEnd","cSendCommand","cStoreRequest","cReceiveInvoice","cReceiveGoods"
 }
 
 Edge == {
@@ -35,7 +35,7 @@ source ==
 @@ "sE9" :> "sSendInvoice"
 @@ "cE1" :> "cStart"
 @@ "cE2" :> "cSendCommand"
-@@ "cE3" :> "sStoreRequest"
+@@ "cE3" :> "cStoreRequest"
 @@ "cE4" :> "cReceiveInvoice"
 @@ "cE5" :> "cReceiveGoods"
 @@ "mf1" :> "cSendCommand"
@@ -54,7 +54,7 @@ target ==
 @@ "sE9" :> "sSendInvoice"
 @@ "cE1" :> "cStart"
 @@ "cE2" :> "cSendCommand"
-@@ "cE3" :> "sStoreRequest"
+@@ "cE3" :> "cStoreRequest"
 @@ "cE4" :> "cReceiveInvoice"
 @@ "cE5" :> "cReceiveGoods"
 @@ "mf1" :> "cSendCommand"
@@ -65,7 +65,7 @@ CatN ==
    "Supplier" :> Process
 @@ "sStart" :> NoneStartEvent
 @@ "sPar1" :> Parallel
-@@ "sPart2" :> Parallel
+@@ "sPar2" :> Parallel
 @@ "sEnd" :> NoneEndEvent
 @@ "sReceiveCommand" :> ReceiveTask
 @@ "sPrepareCommand" :> AbstractTask

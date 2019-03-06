@@ -1,5 +1,5 @@
 {
-  "name": "001-client-supplier",
+  "name": "001ClientSupplier",
   "messages": [
     "command",
     "goods",
@@ -7,7 +7,7 @@
   ],
   "nodes": [
     "Supplier",
-    "sStart", "sPar1", "sPart2", "sEnd",
+    "sStart", "sPar1", "sPar2", "sEnd",
     "sReceiveCommand", "sPrepareCommand", "sInvoiceManagement", "sShipCommand", "sSendInvoice",
     "Client",
     "cStart", "cEnd",
@@ -23,7 +23,7 @@
     "Supplier": "Process",
     "sStart": "NoneStartEvent",
     "sPar1": "AndGateway",
-    "sPart2": "AndGateway",
+    "sPar2": "AndGateway",
     "sEnd": "NoneEndEvent",
     "sReceiveCommand": "ReceiveTask",
     "sPrepareCommand": "AbstractTask",
@@ -69,7 +69,7 @@
     "sE9": "sSendInvoice",
     "cE1": "cStart",
     "cE2": "cSendCommand",
-    "cE3": "sStoreRequest",
+    "cE3": "cStoreRequest",
     "cE4": "cReceiveInvoice",
     "cE5": "cReceiveGoods",
     "mf1": "cSendCommand",
@@ -102,7 +102,7 @@
   },
   "containN": {
     "Supplier": [
-      "sStart", "sPar1", "sPart2", "sEnd",
+      "sStart", "sPar1", "sPar2", "sEnd",
       "sReceiveCommand", "sPrepareCommand", "sInvoiceManagement", "sShipCommand", "sSendInvoice"
     ],
     "Client": [
