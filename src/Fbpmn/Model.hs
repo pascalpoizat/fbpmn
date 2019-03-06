@@ -6,9 +6,13 @@ import           Data.Aeson                     ( FromJSON
 -- import           Data.Monoid                    ( All(..) )
 -- import           Data.Maybe                     ( isNothing )
 -- import           GHC.Generics
+import qualified Data.Set                      as S
+                                                ( fromList
+                                                )
 import           Data.Map.Strict                ( Map
                                                 , (!?)
                                                 , keys
+                                                , assocs
                                                 )
 
 --
@@ -260,10 +264,22 @@ isValidMessageFlow g mf =
         pure (cats, catt, msg)
     of
       Nothing -> False
-      Just (cs, ct, m) ->
-        (cs == SendTask || cs == ThrowMessageIntermediateEvent || cs == MessageEndEvent)
-          && (ct == ReceiveTask || ct == CatchMessageIntermediateEvent || ct == MessageStartEvent)
-            && (isValidMessage g m)
+      Just (cs, ct, m)
+        -> (  cs
+           == SendTask
+           || cs
+           == ThrowMessageIntermediateEvent
+           || cs
+           == MessageEndEvent
+           )
+          && (  ct
+             == ReceiveTask
+             || ct
+             == CatchMessageIntermediateEvent
+             || ct
+             == MessageStartEvent
+             )
+          && (isValidMessage g m)
 
 allValidMessageFlow :: BpmnGraph -> Bool
 allValidMessageFlow g =
@@ -288,3 +304,29 @@ allDef :: (Ord a, Foldable t, Functor t)
        -> BpmnGraph
        -> Bool
 allDef xs f g = not $ any isNothing $ (m !?) <$> xs where m = f g
+
+{-|
+Fixpoint (based on sets).
+Stops upon set equality, i.e. will stop if @f [1,2] = [2,1]@
+-}
+fixpoint :: (Ord a) => ([a] -> [a]) -> [a] -> [a]
+fixpoint f xs | S.fromList xs == S.fromList xs' = xs
+              | otherwise = fixpoint f xs'
+  where xs' = (toList . S.fromList) $ f xs
+
+predecessorEdges :: BpmnGraph -> Edge -> [Edge]
+predecessorEdges g e = case sourceE g !? e of
+  Nothing     -> []
+  Just source -> fst <$> filter ((== source) . snd) (assocs $ targetE g)
+
+predecessorEdgesSuchThat :: BpmnGraph -> (Edge -> Bool) -> Edge -> [Edge]
+predecessorEdgesSuchThat g p e = filter p $ predecessorEdges g e
+
+preE :: BpmnGraph -> Node -> Edge -> [Edge]
+preE g n e = fixpoint step $ predecessorEdgesSuchThat g p e
+ where
+  p x = case targetE g !? x of
+    Nothing -> False    -- if we cannot find the target for the predecessor we fail
+                        -- (impossible due to the way we compute the predecessor edges)
+    Just n' ->  n /= n' -- else we want that it is not n
+  step es = es <> foldMap (predecessorEdgesSuchThat g p) es
