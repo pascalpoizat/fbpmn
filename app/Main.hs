@@ -2,23 +2,24 @@ import           Options.Applicative
 import           Fbpmn.Model
 import           Fbpmn.IO.Bpmn
 import           Fbpmn.IO.Json
-import           Fbpmn.IO.Smt
 import           Fbpmn.IO.Tla
-import           Examples                       ( models )
-import           Data.Map.Strict                ( keys
-                                                , (!?)
-                                                )
+-- import           Fbpmn.IO.Smt
+-- import           Examples                       ( models )
+-- import           Data.Map.Strict                ( keys
+--                                                 , (!?)
+--                                                 )
 
 data RCommand = RQuit        -- quit REPL
              | RHelp        -- list commands
-             | RList        -- list internal examples
-             | RShow        -- show current graph
-             | RImport Text -- load current graph from internal examples
              | RLoad Text   -- load current graph from JSON and verify file
              | RBpmn Text   -- load current graph as BPMN
              | RJson Text   -- save current graph as JSON
-             | RSmt Text    -- save current graph as SMT
              | RTla Text    -- save current graph as TLA+
+            -- to be deprecated: 
+             -- | RList        -- list internal examples
+             -- | RShow        -- show current graph
+             -- | RImport Text -- load current graph from internal examples
+             -- | RSmt Text    -- save current graph as SMT
 
 fversion :: Text
 fversion = "0.1"
@@ -154,34 +155,34 @@ repl (p, g) = do
       putTextLn $ unlines
         [ "quit (quit REPL)"
         , "help (list commands)"
-        , "list (list internal examples)"
-        , "show (show current graph)"
-        , "import (load current graph from internal examples)"
+        -- , "list (list internal examples)"
+        -- , "show (show current graph)"
+        -- , "import (load current graph from internal examples)"
         , "load (load current graph from JSON and verify file)"
         , "bpmn (load current graph as BPMN)"
         , "json (save current graph as JSON)"
-        , "smt (save current graph as SMT)"
-        , "tla (save current graph as TLA)"
+        -- , "smt (save current graph as SMT)"
+        , "tla  (save current graph as TLA)"
         ]
       repl (p, g)
     Just RQuit -> putTextLn "goodbye"
-    Just RShow -> case g of
-      Nothing -> do
-        putTextLn "no graph loaded"
-        repl (p, g)
-      Just g' -> do
-        print g'
-        repl (p, g)
-    Just RList -> do
-      print $ keys models
-      repl (p, g)
-    Just (RImport name) -> case models !? name of
-      Nothing -> do
-        putTextLn "unknown example"
-        repl (p, g)
-      Just g' -> do
-        putTextLn "example loaded"
-        repl (name, Just g')
+    -- Just RShow -> case g of
+    --   Nothing -> do
+    --     putTextLn "no graph loaded"
+    --     repl (p, g)
+    --   Just g' -> do
+    --     print g'
+    --     repl (p, g)
+    -- Just RList -> do
+    --   print $ keys models
+    --   repl (p, g)
+    -- Just (RImport name) -> case models !? name of
+    --   Nothing -> do
+    --     putTextLn "unknown example"
+    --     repl (p, g)
+    --   Just g' -> do
+    --     putTextLn "example loaded"
+    --     repl (name, Just g')
     Just (RJson path) -> case g of
       Nothing -> do
         putTextLn "no graph loaded"
@@ -202,13 +203,13 @@ repl (p, g) = do
           else do
             putTextLn "graph is incorrect"
             repl (p, g)
-    Just (RSmt path) -> case g of
-      Nothing -> do
-        putTextLn "no graph loaded"
-        repl (p, g)
-      Just g' -> do
-        writeToSMT (toString path) g'
-        repl (p, g)
+    -- Just (RSmt path) -> case g of
+    --   Nothing -> do
+    --     putTextLn "no graph loaded"
+    --     repl (p, g)
+    --   Just g' -> do
+    --     writeToSMT (toString path) g'
+    --     repl (p, g)
     Just (RTla path) -> case g of
       Nothing -> do
         putTextLn "no graph loaded"
@@ -233,30 +234,30 @@ repl (p, g) = do
 rparse :: [Text] -> IO (Maybe RCommand)
 rparse ("quit" : _) = pure $ Just RQuit
 rparse ("help" : _) = pure $ Just RHelp
-rparse ("show" : _) = pure $ Just RShow
-rparse ("list" : _) = pure $ Just RList
-rparse ["import"  ] = do
-  putTextLn "missing example name"
-  pure Nothing
+-- rparse ("show" : _) = pure $ Just RShow
+-- rparse ("list" : _) = pure $ Just RList
+-- rparse ["import"  ] = do
+--   putTextLn "missing example name"
+--   pure Nothing
 rparse ["json"] = do
   putTextLn "missing file path"
   pure Nothing
 rparse ["bpmn"] = do
   putTextLn "missing file path"
   pure Nothing
-rparse ["smt"] = do
-  putTextLn "missing file path"
-  pure Nothing
+-- rparse ["smt"] = do
+--   putTextLn "missing file path"
+--   pure Nothing
 rparse ["tla"] = do
   putTextLn "missing file path"
   pure Nothing
 rparse ["load"] = do
   putTextLn "missing file path"
   pure Nothing
-rparse ("import" : name : _) = pure $ Just (RImport name)
+-- rparse ("import" : name : _) = pure $ Just (RImport name)
 rparse ("json"   : path : _) = pure $ Just (RJson path)
 rparse ("bpmn"   : path : _) = pure $ Just (RBpmn path)
-rparse ("smt"    : path : _) = pure $ Just (RSmt path)
+-- rparse ("smt"    : path : _) = pure $ Just (RSmt path)
 rparse ("tla"    : path : _) = pure $ Just (RTla path)
 rparse ("load"   : path : _) = pure $ Just (RLoad path)
 rparse _                     = pure Nothing
