@@ -46,131 +46,80 @@ This will install the `fbpmn` command in some place that depends on your OS.
 You can use `stack path --local-bin` to find out which directory it is.
 Do not forget to put this directory in your command path.
 
-### BPMN models
+## BPMN models
 
 We are currently developping a BPMN-XML (the standard format) to BPMN-JSON (the one we use here) transformation to ease the process.
-For the moment, we deal with BPMN models in a BPMN-JSON format as follows:
+For the moment, we deal with BPMN models in a BPMN-JSON format as follows: 
 
 ```json
 {
-   "containE" : {
-      "Sender" : [
-         "a",
-         "b"
-      ],
-      "Receiver" : [
-         "c",
-         "d"
-      ]
-   },
-   "nodes" : [
-      "Sender",
-      "Receiver",
-      "NSE1",
-      "NSE2",
-      "ST1",
-      "RT2",
-      "NEE1",
-      "NEE2"
-   ],
-   "sourceE" : {
-      "a" : "NSE1",
-      "d" : "RT2",
-      "m" : "ST1",
-      "c" : "NSE2",
-      "b" : "ST1"
-   },
-   "edges" : [
-      "a",
-      "b",
-      "c",
-      "d",
-      "m"
-   ],
-   "targetE" : {
-      "c" : "RT2",
-      "b" : "NEE1",
-      "a" : "ST1",
-      "d" : "NEE2",
-      "m" : "RT2"
-   },
-   "nameN" : {},
-   "catE" : {
-      "c" : "NormalSequenceFlow",
-      "b" : "NormalSequenceFlow",
-      "a" : "NormalSequenceFlow",
-      "d" : "NormalSequenceFlow",
-      "m" : "MessageFlow"
-   },
-   "messageN" : {
-      "ST1" : [
-         "message"
-      ],
-      "RT2" : [
-         "message"
-      ]
-   },
-   "containN" : {
-      "Sender" : [
-         "NSE1",
-         "ST1",
-         "NEE1"
-      ],
-      "Receiver" : [
-         "NSE2",
-         "RT2",
-         "NEE2"
-      ]
-   },
-   "name" : "g0",
-   "catN" : {
-      "ST1" : "SendTask",
-      "RT2" : "ReceiveTask",
-      "NEE2" : "NoneEndEvent",
-      "NSE1" : "NoneStartEvent",
-      "Sender" : "Process",
-      "NSE2" : "NoneStartEvent",
-      "NEE1" : "NoneEndEvent",
-      "Receiver" : "Process"
-   },
-   "messages" : [
-      "message"
-   ]
+  "name": "name of the process/collaboration",
+  "messages": [ list of messages names (strings) ],
+  "nodes": [ list of node ids (strings) ],
+  "edges": [ list of edge ids (strings) ],
+  "nameN": {},
+  "catN": { couples id : type (both strings), giving node categories, should be defined for each node },
+  "catE": { couples id : type (both strings), giving edge categories, should be defined for each edge },
+  "sourceE": { couples edge id : node id, giving sources of edges, should be defined for each edge },
+  "targetE": { couples edge id : node id, giving targets of edges, should be defined for each edge },
+  "messageE": { couples edge id : message name, should be defined for each message flow edge }, 
+  "containN": { map pool name : list of node ids, where pool name should be in nodes, giving direct containment relation for nodes },
+  "containE": { map pool name : list of edge ids, where pool name should be in nodes, giving direct containment relation for edges },
 }
 ```
 
+Node categories are:
 
-## Generating the TLA+ representation of a BPMN model
+```
+SubProcess | Process |
+AbstractTask | 
+SendTask | ReceiveTask | ThrowMessageIntermediateEvent | CatchMessageIntermediateEvent | 
+XorGateway | OrGateway | AndGateway | EventBasedGateway |
+NoneStartEvent | MessageStartEvent | NoneEndEvent | TerminateEndEvent | MessageEndEvent
+```
 
-`fbpmn` is a REPL that understands the following commands:
+Edge catagories are:
 
-- load <path>: load current graph from file (JSON format) and verify it
-- tla <path>: save current graph to file (TLA+ format)
-- quit: quit
-  
-To transform a BPMN model (in our JSON format) into TLA+ for verification, then do:
+```
+NormalSequenceFlow | ConditionalSequenceFlow | DefaultSequenceFlow | MessageFlow
+```
 
-1. run `fbpmn`
-2. load your file using `load <filepath>`
-3. save your file using `tla <filepath>`
-4. quit using `quit`
+Examples of models are given here: [models/json-origin](models/json-origin).
 
-If needed there are small models inlined with the source that can be used to generate a template BPMN model in JSON format.
-For this do:
+## Verification using TLA+
 
-1. run `fbpmn`
-2. list internal models using `list`
-3. import one of them using `import <modelname>`
-4. save it in JSON format using `json <filepath>`
-5. quit using `quit`
+This is achieved in two steps.
 
-If you find the JSON output is hard to read, you may use different IDEs or pretty-printers to render it nicely before edition.
+![Transformation overview.](overview.png)
 
-## Verification
+### Generating the TLA+ representation of a BPMN model
 
-For verification you will need 
-- the TLA+ toolbox: [http://lamport.azurewebsites.net/tla/tla.html](http://lamport.azurewebsites.net/tla/tla.html),
-- the TLA+ theories files available here: [http://pardi.enseeiht.fr/FormaliSE19/](http://pardi.enseeiht.fr/FormaliSE19/).
+To transform a BPMN collaboration model (in our JSON format) into TLA+ for verification, run:
 
-(practical session with the TLA+ toolbox to be described)
+```shell
+fbpmn json2tla source-file-without-json-suffix
+```
 
+The generated TLA+ file will be saved in the same directory as the input file.
+`fbpmn` also has a REPL mode (run it using `fbpmn repl`) including the following commands (**subject to evolution**):
+
+```
+quit (quit REPL)
+load (load current graph from JSON and verify file)
+json (save current graph as JSON)
+tla (save current graph as TLA+)
+```
+
+In the REPL you have to specify the full name of the files (including the `.json` or `.tla` suffix), and you can chose to generate the TLA+ representation of a collaboration in the directory you want.
+
+### Verification
+
+For verification you will need:
+
+- the TLA+ tools, get file `tla2tools.jar` from: [https://github.com/tlaplus/tlaplus/releases](https://github.com/tlaplus/tlaplus/releases)
+- the TLA+ implementation of our FOL semantics: [theories/tla](theories/tla).
+
+1. create a directory
+2. copy files from `theories/tla` into it
+3. copy the file generated by `fbpmn` into it
+4. 
