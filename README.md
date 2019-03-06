@@ -51,7 +51,7 @@ Do not forget to put this directory in your command path.
 We are currently developping a BPMN-XML (the standard format) to BPMN-JSON (the one we use here) transformation to ease the process.
 For the moment, we deal with BPMN models in a BPMN-JSON format as follows: 
 
-```json
+```
 {
   "name": "name of the process/collaboration",
   "messages": [ list of messages names (strings) ],
