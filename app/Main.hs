@@ -1,6 +1,7 @@
 import           Options.Applicative
 import           Fbpmn.Model
 import           Fbpmn.IO.Bpmn
+import           Fbpmn.IO.Dot
 import           Fbpmn.IO.Json
 import           Fbpmn.IO.Tla
 -- import           Fbpmn.IO.Smt
@@ -13,6 +14,7 @@ data RCommand = RQuit        -- quit REPL
              | RHelp        -- list commands
              | RLoad Text   -- load current graph from JSON and verify file
              | RBpmn Text   -- load current graph as BPMN
+             | RDot Text    -- save current graph as DOT
              | RJson Text   -- save current graph as JSON
              | RTla Text    -- save current graph as TLA+
             -- to be deprecated: 
@@ -183,6 +185,13 @@ repl (p, g) = do
     --   Just g' -> do
     --     putTextLn "example loaded"
     --     repl (name, Just g')
+    Just (RDot path) -> case g of
+      Nothing -> do
+        putTextLn "no graph loaded"
+        repl (p, g)
+      Just g' -> do
+        writeToDOT (toString path) g'
+        repl (p, g)
     Just (RJson path) -> case g of
       Nothing -> do
         putTextLn "no graph loaded"
@@ -239,6 +248,9 @@ rparse ("help" : _) = pure $ Just RHelp
 -- rparse ["import"  ] = do
 --   putTextLn "missing example name"
 --   pure Nothing
+rparse ["dot"] = do
+  putTextLn "missing file path"
+  pure Nothing
 rparse ["json"] = do
   putTextLn "missing file path"
   pure Nothing
@@ -255,6 +267,7 @@ rparse ["load"] = do
   putTextLn "missing file path"
   pure Nothing
 -- rparse ("import" : name : _) = pure $ Just (RImport name)
+rparse ("dot"    : path : _) = pure $ Just (RDot path)
 rparse ("json"   : path : _) = pure $ Just (RJson path)
 rparse ("bpmn"   : path : _) = pure $ Just (RBpmn path)
 -- rparse ("smt"    : path : _) = pure $ Just (RSmt path)

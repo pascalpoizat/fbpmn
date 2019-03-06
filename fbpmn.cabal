@@ -25,6 +25,7 @@ library
   exposed-modules:     Fbpmn.Model
                        Fbpmn.Helper
                        Fbpmn.IO.Bpmn
+                       Fbpmn.IO.Dot
                        Fbpmn.IO.Json
                        Fbpmn.IO.Smt
                        Fbpmn.IO.Tla
