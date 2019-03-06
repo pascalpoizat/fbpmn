@@ -103,7 +103,7 @@ data BpmnGraph = BpmnGraph { name     :: Text -- name of the model
                            , containN :: Map Node [Node] -- gives the nodes directly contained in a node n (n must be a subprocess or a process)
                            , containE :: Map Node [Edge] -- gives the edges (not the messageFlows) directly contained in a node n (n must be a subprocess of a process)
                            , messages :: [Message] -- gives all messages types
-                           , messageN :: Map Node [Message] -- message types associated to nodes (for now, only for SendTasks and ReceiveTasks)
+                           , messageE :: Map Edge Message -- message types associated to message flows
 }
   deriving (Eq, Show, Generic)
 instance ToJSON BpmnGraph
@@ -120,9 +120,9 @@ mkGraph :: Text
         -> Map Node [Node]
         -> Map Node [Edge]
         -> [Message]
-        -> Map Node [Message]
+        -> Map Edge Message
         -> BpmnGraph
-mkGraph n ns es catN catE sourceE targetE nameN containN containE messages messageN
+mkGraph n ns es catN catE sourceE targetE nameN containN containE messages messageE
   = let graph = BpmnGraph n
                           ns
                           es
@@ -134,7 +134,7 @@ mkGraph n ns es catN catE sourceE targetE nameN containN containE messages messa
                           containN
                           containE
                           messages
-                          messageN
+                          messageE
     in  graph
 
 --
@@ -215,33 +215,15 @@ isValidGraph g =
         , allEdgesHave catE -- \forall e \in E . e \in dom(catE) 
         , allEdgesHave sourceE -- \forall e \in E . e \in dom(sourceE)
         , allEdgesHave targetE -- \forall e \in E . e \in dom(targetE)
-        , allValidMessageFlow -- \forall m in E^{MessageFlow} . sourceE(e) \in E^{SendTask} /\ target(e) \in E^{ReceiveTask}
+        , allValidMessageFlow -- \forall m in E^{MessageFlow} . e \in dom(sourceE) /\ e \in dom(targetE)
+                              --                             /\ sourceE(e) \in N^{ST,TMIE,MEE}
+                              --                             /\ target(e) \in N^{RT,CMIE,MSE}
+                              --                             /\ e \in dom(messageE)
+                              --                             /\ messageE(e) \in messages
         , allValidSubProcess -- \forall n \in N^{SubProcess} \union N^{Process} . n \in dom(containN) \wedge n \in dom(containE)
         , allValidContainers -- \forall n \in dom(containN) \union dom(containE) . n \in N^{SubProcess} \union N^{Process}
-        , allValidMessageNodes -- \forall n \in N^{ST,RT,TMIE,CMIE,MSE,MEE} . n \in dom(messageN)
-        , allValidMessagesForNodes -- \forall n \in dom(messageN) . \forall m \in messageN(n) . m \in messages
         ]
     <*> [g]
-
-allValidMessagesForNodes :: BpmnGraph -> Bool
-allValidMessagesForNodes _ = True -- TODO:
-
-isValidMessageNode :: BpmnGraph -> Node -> Bool
-isValidMessageNode g n = n `elem` dom_messageN
-  where dom_messageN = keys $ messageN g
-
-allValidMessageNodes :: BpmnGraph -> Bool
-allValidMessageNodes g = getAll $ foldMap (All . isValidMessageNode g) ns
- where
-  ns = nodesTs
-    g
-    [ SendTask
-    , ReceiveTask
-    , ThrowMessageIntermediateEvent
-    , CatchMessageIntermediateEvent
-    , MessageStartEvent
-    , MessageEndEvent
-    ]
 
 isValidContainer :: BpmnGraph -> Node -> Bool
 isValidContainer g n = n `elem` nodesTs g [SubProcess, Process]
@@ -263,6 +245,9 @@ allValidSubProcess :: BpmnGraph -> Bool
 allValidSubProcess g = getAll $ foldMap (All . isValidSubProcess g) ns
   where ns = nodesTs g [SubProcess, Process]
 
+isValidMessage :: BpmnGraph -> Message -> Bool
+isValidMessage _ _ = True
+
 isValidMessageFlow :: BpmnGraph -> Edge -> Bool
 isValidMessageFlow g mf =
   case
@@ -271,12 +256,14 @@ isValidMessageFlow g mf =
         target <- targetE g !? mf
         cats   <- catN g !? source
         catt   <- catN g !? target
-        pure (cats, catt)
+        msg    <- messageE g !? mf
+        pure (cats, catt, msg)
     of
       Nothing -> False
-      Just (cs, ct) ->
+      Just (cs, ct, m) ->
         (cs == SendTask || cs == ThrowMessageIntermediateEvent || cs == MessageEndEvent)
           && (ct == ReceiveTask || ct == CatchMessageIntermediateEvent || ct == MessageStartEvent)
+            && (isValidMessage g m)
 
 allValidMessageFlow :: BpmnGraph -> Bool
 allValidMessageFlow g =

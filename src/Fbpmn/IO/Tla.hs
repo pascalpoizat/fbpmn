@@ -20,14 +20,16 @@ Transform a BPMN Graph to a TLA specification.
 encodeBpmnGraphToTla :: BpmnGraph -> Text
 encodeBpmnGraphToTla g =
   unlines
-    $   [ encodeBpmnGraphHeaderToTla
-        , encodeBpmnGraphContainRelToTla
-        , encodeBpmnGraphNodeDeclToTla
-        , encodeBpmnGraphFlowDeclToTla
-        , encodeBpmnGraphMsgDeclToTla
-        , encodeBpmnGraphCatNToTla
-        , encodeBpmnGraphCatEToTla
-        , encodeBpmnGraphFooterToTla
+    $   [ encodeBpmnGraphHeaderToTla          -- header
+        , encodeBpmnGraphContainRelToTla      -- containment relation
+        , encodeBpmnGraphNodeDeclToTla        -- nodes
+        , encodeBpmnGraphEdgeDeclToTla        -- edges
+        , encodeBpmnGraphMsgDeclToTla         -- messages
+        , encodeBpmnGraphEdgeSourceDeclToTla  -- edge sources
+        , encodeBpmnGraphEdgeTargetDeclToTla  -- edge targets
+        , encodeBpmnGraphCatNToTla            -- node categories
+        , encodeBpmnGraphCatEToTla            -- edge categories
+        , encodeBpmnGraphFooterToTla          -- footer
         ]
     <*> [g]
 
@@ -40,7 +42,6 @@ encodeBpmnGraphHeaderToTla g =
 
   VARIABLES nodemarks, edgemarks, net
 
-  var == <<nodemarks, edgemarks, net>>
   |]
   where
     n = name g
@@ -52,8 +53,6 @@ encodeBpmnGraphFooterToTla _ =
   ASSUME WF!WellFormedness
   
   INSTANCE PWSSemantics
-  
-  Spec == Init /\ [][Next]_var /\ WF_var(Next)
   
   ================================================================
   |]
@@ -87,65 +86,36 @@ encodeBpmnGraphNodeDeclToTla g =
     ns = T.intercalate "," nodeDecls
     nodeDecls = show <$> nodes g
 
-encodeBpmnGraphFlowDeclToTla :: BpmnGraph -> Text
-encodeBpmnGraphFlowDeclToTla g = unlines
-  [ encodeBpmnGraphFlowDeclToTla' "NormalSeqFlowEdge" sequenceFlows g
-  , encodeBpmnGraphFlowDeclToTla' "MsgFlowEdge"       messageFlows  g
-  , "Edge == NormalSeqFlowEdge \\union MsgFlowEdge"
-  ]
-
-encodeBpmnGraphFlowDeclToTla' :: Text
-                              -> (BpmnGraph -> [Edge])
-                              -> BpmnGraph
-                              -> Text
-encodeBpmnGraphFlowDeclToTla' k flowFilter g = 
+encodeBpmnGraphEdgeDeclToTla :: BpmnGraph -> Text
+encodeBpmnGraphEdgeDeclToTla g =
   [text|
-    $k == {
-      $fs
+    Edge == {
+      $es
     }
   |]
- where
-  fs = T.intercalate "," flowDecls
-  flowDecls = flowToSeqFlowDeclaration <$> flowFilter g
-  flowToSeqFlowDeclaration e =
-    case
-        do
-          sourceNode <- sourceE g !? e
-          targetNode <- targetE g !? e
-          pure (sourceNode, targetNode)
-      of
-        Nothing      -> ""
-        Just (n, m) -> let
-                          n' = show n
-                          m' = show m in [text|<<$n', $m'>>|]
+  where
+    es = T.intercalate "," edgeDecls
+    edgeDecls = show <$> edges g
 
 encodeBpmnGraphMsgDeclToTla :: BpmnGraph -> Text
 encodeBpmnGraphMsgDeclToTla g =
   [text|
     Message == { $msgs }
 
-    LOCAL msgtype0 ==
+    msgtype ==
       $mts
 
-    msgtype == [ n \in Node |->
-      IF n \in DOMAIN msgtype0 THEN msgtype0[n]
-      ELSE {} ]
   |]
   where
     msgs = T.intercalate ", " (show <$> messages g)
-    mts = T.intercalate "@@ " (nodeToMsgTypeForNode <$> nodesTs g [ SendTask
-                                                                  , ReceiveTask
-                                                                  , ThrowMessageIntermediateEvent
-                                                                  , CatchMessageIntermediateEvent
-                                                                  , MessageStartEvent
-                                                                  , MessageEndEvent])
-    nodeToMsgTypeForNode n = case messageN g !? n of
+    mts = "    " <> T.intercalate "@@ " (edgeToMsgDecl <$> (edgesT g MessageFlow))
+    edgeToMsgDecl e = case messageE g !? e of
       Nothing -> ""
-      Just ms -> [text|$n' :> { $ms' }|]
+      Just m -> [text|$e' :> $m'|]
         where
-          ms' = T.intercalate ", " (show <$> ms)
-          n' = show n
-
+          m' = show m
+          e' = show e
+ 
 encodeBpmnGraphCatNToTla :: BpmnGraph -> Text
 encodeBpmnGraphCatNToTla g = 
   [text|
@@ -158,32 +128,74 @@ encodeBpmnGraphCatNToTla g =
     Nothing -> ""
     Just c  -> [text|$n' :> $c'|] 
       where
-        c' = toTLA c
+        c' = nodeToTLA c
         n' = show n
 
 encodeBpmnGraphCatEToTla :: BpmnGraph -> Text
-encodeBpmnGraphCatEToTla _ =
+encodeBpmnGraphCatEToTla g =
   [text|
-    CatE == [ e \in Edge |->
-                IF e \in NormalSeqFlowEdge THEN NormalSeqFlow
-                ELSE MsgFlow
-            ]
+    CatE ==
+    $es
   |]
+ where
+  es = "   " <> T.intercalate "@@ " (edgeToEdgeCatDecl <$> edges g)
+  edgeToEdgeCatDecl e = case catE g !? e of
+    Nothing -> ""
+    Just c  -> [text|$e' :> $c'|] 
+      where
+        c' = edgeToTLA c
+        e' = show e
 
-toTLA :: NodeType -> Text
-toTLA AbstractTask   = "AbstractTask"
-toTLA SendTask       = "SendTask"
-toTLA ReceiveTask    = "ReceiveTask"
-toTLA ThrowMessageIntermediateEvent = "ThrowMessageIntermediateEvent"
-toTLA CatchMessageIntermediateEvent = "CatchMessageIntermediateEvent"
-toTLA SubProcess     = "SubProcess"
-toTLA XorGateway     = "ExclusiveOr"
-toTLA OrGateway      = "InclusiveOr"
-toTLA AndGateway     = "Parallel"
-toTLA EventBasedGateway = "EventBasedGateway"
-toTLA NoneStartEvent = "NoneStartEvent"
-toTLA MessageStartEvent = "MessageStartEvent"
-toTLA NoneEndEvent      = "NoneEndEvent"
-toTLA TerminateEndEvent = "TerminateEndEvent"
-toTLA MessageEndEvent   = "MessageEndEvent"
-toTLA Process           = "Process"
+encodeBpmnGraphEdgeSourceDeclToTla :: BpmnGraph -> Text
+encodeBpmnGraphEdgeSourceDeclToTla g =
+  [text|
+    source ==
+    $es
+  |]
+ where
+  es = "   " <> T.intercalate "@@ " (edgeToEdgeSourceDecl <$> edges g)
+  edgeToEdgeSourceDecl e = case sourceE g !? e of
+    Nothing -> ""
+    Just c  -> [text|$e' :> $c'|] 
+      where
+        c' = show c
+        e' = show e
+
+encodeBpmnGraphEdgeTargetDeclToTla :: BpmnGraph -> Text
+encodeBpmnGraphEdgeTargetDeclToTla g =
+  [text|
+    target ==
+    $es
+  |]
+ where
+  es = "   " <> T.intercalate "@@ " (edgeToEdgeTargetDecl <$> edges g)
+  edgeToEdgeTargetDecl e = case sourceE g !? e of
+    Nothing -> ""
+    Just c  -> [text|$e' :> $c'|] 
+      where
+        c' = show c
+        e' = show e
+
+nodeToTLA :: NodeType -> Text
+nodeToTLA AbstractTask   = "AbstractTask"
+nodeToTLA SendTask       = "SendTask"
+nodeToTLA ReceiveTask    = "ReceiveTask"
+nodeToTLA ThrowMessageIntermediateEvent = "ThrowMessageIntermediateEvent"
+nodeToTLA CatchMessageIntermediateEvent = "CatchMessageIntermediateEvent"
+nodeToTLA SubProcess     = "SubProcess"
+nodeToTLA XorGateway     = "ExclusiveOr"
+nodeToTLA OrGateway      = "InclusiveOr"
+nodeToTLA AndGateway     = "Parallel"
+nodeToTLA EventBasedGateway = "EventBasedGateway"
+nodeToTLA NoneStartEvent = "NoneStartEvent"
+nodeToTLA MessageStartEvent = "MessageStartEvent"
+nodeToTLA NoneEndEvent      = "NoneEndEvent"
+nodeToTLA TerminateEndEvent = "TerminateEndEvent"
+nodeToTLA MessageEndEvent   = "MessageEndEvent"
+nodeToTLA Process           = "Process"
+
+edgeToTLA :: EdgeType -> Text
+edgeToTLA NormalSequenceFlow = "NormalSeqFlow"
+edgeToTLA ConditionalSequenceFlow = "NormalSeqFlow"
+edgeToTLA DefaultSequenceFlow = "NormalSeqFlow"
+edgeToTLA MessageFlow = "MsgFlow"
