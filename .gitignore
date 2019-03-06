@@ -49,6 +49,9 @@ tags
 .dir-locals.el
 TAGS
 
+# project
+models/json-origin/*.tla
+
 # other
 .DS_Store
 
