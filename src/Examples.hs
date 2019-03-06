@@ -26,7 +26,7 @@ g0 = mkGraph
   containN
   containE
   messages
-  messageN
+  messageE
  where
   catN = fromList
     [ ("Sender"  , Process)
@@ -54,7 +54,7 @@ g0 = mkGraph
     [("Sender", ["NSE1", "ST1", "NEE1"]), ("Receiver", ["NSE2", "RT2", "NEE2"])]
   containE = fromList [("Sender", ["a", "b"]), ("Receiver", ["c", "d"])]
   messages = ["message"]
-  messageN = fromList [("ST1", ["message"]), ("RT2", ["message"])]
+  messageE = fromList [("m", "message")]
 
 --
 -- g1

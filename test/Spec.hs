@@ -331,7 +331,7 @@ g0e1 = mkGraph "g0e1"
                containN
                containE
                ["message"]
-               (fromList [("ST1", ["message"]), ("RT1", ["message"])])
+               (fromList [("m", "message")])
               where
   catN = fromList
     [ ("Sender" , Process)
@@ -371,7 +371,7 @@ g0e2 = mkGraph "g0e2"
                containN
                containE
                ["message"]
-               (fromList [("ST1", ["message"]), ("RT1", ["message"])])
+               (fromList [("m", "message")])
  where
   catN = fromList
     [ ("Sender" , Process)
