@@ -4,8 +4,6 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
-var == <<nodemarks, edgemarks, net>>
-
 ContainRel ==
   "Client" :> { "cStart", "cEnd", "cSendCommand", "cStoreRequest", "cReceiveInvoice", "cReceiveGoods" }
   @@ "Supplier" :> { "sStart", "sPar1", "sPart2", "sEnd", "sReceiveCommand", "sPrepareCommand", "sInvoiceManagement", "sShipCommand", "sSendInvoice" }
@@ -14,44 +12,54 @@ Node == {
   "Supplier","sStart","sPar1","sPart2","sEnd","sReceiveCommand","sPrepareCommand","sInvoiceManagement","sShipCommand","sSendInvoice","Client","cStart","cEnd","cSendCommand","cStoreRequest","cReceiveInvoice","cReceiveGoods"
 }
 
-NormalSeqFlowEdge == {
-  <<"sStart", "sReceiveCommand">>
-  ,<<"sReceiveCommand", "sPar1">>
-  ,<<"sPar1", "sPrepareCommand">>
-  ,<<"sPar1", "sInvoiceManagement">>
-  ,<<"sPrepareCommand", "sPar2">>
-  ,<<"sInvoiceManagement", "sPar2">>
-  ,<<"sPar2", "sShipCommand">>
-  ,<<"sShipCommand", "sSendInvoice">>
-  ,<<"sSendInvoice", "sEnd">>
-  ,<<"cStart", "cSendCommand">>
-  ,<<"cSendCommand", "cStoreRequest">>
-  ,<<"sStoreRequest", "cReceiveInvoice">>
-  ,<<"cReceiveInvoice", "cReceiveGoods">>
-  ,<<"cReceiveGoods", "cEnd">>
+Edge == {
+  "sE1","sE2","sE3","sE4","sE5","sE6","sE7","sE8","sE9","cE1","cE2","cE3","cE4","cE5","mf1","mf2","mf3"
 }
-
-MsgFlowEdge == {
-  <<"cSendCommand", "sReceiveCommand">>
-  ,<<"sSendInvoice", "cReceiveInvoice">>
-  ,<<"sShipCommand", "cReceiveGoods">>
-}
-
-Edge == NormalSeqFlowEdge \union MsgFlowEdge
 
 Message == { "command", "goods", "invoice" }
 
-LOCAL msgtype0 ==
-  "sShipCommand" :> { "goods" }
-  @@ "sSendInvoice" :> { "invoice" }
-  @@ "cSendCommand" :> { "command" }
-  @@ "sReceiveCommand" :> { "command" }
-  @@ "cReceiveInvoice" :> { "invoice" }
-  @@ "cReceiveGoods" :> { "goods" }
+msgtype ==
+      "mf1" :> "command"
+  @@ "mf2" :> "invoice"
+  @@ "mf3" :> "goods"
 
-msgtype == [ n \in Node |->
-  IF n \in DOMAIN msgtype0 THEN msgtype0[n]
-  ELSE {} ]
+source ==
+   "sE1" :> "sStart"
+@@ "sE2" :> "sReceiveCommand"
+@@ "sE3" :> "sPar1"
+@@ "sE4" :> "sPar1"
+@@ "sE5" :> "sPrepareCommand"
+@@ "sE6" :> "sInvoiceManagement"
+@@ "sE7" :> "sPar2"
+@@ "sE8" :> "sShipCommand"
+@@ "sE9" :> "sSendInvoice"
+@@ "cE1" :> "cStart"
+@@ "cE2" :> "cSendCommand"
+@@ "cE3" :> "sStoreRequest"
+@@ "cE4" :> "cReceiveInvoice"
+@@ "cE5" :> "cReceiveGoods"
+@@ "mf1" :> "cSendCommand"
+@@ "mf2" :> "sSendInvoice"
+@@ "mf3" :> "sShipCommand"
+
+target ==
+   "sE1" :> "sStart"
+@@ "sE2" :> "sReceiveCommand"
+@@ "sE3" :> "sPar1"
+@@ "sE4" :> "sPar1"
+@@ "sE5" :> "sPrepareCommand"
+@@ "sE6" :> "sInvoiceManagement"
+@@ "sE7" :> "sPar2"
+@@ "sE8" :> "sShipCommand"
+@@ "sE9" :> "sSendInvoice"
+@@ "cE1" :> "cStart"
+@@ "cE2" :> "cSendCommand"
+@@ "cE3" :> "sStoreRequest"
+@@ "cE4" :> "cReceiveInvoice"
+@@ "cE5" :> "cReceiveGoods"
+@@ "mf1" :> "cSendCommand"
+@@ "mf2" :> "sSendInvoice"
+@@ "mf3" :> "sShipCommand"
 
 CatN ==
    "Supplier" :> Process
@@ -72,17 +80,29 @@ CatN ==
 @@ "cReceiveInvoice" :> ReceiveTask
 @@ "cReceiveGoods" :> ReceiveTask
 
-CatE == [ e \in Edge |->
-            IF e \in NormalSeqFlowEdge THEN NormalSeqFlow
-            ELSE MsgFlow
-        ]
+CatE ==
+   "sE1" :> NormalSeqFlow
+@@ "sE2" :> NormalSeqFlow
+@@ "sE3" :> NormalSeqFlow
+@@ "sE4" :> NormalSeqFlow
+@@ "sE5" :> NormalSeqFlow
+@@ "sE6" :> NormalSeqFlow
+@@ "sE7" :> NormalSeqFlow
+@@ "sE8" :> NormalSeqFlow
+@@ "sE9" :> NormalSeqFlow
+@@ "cE1" :> NormalSeqFlow
+@@ "cE2" :> NormalSeqFlow
+@@ "cE3" :> NormalSeqFlow
+@@ "cE4" :> NormalSeqFlow
+@@ "cE5" :> NormalSeqFlow
+@@ "mf1" :> MsgFlow
+@@ "mf2" :> MsgFlow
+@@ "mf3" :> MsgFlow
 
 WF == INSTANCE PWSWellFormed
 ASSUME WF!WellFormedness
 
 INSTANCE PWSSemantics
-
-Spec == Init /\ [][Next]_var /\ WF_var(Next)
 
 ================================================================
 

@@ -95,13 +95,10 @@
     "mf2": "cReceiveInvoice",
     "mf3": "cReceiveGoods"
   },
-  "messageN": {
-    "cSendCommand": ["command"],
-    "sReceiveCommand": ["command"],
-    "sSendInvoice": ["invoice"],
-    "cReceiveInvoice": ["invoice"],
-    "sShipCommand": ["goods"],
-    "cReceiveGoods": ["goods"]
+  "messageE": {
+    "mf1": "command",
+    "mf2": "invoice",
+    "mf3": "goods"
   },
   "containN": {
     "Supplier": [
