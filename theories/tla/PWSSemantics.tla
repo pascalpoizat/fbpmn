@@ -1,7 +1,6 @@
 ---------------- MODULE PWSSemantics ----------------
 
-EXTENDS PWSTypes, PWSDefs
-LOCAL INSTANCE Naturals
+EXTENDS Naturals, PWSTypes, PWSDefs
 
 VARIABLES
   edgemarks,
@@ -212,11 +211,11 @@ or_complete(n) ==
   /\ CatN[n] = InclusiveOr
   /\ LET InPlus == { e \in intype(SeqFlowType, n) : edgemarks[e] >= 1 } IN
      LET InMinus == { e \in intype(SeqFlowType, n) : edgemarks[e] = 0 } IN
-     LET ignoredpreedges == UNION { PreEdges[n,e] : e \in InPlus } IN
-     LET ignoredprenodes == UNION { PreNodes[n,e] : e \in InPlus } IN
+     LET ignoredpreedges == UNION { PreEdges(n,e) : e \in InPlus } IN
+     LET ignoredprenodes == UNION { PreNodes(n,e) : e \in InPlus } IN
         /\ InPlus # {}
-        /\ \A ezero \in InMinus : /\ \A ee \in (PreEdges[n, ezero] \ ignoredpreedges) : edgemarks[ee] = 0
-                                  /\ \A nn \in (PreNodes[n, ezero] \ ignoredprenodes) : nodemarks[nn] = 0
+        /\ \A ezero \in InMinus : /\ \A ee \in (PreEdges(n, ezero) \ ignoredpreedges) : edgemarks[ee] = 0
+                                  /\ \A nn \in (PreNodes(n, ezero) \ ignoredprenodes) : nodemarks[nn] = 0
         /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) :
                  /\ eouts # {}
                  /\ edgemarks' = [ e \in DOMAIN edgemarks |->
