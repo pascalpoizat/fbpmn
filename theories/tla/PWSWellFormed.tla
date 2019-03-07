@@ -31,7 +31,7 @@ WellStructuredBPD == /\ WSBPD_C1_StartNoIncomingEdge
 (* Well-Formed BPMN Process Diagram *)
 
 WFBPD_C1_NoLoopingEdge ==
-    \A e \in Edge : source(e) # target(e)
+    \A e \in Edge : source[e] # target[e]
 
 WFBPD_C2_NotIsolation ==
     \A n \in Node : CatN[n] # Process => incoming(n) # {} \/ outgoing(n) # {}
@@ -54,11 +54,11 @@ WSBCD_C2_ReceiveTask ==
     \A n \in Node : CatN[n] = ReceiveTask => outtype(MsgFlowType,n) = {}
 
 WSBCD_C3_MessageFlowDifferentProcesses ==
-    \A ni, nj \in Processes, e \in Edge : CatE[e] \in MsgFlowType /\ source(e) \in ContainRel[ni] /\ target(e) \in ContainRel[nj] => ni # nj
+    \A ni, nj \in Processes, e \in Edge : CatE[e] \in MsgFlowType /\ source[e] \in ContainRel[ni] /\ target[e] \in ContainRel[nj] => ni # nj
 
 (*
 WSBCD_Cx_MessageFlowEdge ==
-    \A e \in Edge : CatE[e] = MsgFlow <=> (CatN[source(e)] = SendTask /\ CatN[target(e)] = ReceiveTask)
+    \A e \in Edge : CatE[e] = MsgFlow <=> (CatN[source[e]] = SendTask /\ CatN[target[e]] = ReceiveTask)
 *)
 
 WellStructuredBCD == /\ WSBCD_C1_SendTask

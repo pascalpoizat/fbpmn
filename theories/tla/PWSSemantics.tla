@@ -8,6 +8,8 @@ VARIABLES
   nodemarks,
   net
 
+var == <<nodemarks, edgemarks, net>>
+
 LOCAL Network == INSTANCE Network
 
 TypeInvariant ==
@@ -33,9 +35,9 @@ nonestart_complete(n) ==
 messagestart_start(n) ==
   /\ CatN[n] = MessageStartEvent
   /\ nodemarks[n] = 0
-  /\ \E e \in intype(SeqFlowType, n) :
+  /\ \E e \in intype(MsgFlowType, n) :
      /\ edgemarks[e] >= 1
-     /\ \E msg \in msgtype[n] : Network!receive(ProcessOf(source(e)), ProcessOf(n), msg)
+     /\ Network!receive(ProcessOf(source[e]), ProcessOf(n), msgtype[e])
      /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
 
@@ -76,7 +78,7 @@ messageend_start(n) ==
   /\ CatN[n] = MessageEndEvent
   /\ \E e1 \in intype(SeqFlowType, n), e2 \in outtype(MsgFlowType, n) :
      /\ edgemarks[e1] >= 1
-     /\ \E msg \in msgtype[n] : Network!send(ProcessOf(n), ProcessOf(target(e2)), msg)
+     /\ Network!send(ProcessOf(n), ProcessOf(target[e2]), msgtype[e2])
      /\ edgemarks' = [ edgemarks EXCEPT ![e1] = @ - 1, ![e2] = @ + 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = 1 ]
 
@@ -114,7 +116,7 @@ send_complete(n) ==
   /\ CatN[n] = SendTask
   /\ nodemarks[n] >= 1
   /\ \E e \in outtype(MsgFlowType, n) :
-      /\ \E msg \in msgtype[n] : Network!send(ProcessOf(n), ProcessOf(target(e)), msg)
+      /\ Network!send(ProcessOf(n), ProcessOf(target[e]), msgtype[e])
       /\ nodemarks' = [ nodemarks EXCEPT ![n] = 0 ]
       /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
                            IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
@@ -129,7 +131,7 @@ receive_start(n) ==
   /\ \E e1 \in intype(SeqFlowType, n), e2 \in intype(MsgFlowType, n) :
      /\ edgemarks[e1] >= 1
      /\ edgemarks[e2] >= 1
-     /\ \E msg \in msgtype[n] : Network!receive(ProcessOf(source(e2)), ProcessOf(n), msg)
+     /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
      /\ edgemarks' = [ edgemarks EXCEPT ![e1] = @ - 1, ![e2] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
 
@@ -148,7 +150,7 @@ tmie_start(n) ==
   /\ CatN[n] = ThrowMessageIntermediateEvent
   /\ \E ein \in intype(SeqFlowType, n), eout \in outtype(MsgFlowType, n) :
       /\ edgemarks[ein] >= 1
-      /\ \E msg \in msgtype[n] : Network!send(ProcessOf(n), ProcessOf(target(eout)), msg)
+      /\ Network!send(ProcessOf(n), ProcessOf(target[eout]), msgtype[eout])
       /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
                            IF ee = ein THEN edgemarks[ee] - 1
                            ELSE IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
@@ -160,7 +162,7 @@ cmie_start(n) ==
   /\ \E e1 \in intype(SeqFlowType, n), e2 \in intype(MsgFlowType, n) :
      /\ edgemarks[e1] >= 1
      /\ edgemarks[e2] >= 1
-     /\ \E msg \in msgtype[n] : Network!receive(ProcessOf(source(e2)), ProcessOf(n), msg)
+     /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
      /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                         IF e \in {e1,e2} THEN edgemarks[e] - 1
                         ELSE IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
@@ -215,14 +217,21 @@ or_complete(n) ==
         /\ InPlus # {}
         /\ \A ezero \in InMinus : /\ \A ee \in (PreEdges[n, ezero] \ ignoredpreedges) : edgemarks[ee] = 0
                                   /\ \A nn \in (PreNodes[n, ezero] \ ignoredprenodes) : nodemarks[nn] = 0
-        /\ \E eouts \in SUBSET outtype(SeqFlowType, n) :
-             /\ eouts # {}
-             /\ edgemarks' = [ e \in DOMAIN edgemarks |->
-                               IF e \in InPlus THEN edgemarks[e] - 1
-                               ELSE IF e \in eouts THEN edgemarks[e] + 1
-                               ELSE edgemarks[e] ]
-             /\ UNCHANGED nodemarks
-             /\ Network!unchanged
+        /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) :
+                 /\ eouts # {}
+                 /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                                   IF e \in InPlus THEN edgemarks[e] - 1
+                                   ELSE IF e \in eouts THEN edgemarks[e] + 1
+                                   ELSE edgemarks[e] ]
+                 /\ UNCHANGED nodemarks
+                 /\ Network!unchanged
+           \/ \E eout \in outtype({ DefaultSeqFlow }, n) :
+                 /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                                   IF e \in InPlus THEN edgemarks[e] - 1
+                                   ELSE IF e = eout THEN edgemarks[e] + 1
+                                   ELSE edgemarks[e] ]
+                 /\ UNCHANGED nodemarks
+                 /\ Network!unchanged
 
 (* ---- Parallel ---- *)
 
@@ -242,7 +251,7 @@ eventbased_complete(n) ==
   /\ CatN[n] = EventBasedGateway
   /\ \E ein \in intype(SeqFlowType, n), eout \in outtype(SeqFlowType, n) :
       /\ edgemarks[ein] >= 1
-      /\ \E emsg \in intype(MsgFlowType, target(eout)) : edgemarks[emsg] # 0
+      /\ \E emsg \in intype(MsgFlowType, target[eout]) : edgemarks[emsg] # 0
       /\ edgemarks' = [ edgemarks EXCEPT ![ein] = @ - 1, ![eout] = @ + 1 ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
@@ -306,6 +315,8 @@ Init ==
                      ELSE 0 ]
   /\ edgemarks = [ e \in Edge |-> 0 ]
   /\ Network!init
+
+Spec == Init /\ [][Next]_var /\ WF_var(Next)
 
 (* ---------------------------------------------------------------- *)
 
