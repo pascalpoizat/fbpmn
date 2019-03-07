@@ -1,4 +1,4 @@
----------------- MODULE 001OrTest ----------------
+---------------- MODULE 003OrTest ----------------
 
 EXTENDS TLC, PWSTypes
 
@@ -18,7 +18,7 @@ Edge == {
 Message == {  }
 
 msgtype ==
-  {}
+    [ i \in {} |-> {}]
 
 source ==
    "e0" :> "NSE"
@@ -90,14 +90,15 @@ CatE ==
 @@ "e14" :> NormalSeqFlow
 @@ "e15" :> NormalSeqFlow
 
-PreEdges ==
+LOCAL preEdges ==
 <<"Or1", "e2">> :> {"e0", "e1", "e15"}
 @@ <<"Or2", "e5">> :> {"e0", "e1", "e15", "e2", "e4"}
 @@ <<"Or2", "e9">> :> {"e0", "e1", "e15", "e2", "e3", "e6", "e7", "e8"}
 @@ <<"Or2", "e12">> :> {"e10", "e11"}
+PreEdges(n,e) == preEdges[n,e]
 
-PreNodes(n,e) == { target[ee] : ee \in PreEdges[n,e] }
-          \union { nn \in { source[ee] : ee \in PreEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
+PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
+          \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
 
 WF == INSTANCE PWSWellFormed
 ASSUME WF!WellFormedness

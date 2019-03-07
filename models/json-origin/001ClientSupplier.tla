@@ -99,11 +99,12 @@ CatE ==
 @@ "mf2" :> MsgFlow
 @@ "mf3" :> MsgFlow
 
-PreEdges ==
-{}
+LOCAL preEdges ==
+  [ i \in {} |-> {}]
+PreEdges(n,e) == preEdges[n,e]
 
-PreNodes(n,e) == { target[ee] : ee \in PreEdges[n,e] }
-          \union { nn \in { source[ee] : ee \in PreEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
+PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
+          \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
 
 WF == INSTANCE PWSWellFormed
 ASSUME WF!WellFormedness

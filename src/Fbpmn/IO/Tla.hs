@@ -110,7 +110,7 @@ encodeBpmnGraphMsgDeclToTla g =
   |]
   where
     msgs = T.intercalate ", " (show <$> messages g)
-    mts = if null (messages g) then "{}" else "    " <> T.intercalate "@@ " (edgeToMsgDecl <$> (edgesT g MessageFlow))
+    mts = if null (messages g) then "  [ i \\in {} |-> {}]" else "    " <> T.intercalate "@@ " (edgeToMsgDecl <$> (edgesT g MessageFlow))
     edgeToMsgDecl e = case messageE g !? e of
       Nothing -> ""
       Just m -> [text|$e' :> $m'|]
@@ -181,12 +181,13 @@ encodeBpmnGraphEdgeTargetDeclToTla g =
 encodeBpmnGraphPreEToTla :: BpmnGraph -> Text
 encodeBpmnGraphPreEToTla g =
   [text|
-  PreEdges ==
+  LOCAL preEdges ==
   $spres
+  PreEdges(n,e) == preEdges[n,e]
   |]
   where
     gws = nodesT g OrGateway
-    spres = if null pres then "{}" else T.intercalate "@@ " $ preToTLA <$> pres
+    spres = if null pres then "  [ i \\in {} |-> {}]" else T.intercalate "@@ " $ preToTLA <$> pres
     preToTLA (n, e, es) = [text|<<$sn, $se>> :> {$ses}|]
       where
         sn = show n
@@ -198,8 +199,8 @@ encodeBpmnGraphPreEToTla g =
 encodeBpmnGraphPreNToTla :: BpmnGraph -> Text
 encodeBpmnGraphPreNToTla _ =
   [text|
-  PreNodes(n,e) == { target[ee] : ee \in PreEdges[n,e] }
-            \union { nn \in { source[ee] : ee \in PreEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
+  PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
+            \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
   |]
     
 nodeTypeToTLA :: NodeType -> Text
