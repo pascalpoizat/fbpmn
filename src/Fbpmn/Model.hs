@@ -64,7 +64,8 @@ instance ToJSON EdgeType
 instance FromJSON EdgeType
 
 sequenceFlow :: [EdgeType]
-sequenceFlow = [NormalSequenceFlow, ConditionalSequenceFlow, DefaultSequenceFlow]
+sequenceFlow =
+  [NormalSequenceFlow, ConditionalSequenceFlow, DefaultSequenceFlow]
 
 --
 -- Messages
@@ -338,8 +339,11 @@ predecessorEdgesSuchThat g p e = filter p $ predecessorEdges g e
 preE :: BpmnGraph -> Node -> Edge -> [Edge]
 preE g n e = fixpoint step $ predecessorEdgesSuchThat g p e
  where
-  p x = case targetE g !? x of
-    Nothing -> False    -- if we cannot find the target for the predecessor we fail
-                        -- (impossible due to the way we compute the predecessor edges)
-    Just n' -> n /= n' -- else we want that it is not n
+  p x = case (catE g !? x, targetE g !? x) of
+    (_      , Nothing) -> False   -- if we cannot find the target for the predecessor we fail
+                                  -- (impossible due to the way we compute the predecessor edges)
+    (Nothing, _      ) -> False
+    (Just c, Just n') ->
+      n /= n'             -- else we want that it is not n
+      && c /= MessageFlow -- end that the edge is a Message Flow
   step es = es <> foldMap (predecessorEdgesSuchThat g p) es

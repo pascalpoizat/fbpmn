@@ -27,6 +27,7 @@ uIsValidGraph = testGroup
   "Unit tests for isValidGraph"
   [ testCase "all ok g1" $ isValidGraph g0 @?= True
   , testCase "all ok g2" $ isValidGraph g2 @?= True
+  , testCase "all ok g3" $ isValidGraph g3 @?= True
   , testCase "wrong message flow" $ isValidGraph g0e1 @?= False
   , testCase "wrong message flow" $ isValidGraph g0e2 @?= False
   , testCase "missing catN" $ isValidGraph g0a @?= False
@@ -71,7 +72,8 @@ uOutN = testGroup
 uPredecessorEdges :: TestTree
 uPredecessorEdges = testGroup
   "Unit tests of predecessorEdges"
-  [ testCase "general e1"  $ predecessorEdges g2 "e1"  @?= []
+  [ testCase "general e0"  $ predecessorEdges g2 "e0"  @?= []
+  , testCase "general e1"  $ predecessorEdges g2 "e1"  @?= ["e0", "e15"]
   , testCase "general e2"  $ predecessorEdges g2 "e2"  @?= ["e1"]
   , testCase "general e3"  $ predecessorEdges g2 "e3"  @?= ["e2"]
   , testCase "general e4"  $ predecessorEdges g2 "e4"  @?= ["e2"] 
@@ -85,15 +87,26 @@ uPredecessorEdges = testGroup
   , testCase "general e12" $ predecessorEdges g2 "e12" @?= ["e11"]
   , testCase "general e13" $ predecessorEdges g2 "e13" @?= ["e11"]
   , testCase "general e14" $ predecessorEdges g2 "e14" @?= ["e13"]
+  , testCase "general e15"  $ predecessorEdges g2 "e15"  @?= ["e2"]
   ]
 
 uPre :: TestTree
 uPre = testGroup
   "Unit tests for preE"
-  [ testCase "general e5"  $ preE g2 "Or2" "e5"  @?= ["e1", "e2", "e4"]
-  , testCase "general e9"  $ preE g2 "Or2" "e9"  @?= ["e1","e2","e3","e6","e7","e8"]
+  [ testCase "general e5"  $ preE g2 "Or1" "e2"  @?= ["e0", "e1", "e15"]
+  , testCase "general e5"  $ preE g2 "Or2" "e5"  @?= ["e0", "e1", "e15", "e2", "e4"]
+  , testCase "general e9"  $ preE g2 "Or2" "e9"  @?= ["e0", "e1", "e15", "e2", "e3", "e6", "e7", "e8"]
   , testCase "general e10" $ preE g2 "Or2" "e10" @?= []
-  , testCase "general e11" $ preE g2 "Or2" "e11" @?= ["e10"]]  
+  , testCase "general e11" $ preE g2 "Or2" "e11" @?= ["e10"]
+  , testCase "general e12" $ preE g2 "Or2" "e12" @?= ["e10", "e11"]
+  --
+  , testCase "with communication e5"  $ preE g3 "Or1" "e2"  @?= ["e0", "e1", "e15"]
+  , testCase "with communication e5"  $ preE g3 "Or2" "e5"  @?= ["e0", "e1", "e15", "e2", "e4"]
+  , testCase "with communication e9"  $ preE g3 "Or2" "e9"  @?= ["e0", "e1", "e15", "e2", "e3", "e6", "e7", "e8"]
+  , testCase "with communication e10" $ preE g3 "Or2" "e10" @?= []
+  , testCase "with communication e11" $ preE g3 "Or2" "e11" @?= ["e10"]
+  , testCase "with communication e12" $ preE g3 "Or2" "e12" @?= ["e10", "e11"]
+  ]  
 
 --
 -- graphs
@@ -429,8 +442,8 @@ g0e2 = mkGraph "g0e2"
 
 g2 :: BpmnGraph
 g2 = mkGraph "g2"
-    ["Process", "NSE", "AT1", "Or1", "Xor1", "AT2", "Xor2", "AT3", "Or2", "AT4", "Xor3", "AT5", "NEE"]
-    ["e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14"]
+    ["Process", "NSE", "Xor0", "AT1", "Or1", "Xor1", "AT2", "Xor2", "AT3", "Or2", "AT4", "Xor3", "AT5", "NEE"]
+    ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14", "e15"]
     catN
     catE
     source
@@ -445,6 +458,7 @@ g2 = mkGraph "g2"
       [ ("Process" , Process)
       , ("NSE", NoneStartEvent)
       , ("AT1", AbstractTask)
+      , ("Xor0", XorGateway)
       , ("Or1" , OrGateway)
       , ("Xor1" , XorGateway)
       , ("AT2", AbstractTask)
@@ -457,23 +471,26 @@ g2 = mkGraph "g2"
       , ("NEE", NoneEndEvent)
       ]
     catE = fromList
-      [ ("e1", NormalSequenceFlow)
+      [ ("e0", NormalSequenceFlow)
+      , ("e1", NormalSequenceFlow)
       , ("e2", NormalSequenceFlow)
-      , ("e3", NormalSequenceFlow)
-      , ("e4", NormalSequenceFlow)
+      , ("e3", ConditionalSequenceFlow)
+      , ("e4", ConditionalSequenceFlow)
       , ("e5", NormalSequenceFlow)
       , ("e6", NormalSequenceFlow)
       , ("e7", NormalSequenceFlow)
-      , ("e8", NormalSequenceFlow)
-      , ("e9", NormalSequenceFlow)
+      , ("e8", DefaultSequenceFlow)
+      , ("e9", ConditionalSequenceFlow)
       , ("e10", NormalSequenceFlow)
       , ("e11", NormalSequenceFlow)
-      , ("e12", NormalSequenceFlow)
-      , ("e13", NormalSequenceFlow)
+      , ("e12", DefaultSequenceFlow)
+      , ("e13", ConditionalSequenceFlow)
       , ("e14", NormalSequenceFlow)
+      , ("e15", DefaultSequenceFlow)
       ]
     source = fromList
-      [("e1", "NSE")
+      [ ("e0", "NSE")
+      , ("e1", "Xor0")
       , ("e2", "AT1")
       , ("e3", "Or1")
       , ("e4", "Or1")
@@ -487,9 +504,11 @@ g2 = mkGraph "g2"
       , ("e12", "Xor3")
       , ("e13", "Xor3")
       , ("e14", "AT5")
+      , ("e15", "Or1")
       ]
     target = fromList
-      [("e1", "AT1")
+      [ ("e0", "Xor0")
+      , ("e1", "AT1")
       , ("e2", "Or1")
       , ("e3", "Xor1")
       , ("e4", "AT3")
@@ -503,8 +522,116 @@ g2 = mkGraph "g2"
       , ("e12", "Or2")
       , ("e13", "AT5")
       , ("e14", "NEE")
+      , ("e15", "Xor0")
       ]
     containN = fromList
-      [("Process", ["NSE", "AT1", "Or1", "Xor1", "AT2", "Xor2", "AT3", "Or2", "AT4", "Xor3", "AT5", "NEE"])]
+      [("Process", ["NSE", "AT1", "Xor0", "Or1", "Xor1", "AT2", "Xor2", "AT3", "Or2", "AT4", "Xor3", "AT5", "NEE"])]
     containE = fromList
-      [("Process", ["e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14"])]
+      [("Process", ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14", "e15"])]
+
+g3 :: BpmnGraph
+g3 = mkGraph "g3"
+    ["Process", "NSE", "Xor0", "AT1", "Or1", "Xor1", "AT2", "Xor2", "RT3", "Or2", "AT4", "Xor3", "AT5", "NEE"
+    ,"Sender", "NSE2", "ST1", "NEE2"]
+    ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14", "e15"
+    ,"e16", "e17"
+    ,"mf1"]
+    catN
+    catE
+    source
+    target
+    (fromList [])
+    containN
+    containE
+    ["message"]
+    (fromList [("mf1", "message")])
+  where
+    catN = fromList
+      [ ("Process" , Process)
+      , ("NSE", NoneStartEvent)
+      , ("AT1", AbstractTask)
+      , ("Xor0", XorGateway)
+      , ("Or1" , OrGateway)
+      , ("Xor1" , XorGateway)
+      , ("AT2", AbstractTask)
+      , ("Xor2", XorGateway)
+      , ("RT3", ReceiveTask)
+      , ("Or2", OrGateway)
+      , ("AT4", AbstractTask)
+      , ("Xor3", XorGateway)
+      , ("AT5", AbstractTask)
+      , ("NEE", NoneEndEvent)
+      , ("Sender", Process)
+      , ("NSE2", NoneStartEvent)
+      , ("ST1", SendTask)
+      , ("NEE2", NoneEndEvent)
+      ]
+    catE = fromList
+      [ ("e0", NormalSequenceFlow)
+      , ("e1", NormalSequenceFlow)
+      , ("e2", NormalSequenceFlow)
+      , ("e3", ConditionalSequenceFlow)
+      , ("e4", ConditionalSequenceFlow)
+      , ("e5", NormalSequenceFlow)
+      , ("e6", NormalSequenceFlow)
+      , ("e7", NormalSequenceFlow)
+      , ("e8", DefaultSequenceFlow)
+      , ("e9", ConditionalSequenceFlow)
+      , ("e10", NormalSequenceFlow)
+      , ("e11", NormalSequenceFlow)
+      , ("e12", DefaultSequenceFlow)
+      , ("e13", ConditionalSequenceFlow)
+      , ("e14", NormalSequenceFlow)
+      , ("e15", DefaultSequenceFlow)
+      , ("e16", NormalSequenceFlow)
+      , ("e17", NormalSequenceFlow)
+      , ("mf1", MessageFlow)
+      ]
+    source = fromList
+      [ ("e0", "NSE")
+      , ("e1", "Xor0")
+      , ("e2", "AT1")
+      , ("e3", "Or1")
+      , ("e4", "Or1")
+      , ("e5", "RT3")
+      , ("e6", "Xor1")
+      , ("e7", "AT2")
+      , ("e8", "Xor2")
+      , ("e9", "Xor2")
+      , ("e10", "Or2")
+      , ("e11", "AT4")
+      , ("e12", "Xor3")
+      , ("e13", "Xor3")
+      , ("e14", "AT5")
+      , ("e15", "Or1")
+      , ("e16", "NSE2")
+      , ("e17", "ST1")
+      , ("mf1", "ST1")
+      ]
+    target = fromList
+      [ ("e0", "Xor0")
+      , ("e1", "AT1")
+      , ("e2", "Or1")
+      , ("e3", "Xor1")
+      , ("e4", "RT3")
+      , ("e5", "Or2")
+      , ("e6", "AT2")
+      , ("e7", "Xor2")
+      , ("e8", "Xor1")
+      , ("e9", "Or2")
+      , ("e10", "AT4")
+      , ("e11", "Xor3")
+      , ("e12", "Or2")
+      , ("e13", "AT5")
+      , ("e14", "NEE")
+      , ("e15", "Xor0")
+      , ("e16", "ST1")
+      , ("e17", "NEE2")
+      , ("mf1", "RT3")
+      ]
+    containN = fromList
+      [("Process", ["NSE", "AT1", "Xor0", "Or1", "Xor1", "AT2", "Xor2", "AT3", "Or2", "AT4", "Xor3", "AT5", "NEE"])
+      ,("Sender", ["NSE2", "ST1", "NEE2"])]
+    containE = fromList
+      [("Process", ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14", "e15"])
+      ,("Sender", ["e16", "e17"])]
