@@ -1,7 +1,7 @@
 ---------------- MODULE PWSDefs ----------------
 EXTENDS PWSTypes
 
-CONSTANT Node, Edge, Message, CatN, CatE, msgtype, ContainRel (* = R *), PreEdges, PreNodes
+CONSTANT Node, Edge, source, target, Message, CatN, CatE, msgtype, ContainRel (* = R *), PreEdges, PreNodes
 
 (* R^{-1}(n). Unused *)
 ContainRelInv(n) == CHOOSE p \in { nn \in Node : CatN[nn] \in {Process, SubProcess} } : n \in ContainRel[p]
@@ -17,23 +17,21 @@ Processes == { n \in Node : CatN[n] = Process }
 
 ProcessOf(n) == CHOOSE p \in Node : CatN[p] = Process /\ n \in ContainRelStar(p)
 
-TypeAssume == /\ Edge \subseteq Node \X Node
+TypeAssume == /\ source \in [ Edge -> Node ]
+              /\ target \in [ Edge -> Node ]
               /\ CatN \in [ Node -> NodeType ]
               /\ CatE \in [ Edge -> EdgeType ]
-              /\ msgtype \in [ Node -> SUBSET Message ]
+              /\ msgtype \in [ { e \in Edge : CatE[e] = MsgFlow } -> Message ]
               /\ ContainRel \in [ { n \in Node : CatN[n] \in {Process,SubProcess} } -> SUBSET Node ]
+              \* PreEdges and PreNodes are tricky to type
 
-source(e) == e[1]
-target(e) == e[2]
+incoming(n) == { e \in Edge : target[e] = n }
+outgoing(n) == { e \in Edge : source[e] = n }
 
-incoming(n) == { e \in Edge : target(e) = n }
-outgoing(n) == { e \in Edge : source(e) = n }
-
-succs(n) == { s \in Node : <<n,s>> \in Edge }
-preds(n) == { p \in Node : <<p,n>> \in Edge }
+succs(n) == { target[e] : e \in outgoing(n) }
+preds(n) == { source[e] : e \in incoming(n) }
 
 intype(type,n)  == { e \in incoming(n) : CatE[e] \in type }
 outtype(type,n) == { e \in outgoing(n) : CatE[e] \in type }
-
 
 ================================================================
