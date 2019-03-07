@@ -76,19 +76,19 @@ CatE ==
    "e0" :> NormalSeqFlow
 @@ "e1" :> NormalSeqFlow
 @@ "e2" :> NormalSeqFlow
-@@ "e3" :> NormalSeqFlow
-@@ "e4" :> NormalSeqFlow
+@@ "e3" :> ConditionalSeqFlow
+@@ "e4" :> ConditionalSeqFlow
 @@ "e5" :> NormalSeqFlow
 @@ "e6" :> NormalSeqFlow
 @@ "e7" :> NormalSeqFlow
-@@ "e8" :> NormalSeqFlow
-@@ "e9" :> NormalSeqFlow
+@@ "e8" :> DefaultSeqFlow
+@@ "e9" :> ConditionalSeqFlow
 @@ "e10" :> NormalSeqFlow
 @@ "e11" :> NormalSeqFlow
-@@ "e12" :> NormalSeqFlow
-@@ "e13" :> NormalSeqFlow
+@@ "e12" :> DefaultSeqFlow
+@@ "e13" :> ConditionalSeqFlow
 @@ "e14" :> NormalSeqFlow
-@@ "e15" :> NormalSeqFlow
+@@ "e15" :> DefaultSeqFlow
 
 LOCAL preEdges ==
 <<"Or1", "e2">> :> {"e0", "e1", "e15"}

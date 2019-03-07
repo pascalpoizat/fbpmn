@@ -223,6 +223,6 @@ nodeTypeToTLA Process           = "Process"
 
 edgeTypeToTLA :: EdgeType -> Text
 edgeTypeToTLA NormalSequenceFlow = "NormalSeqFlow"
-edgeTypeToTLA ConditionalSequenceFlow = "NormalSeqFlow"
-edgeTypeToTLA DefaultSequenceFlow = "NormalSeqFlow"
+edgeTypeToTLA ConditionalSequenceFlow = "ConditionalSeqFlow"
+edgeTypeToTLA DefaultSequenceFlow = "DefaultSeqFlow"
 edgeTypeToTLA MessageFlow = "MsgFlow"
