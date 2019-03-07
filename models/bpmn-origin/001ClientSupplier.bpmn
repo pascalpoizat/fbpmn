@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1krcbrs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
+  <bpmn:collaboration id="_001ClientSupplier">
+    <bpmn:participant id="Participant_0vk4arm" name="Supplier" processRef="Process_1" />
+    <bpmn:participant id="Participant_12bycyr" name="Client" processRef="Process_0jthe8j" />
+    <bpmn:messageFlow id="mf1" name="command" sourceRef="cSendCommand" targetRef="sReceiveCommand" />
+    <bpmn:messageFlow id="mf3" name="goods" sourceRef="sShipCommand" targetRef="cReceiveGoods" />
+    <bpmn:messageFlow id="mf2" name="invoice" sourceRef="sSendInvoice" targetRef="cReceiveInvoice" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" isExecutable="true">
+    <bpmn:sequenceFlow id="sE1" sourceRef="sStart" targetRef="sReceiveCommand" />
+    <bpmn:exclusiveGateway id="sPar1">
+      <bpmn:incoming>sE2</bpmn:incoming>
+      <bpmn:outgoing>sE3</bpmn:outgoing>
+      <bpmn:outgoing>sE4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="sPar2">
+      <bpmn:incoming>sE5</bpmn:incoming>
+      <bpmn:incoming>sE6</bpmn:incoming>
+      <bpmn:outgoing>sE7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="sE2" sourceRef="sReceiveCommand" targetRef="sPar1" />
+    <bpmn:sequenceFlow id="sE3" sourceRef="sPar1" targetRef="sPrepareCommand" />
+    <bpmn:sequenceFlow id="sE4" sourceRef="sPar1" targetRef="sInvoiceManagement" />
+    <bpmn:sequenceFlow id="sE5" sourceRef="sPrepareCommand" targetRef="sPar2" />
+    <bpmn:sequenceFlow id="sE6" sourceRef="sInvoiceManagement" targetRef="sPar2" />
+    <bpmn:sequenceFlow id="sE7" sourceRef="sPar2" targetRef="sShipCommand" />
+    <bpmn:sequenceFlow id="sE8" sourceRef="sShipCommand" targetRef="sSendInvoice" />
+    <bpmn:sequenceFlow id="sE9" sourceRef="sSendInvoice" targetRef="sEnd" />
+    <bpmn:startEvent id="sStart">
+      <bpmn:outgoing>sE1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sendTask id="sShipCommand" name="Ship Command">
+      <bpmn:incoming>sE7</bpmn:incoming>
+      <bpmn:outgoing>sE8</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sendTask id="sSendInvoice" name="Send Invoice">
+      <bpmn:incoming>sE8</bpmn:incoming>
+      <bpmn:outgoing>sE9</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:receiveTask id="sReceiveCommand" name="Receive Command">
+      <bpmn:incoming>sE1</bpmn:incoming>
+      <bpmn:outgoing>sE2</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:task id="sInvoiceManagement" name="Invoice Management">
+      <bpmn:incoming>sE4</bpmn:incoming>
+      <bpmn:outgoing>sE6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="sPrepareCommand" name="Prepare Command">
+      <bpmn:incoming>sE3</bpmn:incoming>
+      <bpmn:outgoing>sE5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="sEnd">
+      <bpmn:incoming>sE9</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:process id="Process_0jthe8j" isExecutable="false">
+    <bpmn:startEvent id="cStart">
+      <bpmn:outgoing>cE1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sendTask id="cSendCommand" name="Send Command">
+      <bpmn:incoming>cE1</bpmn:incoming>
+      <bpmn:outgoing>cE2</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="cEnd">
+      <bpmn:incoming>cE5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:receiveTask id="cReceiveInvoice" name="Receive Invoice">
+      <bpmn:incoming>cE3</bpmn:incoming>
+      <bpmn:outgoing>cE4</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:receiveTask id="cReceiveGoods" name="Receive Goods">
+      <bpmn:incoming>cE4</bpmn:incoming>
+      <bpmn:outgoing>cE5</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="cE1" sourceRef="cStart" targetRef="cSendCommand" />
+    <bpmn:sequenceFlow id="cE2" sourceRef="cSendCommand" targetRef="cStoreRequest" />
+    <bpmn:sequenceFlow id="cE3" sourceRef="cStoreRequest" targetRef="cReceiveInvoice" />
+    <bpmn:sequenceFlow id="cE4" sourceRef="cReceiveInvoice" targetRef="cReceiveGoods" />
+    <bpmn:sequenceFlow id="cE5" sourceRef="cReceiveGoods" targetRef="cEnd" />
+    <bpmn:task id="cStoreRequest" name="Store Request">
+      <bpmn:incoming>cE2</bpmn:incoming>
+      <bpmn:outgoing>cE3</bpmn:outgoing>
+    </bpmn:task>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="_001ClientSupplier">
+      <bpmndi:BPMNShape id="Participant_0vk4arm_di" bpmnElement="Participant_0vk4arm">
+        <dc:Bounds x="123" y="82" width="838" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_12bycyr_di" bpmnElement="Participant_12bycyr">
+        <dc:Bounds x="123" y="349" width="695" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0wqbuas_di" bpmnElement="cStart">
+        <dc:Bounds x="170" y="449" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendTask_1te32pj_di" bpmnElement="cSendCommand">
+        <dc:Bounds x="233" y="427" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1np621g_di" bpmnElement="cEnd">
+        <dc:Bounds x="755" y="449" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveTask_07fuknm_di" bpmnElement="cReceiveInvoice">
+        <dc:Bounds x="488" y="427" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveTask_1cswums_di" bpmnElement="cReceiveGoods">
+        <dc:Bounds x="618" y="427" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1l3qxy1_di" bpmnElement="cE1">
+        <di:waypoint x="206" y="467" />
+        <di:waypoint x="233" y="467" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0l8vf2v_di" bpmnElement="cE2">
+        <di:waypoint x="333" y="467" />
+        <di:waypoint x="363" y="467" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1d9662y_di" bpmnElement="cE3">
+        <di:waypoint x="463" y="467" />
+        <di:waypoint x="488" y="467" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0eptb7v_di" bpmnElement="cE4">
+        <di:waypoint x="588" y="467" />
+        <di:waypoint x="618" y="467" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0exi4qb_di" bpmnElement="cE5">
+        <di:waypoint x="718" y="467" />
+        <di:waypoint x="755" y="467" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_07bx55n_di" bpmnElement="sE1">
+        <di:waypoint x="210" y="206" />
+        <di:waypoint x="235" y="206" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1793lbg_di" bpmnElement="mf1">
+        <di:waypoint x="283" y="427" />
+        <di:waypoint x="283" y="246" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="295" y="361" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_04imau1_di" bpmnElement="sPar1" isMarkerVisible="true">
+        <dc:Bounds x="358" y="181" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0h1492x_di" bpmnElement="sPar2" isMarkerVisible="true">
+        <dc:Bounds x="553" y="181" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1x93vg6_di" bpmnElement="sE2">
+        <di:waypoint x="335" y="206" />
+        <di:waypoint x="358" y="206" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_15g3f5h_di" bpmnElement="sE3">
+        <di:waypoint x="383" y="181" />
+        <di:waypoint x="383" y="137" />
+        <di:waypoint x="429" y="137" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vkhj2t_di" bpmnElement="sE4">
+        <di:waypoint x="383" y="231" />
+        <di:waypoint x="383" y="271" />
+        <di:waypoint x="429" y="271" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0oa8bv3_di" bpmnElement="sE5">
+        <di:waypoint x="529" y="137" />
+        <di:waypoint x="578" y="137" />
+        <di:waypoint x="578" y="181" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c2krlg_di" bpmnElement="sE6">
+        <di:waypoint x="529" y="271" />
+        <di:waypoint x="578" y="271" />
+        <di:waypoint x="578" y="231" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06zhe24_di" bpmnElement="sE7">
+        <di:waypoint x="603" y="206" />
+        <di:waypoint x="629" y="206" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0odj96u_di" bpmnElement="sE8">
+        <di:waypoint x="729" y="206" />
+        <di:waypoint x="761" y="206" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bytgue_di" bpmnElement="sE9">
+        <di:waypoint x="861" y="206" />
+        <di:waypoint x="892" y="206" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1u6722e_di" bpmnElement="mf3">
+        <di:waypoint x="679" y="246" />
+        <di:waypoint x="679" y="427" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="687" y="282" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_12jkfae_di" bpmnElement="mf2">
+        <di:waypoint x="811" y="246" />
+        <di:waypoint x="811" y="337" />
+        <di:waypoint x="526" y="337" />
+        <di:waypoint x="526" y="427" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="818" y="282" width="35" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1k4o7m3_di" bpmnElement="sStart">
+        <dc:Bounds x="174" y="188" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendTask_0kjiq7h_di" bpmnElement="sShipCommand">
+        <dc:Bounds x="629" y="166" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendTask_0k2gt61_di" bpmnElement="sSendInvoice">
+        <dc:Bounds x="761" y="166" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveTask_1em1857_di" bpmnElement="sReceiveCommand">
+        <dc:Bounds x="235" y="166" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1evf0m2_di" bpmnElement="sInvoiceManagement">
+        <dc:Bounds x="429" y="231" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1nl5zfe_di" bpmnElement="sPrepareCommand">
+        <dc:Bounds x="429" y="97" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1gdwljy_di" bpmnElement="cStoreRequest">
+        <dc:Bounds x="363" y="427" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_12ckj6l_di" bpmnElement="sEnd">
+        <dc:Bounds x="892" y="188" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
