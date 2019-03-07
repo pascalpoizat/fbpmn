@@ -1,5 +1,5 @@
 {
-  "name": "001-client-supplier",
+  "name": "002ClientSupplierDynamic",
   "messages": [
     "command",
     "goods",
@@ -7,25 +7,24 @@
   ],
   "nodes": [
     "Supplier",
-    "sStart", "sPar1", "sPart2", "sEnd",
-    "sReceiveCommand", "sPrepareCommand", "sInvoiceManagement", "sShipCommand", "sSendInvoice",
+    "sStart", "sPar1", "sPar2", "sEnd",
+    "sPrepareCommand", "sInvoiceManagement", "sShipCommand", "sSendInvoice",
     "Client",
     "cStart", "cEnd",
     "cSendCommand", "cStoreRequest", "cReceiveInvoice", "cReceiveGoods"
   ],
   "edges": [
-    "sE1", "sE2", "sE3", "sE4", "sE5", "sE6", "sE7", "sE8", "sE9",
+    "sE1", "sE2", "sE3", "sE4", "sE5", "sE6", "sE7", "sE8",
     "cE1", "cE2", "cE3", "cE4", "cE5",
     "mf1", "mf2", "mf3"
   ],
   "nameN": {},
   "catN": {
     "Supplier": "Process",
-    "sStart": "NoneStartEvent",
+    "sStart": "MessageStartEvent",
     "sPar1": "AndGateway",
-    "sPart2": "AndGateway",
+    "sPar2": "AndGateway",
     "sEnd": "NoneEndEvent",
-    "sReceiveCommand": "ReceiveTask",
     "sPrepareCommand": "AbstractTask",
     "sInvoiceManagement": "AbstractTask",
     "sShipCommand": "SendTask",
@@ -47,7 +46,6 @@
     "sE6": "NormalSequenceFlow",
     "sE7": "NormalSequenceFlow",
     "sE8": "NormalSequenceFlow",
-    "sE9": "NormalSequenceFlow",
     "cE1": "NormalSequenceFlow",
     "cE2": "NormalSequenceFlow",
     "cE3": "NormalSequenceFlow",
@@ -59,17 +57,16 @@
   },
   "sourceE": {
     "sE1": "sStart",
-    "sE2": "sReceiveCommand",
+    "sE2": "sPar1",
     "sE3": "sPar1",
-    "sE4": "sPar1",
-    "sE5": "sPrepareCommand",
-    "sE6": "sInvoiceManagement",
-    "sE7": "sPar2",
-    "sE8": "sShipCommand",
-    "sE9": "sSendInvoice",
+    "sE4": "sPrepareCommand",
+    "sE5": "sInvoiceManagement",
+    "sE6": "sPar2",
+    "sE7": "sShipCommand",
+    "sE8": "sSendInvoice",
     "cE1": "cStart",
     "cE2": "cSendCommand",
-    "cE3": "sStoreRequest",
+    "cE3": "cStoreRequest",
     "cE4": "cReceiveInvoice",
     "cE5": "cReceiveGoods",
     "mf1": "cSendCommand",
@@ -77,21 +74,20 @@
     "mf3": "sShipCommand"
   },
   "targetE": {
-    "sE1": "sReceiveCommand",
-    "sE2": "sPar1",
-    "sE3": "sPrepareCommand",
-    "sE4": "sInvoiceManagement",
+    "sE1": "sPar1",
+    "sE2": "sPrepareCommand",
+    "sE3": "sInvoiceManagement",
+    "sE4": "sPar2",
     "sE5": "sPar2",
-    "sE6": "sPar2",
-    "sE7": "sShipCommand",
-    "sE8": "sSendInvoice",
-    "sE9": "sEnd",
+    "sE6": "sShipCommand",
+    "sE7": "sSendInvoice",
+    "sE8": "sEnd",
     "cE1": "cSendCommand",
     "cE2": "cStoreRequest",
     "cE3": "cReceiveInvoice",
     "cE4": "cReceiveGoods",
     "cE5": "cEnd",
-    "mf1": "sReceiveCommand",
+    "mf1": "sStart",
     "mf2": "cReceiveInvoice",
     "mf3": "cReceiveGoods"
   },
@@ -102,8 +98,8 @@
   },
   "containN": {
     "Supplier": [
-      "sStart", "sPar1", "sPart2", "sEnd",
-      "sReceiveCommand", "sPrepareCommand", "sInvoiceManagement", "sShipCommand", "sSendInvoice"
+      "sStart", "sPar1", "sPar2", "sEnd",
+      "sPrepareCommand", "sInvoiceManagement", "sShipCommand", "sSendInvoice"
     ],
     "Client": [
       "cStart", "cEnd",
@@ -112,7 +108,7 @@
   },
   "containE": {
     "Supplier": [
-      "sE1", "sE2", "sE3", "sE4", "sE5", "sE6", "sE7", "sE8", "sE9"
+      "sE1", "sE2", "sE3", "sE4", "sE5", "sE6", "sE7", "sE8"
     ],
     "Client": [
       "cE1", "cE2", "cE3", "cE4", "cE5"

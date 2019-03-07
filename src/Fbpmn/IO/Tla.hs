@@ -169,7 +169,7 @@ encodeBpmnGraphEdgeTargetDeclToTla g =
   |]
  where
   es = "   " <> T.intercalate "@@ " (edgeToEdgeTargetDecl <$> edges g)
-  edgeToEdgeTargetDecl e = case sourceE g !? e of
+  edgeToEdgeTargetDecl e = case targetE g !? e of
     Nothing -> ""
     Just c  -> [text|$e' :> $c'|] 
       where
