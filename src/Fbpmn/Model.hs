@@ -231,8 +231,8 @@ isValidGraph g =
   and
     $   [ allNodesHave catN -- \forall n \in N . n \in dom(catN)
         , allEdgesHave catE -- \forall e \in E . e \in dom(catE) 
-        , allEdgesHave sourceE -- \forall e \in E . e \in dom(sourceE)
-        , allEdgesHave targetE -- \forall e \in E . e \in dom(targetE)
+        , allEdgesHave sourceE -- \forall e \in E . e \in dom(sourceE) TODO: check that sourceE(e) \in N
+        , allEdgesHave targetE -- \forall e \in E . e \in dom(targetE) TODO: check that targetE(e) \in N
         , allValidMessageFlow -- \forall m in E^{MessageFlow} . e \in dom(sourceE) /\ e \in dom(targetE)
                               --                             /\ sourceE(e) \in N^{ST,TMIE,MEE}
                               --                             /\ target(e) \in N^{RT,CMIE,MSE}
