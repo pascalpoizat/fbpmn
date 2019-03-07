@@ -9,16 +9,6 @@
   </bpmn:collaboration>
   <bpmn:process id="Process_1" isExecutable="true">
     <bpmn:sequenceFlow id="sE1" sourceRef="sStart" targetRef="sReceiveCommand" />
-    <bpmn:exclusiveGateway id="sPar1">
-      <bpmn:incoming>sE2</bpmn:incoming>
-      <bpmn:outgoing>sE3</bpmn:outgoing>
-      <bpmn:outgoing>sE4</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="sPar2">
-      <bpmn:incoming>sE5</bpmn:incoming>
-      <bpmn:incoming>sE6</bpmn:incoming>
-      <bpmn:outgoing>sE7</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="sE2" sourceRef="sReceiveCommand" targetRef="sPar1" />
     <bpmn:sequenceFlow id="sE3" sourceRef="sPar1" targetRef="sPrepareCommand" />
     <bpmn:sequenceFlow id="sE4" sourceRef="sPar1" targetRef="sInvoiceManagement" />
@@ -53,6 +43,16 @@
     <bpmn:endEvent id="sEnd">
       <bpmn:incoming>sE9</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:parallelGateway id="sPar1">
+      <bpmn:incoming>sE2</bpmn:incoming>
+      <bpmn:outgoing>sE3</bpmn:outgoing>
+      <bpmn:outgoing>sE4</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="sPar2">
+      <bpmn:incoming>sE5</bpmn:incoming>
+      <bpmn:incoming>sE6</bpmn:incoming>
+      <bpmn:outgoing>sE7</bpmn:outgoing>
+    </bpmn:parallelGateway>
   </bpmn:process>
   <bpmn:process id="Process_0jthe8j" isExecutable="false">
     <bpmn:startEvent id="cStart">
@@ -137,12 +137,6 @@
           <dc:Bounds x="295" y="361" width="49" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_04imau1_di" bpmnElement="sPar1" isMarkerVisible="true">
-        <dc:Bounds x="358" y="181" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0h1492x_di" bpmnElement="sPar2" isMarkerVisible="true">
-        <dc:Bounds x="553" y="181" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1x93vg6_di" bpmnElement="sE2">
         <di:waypoint x="335" y="206" />
         <di:waypoint x="358" y="206" />
@@ -218,6 +212,12 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_12ckj6l_di" bpmnElement="sEnd">
         <dc:Bounds x="892" y="188" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_1la9zge_di" bpmnElement="sPar1">
+        <dc:Bounds x="358" y="181" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_1sbrf03_di" bpmnElement="sPar2">
+        <dc:Bounds x="553" y="181" width="50" height="50" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
