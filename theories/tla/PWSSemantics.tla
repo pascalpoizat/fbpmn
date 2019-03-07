@@ -217,14 +217,21 @@ or_complete(n) ==
         /\ InPlus # {}
         /\ \A ezero \in InMinus : /\ \A ee \in (PreEdges[n, ezero] \ ignoredpreedges) : edgemarks[ee] = 0
                                   /\ \A nn \in (PreNodes[n, ezero] \ ignoredprenodes) : nodemarks[nn] = 0
-        /\ \E eouts \in SUBSET outtype(SeqFlowType, n) :
-             /\ eouts # {}
-             /\ edgemarks' = [ e \in DOMAIN edgemarks |->
-                               IF e \in InPlus THEN edgemarks[e] - 1
-                               ELSE IF e \in eouts THEN edgemarks[e] + 1
-                               ELSE edgemarks[e] ]
-             /\ UNCHANGED nodemarks
-             /\ Network!unchanged
+        /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) :
+                 /\ eouts # {}
+                 /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                                   IF e \in InPlus THEN edgemarks[e] - 1
+                                   ELSE IF e \in eouts THEN edgemarks[e] + 1
+                                   ELSE edgemarks[e] ]
+                 /\ UNCHANGED nodemarks
+                 /\ Network!unchanged
+           \/ \E eout \in outtype({ DefaultSeqFlow }, n) :
+                 /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                                   IF e \in InPlus THEN edgemarks[e] - 1
+                                   ELSE IF e = eout THEN edgemarks[e] + 1
+                                   ELSE edgemarks[e] ]
+                 /\ UNCHANGED nodemarks
+                 /\ Network!unchanged
 
 (* ---- Parallel ---- *)
 
