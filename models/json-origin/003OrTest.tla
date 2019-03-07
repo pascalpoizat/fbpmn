@@ -18,7 +18,7 @@ Edge == {
 Message == {  }
 
 msgtype ==
-      
+  {}
 
 source ==
    "e0" :> "NSE"

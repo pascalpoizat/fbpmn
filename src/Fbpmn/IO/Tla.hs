@@ -110,7 +110,7 @@ encodeBpmnGraphMsgDeclToTla g =
   |]
   where
     msgs = T.intercalate ", " (show <$> messages g)
-    mts = "    " <> T.intercalate "@@ " (edgeToMsgDecl <$> (edgesT g MessageFlow))
+    mts = if null (messages g) then "{}" else "    " <> T.intercalate "@@ " (edgeToMsgDecl <$> (edgesT g MessageFlow))
     edgeToMsgDecl e = case messageE g !? e of
       Nothing -> ""
       Just m -> [text|$e' :> $m'|]
