@@ -23,6 +23,7 @@ nonestart_complete(n) ==
   /\ nodemarks[n] >= 1
   /\ \E p \in Processes :
      /\ n \in ContainRel[p]
+     /\ nodemarks[p] = 0  \* XXXX No multi-instance XXXX
      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
@@ -45,6 +46,7 @@ messagestart_complete(n) ==
   /\ nodemarks[n] >= 1
   /\ \E p \in Processes :
      /\ n \in ContainRel[p]
+     /\ nodemarks[p] = 0  \* XXXX No multi-instance XXXX
      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
