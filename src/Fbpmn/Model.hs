@@ -7,13 +7,13 @@ import           Data.Aeson                     ( FromJSON
 -- import           Data.Maybe                     ( isNothing )
 -- import           GHC.Generics
 import qualified Data.Set                      as S
-                                                ( fromList
-                                                )
+                                                ( fromList )
 import           Data.Map.Strict                ( Map
                                                 , (!?)
                                                 , keys
                                                 , assocs
                                                 )
+import           Fbpmn.Helper                   ( filter' )
 
 --
 -- Node types
@@ -62,6 +62,9 @@ data EdgeType = NormalSequenceFlow
   deriving (Eq, Show, Generic)
 instance ToJSON EdgeType
 instance FromJSON EdgeType
+
+sequenceFlow :: [EdgeType]
+sequenceFlow = [NormalSequenceFlow, ConditionalSequenceFlow, DefaultSequenceFlow]
 
 --
 -- Messages
@@ -142,53 +145,63 @@ mkGraph n ns es catN catE sourceE targetE nameN containN containE messages messa
     in  graph
 
 --
--- nodesT for one type
+-- NODES
+-- nodes g        : all nodes
+-- nodesT g t     : all nodes of a given type
+-- nodesTs g ts   : all nodes of given types
+-- EDGES
+-- edges g        : all edges
+-- edgesT g t     : all edges of a given type
+-- edgesTs g ts   : all edges of given types
+-- inN g n        : input edges of node n
+-- inNT g n t     : input edges of node n, that are of a given type
+-- inNTs g n ts   : input edges of node n, that are of given types 
+-- outN g n       : output edges of node n
+-- outNT g n t    : output edges of node n, that are of a given type
+-- outNTs g n ts  : output edges of node n, that are of given types 
+--
+
+--
+-- all nodes of a given type
 --
 nodesT :: BpmnGraph -> NodeType -> [Node]
 nodesT g t = filter' (nodes g) (catN g) (== Just t)
 
 --
--- nodesT for several types
+-- all nodes of given types
 --
 nodesTs :: BpmnGraph -> [NodeType] -> [Node]
 nodesTs g ts = concat $ nodesT g <$> ts
 
 --
--- nodesE for one type
+-- all edges of a given type
 --
 edgesT :: BpmnGraph -> EdgeType -> [Edge]
 edgesT g t = filter' (edges g) (catE g) (== Just t)
 
 --
--- nodesE for several types
+-- all edges of given types
 --
 edgesTs :: BpmnGraph -> [EdgeType] -> [Edge]
 edgesTs g ts = concat $ edgesT g <$> ts
-
---
--- sequence flows
---
-sequenceFlows :: BpmnGraph -> [Edge]
-sequenceFlows g =
-  edgesTs g [NormalSequenceFlow, ConditionalSequenceFlow, DefaultSequenceFlow]
-
---
--- message flows
---
-messageFlows :: BpmnGraph -> [Edge]
-messageFlows g = edgesT g MessageFlow
-
---
--- helper
---
-filter' :: (Ord a) => [a] -> (Map a b) -> (Maybe b -> Bool) -> [a]
-filter' xs f p = filter p' xs where p' x = p $ f !? x
 
 --
 -- in
 --
 inN :: BpmnGraph -> Node -> [Edge]
 inN g n = [ e | e <- edges g, target !? e == Just n ] where target = targetE g
+
+--
+-- in for one type
+--
+inNT :: BpmnGraph -> Node -> EdgeType -> [Edge]
+inNT g n t = filter' (inN g n) (catE g) (== Just t)
+
+--
+-- in for several types
+--
+inNTs :: BpmnGraph -> Node -> [EdgeType] -> [Edge]
+inNTs g n ts = concat $ inNT g n <$> ts
 
 --
 -- out
@@ -198,16 +211,16 @@ outN g n = [ e | e <- edges g, source !? e == Just n ]
   where source = sourceE g
 
 --
--- inT
+-- out for one type
 --
-inT :: BpmnGraph -> Node -> EdgeType -> [Edge]
-inT g n t = [ e1 | e1 <- edgesT g t, e2 <- inN g n, e1 == e2 ]
+outNT :: BpmnGraph -> Node -> EdgeType -> [Edge]
+outNT g n t = filter' (outN g n) (catE g) (== Just t)
 
 --
--- outT
+-- out for several types
 --
-outT :: BpmnGraph -> Node -> EdgeType -> [Edge]
-outT g n t = [ e1 | e1 <- edgesT g t, e2 <- outN g n, e1 == e2 ]
+outNTs :: BpmnGraph -> Node -> [EdgeType] -> [Edge]
+outNTs g n ts = concat $ outNT g n <$> ts
 
 --
 -- checks
@@ -283,7 +296,7 @@ isValidMessageFlow g mf =
 
 allValidMessageFlow :: BpmnGraph -> Bool
 allValidMessageFlow g =
-  getAll $ foldMap (All . isValidMessageFlow g) $ messageFlows g
+  getAll $ foldMap (All . isValidMessageFlow g) $ edgesT g MessageFlow
 
 allNodesHave :: (BpmnGraph -> Map Node b) -> BpmnGraph -> Bool
 allNodesHave = allDefF nodes
@@ -311,7 +324,7 @@ Stops upon set equality, i.e. will stop if @f [1,2] = [2,1]@
 -}
 fixpoint :: (Ord a) => ([a] -> [a]) -> [a] -> [a]
 fixpoint f xs | S.fromList xs == S.fromList xs' = xs
-              | otherwise = fixpoint f xs'
+              | otherwise                       = fixpoint f xs'
   where xs' = (toList . S.fromList) $ f xs
 
 predecessorEdges :: BpmnGraph -> Edge -> [Edge]
@@ -328,5 +341,5 @@ preE g n e = fixpoint step $ predecessorEdgesSuchThat g p e
   p x = case targetE g !? x of
     Nothing -> False    -- if we cannot find the target for the predecessor we fail
                         -- (impossible due to the way we compute the predecessor edges)
-    Just n' ->  n /= n' -- else we want that it is not n
+    Just n' -> n /= n' -- else we want that it is not n
   step es = es <> foldMap (predecessorEdgesSuchThat g p) es

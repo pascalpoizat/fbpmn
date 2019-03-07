@@ -8,7 +8,7 @@
     "Process": "Process",
     "NSE": "NoneStartEvent",
     "AT1": "AbstractTask",
-    "Xor0": "OrGateway",
+    "Xor0": "XorGateway",
     "Or1": "OrGateway",
     "Xor1": "XorGateway",
     "AT2": "AbstractTask",

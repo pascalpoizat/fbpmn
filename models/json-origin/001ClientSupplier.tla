@@ -99,6 +99,12 @@ CatE ==
 @@ "mf2" :> MsgFlow
 @@ "mf3" :> MsgFlow
 
+PreEdges ==
+{}
+
+PreNodes(n,e) == { target[ee] : ee \in PreEdges[n,e] }
+          \union { nn \in { source[ee] : ee \in PreEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
+
 WF == INSTANCE PWSWellFormed
 ASSUME WF!WellFormedness
 
