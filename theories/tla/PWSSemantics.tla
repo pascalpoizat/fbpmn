@@ -64,13 +64,20 @@ noneend_start(n) ==
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = 1 ]
   /\ Network!unchanged
 
-terminateend_start(n) ==
+terminateend_start(n) == \* Terminate End Event clears all token in the process/subprocess.
   /\ CatN[n] = TerminateEndEvent
   /\ nodemarks[n] = 0
   /\ \E e \in intype(SeqFlowType, n) :
        /\ edgemarks[e] >= 1
-       /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
-  /\ nodemarks' = [ nodemarks EXCEPT ![n] = 1 ]
+       /\ LET pr == ContainRelInv(n) IN
+           /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
+                             IF source[ee] \in ContainRel[pr] /\ target[ee] \in ContainRel[pr] THEN 0
+                             ELSE IF ee = e THEN edgemarks[ee] - 1 \* is it possible ?
+                             ELSE edgemarks[ee] ]
+           /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
+                             IF nn = n THEN nodemarks[nn] + 1
+                             ELSE IF nn \in ContainRel[pr] THEN 0
+                             ELSE nodemarks[nn] ]
   /\ Network!unchanged
 
 (* ---- message end event ---- *)
@@ -345,5 +352,27 @@ NoAbnormalTermination ==
 (* When all processes have ended, there are no messages left in transit. *)
 NoUndeliveredMessages ==
   []((\A p \in Processes : nodemarks[p] = 0) => (\A e \in Edge : CatE[e] = MsgFlow => edgemarks[e] = 0))
-  
+
+(* ---------------------------------------------------------------- *)
+
+(* Corradini's correctness properties *)
+(* They have been adapted to our marking, where both edges and nodes hold tokens. *)
+
+(* No sequence flow edge has more than one token. *)
+SafeCollaboration ==
+   [](\A e \in Edge : CatE[e] \in SeqFlowType => edgemarks[e] <= 1)
+
+(* Either all end event are marked and there are no token anywhere else, or no tokens are left nowhere at all. *)
+\* sould we include MessageEndEvent?
+SoundCollaboration ==
+   <>(/\ \A e \in Edge : edgemarks[e] = 0
+      /\ \/ \A n \in Node : nodemarks[n] = IF CatN[n] \in {NoneEndEvent} THEN 1 ELSE 0
+         \/ \A n \in Node : nodemarks[n] = 0)
+
+(* Like SoundCollaboration, but ignore messages in transit. *)
+MessageRelaxedSoundCollaboration ==
+   <>(/\ \A e \in Edge : CatE[e] \in SeqFlowType => edgemarks[e] = 0
+      /\ \/ \A n \in Node : nodemarks[n] = IF CatN[n] \in {NoneEndEvent} THEN 1 ELSE 0
+         \/ \A n \in Node : nodemarks[n] = 0)
+
 ================================================================
