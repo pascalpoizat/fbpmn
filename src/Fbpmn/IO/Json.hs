@@ -6,9 +6,9 @@ import qualified Data.ByteString.Lazy          as BS
                                                 , writeFile
                                                 , readFile
                                                 )
-import           Data.Aeson                     ( encode
-                                                , decode
+import           Data.Aeson                     ( decode
                                                 )
+import           Data.Aeson.Encode.Pretty       ( encodePretty )
 import           System.IO.Error                ( IOError
                                                 , catchIOError
                                                 , isDoesNotExistError
@@ -18,7 +18,7 @@ import           System.IO.Error                ( IOError
 Generate the JSON representation for a BPMN Graph.
 -}
 genJSON :: BpmnGraph -> BS.ByteString
-genJSON = encode
+genJSON = encodePretty
 
 {-|
 Read a BPMN Graph from a JSON file.
@@ -40,4 +40,4 @@ readFromJSON p = (decode <$> BS.readFile p) `catchIOError` handler
 Write a BPMN Graph to a JSON file.
 -}
 writeToJSON :: FilePath -> BpmnGraph -> IO ()
-writeToJSON p = BS.writeFile p . encode
+writeToJSON p = BS.writeFile p . encodePretty

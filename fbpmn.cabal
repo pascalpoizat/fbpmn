@@ -41,6 +41,7 @@ library
   build-depends:       base-noprelude
                      , relude
                      , aeson
+                     , aeson-pretty
                      , bytestring
                      , containers
                      , neat-interpolation
@@ -73,6 +74,7 @@ executable fbpmn
                      , base-noprelude
                      , relude
                      , aeson
+                     , aeson-pretty
                      , bytestring
                      , containers
                      , neat-interpolation
@@ -106,6 +108,7 @@ test-suite fbpmn-test
                      , base-noprelude
                      , relude
                      , aeson
+                     , aeson-pretty
                      , bytestring
                      , containers
                      , neat-interpolation
