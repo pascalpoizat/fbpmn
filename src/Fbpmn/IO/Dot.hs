@@ -19,7 +19,7 @@ encodeBpmnGraphToDot :: BpmnGraph -> Text
 encodeBpmnGraphToDot g =
   unlines
     $   [ encodeBpmnGraphHeaderToDot    -- header
-        -- , encodeBpmnGraphNodeDeclToDot        -- nodes
+        , encodeBpmnGraphNodeDeclToDot  -- nodes
         , encodeBpmnGraphEdgeDeclToDot  -- edges
         , encodeBpmnGraphFooterToDot    -- footer
         ]
@@ -36,6 +36,26 @@ encodeBpmnGraphFooterToDot :: BpmnGraph -> Text
 encodeBpmnGraphFooterToDot _ =
   [text|}
   |]
+
+encodeBpmnGraphNodeDeclToDot :: BpmnGraph -> Text
+encodeBpmnGraphNodeDeclToDot g =
+  [text|
+  $nes
+  |]
+  where
+    nes = unlines $ toDot . nameOrElseIdForNode g <$> nodes g
+    toDot (n,nn) =
+      [text|
+      $sn [ label = $nn ];
+      |]
+      where
+        sn = show n
+
+nameOrElseIdForNode :: BpmnGraph -> Node -> (Node, Text)
+nameOrElseIdForNode g n =
+  case nameN g !? n of
+    Nothing -> (n, show n)
+    Just nn -> (n, show nn)
 
 encodeBpmnGraphEdgeDeclToDot :: BpmnGraph -> Text
 encodeBpmnGraphEdgeDeclToDot g =
