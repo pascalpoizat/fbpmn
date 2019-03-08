@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1hwzhfz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
   <bpmn:collaboration id="_010CheckTest">
+    <bpmn:documentation>from "A Classification of BPMN Collaborations based on Safeness and Soundness Notions", EXPRESS/SOS 2018.</bpmn:documentation>
     <bpmn:participant id="Participant_0z6fk7j" name="A" processRef="Process_1" />
     <bpmn:participant id="Participant_0o6fqne" name="B" processRef="Process_1vix2xm" />
     <bpmn:messageFlow id="MessageFlow_13zc5xc" name="m1" sourceRef="Task_1rt44mz" targetRef="ReceiveTask_0tuz5r7" />
