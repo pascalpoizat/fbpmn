@@ -3,7 +3,7 @@ EXTENDS PWSTypes
 
 CONSTANT Node, Edge, source, target, Message, CatN, CatE, msgtype, ContainRel (* = R *), PreEdges(_,_), PreNodes(_,_)
 
-(* R^{-1}(n). Unused *)
+(* R^{-1}(n). *)
 ContainRelInv(n) == CHOOSE p \in { nn \in Node : CatN[nn] \in {Process, SubProcess} } : n \in ContainRel[p]
 
 (* Reflexive closure of ContainRel *)
