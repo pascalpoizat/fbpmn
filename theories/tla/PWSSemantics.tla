@@ -72,7 +72,6 @@ terminateend_start(n) == \* Terminate End Event clears all token in the process/
        /\ LET pr == ContainRelInv(n) IN
            /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
                              IF source[ee] \in ContainRel[pr] /\ target[ee] \in ContainRel[pr] THEN 0
-                             ELSE IF ee = e THEN edgemarks[ee] - 1 \* is it possible ?
                              ELSE edgemarks[ee] ]
            /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
                              IF nn = n THEN nodemarks[nn] + 1

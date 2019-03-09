@@ -1,4 +1,6 @@
 ---------------------------- MODULE NetworkFifoPair ----------------------------
+(* Fifo 1-1: a queue between each couple of processes/pools. *)
+
 \* CONSTANT Node, Message
 
 LOCAL INSTANCE Sequences
@@ -7,7 +9,7 @@ VARIABLES net
 
 TypeInvariant ==
   /\ TRUE
-  \* /\ net \in [ (Node \X Node) -> Seq(Message) ]
+  \* /\ net \in [ (Pool \X Pool) -> Seq(Message) ]
 
 init == net = [ x \in {} |-> <<>>]
 

@@ -1,4 +1,6 @@
 ---------------------------- MODULE NetworkFifo ----------------------------
+(* Fifo n-n: a global unique queue. *)
+
 \* CONSTANT Node, Message
 
 LOCAL INSTANCE Sequences
@@ -7,7 +9,7 @@ VARIABLES net
 
 TypeInvariant ==
   /\ TRUE
-  \* /\ net \in Seq(Node \X Node \X Message)
+  \* /\ net \in Seq(Pool \X Pool \X Message)
 
 init == net = <<>>
 

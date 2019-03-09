@@ -1,4 +1,6 @@
 ---------------- MODULE NetworkBag ----------------
+(* Unordered *)
+
 \* CONSTANT Node, Message
 
 LOCAL INSTANCE Bags
@@ -7,7 +9,7 @@ VARIABLES net
 
 TypeInvariant ==
   /\ IsABag(net)
-  \* /\ BagToSet(net) \in SUBSET Node \X Node \X Message
+  \* /\ BagToSet(net) \in SUBSET Pool \X Pool \X Message
 
 init == net = EmptyBag
 
