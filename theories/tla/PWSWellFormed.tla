@@ -1,5 +1,5 @@
 ---------------- MODULE PWSWellFormed ----------------
-(* Rules of well-formedness *)
+(* Rules of well-structureness *)
 
 EXTENDS PWSDefs, PWSTypes
 
@@ -65,23 +65,23 @@ Cx_MessageFlowEdge ==
     \A e \in Edge : CatE[e] = MsgFlow <=> (CatN[source[e]] = SendTask /\ CatN[target[e]] = ReceiveTask)
 *)
 
-WellStructured == /\ C1_StartNoIncomingEdge
-                  /\ C2_EndNoOutgoingEdge
-                  /\ C3_SubProcessUniqueStart
-                  /\ C4_NoProcessInSubProcess
-                  /\ C5_ProcessNode
-                  /\ C6_NoLoopingEdge
-                  /\ C7_NotIsolation
-                  /\ C8_DefaultSeqFlow
-                  /\ C9_SendTask
-                  /\ C10_ReceiveTask
-                  /\ C11_MessageFlowDifferentProcesses
-                  /\ C12_EXORTwoOutgoingEdges
-                  /\ C13_EXOR_NoConditional
-                  /\ C14_EXOR_NextElements
+LOCAL AllConditions == /\ C1_StartNoIncomingEdge
+                       /\ C2_EndNoOutgoingEdge
+                       /\ C3_SubProcessUniqueStart
+                       /\ C4_NoProcessInSubProcess
+                       /\ C5_ProcessNode
+                       /\ C6_NoLoopingEdge
+                       /\ C7_NotIsolation
+                       /\ C8_DefaultSeqFlow
+                       /\ C9_SendTask
+                       /\ C10_ReceiveTask
+                       /\ C11_MessageFlowDifferentProcesses
+                       /\ C12_EXORTwoOutgoingEdges
+                       /\ C13_EXOR_NoConditional
+                       /\ C14_EXOR_NextElements
 
 ----------------------------------------------------------------
 
-WellFormedness == TypeAssume /\ WellStructured
+WellFormedness == TypeAssume /\ AllConditions
 
 ================================================================

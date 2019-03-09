@@ -1,5 +1,5 @@
 ---------------------------- MODULE NetworkInbox ----------------------------
-(* Fifo n-1: each process/pool has an input box where senders put their messages. This box is FIFO. *)
+(* Fifo n-1: each process/pool has a fifo input box where senders put their messages. *)
 
 \* CONSTANT Node, Message
 

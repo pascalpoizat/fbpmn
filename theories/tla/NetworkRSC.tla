@@ -1,5 +1,6 @@
 ---------------- MODULE NetworkRSC ----------------
-(* RSC - realizable with synchronous communication. A unique place => at most one message in transit. *)
+(* RSC - realizable with synchronous communication.
+   A unique place => at most one message in transit. *)
 
 \* CONSTANT Node, Message
 

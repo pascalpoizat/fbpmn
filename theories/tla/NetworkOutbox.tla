@@ -1,5 +1,6 @@
 ---------------------------- MODULE NetworkOutbox ----------------------------
-(* Fifo 1-n: each process/pool has an output box where it puts outgoing messages. Receivers fetch from this box. The box is FIFO. *)
+(* Fifo 1-n: each process/pool has a fifo output box where it puts outgoing messages.
+   Receivers fetch from the box. *)
 
 \* CONSTANT Node, Message
 
