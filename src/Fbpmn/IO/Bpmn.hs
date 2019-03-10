@@ -1,5 +1,6 @@
 module Fbpmn.IO.Bpmn where
 
+import           Fbpmn.Helper                   ( tlift2 )
 import           Fbpmn.Model
 import           Text.XML.Light                 ( Element(..)
                                                 , Content(..)
@@ -13,6 +14,7 @@ import           Text.XML.Light                 ( Element(..)
                                                 )
 import qualified Data.Map                      as M
                                                 ( empty
+                                                , fromList
                                                 , singleton
                                                 )
 import qualified Data.ByteString.Lazy          as BS
@@ -68,18 +70,22 @@ oneOf e ps = getAny . foldMap Any $ ps <*> [e]
 getId :: Element -> Maybe String
 getId = findAttr (nA "id")
 
-hasId :: String -> Element -> Maybe Bool
-hasId s e =
-  do
-    ie <- getId e
-    pure $ ie == s
+getName :: Element -> Maybe String
+getName = findAttr (nA "name")
 
-hasId' :: String -> Element -> Bool
-hasId' s e = fromMaybe False $ hasId s e
+isIdOf :: String -> Element -> Maybe Bool
+isIdOf s e = do
+  ie <- getId e
+  pure (ie == s)
+
+isIdOf' :: String -> Element -> Bool
+isIdOf' s e = fromMaybe False $ isIdOf s e
 
 findById :: [Element] -> String -> Maybe Element
-findById es eid =
-  listToMaybe $ concatMap (filterChildren (hasId' eid)) es
+findById es eid = listToMaybe $ concatMap (filterChildren (eid `isIdOf'`)) es
+
+findByIds :: [Element] -> [String] -> [Element]
+findByIds es ids = [e | e <- es, eid <- ids, isIdOf' eid e]
 
 --
 -- helpers for names vs ids
@@ -150,7 +156,12 @@ pEventBasedGateway :: [Element] -> Element -> Bool
 pXorGateway _ = (?=) "eventBasedGateway"
 pGateway :: [Element] -> Element -> Bool
 pGateway es e =
-  e `oneOf` [pAndGateway es, pOrGateway es, pXorGateway es, pEventBasedGateway es]
+  e
+    `oneOf` [ pAndGateway es
+            , pOrGateway es
+            , pXorGateway es
+            , pEventBasedGateway es
+            ]
 
 -- tasks
 -- AT, ST, or RT
@@ -190,14 +201,12 @@ pCSF es e = pSF es e && pCx e
 -- 1. e.name = sequenceFlow 
 -- 2. e.sourceRef.default = e.id
 pDSF :: [Element] -> Element -> Bool
-pDSF es e =
-  fromMaybe False $
-    do
-      eid <- getId e
-      sa <- findAttr (nA "sourceRef") e
-      sn <- findById es sa
-      def <- findAttr (nA "default") sn
-      pure $ pSF es e && (def == eid)
+pDSF es e = fromMaybe False $ do
+  eid <- getId e
+  sa  <- findAttr (nA "sourceRef") e
+  sn  <- findById es sa
+  def <- findAttr (nA "default") sn
+  pure $ pSF es e && (def == eid)
 
 pNSF :: [Element] -> Element -> Bool
 pNSF es e = pSF es e && not (e `oneOf` [pCSF es, pDSF es])
@@ -217,56 +226,80 @@ Enhancements:
 decode :: [Content] -> Maybe BpmnGraph
 decode cs = do
     -- all elements
-  allElements       <- pure $ onlyElems cs
+  allElements      <- pure $ onlyElems cs
   -- collaboration (1st one to be found)
   c <- listToMaybe $ concatMap (findChildren (nE "collaboration")) allElements
-  cName             <- findAttr (nA "id") c
+  cId              <- getId c
   -- participants
-  cParticipants     <- pure $ findChildren (nE "participant") c
-  cParticipantRefs  <- sequence $ findAttr (nA "processRef") <$> cParticipants
-  cParticipantNames <- sequence $ aOrElseB "name" "processRef" <$> cParticipants
+  cParticipants    <- pure $ findChildren (nE "participant") c
+  cParticipantRefs <- sequence $ findAttr (nA "processRef") <$> cParticipants
+  cParticipantIds <- sequence $ getId <$> cParticipants
   -- processes
-  allProcesses <- pure $ concatMap (findChildren (nE "process")) allElements
-  cProcesses <- pure $ filter (filterByReferences cParticipantRefs) allProcesses
+  allProcesses     <- pure $ concatMap (findChildren (nE "process")) allElements
+  cProcesses       <- pure $ findByIds allProcesses cParticipantRefs
   -- message flows and messages
-  cMessageFlows     <- pure $ findChildren (nE "messageFlow") c
-  cMessageFlowIds   <- sequence $ getId <$> cMessageFlows
-  cMessageTypes     <- sequence $ nameOrElseId <$> cMessageFlows
-  -- graph
-  Just
-    (mkGraph (toText cName)
-             cParticipantNames -- TODO: completer avec tous les nodes
-             cMessageFlowIds -- TODO: completer avec tous les edges
-             M.empty -- TODO:
-             M.empty -- TODO:
-             M.empty -- TODO:
-             M.empty -- TODO:
-             M.empty -- TODO:
-             M.empty -- TODO:
-             M.empty -- TODO:
-             cMessageTypes
-             M.empty -- TODO:
-    )
+  cMessageFlows    <- pure $ findChildren (nE "messageFlow") c
+  cMessageFlowIds  <- sequence $ getId <$> cMessageFlows
+  cMessageTypes    <- sequence $ nameOrElseId <$> cMessageFlows
+  -- high level information (collaboration level)
+  g                <- pure $ BpmnGraph
+    (toText cId)
+    cParticipantIds
+    cMessageFlowIds
+    (M.fromList $ bcatN <$> cParticipantIds)
+    (M.fromList $ bcatE <$> cMessageFlowIds)
+    (M.fromList $ catMaybes $ tlift2 . bsource <$> cMessageFlows)
+    (M.fromList $ catMaybes $ tlift2 . btarget <$> cMessageFlows)
+    (M.fromList $ catMaybes $ tlift2 . bname <$> cParticipants)
+    M.empty
+    M.empty
+    cMessageTypes
+    (M.fromList $ catMaybes $ tlift2 . bname <$> cMessageFlows)
+  -- compute for participant processes
+  processGraphs <- sequence $ compute allElements <$> cProcesses
+  pure $ g <> mconcat processGraphs
  where
-  filterByReferences = undefined -- TODO:
+  bcatE :: String -> (Edge, EdgeType)
+  bcatE e = (e, MessageFlow)
+  bcatN :: String -> (Node, NodeType)
+  bcatN e = (e, Process)
 
-compute :: [Element] -> Bool -> Element -> BpmnGraph
-compute es highlevel e =
-  let
-    cat = if highlevel then "process" else "subProcess"
-    sps = findChildren (nE cat) e
-    n = nameOrElseId e
-    ns = filterChildren (pNode es) e
-  in
-    mempty
+compute :: [Element] -> Element -> Maybe BpmnGraph
+compute allElements e = do
+  pid  <- getId e
+  ns   <- pure $ filterChildren (pNode allElements) e
+  nids <- sequence $ getId <$> ns
+  es   <- pure $ filterChildren (pEdge allElements) e
+  eids <- sequence $ getId <$> es
+  sps  <- pure $ findChildren (nE "subProcess") e
+  g    <- pure $ BpmnGraph ""
+                           nids
+                           eids
+                           (M.empty)
+                           (M.empty)
+                           (M.fromList $ catMaybes $ tlift2 . bsource <$> es)
+                           (M.fromList $ catMaybes $ tlift2 . btarget <$> es)
+                           (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
+                           M.empty
+                           M.empty
+                           []
+                           M.empty
+  subprocessGraphs <- sequence $ compute allElements <$> sps
+  pure $ g <> mconcat subprocessGraphs
+
+bsource :: Element -> (Maybe Edge, Maybe Node)
+bsource mf = (getId mf, findAttr (nA "sourceRef") mf)
+btarget :: Element -> (Maybe Edge, Maybe Node)
+btarget mf = (getId mf, findAttr (nA "targetRef") mf)
+bname :: Element -> (Maybe Edge, Maybe String)
+bname mf = (getId mf, getName mf)
 
 prefix :: BpmnGraph -> Node -> BpmnGraph
-prefix (BpmnGraph n ns es cn ce se te nn rn re m me) p
- = BpmnGraph n ns es cn ce se te nn rn' re' m me
+prefix (BpmnGraph n ns es cn ce se te nn rn re m me) p =
+  BpmnGraph n ns es cn ce se te nn rn' re' m me
  where
   rn' = rn <> M.singleton p ns
   re' = re <> M.singleton p es
-
 
 {-|
 Read a BPMN Graph from a BPMN file.
