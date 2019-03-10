@@ -221,10 +221,11 @@ repl (p, g) = do
         -- , "show (show current graph)"
         -- , "import (load current graph from internal examples)"
         , "load (load current graph from JSON and verify file)"
-        , "bpmn (load current graph as BPMN)"
-        , "json (save current graph as JSON)"
+        , "bpmn (load current graph from BPMN)"
+        , "json (save current graph to JSON)"
+        , "dot (save current graph to DOT)"
         -- , "smt (save current graph as SMT)"
-        , "tla  (save current graph as TLA)"
+        , "tla  (save current graph to TLA+)"
         ]
       repl (p, g)
     Just RQuit       -> putTextLn "goodbye"
