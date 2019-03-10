@@ -55,9 +55,9 @@ data Command
   = CVersion
   | CRepl
   | CJson2Dot { optPathIn :: Text, optPathOut :: Text }
-  | CJson2Tla { optPath :: Text }
-  | CBpmn2Json { optPath :: Text }
-  | CBpmn2Tla { optPath :: Text }
+  | CJson2Tla { optPathIn :: Text, optPathOut :: Text }
+  | CBpmn2Json { optPath :: Text, optPathOut :: Text }
+  | CBpmn2Tla { optPath :: Text, optPathOut :: Text }
 
 parserOptions :: Parser Options
 parserOptions = Options <$> subparser
@@ -100,34 +100,55 @@ parserJson2Dot =
           )
 
 parserJson2Tla :: Parser Command
-parserJson2Tla = CJson2Tla <$> argument
-  str
-  (  metavar "PATH"
-  <> help "path to the input model in JSON format (without .json suffix)"
-  )
+parserJson2Tla =
+  CJson2Tla
+    <$> argument
+          str
+          (metavar "INPUT-PATH" <> help
+            "path to the input model in JSON format (without .json suffix)"
+          )
+    <*> argument
+          str
+          (metavar "OUTPUT-PATH" <> help
+            "path to the output file in TLA+ format (without .tla suffix)"
+          )
 
 parserBpmn2Json :: Parser Command
-parserBpmn2Json = CBpmn2Json <$> argument
-  str
-  (  metavar "PATH"
-  <> help "path to the input model in BPMN format (without .bpmn suffix)"
-  )
+parserBpmn2Json =
+  CBpmn2Json
+    <$> argument
+          str
+          (metavar "INPUT-PATH" <> help
+            "path to the input model in BPMN format (without .bpmn suffix)"
+          )
+    <*> argument
+          str
+          (metavar "OUTPUT-PATH" <> help
+            "path to the output file in JSON format (without .json suffix)"
+          )
 
 parserBpmn2Tla :: Parser Command
-parserBpmn2Tla = CBpmn2Tla <$> argument
-  str
-  (  metavar "PATH"
-  <> help "path to the input model in BPMN format (without .bpmn suffix)"
-  )
+parserBpmn2Tla =
+  CBpmn2Tla
+    <$> argument
+          str
+          (metavar "INPUT-PATH" <> help
+            "path to the input model in BPMN format (without .bpmn suffix)"
+          )
+    <*> argument
+          str
+          (metavar "OUTPUT-PATH" <> help
+            "path to the output file in TLA+ format (without .tla suffix)"
+          )
 
 -- no validation needed from BPMN since we build the graph ourselves
 run :: Options -> IO ()
-run (Options CVersion            ) = putStrLn toolversion
-run (Options CRepl               ) = repl ("()", Nothing)
-run (Options (CJson2Dot pin pout)) = json2dot True pin pout
-run (Options (CJson2Tla  p      )) = json2tla True p
-run (Options (CBpmn2Json p      )) = bpmn2json False p
-run (Options (CBpmn2Tla  p      )) = bpmn2tla False p
+run (Options CVersion             ) = putStrLn toolversion
+run (Options CRepl                ) = repl ("()", Nothing)
+run (Options (CJson2Dot  pin pout)) = json2dot True pin pout
+run (Options (CJson2Tla  pin pout)) = json2tla True pin pout
+run (Options (CBpmn2Json pin pout)) = bpmn2json False pin pout
+run (Options (CBpmn2Tla  pin pout)) = bpmn2tla False pin pout
 
 transform :: Text
           -> Text
@@ -161,14 +182,14 @@ transform2 sourceSuffix targetSuffix mreader mwriter withValidation inputPath ou
 json2dot :: Bool -> Text -> Text -> IO ()
 json2dot = transform2 jsonSuffix dotSuffix readFromJSON writeToDOT
 
-json2tla :: Bool -> Text -> IO ()
-json2tla = transform jsonSuffix tlaSuffix readFromJSON writeToTLA
+json2tla :: Bool -> Text -> Text -> IO ()
+json2tla = transform2 jsonSuffix tlaSuffix readFromJSON writeToTLA
 
-bpmn2json :: Bool -> Text -> IO ()
-bpmn2json = transform bpmnSuffix jsonSuffix readFromBPMN writeToJSON
+bpmn2json :: Bool -> Text -> Text -> IO ()
+bpmn2json = transform2 bpmnSuffix jsonSuffix readFromBPMN writeToJSON
 
-bpmn2tla :: Bool -> Text -> IO ()
-bpmn2tla = transform bpmnSuffix tlaSuffix readFromBPMN writeToTLA
+bpmn2tla :: Bool -> Text -> Text -> IO ()
+bpmn2tla = transform2 bpmnSuffix tlaSuffix readFromBPMN writeToTLA
 
 main :: IO ()
 main = run =<< execParser opts
