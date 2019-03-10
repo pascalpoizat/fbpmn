@@ -3,9 +3,6 @@ module Fbpmn.Model where
 import           Data.Aeson                     ( FromJSON
                                                 , ToJSON
                                                 )
--- import           Data.Monoid                    ( All(..) )
--- import           Data.Maybe                     ( isNothing )
--- import           GHC.Generics
 import qualified Data.Set                      as S
                                                 ( fromList )
 import qualified Data.Map.Strict               as M
