@@ -151,9 +151,9 @@ pAndGateway _ = (?=) "parallelGateway"
 pOrGateway :: [Element] -> Element -> Bool
 pOrGateway _ = (?=) "inclusiveGateway"
 pXorGateway :: [Element] -> Element -> Bool
-pEventBasedGateway _ = (?=) "exclusiveGateway"
+pEventBasedGateway _ = (?=) "eventBasedGateway"
 pEventBasedGateway :: [Element] -> Element -> Bool
-pXorGateway _ = (?=) "eventBasedGateway"
+pXorGateway _ = (?=) "exclusiveGateway"
 pGateway :: [Element] -> Element -> Bool
 pGateway es e =
   e
