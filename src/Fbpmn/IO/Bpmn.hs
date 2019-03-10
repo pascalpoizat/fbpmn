@@ -244,13 +244,13 @@ decode cs = do
   -- high level information (collaboration level)
   g                <- pure $ BpmnGraph
     (toText cId)
-    cParticipantIds
+    cParticipantRefs
     cMessageFlowIds
-    (M.fromList $ ccatN <$> cParticipantIds)
+    (M.fromList $ ccatN <$> cParticipantRefs)
     (M.fromList $ ccatE <$> cMessageFlowIds)
     (M.fromList $ catMaybes $ tlift2 . bsource <$> cMessageFlows)
     (M.fromList $ catMaybes $ tlift2 . btarget <$> cMessageFlows)
-    (M.fromList $ catMaybes $ tlift2 . bname <$> cParticipants)
+    M.empty -- (M.fromList $ catMaybes $ tlift2 . bname <$> cParticipants)
     M.empty
     M.empty
     cMessageTypes
