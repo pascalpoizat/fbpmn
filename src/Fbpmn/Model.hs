@@ -3,11 +3,10 @@ module Fbpmn.Model where
 import           Data.Aeson                     ( FromJSON
                                                 , ToJSON
                                                 )
--- import           Data.Monoid                    ( All(..) )
--- import           Data.Maybe                     ( isNothing )
--- import           GHC.Generics
 import qualified Data.Set                      as S
                                                 ( fromList )
+import qualified Data.Map.Strict               as M
+                                                ( empty )
 import           Data.Map.Strict                ( Map
                                                 , (!?)
                                                 , keys
@@ -116,6 +115,36 @@ data BpmnGraph = BpmnGraph { name     :: Text -- name of the model
   deriving (Eq, Show, Generic)
 instance ToJSON BpmnGraph
 instance FromJSON BpmnGraph
+
+instance Semigroup BpmnGraph
+  where
+      (BpmnGraph n ns es cn ce se te nn rn re m me)
+        <> (BpmnGraph n' ns' es' cn' ce' se' te' nn' rn' re' m' me')
+        =
+        BpmnGraph
+          (n <> n')
+          (ns <> ns')
+          (es <> es')
+          (cn <> cn')
+          (ce <> ce')
+          (se <> se')
+          (te <> te')
+          (nn <> nn')
+          (rn <> rn')
+          (re <> re')
+          (m <> m')
+          (me <> me')
+
+instance Monoid BpmnGraph
+  where
+    mempty =
+      BpmnGraph
+        ""
+        [] [] M.empty M.empty
+        M.empty M.empty
+        M.empty
+        M.empty M.empty
+        [] M.empty
 
 mkGraph :: Text
         -> [Node]
@@ -344,6 +373,8 @@ preE g n e = fixpoint step $ predecessorEdgesSuchThat g p e
                                   -- (impossible due to the way we compute the predecessor edges)
     (Nothing, _      ) -> False
     (Just c, Just n') ->
-      n /= n'             -- else we want that it is not n
-      && c /= MessageFlow -- end that the edge is a Message Flow
+      n
+        /= n'             -- else we want that it is not n
+        && c
+        /= MessageFlow -- end that the edge is a Message Flow
   step es = es <> foldMap (predecessorEdgesSuchThat g p) es
