@@ -6,7 +6,7 @@
 
 VARIABLES net
 
-LOCAL NetworkImpl == INSTANCE NetworkRSC
+LOCAL NetworkImpl == INSTANCE NetworkBag
 
 TypeInvariant == NetworkImpl!TypeInvariant
 

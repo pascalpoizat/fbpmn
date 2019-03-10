@@ -64,7 +64,7 @@ noneend_start(n) ==
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = 1 ]
   /\ Network!unchanged
 
-terminateend_start(n) == \* Terminate End Event clears all token in the process/subprocess.
+terminateend_start(n) == \* Terminate End Event clears all token in the process/subprocess (except for the n node).
   /\ CatN[n] = TerminateEndEvent
   /\ nodemarks[n] = 0
   /\ \E e \in intype(SeqFlowType, n) :
@@ -74,7 +74,7 @@ terminateend_start(n) == \* Terminate End Event clears all token in the process/
                              IF source[ee] \in ContainRel[pr] /\ target[ee] \in ContainRel[pr] THEN 0
                              ELSE edgemarks[ee] ]
            /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
-                             IF nn = n THEN nodemarks[nn] + 1
+                             IF nn = n THEN 1
                              ELSE IF nn \in ContainRel[pr] THEN 0
                              ELSE nodemarks[nn] ]
   /\ Network!unchanged
@@ -112,11 +112,10 @@ abstract_complete(n) ==
 
 send_start(n) ==
   /\ CatN[n] = SendTask
-  /\ nodemarks[n] = 0
   /\ \E e \in intype(SeqFlowType, n) :
        /\ edgemarks[e] >= 1
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
-  /\ nodemarks' = [ nodemarks EXCEPT ![n] = 1 ]
+  /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
   /\ Network!unchanged
        
 send_complete(n) ==
@@ -180,24 +179,23 @@ cmie_start(n) ==
 
 subprocess_start(n) ==
   /\ CatN[n] = SubProcess
-  /\ nodemarks[n] = 0
   /\ \E e \in intype(SeqFlowType, n) :
      /\ edgemarks[e] >= 1
      /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
-                       IF nn = n THEN 1
-                       ELSE IF nn \in ContainRel[n] /\ CatN[nn] \in StartEventType THEN 1
+                       IF nn = n THEN nodemarks[nn] + 1
+                       ELSE IF nn \in ContainRel[n] /\ CatN[nn] \in StartEventType THEN nodemarks[nn] + 1
                        ELSE nodemarks[nn] ]
   /\ Network!unchanged
 
 subprocess_complete(n) == 
   /\ CatN[n] = SubProcess
-  /\ nodemarks[n] = 1
-  /\ \A x \in ContainRel[n] : CatN[x] \notin EndEventType => nodemarks[x] = 0
-  /\ \E nee \in ContainRel[n] :
-      /\ CatN[nee] \in EndEventType
-      /\ nodemarks[nee] = 1
-      /\ nodemarks' = [ nodemarks EXCEPT ![n] = 0, ![nee] = 0 ]
+  /\ nodemarks[n] >= 1
+  /\ \E ee \in ContainRel[n] :
+      /\ CatN[ee] \in EndEventType
+      /\ nodemarks[ee] = 1
+      /\ \A x \in ContainRel[n] : x # ee => nodemarks[x] = 0
+      /\ nodemarks' = [ nodemarks EXCEPT ![n] = 0, ![ee] = 0 ]
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
@@ -265,34 +263,16 @@ eventbased_complete(n) ==
 
 (* ---- Top level Process ---- *)
 
-LOCAL process_complete1(n) ==   
-  /\ nodemarks[n] = 1
-  /\ \E tee \in ContainRel[n] :
-      /\ CatN[tee] = TerminateEndEvent
-      /\ nodemarks[tee] = 1
-      /\ nodemarks' = [ x \in DOMAIN nodemarks |->
-                          IF x = n THEN 0
-                          ELSE IF x = tee THEN 0
-                          ELSE nodemarks[x] ]
-  /\ UNCHANGED edgemarks
-  /\ Network!unchanged
-
-LOCAL process_complete2(n) ==
-  /\ nodemarks[n] = 1
-  /\ \E nee \in ContainRel[n] :
-      /\ CatN[nee] = NoneEndEvent
-      /\ nodemarks[nee] = 1
-      /\ \A x \in ContainRel[n] : CatN[x] = NoneEndEvent /\ x # nee => nodemarks[x] = 0
-      /\ nodemarks' = [ x \in DOMAIN nodemarks |->
-                          IF x = n THEN 0
-                          ELSE IF x = nee THEN 0
-                          ELSE nodemarks[x] ]
-  /\ UNCHANGED edgemarks
-  /\ Network!unchanged
-
 process_complete(n) ==
   /\ CatN[n] = Process
-  /\ process_complete1(n) \/ process_complete2(n)
+  /\ nodemarks[n] = 1
+  /\ \E ee \in ContainRel[n] :
+      /\ CatN[ee] \in EndEventType
+      /\ nodemarks[ee] = 1
+      /\ \A x \in ContainRel[n] : x # ee => nodemarks[x] = 0
+      /\ nodemarks' = [ nodemarks EXCEPT ![n] = 0, ![ee] = 0 ]
+  /\ UNCHANGED edgemarks
+  /\ Network!unchanged
 
 (* ---------------------------------------------------------------- *)
 
@@ -323,7 +303,10 @@ Init ==
   /\ edgemarks = [ e \in Edge |-> 0 ]
   /\ Network!init
 
-Spec == Init /\ [][Next]_var /\ WF_var(Next)
+(* Fairness == WF_var(Next) *)
+Fairness == \A n \in Node : WF_var(step(n))
+
+Spec == Init /\ [][Next]_var /\ Fairness
 
 (* ---------------------------------------------------------------- *)
 
