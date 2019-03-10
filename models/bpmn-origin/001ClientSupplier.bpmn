@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1krcbrs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
   <bpmn:collaboration id="_001ClientSupplier">
-    <bpmn:participant id="Participant_0vk4arm" name="Supplier" processRef="Process_1" />
-    <bpmn:participant id="Participant_12bycyr" name="Client" processRef="Process_0jthe8j" />
+    <bpmn:participant id="Supplier" name="Supplier" processRef="Process_Supplier" />
+    <bpmn:participant id="Client" name="Client" processRef="Process_Client" />
     <bpmn:messageFlow id="mf1" name="command" sourceRef="cSendCommand" targetRef="sReceiveCommand" />
     <bpmn:messageFlow id="mf3" name="goods" sourceRef="sShipCommand" targetRef="cReceiveGoods" />
     <bpmn:messageFlow id="mf2" name="invoice" sourceRef="sSendInvoice" targetRef="cReceiveInvoice" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_1" isExecutable="true">
+  <bpmn:process id="Process_Supplier" name="Process_Supplier" isExecutable="true">
     <bpmn:sequenceFlow id="sE1" sourceRef="sStart" targetRef="sReceiveCommand" />
     <bpmn:sequenceFlow id="sE2" sourceRef="sReceiveCommand" targetRef="sPar1" />
     <bpmn:sequenceFlow id="sE3" sourceRef="sPar1" targetRef="sPrepareCommand" />
@@ -54,7 +54,7 @@
       <bpmn:outgoing>sE7</bpmn:outgoing>
     </bpmn:parallelGateway>
   </bpmn:process>
-  <bpmn:process id="Process_0jthe8j" isExecutable="false">
+  <bpmn:process id="Process_Client" name="Process_Client" isExecutable="false">
     <bpmn:startEvent id="cStart">
       <bpmn:outgoing>cE1</bpmn:outgoing>
     </bpmn:startEvent>
@@ -85,10 +85,10 @@
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="_001ClientSupplier">
-      <bpmndi:BPMNShape id="Participant_0vk4arm_di" bpmnElement="Participant_0vk4arm">
+      <bpmndi:BPMNShape id="Participant_0vk4arm_di" bpmnElement="Supplier">
         <dc:Bounds x="123" y="82" width="838" height="250" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Participant_12bycyr_di" bpmnElement="Participant_12bycyr">
+      <bpmndi:BPMNShape id="Participant_12bycyr_di" bpmnElement="Client">
         <dc:Bounds x="123" y="349" width="695" height="250" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_0wqbuas_di" bpmnElement="cStart">
