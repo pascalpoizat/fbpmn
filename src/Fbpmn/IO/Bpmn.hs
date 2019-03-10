@@ -280,12 +280,12 @@ compute allElements e = do
                            (M.fromList $ catMaybes $ tlift2 . bsource <$> es)
                            (M.fromList $ catMaybes $ tlift2 . btarget <$> es)
                            (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
-                           M.empty
-                           M.empty
+                           (M.singleton pid nids)
+                           (M.singleton pid eids)
                            []
                            M.empty
-  subprocessGraphs <- sequence $ compute allElements <$> sps
-  pure $ g <> mconcat subprocessGraphs
+  spgs <- sequence $ compute allElements <$> sps
+  pure $ g <> mconcat spgs
 
 bsource :: Element -> (Maybe Edge, Maybe Node)
 bsource mf = (getId mf, findAttr (nA "sourceRef") mf)
@@ -293,13 +293,6 @@ btarget :: Element -> (Maybe Edge, Maybe Node)
 btarget mf = (getId mf, findAttr (nA "targetRef") mf)
 bname :: Element -> (Maybe Edge, Maybe String)
 bname mf = (getId mf, getName mf)
-
-prefix :: BpmnGraph -> Node -> BpmnGraph
-prefix (BpmnGraph n ns es cn ce se te nn rn re m me) p =
-  BpmnGraph n ns es cn ce se te nn rn' re' m me
- where
-  rn' = rn <> M.singleton p ns
-  re' = re <> M.singleton p es
 
 {-|
 Read a BPMN Graph from a BPMN file.
