@@ -246,8 +246,8 @@ decode cs = do
     (toText cId)
     cParticipantIds
     cMessageFlowIds
-    (M.fromList $ bcatN <$> cParticipantIds)
-    (M.fromList $ bcatE <$> cMessageFlowIds)
+    (M.fromList $ ccatN <$> cParticipantIds)
+    (M.fromList $ ccatE <$> cMessageFlowIds)
     (M.fromList $ catMaybes $ tlift2 . bsource <$> cMessageFlows)
     (M.fromList $ catMaybes $ tlift2 . btarget <$> cMessageFlows)
     (M.fromList $ catMaybes $ tlift2 . bname <$> cParticipants)
@@ -259,10 +259,10 @@ decode cs = do
   processGraphs <- sequence $ compute allElements <$> cProcesses
   pure $ g <> mconcat processGraphs
  where
-  bcatE :: String -> (Edge, EdgeType)
-  bcatE e = (e, MessageFlow)
-  bcatN :: String -> (Node, NodeType)
-  bcatN e = (e, Process)
+  ccatE :: String -> (Edge, EdgeType)
+  ccatE e = (e, MessageFlow)
+  ccatN :: String -> (Node, NodeType)
+  ccatN e = (e, Process)
 
 compute :: [Element] -> Element -> Maybe BpmnGraph
 compute allElements e = do
@@ -275,8 +275,8 @@ compute allElements e = do
   g    <- pure $ BpmnGraph ""
                            nids
                            eids
-                           (M.empty)
-                           (M.empty)
+                           (M.fromList $ catMaybes $ tlift2 . bcatN allElements <$> ns)
+                           (M.fromList $ catMaybes $ tlift2 . bcatE allElements <$> es)
                            (M.fromList $ catMaybes $ tlift2 . bsource <$> es)
                            (M.fromList $ catMaybes $ tlift2 . btarget <$> es)
                            (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
@@ -289,10 +289,46 @@ compute allElements e = do
 
 bsource :: Element -> (Maybe Edge, Maybe Node)
 bsource mf = (getId mf, findAttr (nA "sourceRef") mf)
+
 btarget :: Element -> (Maybe Edge, Maybe Node)
 btarget mf = (getId mf, findAttr (nA "targetRef") mf)
+
 bname :: Element -> (Maybe Edge, Maybe String)
 bname mf = (getId mf, getName mf)
+
+bcatN :: [Element] -> Element -> (Maybe Node, Maybe NodeType)
+bcatN xs e = f e preds
+  where
+    f :: Element -> [(Element -> Bool, NodeType)] -> (Maybe Node, Maybe NodeType)
+    f e' ((p, t):r) = if p e' then (getId e', Just t) else f e' r
+    f e' [] = (getId e', Nothing)
+    preds = [(pNSE xs, NoneStartEvent)
+            ,(pMSE xs, MessageStartEvent)
+            ,(pCMIE xs, CatchMessageIntermediateEvent)
+            ,(pTMIE xs, ThrowMessageIntermediateEvent)
+            ,(pNEE xs, NoneEndEvent)
+            ,(pMEE xs, MessageEndEvent)
+            ,(pTEE xs, TerminateEndEvent)
+            ,(pAndGateway xs, AndGateway)
+            ,(pXorGateway xs, XorGateway)
+            ,(pOrGateway xs, OrGateway)
+            ,(pEventBasedGateway xs, EventBasedGateway)
+            ,(pST xs, SendTask)
+            ,(pRT xs, ReceiveTask)
+            ,(pAT xs, AbstractTask)
+            ,(pSP xs, SubProcess)
+            ]
+
+bcatE :: [Element] -> Element -> (Maybe Edge, Maybe EdgeType)
+bcatE xs e = f e preds
+  where
+    f :: Element -> [(Element -> Bool, EdgeType)] -> (Maybe Edge, Maybe EdgeType)
+    f e' ((p, t):r) = if p e' then (getId e', Just t) else f e' r
+    f e' [] = (getId e', Nothing)
+    preds = [(pNSF xs, NormalSequenceFlow)
+            ,(pCSF xs, ConditionalSequenceFlow)
+            ,(pDSF xs, DefaultSequenceFlow)
+            ,(pMF xs, MessageFlow)]
 
 {-|
 Read a BPMN Graph from a BPMN file.
