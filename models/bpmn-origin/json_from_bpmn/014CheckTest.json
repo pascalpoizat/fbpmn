@@ -1,0 +1,74 @@
+{
+    "catN": {
+        "StartEvent_1": "NoneStartEvent",
+        "ExclusiveGateway_1gus05a": "XorGateway",
+        "Task_1cbrss1": "AbstractTask",
+        "EndEvent_1e5c16l": "NoneEndEvent",
+        "Task_1c559zv": "AbstractTask",
+        "EndEvent_198u4gq": "NoneEndEvent",
+        "Process_Id": "Process"
+    },
+    "catE": {
+        "SequenceFlow_1bot7ik": "NormalSequenceFlow",
+        "SequenceFlow_08o2r31": "NormalSequenceFlow",
+        "SequenceFlow_0cvzouu": "NormalSequenceFlow",
+        "SequenceFlow_1t3w3h5": "ConditionalSequenceFlow",
+        "SequenceFlow_13vrdzd": "NormalSequenceFlow"
+    },
+    "containN": {
+        "Process_Id": [
+            "StartEvent_1",
+            "ExclusiveGateway_1gus05a",
+            "Task_1c559zv",
+            "Task_1cbrss1",
+            "EndEvent_198u4gq",
+            "EndEvent_1e5c16l"
+        ]
+    },
+    "messageE": {},
+    "targetE": {
+        "SequenceFlow_1bot7ik": "ExclusiveGateway_1gus05a",
+        "SequenceFlow_08o2r31": "EndEvent_198u4gq",
+        "SequenceFlow_0cvzouu": "EndEvent_1e5c16l",
+        "SequenceFlow_1t3w3h5": "Task_1c559zv",
+        "SequenceFlow_13vrdzd": "Task_1cbrss1"
+    },
+    "name": "_014CheckTest",
+    "containE": {
+        "Process_Id": [
+            "SequenceFlow_1bot7ik",
+            "SequenceFlow_1t3w3h5",
+            "SequenceFlow_13vrdzd",
+            "SequenceFlow_08o2r31",
+            "SequenceFlow_0cvzouu"
+        ]
+    },
+    "edges": [
+        "SequenceFlow_1bot7ik",
+        "SequenceFlow_1t3w3h5",
+        "SequenceFlow_13vrdzd",
+        "SequenceFlow_08o2r31",
+        "SequenceFlow_0cvzouu"
+    ],
+    "messages": [],
+    "sourceE": {
+        "SequenceFlow_1bot7ik": "StartEvent_1",
+        "SequenceFlow_08o2r31": "Task_1cbrss1",
+        "SequenceFlow_0cvzouu": "Task_1c559zv",
+        "SequenceFlow_1t3w3h5": "ExclusiveGateway_1gus05a",
+        "SequenceFlow_13vrdzd": "ExclusiveGateway_1gus05a"
+    },
+    "nodes": [
+        "Process_Id",
+        "StartEvent_1",
+        "ExclusiveGateway_1gus05a",
+        "Task_1c559zv",
+        "Task_1cbrss1",
+        "EndEvent_198u4gq",
+        "EndEvent_1e5c16l"
+    ],
+    "nameN": {
+        "Task_1cbrss1": "B",
+        "Task_1c559zv": "A"
+    }
+}
