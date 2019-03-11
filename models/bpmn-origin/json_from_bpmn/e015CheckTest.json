@@ -1,0 +1,139 @@
+{
+    "catN": {
+        "Task_19wi6kk": "ReceiveTask",
+        "StartEvent_1": "NoneStartEvent",
+        "ExclusiveGateway_1gus05a": "XorGateway",
+        "EndEvent_1d6yy2u": "NoneEndEvent",
+        "EndEvent_19gcpb9": "NoneEndEvent",
+        "Task_1cbrss1": "SendTask",
+        "StartEvent_0x0o2ml": "NoneStartEvent",
+        "ExclusiveGateway_1aidani": "XorGateway",
+        "EndEvent_1e5c16l": "NoneEndEvent",
+        "Task_1c559zv": "SendTask",
+        "EndEvent_198u4gq": "NoneEndEvent",
+        "Receiver_Id": "Process",
+        "Sender_Id": "Process",
+        "Task_1d78ih0": "ReceiveTask"
+    },
+    "catE": {
+        "SequenceFlow_1bot7ik": "NormalSequenceFlow",
+        "MessageFlow_1n4m463": "MessageFlow",
+        "SequenceFlow_0ob8kjq": "NormalSequenceFlow",
+        "SequenceFlow_08o2r31": "NormalSequenceFlow",
+        "SequenceFlow_01czfja": "ConditionalSequenceFlow",
+        "SequenceFlow_0fxw5l8": "NormalSequenceFlow",
+        "SequenceFlow_0cvzouu": "NormalSequenceFlow",
+        "SequenceFlow_0tmjk0x": "NormalSequenceFlow",
+        "SequenceFlow_1t3w3h5": "ConditionalSequenceFlow",
+        "SequenceFlow_0qoid9s": "NormalSequenceFlow",
+        "SequenceFlow_13vrdzd": "NormalSequenceFlow",
+        "MessageFlow_095vt4e": "MessageFlow"
+    },
+    "containN": {
+        "Receiver_Id": [
+            "StartEvent_0x0o2ml",
+            "ExclusiveGateway_1aidani",
+            "EndEvent_1d6yy2u",
+            "EndEvent_19gcpb9",
+            "Task_1d78ih0",
+            "Task_19wi6kk"
+        ],
+        "Sender_Id": [
+            "StartEvent_1",
+            "ExclusiveGateway_1gus05a",
+            "EndEvent_198u4gq",
+            "EndEvent_1e5c16l",
+            "Task_1c559zv",
+            "Task_1cbrss1"
+        ]
+    },
+    "messageE": {
+        "MessageFlow_1n4m463": "m2",
+        "MessageFlow_095vt4e": "m1"
+    },
+    "targetE": {
+        "SequenceFlow_1bot7ik": "ExclusiveGateway_1gus05a",
+        "MessageFlow_1n4m463": "Task_19wi6kk",
+        "SequenceFlow_0ob8kjq": "EndEvent_1d6yy2u",
+        "SequenceFlow_08o2r31": "EndEvent_198u4gq",
+        "SequenceFlow_01czfja": "Task_1d78ih0",
+        "SequenceFlow_0fxw5l8": "ExclusiveGateway_1aidani",
+        "SequenceFlow_0cvzouu": "EndEvent_1e5c16l",
+        "SequenceFlow_0tmjk0x": "EndEvent_19gcpb9",
+        "SequenceFlow_1t3w3h5": "Task_1c559zv",
+        "SequenceFlow_0qoid9s": "Task_19wi6kk",
+        "SequenceFlow_13vrdzd": "Task_1cbrss1",
+        "MessageFlow_095vt4e": "Task_1d78ih0"
+    },
+    "name": "e015CheckTest",
+    "containE": {
+        "Receiver_Id": [
+            "SequenceFlow_0fxw5l8",
+            "SequenceFlow_01czfja",
+            "SequenceFlow_0qoid9s",
+            "SequenceFlow_0ob8kjq",
+            "SequenceFlow_0tmjk0x"
+        ],
+        "Sender_Id": [
+            "SequenceFlow_1bot7ik",
+            "SequenceFlow_1t3w3h5",
+            "SequenceFlow_13vrdzd",
+            "SequenceFlow_08o2r31",
+            "SequenceFlow_0cvzouu"
+        ]
+    },
+    "edges": [
+        "MessageFlow_095vt4e",
+        "MessageFlow_1n4m463",
+        "SequenceFlow_1bot7ik",
+        "SequenceFlow_1t3w3h5",
+        "SequenceFlow_13vrdzd",
+        "SequenceFlow_08o2r31",
+        "SequenceFlow_0cvzouu",
+        "SequenceFlow_0fxw5l8",
+        "SequenceFlow_01czfja",
+        "SequenceFlow_0qoid9s",
+        "SequenceFlow_0ob8kjq",
+        "SequenceFlow_0tmjk0x"
+    ],
+    "messages": [
+        "m1",
+        "m2"
+    ],
+    "sourceE": {
+        "SequenceFlow_1bot7ik": "StartEvent_1",
+        "MessageFlow_1n4m463": "Task_1c559zv",
+        "SequenceFlow_0ob8kjq": "Task_1d78ih0",
+        "SequenceFlow_08o2r31": "Task_1cbrss1",
+        "SequenceFlow_01czfja": "ExclusiveGateway_1aidani",
+        "SequenceFlow_0fxw5l8": "StartEvent_0x0o2ml",
+        "SequenceFlow_0cvzouu": "Task_1c559zv",
+        "SequenceFlow_0tmjk0x": "Task_19wi6kk",
+        "SequenceFlow_1t3w3h5": "ExclusiveGateway_1gus05a",
+        "SequenceFlow_0qoid9s": "ExclusiveGateway_1aidani",
+        "SequenceFlow_13vrdzd": "ExclusiveGateway_1gus05a",
+        "MessageFlow_095vt4e": "Task_1c559zv"
+    },
+    "nodes": [
+        "Sender_Id",
+        "Receiver_Id",
+        "StartEvent_1",
+        "ExclusiveGateway_1gus05a",
+        "EndEvent_198u4gq",
+        "EndEvent_1e5c16l",
+        "Task_1c559zv",
+        "Task_1cbrss1",
+        "StartEvent_0x0o2ml",
+        "ExclusiveGateway_1aidani",
+        "EndEvent_1d6yy2u",
+        "EndEvent_19gcpb9",
+        "Task_1d78ih0",
+        "Task_19wi6kk"
+    ],
+    "nameN": {
+        "Task_19wi6kk": "B",
+        "Task_1cbrss1": "B",
+        "Task_1c559zv": "A",
+        "Task_1d78ih0": "A"
+    }
+}

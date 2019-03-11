@@ -1,0 +1,83 @@
+---------------- MODULE e008CheckTest ----------------
+
+EXTENDS TLC, PWSTypes
+
+VARIABLES nodemarks, edgemarks, net
+
+ContainRel ==
+  "Process_1" :> { "SubProcess_0mgtdae", "StartEvent_0ayuyd2", "EndEvent_0ns8te3" }
+  @@ "SubProcess_0mgtdae" :> { "EndEvent_0v9lt5i", "Task_1rt44mz", "Task_1eirt50", "Task_097548f", "ExclusiveGateway_1j1chqb", "StartEvent_1", "ExclusiveGateway_0079typ" }
+
+Node == {
+  "Process_1","SubProcess_0mgtdae","StartEvent_0ayuyd2","EndEvent_0ns8te3","EndEvent_0v9lt5i","Task_1rt44mz","Task_1eirt50","Task_097548f","ExclusiveGateway_1j1chqb","StartEvent_1","ExclusiveGateway_0079typ"
+}
+
+Edge == {
+  "SequenceFlow_1vue23p","SequenceFlow_00aes3w","SequenceFlow_0z2xwql","SequenceFlow_0wto9d1","SequenceFlow_0uplc1a","SequenceFlow_01wc4ks","SequenceFlow_0b7efwa","SequenceFlow_1fuwd1z","SequenceFlow_0uzla8o"
+}
+
+Message == {  }
+
+msgtype ==
+    [ i \in {} |-> {}]
+
+source ==
+   "SequenceFlow_1vue23p" :> "StartEvent_0ayuyd2"
+@@ "SequenceFlow_00aes3w" :> "SubProcess_0mgtdae"
+@@ "SequenceFlow_0z2xwql" :> "StartEvent_1"
+@@ "SequenceFlow_0wto9d1" :> "ExclusiveGateway_1j1chqb"
+@@ "SequenceFlow_0uplc1a" :> "ExclusiveGateway_1j1chqb"
+@@ "SequenceFlow_01wc4ks" :> "Task_097548f"
+@@ "SequenceFlow_0b7efwa" :> "Task_1eirt50"
+@@ "SequenceFlow_1fuwd1z" :> "ExclusiveGateway_0079typ"
+@@ "SequenceFlow_0uzla8o" :> "Task_1rt44mz"
+
+target ==
+   "SequenceFlow_1vue23p" :> "SubProcess_0mgtdae"
+@@ "SequenceFlow_00aes3w" :> "EndEvent_0ns8te3"
+@@ "SequenceFlow_0z2xwql" :> "ExclusiveGateway_1j1chqb"
+@@ "SequenceFlow_0wto9d1" :> "Task_1eirt50"
+@@ "SequenceFlow_0uplc1a" :> "Task_097548f"
+@@ "SequenceFlow_01wc4ks" :> "ExclusiveGateway_0079typ"
+@@ "SequenceFlow_0b7efwa" :> "ExclusiveGateway_0079typ"
+@@ "SequenceFlow_1fuwd1z" :> "Task_1rt44mz"
+@@ "SequenceFlow_0uzla8o" :> "EndEvent_0v9lt5i"
+
+CatN ==
+   "Process_1" :> Process
+@@ "SubProcess_0mgtdae" :> SubProcess
+@@ "StartEvent_0ayuyd2" :> NoneStartEvent
+@@ "EndEvent_0ns8te3" :> NoneEndEvent
+@@ "EndEvent_0v9lt5i" :> NoneEndEvent
+@@ "Task_1rt44mz" :> AbstractTask
+@@ "Task_1eirt50" :> AbstractTask
+@@ "Task_097548f" :> AbstractTask
+@@ "ExclusiveGateway_1j1chqb" :> Parallel
+@@ "StartEvent_1" :> NoneStartEvent
+@@ "ExclusiveGateway_0079typ" :> ExclusiveOr
+
+CatE ==
+   "SequenceFlow_1vue23p" :> NormalSeqFlow
+@@ "SequenceFlow_00aes3w" :> NormalSeqFlow
+@@ "SequenceFlow_0z2xwql" :> NormalSeqFlow
+@@ "SequenceFlow_0wto9d1" :> NormalSeqFlow
+@@ "SequenceFlow_0uplc1a" :> NormalSeqFlow
+@@ "SequenceFlow_01wc4ks" :> NormalSeqFlow
+@@ "SequenceFlow_0b7efwa" :> NormalSeqFlow
+@@ "SequenceFlow_1fuwd1z" :> NormalSeqFlow
+@@ "SequenceFlow_0uzla8o" :> NormalSeqFlow
+
+LOCAL preEdges ==
+  [ i \in {} |-> {}]
+PreEdges(n,e) == preEdges[n,e]
+
+PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
+          \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
+
+WF == INSTANCE PWSWellFormed
+ASSUME WF!WellFormedness
+
+INSTANCE PWSSemantics
+
+================================================================
+
