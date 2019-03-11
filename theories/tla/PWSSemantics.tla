@@ -21,10 +21,12 @@ TypeInvariant ==
 nonestart_complete(n) ==
   /\ CatN[n] = NoneStartEvent
   /\ nodemarks[n] >= 1
-  /\ \E p \in Processes :
-     /\ n \in ContainRel[p]
-     /\ nodemarks[p] = 0  \* XXXX No multi-instance XXXX
-     /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
+  /\ LET p == ContainRelInv(n) IN
+      \/ /\ CatN[p] = Process
+         /\ nodemarks[p] = 0  \* XXXX No multi-instance XXXX
+         /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
+      \/ /\ CatN[p] = SubProcess
+         /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
