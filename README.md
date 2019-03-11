@@ -99,6 +99,9 @@ XorGateway | OrGateway | AndGateway | EventBasedGateway |
 NoneStartEvent | MessageStartEvent | NoneEndEvent | TerminateEndEvent | MessageEndEvent
 ```
 
+Please note that some kinds of BPMN tasks are treated as `AbstractTask`s in the semantics.
+If you have manual tasks, user tasks, service tasks, script tasks, or business rule tasks, you may use directly `AbstractTask` in your JSON model.
+
 Edge categories are:
 
 ```
