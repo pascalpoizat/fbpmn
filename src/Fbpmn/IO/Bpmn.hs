@@ -169,15 +169,27 @@ pGateway es e =
 
 -- tasks
 -- AT, ST, or RT
--- other tasks are discarded
+-- {user,service,script,manual,business rule} tasks are treated as AT
 pST :: [Element] -> Element -> Bool
 pST _ = (?=) "sendTask"
 pRT :: [Element] -> Element -> Bool
 pRT _ = (?=) "receiveTask"
 pAT :: [Element] -> Element -> Bool
 pAT _ = (?=) "task"
+pUT :: [Element] -> Element -> Bool
+pUT _ = (?=) "userTask"
+pXT :: [Element] -> Element -> Bool
+pXT _ = (?=) "scriptTask"
+pWT :: [Element] -> Element -> Bool
+pWT _ = (?=) "serviceTask"
+pMT :: [Element] -> Element -> Bool
+pMT _ = (?=) "manualTask"
+pBT :: [Element] -> Element -> Bool
+pBT _ = (?=) "businessRuleTask"
+pAsAT :: [Element] -> Element -> Bool
+pAsAT es e = e `oneOf` [pAT es, pUT es, pWT es, pXT es, pBT es, pMT es]
 pT :: [Element] -> Element -> Bool
-pT es e = e `oneOf` [pAT es, pST es, pRT es]
+pT es e = e `oneOf` [pAsAT es, pST es, pRT es]
 
 -- activities
 pSP :: [Element] -> Element -> Bool
@@ -319,7 +331,7 @@ bcatN xs e = f e preds
             ,(pEventBasedGateway xs, EventBasedGateway)
             ,(pST xs, SendTask)
             ,(pRT xs, ReceiveTask)
-            ,(pAT xs, AbstractTask)
+            ,(pAsAT xs, AbstractTask)
             ,(pSP xs, SubProcess)
             ]
 

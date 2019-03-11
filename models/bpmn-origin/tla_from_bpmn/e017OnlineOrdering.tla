@@ -5,10 +5,10 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "Process_Id" :> { "exclusivegateway4", "exclusivegateway3", "inclusivegateway2", "inclusivegateway1", "exclusivegateway2", "exclusivegateway1", "startevent1", "parallelgateway1", "parallelgateway2", "parallelgateway5", "parallelgateway6", "parallelgateway3", "parallelgateway4", "endevent1", "errorendevent1" }
+  "Process_Id" :> { "exclusivegateway4", "exclusivegateway3", "validatePayment", "inclusivegateway2", "payOnDelivery", "card", "giftVoucher", "inclusivegateway1", "Payment", "selectItems", "exclusivegateway2", "signUp", "signIn", "exclusivegateway1", "startevent1", "initiateShipping", "parallelgateway1", "packageItems", "parallelgateway2", "initiateDelivery", "email", "notifyUser", "sms", "transport", "parallelgateway5", "parallelgateway6", "parallelgateway3", "parallelgateway4", "endevent1", "generateTrackingInfo", "errorendevent1" }
 
 Node == {
-  "Process_Id","exclusivegateway4","exclusivegateway3","inclusivegateway2","inclusivegateway1","exclusivegateway2","exclusivegateway1","startevent1","parallelgateway1","parallelgateway2","parallelgateway5","parallelgateway6","parallelgateway3","parallelgateway4","endevent1","errorendevent1"
+  "Process_Id","exclusivegateway4","exclusivegateway3","validatePayment","inclusivegateway2","payOnDelivery","card","giftVoucher","inclusivegateway1","Payment","selectItems","exclusivegateway2","signUp","signIn","exclusivegateway1","startevent1","initiateShipping","parallelgateway1","packageItems","parallelgateway2","initiateDelivery","email","notifyUser","sms","transport","parallelgateway5","parallelgateway6","parallelgateway3","parallelgateway4","endevent1","generateTrackingInfo","errorendevent1"
 }
 
 Edge == {
@@ -100,18 +100,34 @@ CatN ==
    "Process_Id" :> Process
 @@ "exclusivegateway4" :> ExclusiveOr
 @@ "exclusivegateway3" :> ExclusiveOr
+@@ "validatePayment" :> AbstractTask
 @@ "inclusivegateway2" :> InclusiveOr
+@@ "payOnDelivery" :> AbstractTask
+@@ "card" :> AbstractTask
+@@ "giftVoucher" :> AbstractTask
 @@ "inclusivegateway1" :> InclusiveOr
+@@ "Payment" :> AbstractTask
+@@ "selectItems" :> AbstractTask
 @@ "exclusivegateway2" :> ExclusiveOr
+@@ "signUp" :> AbstractTask
+@@ "signIn" :> AbstractTask
 @@ "exclusivegateway1" :> ExclusiveOr
 @@ "startevent1" :> NoneStartEvent
+@@ "initiateShipping" :> AbstractTask
 @@ "parallelgateway1" :> Parallel
+@@ "packageItems" :> AbstractTask
 @@ "parallelgateway2" :> Parallel
+@@ "initiateDelivery" :> AbstractTask
+@@ "email" :> AbstractTask
+@@ "notifyUser" :> AbstractTask
+@@ "sms" :> AbstractTask
+@@ "transport" :> AbstractTask
 @@ "parallelgateway5" :> Parallel
 @@ "parallelgateway6" :> Parallel
 @@ "parallelgateway3" :> Parallel
 @@ "parallelgateway4" :> Parallel
 @@ "endevent1" :> NoneEndEvent
+@@ "generateTrackingInfo" :> AbstractTask
 @@ "errorendevent1" :> NoneEndEvent
 
 CatE ==
