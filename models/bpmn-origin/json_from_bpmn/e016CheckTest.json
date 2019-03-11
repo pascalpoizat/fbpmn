@@ -20,7 +20,7 @@
         "MessageFlow_1n4m463": "MessageFlow",
         "SequenceFlow_0ob8kjq": "NormalSequenceFlow",
         "SequenceFlow_08o2r31": "NormalSequenceFlow",
-        "SequenceFlow_01czfja": "ConditionalSequenceFlow",
+        "SequenceFlow_01czfja": "NormalSequenceFlow",
         "SequenceFlow_0fxw5l8": "NormalSequenceFlow",
         "SequenceFlow_0cvzouu": "NormalSequenceFlow",
         "SequenceFlow_0tmjk0x": "NormalSequenceFlow",

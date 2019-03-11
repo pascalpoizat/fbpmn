@@ -75,7 +75,7 @@ CatE ==
 @@ "SequenceFlow_08o2r31" :> NormalSeqFlow
 @@ "SequenceFlow_0cvzouu" :> NormalSeqFlow
 @@ "SequenceFlow_0fxw5l8" :> NormalSeqFlow
-@@ "SequenceFlow_01czfja" :> ConditionalSeqFlow
+@@ "SequenceFlow_01czfja" :> NormalSeqFlow
 @@ "SequenceFlow_0qoid9s" :> NormalSeqFlow
 @@ "SequenceFlow_0ob8kjq" :> NormalSeqFlow
 @@ "SequenceFlow_0tmjk0x" :> NormalSeqFlow

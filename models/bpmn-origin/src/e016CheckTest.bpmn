@@ -42,9 +42,7 @@
       <bpmn:outgoing>SequenceFlow_0fxw5l8</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0fxw5l8" sourceRef="StartEvent_0x0o2ml" targetRef="ExclusiveGateway_1aidani" />
-    <bpmn:sequenceFlow id="SequenceFlow_01czfja" sourceRef="ExclusiveGateway_1aidani" targetRef="Task_1d78ih0">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">condition2</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_01czfja" sourceRef="ExclusiveGateway_1aidani" targetRef="Task_1d78ih0"/>
     <bpmn:sequenceFlow id="SequenceFlow_0qoid9s" sourceRef="ExclusiveGateway_1aidani" targetRef="Task_19wi6kk" />
     <bpmn:endEvent id="EndEvent_1d6yy2u">
       <bpmn:incoming>SequenceFlow_0ob8kjq</bpmn:incoming>
