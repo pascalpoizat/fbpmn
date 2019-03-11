@@ -6,16 +6,16 @@ CONSTANT Node, Edge, source, target, Message, CatN, CatE, msgtype, ContainRel (*
 (* R^{-1}(n). *)
 ContainRelInv(n) == CHOOSE p \in { nn \in Node : CatN[nn] \in {Process, SubProcess} } : n \in ContainRel[p]
 
-(* Reflexive closure of ContainRel *)
+(* Transitive closure of ContainRel *)
 (* ContainRel[p] is the set of nodes directly in process p. *)
-(* ContainRelStar[p] is the recursive inclusion relation, including the nodes of the subprocesses of p. *)
-ContainRelStar(p) ==
+(* ContainRelPlus[p] is the recursive inclusion relation, including the nodes of the subprocesses of p. *)
+ContainRelPlus(p) ==
   LET AllNodes[q \in Node] == ContainRel[q] \union UNION { AllNodes[sp] : sp \in { n \in Node : n \in ContainRel[q] /\ CatN[n] = SubProcess } }
   IN AllNodes[p]  
 
 Processes == { n \in Node : CatN[n] = Process }
 
-ProcessOf(n) == CHOOSE p \in Node : CatN[p] = Process /\ n \in ContainRelStar(p)
+ProcessOf(n) == CHOOSE p \in Node : CatN[p] = Process /\ n \in ContainRelPlus(p)
 
 TypeAssume == /\ source \in [ Edge -> Node ]
               /\ target \in [ Edge -> Node ]

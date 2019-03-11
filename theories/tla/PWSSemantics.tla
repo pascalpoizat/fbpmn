@@ -70,12 +70,13 @@ terminateend_start(n) == \* Terminate End Event clears all token in the process/
   /\ \E e \in intype(SeqFlowType, n) :
        /\ edgemarks[e] >= 1
        /\ LET pr == ContainRelInv(n) IN
+          LET includedNodes == ContainRelPlus(pr) IN
            /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
-                             IF source[ee] \in ContainRel[pr] /\ target[ee] \in ContainRel[pr] THEN 0
+                             IF source[ee] \in includedNodes /\ target[ee] \in includedNodes THEN 0
                              ELSE edgemarks[ee] ]
            /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
                              IF nn = n THEN 1
-                             ELSE IF nn \in ContainRel[pr] THEN 0
+                             ELSE IF nn \in includedNodes THEN 0
                              ELSE nodemarks[nn] ]
   /\ Network!unchanged
 
@@ -295,6 +296,9 @@ step(n) ==
     [] CatN[n] = Process -> process_complete(n)
 
 Next == \E n \in Node : step(n)
+        \* \/ (\A n \in Node : nodemarks[n] = 0) /\ (\A n \in Edge : edgemarks[n] = 0) /\ UNCHANGED var
+        \* Would be to avoid deadlock when done. But deadlock occurs too often and is
+        \* catched by unsoundness => it seems better to disable deadlock detection in TLC.
 
 Init ==
   /\ nodemarks = [ n \in Node |->
@@ -337,14 +341,14 @@ NoUndeliveredMessages ==
 
 (* ---------------------------------------------------------------- *)
 
-(* Corradini's correctness properties *)
+(* Correctness properties from F. Corradini, C. Muzi, B. Re, and F. Tiezzi, « A Classification of BPMN Collaborations based on Safeness and Soundness Notions », EXPRESS/SOS’18. *)
 (* They have been adapted to our marking, where both edges and nodes hold tokens. *)
 
 (* No sequence flow edge has more than one token. *)
 SafeCollaboration ==
    [](\A e \in Edge : CatE[e] \in SeqFlowType => edgemarks[e] <= 1)
 
-(* Either all end event are marked and there are no token anywhere else, or no tokens are left nowhere at all. *)
+(* Either all end events are marked and there are no token anywhere else, or no tokens are left anywhere at all. *)
 \* sould we include MessageEndEvent?
 SoundCollaboration ==
    <>(/\ \A e \in Edge : edgemarks[e] = 0
