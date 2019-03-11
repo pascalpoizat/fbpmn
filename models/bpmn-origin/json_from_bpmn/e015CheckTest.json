@@ -25,8 +25,8 @@
         "SequenceFlow_0cvzouu": "NormalSequenceFlow",
         "SequenceFlow_0tmjk0x": "NormalSequenceFlow",
         "SequenceFlow_1t3w3h5": "ConditionalSequenceFlow",
-        "SequenceFlow_0qoid9s": "NormalSequenceFlow",
-        "SequenceFlow_13vrdzd": "NormalSequenceFlow",
+        "SequenceFlow_0qoid9s": "DefaultSequenceFlow",
+        "SequenceFlow_13vrdzd": "DefaultSequenceFlow",
         "MessageFlow_095vt4e": "MessageFlow"
     },
     "containN": {

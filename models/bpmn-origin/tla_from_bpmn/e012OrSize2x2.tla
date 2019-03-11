@@ -81,8 +81,8 @@ CatE ==
 @@ "SequenceFlow_0h7fy2d" :> NormalSeqFlow
 @@ "SequenceFlow_0xd1ing" :> NormalSeqFlow
 @@ "SequenceFlow_1djolfc" :> ConditionalSeqFlow
-@@ "SequenceFlow_0c3vv21" :> NormalSeqFlow
-@@ "SequenceFlow_01dq60h" :> NormalSeqFlow
+@@ "SequenceFlow_0c3vv21" :> DefaultSeqFlow
+@@ "SequenceFlow_01dq60h" :> DefaultSeqFlow
 @@ "SequenceFlow_0rj7tua" :> ConditionalSeqFlow
 @@ "SequenceFlow_14bv8dd" :> NormalSeqFlow
 @@ "SequenceFlow_17yc9hp" :> NormalSeqFlow
@@ -92,7 +92,7 @@ CatE ==
 @@ "SequenceFlow_0n88gkx" :> NormalSeqFlow
 @@ "SequenceFlow_1c7k30y" :> NormalSeqFlow
 @@ "SequenceFlow_1fvzdhj" :> ConditionalSeqFlow
-@@ "SequenceFlow_1kepz08" :> NormalSeqFlow
+@@ "SequenceFlow_1kepz08" :> DefaultSeqFlow
 
 LOCAL preEdges ==
 <<"ExclusiveGateway_1dofiof", "SequenceFlow_0h7fy2d">> :> {"SequenceFlow_00e481v", "SequenceFlow_01dq60h", "SequenceFlow_0c3vv21", "SequenceFlow_0mxxo9x", "SequenceFlow_0n88gkx", "SequenceFlow_0n91hmc", "SequenceFlow_0rj7tua", "SequenceFlow_0xd1ing", "SequenceFlow_14bv8dd", "SequenceFlow_17yc9hp", "SequenceFlow_1bofvkk", "SequenceFlow_1c7k30y", "SequenceFlow_1djolfc", "SequenceFlow_1fvzdhj", "SequenceFlow_1wcsu5r"}

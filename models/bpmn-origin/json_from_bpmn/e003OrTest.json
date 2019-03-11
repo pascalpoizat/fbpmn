@@ -23,15 +23,15 @@
         "e0": "NormalSequenceFlow",
         "e6": "NormalSequenceFlow",
         "e3": "ConditionalSequenceFlow",
-        "e12": "NormalSequenceFlow",
+        "e12": "DefaultSequenceFlow",
         "e9": "ConditionalSequenceFlow",
         "e13": "ConditionalSequenceFlow",
         "e2": "NormalSequenceFlow",
-        "e8": "NormalSequenceFlow",
+        "e8": "DefaultSequenceFlow",
         "e14": "NormalSequenceFlow",
         "e5": "NormalSequenceFlow",
         "e4": "ConditionalSequenceFlow",
-        "e15": "NormalSequenceFlow"
+        "e15": "DefaultSequenceFlow"
     },
     "containN": {
         "Process_1": [

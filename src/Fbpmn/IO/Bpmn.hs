@@ -5,6 +5,7 @@ import           Fbpmn.Model
 import           Text.XML.Light                 ( Element(..)
                                                 , Content(..)
                                                 , QName(..)
+                                                , elChildren
                                                 , findAttr
                                                 , findChildren
                                                 , findChildren
@@ -82,10 +83,13 @@ isIdOf' :: String -> Element -> Bool
 isIdOf' s e = fromMaybe False $ isIdOf s e
 
 findById :: [Element] -> String -> Maybe Element
-findById es eid = listToMaybe $ concatMap (filterChildren (eid `isIdOf'`)) es
+findById es eid =
+    do
+    ess <- nonEmpty [e | e <- es, isIdOf' eid e]
+    Just $ head ess
 
 findByIds :: [Element] -> [String] -> [Element]
-findByIds es ids = [e | e <- es, eid <- ids, isIdOf' eid e]
+findByIds es ids = [e | e <- es, eid <- ids, isIdOf' eid e]
 
 --
 -- helpers for names vs ids
@@ -198,15 +202,14 @@ pSF _ = (?=) "sequenceFlow"
 pCSF :: [Element] -> Element -> Bool
 pCSF es e = pSF es e && pCx e
 -- for e to be a DSF it is a bit more complicated
--- 1. e.name = sequenceFlow 
+-- 1. type of e is sequenceFlow 
 -- 2. e.sourceRef.default = e.id
 pDSF :: [Element] -> Element -> Bool
 pDSF es e = fromMaybe False $ do
-  eid <- getId e
   sa  <- findAttr (nA "sourceRef") e
   sn  <- findById es sa
   def <- findAttr (nA "default") sn
-  pure $ pSF es e && (def == eid)
+  pure $ pSF es e && isIdOf' def e
 
 pNSF :: [Element] -> Element -> Bool
 pNSF es e = pSF es e && not (e `oneOf` [pCSF es, pDSF es])
@@ -225,17 +228,17 @@ Enhancements:
 -}
 decode :: [Content] -> Maybe BpmnGraph
 decode cs = do
-    -- all elements
-  allElements      <- pure $ onlyElems cs
+    -- top-level elements
+  topElements      <- pure $ onlyElems cs
   -- collaboration (1st one to be found)
-  c <- listToMaybe $ concatMap (findChildren (nE "collaboration")) allElements
+  c <- listToMaybe $ concatMap (findChildren (nE "collaboration")) topElements
   cId              <- getId c
   -- participants
   cParticipants    <- pure $ findChildren (nE "participant") c
   cParticipantRefs <- sequence $ findAttr (nA "processRef") <$> cParticipants
-  cParticipantIds <- sequence $ getId <$> cParticipants
+  -- cParticipantIds <- sequence $ getId <$> cParticipants
   -- processes
-  allProcesses     <- pure $ concatMap (findChildren (nE "process")) allElements
+  allProcesses     <- pure $ concatMap (findChildren (nE "process")) topElements
   cProcesses       <- pure $ findByIds allProcesses cParticipantRefs
   -- message flows and messages
   cMessageFlows    <- pure $ findChildren (nE "messageFlow") c
@@ -256,7 +259,7 @@ decode cs = do
     cMessageTypes
     (M.fromList $ catMaybes $ tlift2 . bname <$> cMessageFlows)
   -- compute for participant processes
-  processGraphs <- sequence $ compute allElements <$> cProcesses
+  processGraphs <- sequence $ compute <$> cProcesses
   pure $ g <> mconcat processGraphs
  where
   ccatE :: String -> (Edge, EdgeType)
@@ -264,8 +267,9 @@ decode cs = do
   ccatN :: String -> (Node, NodeType)
   ccatN e = (e, Process)
 
-compute :: [Element] -> Element -> Maybe BpmnGraph
-compute allElements e = do
+compute :: Element -> Maybe BpmnGraph
+compute e = do
+  allElements <- pure $ elChildren e
   pid  <- getId e
   ns   <- pure $ filterChildren (pNode allElements) e
   nids <- sequence $ getId <$> ns
@@ -284,7 +288,7 @@ compute allElements e = do
                            (M.singleton pid eids)
                            []
                            M.empty
-  spgs <- sequence $ compute allElements <$> sps
+  spgs <- sequence $ compute <$> sps
   pure $ g <> mconcat spgs
 
 bsource :: Element -> (Maybe Edge, Maybe Node)
@@ -325,9 +329,10 @@ bcatE xs e = f e preds
     f :: Element -> [(Element -> Bool, EdgeType)] -> (Maybe Edge, Maybe EdgeType)
     f e' ((p, t):r) = if p e' then (getId e', Just t) else f e' r
     f e' [] = (getId e', Nothing)
-    preds = [(pNSF xs, NormalSequenceFlow)
+    -- in preds, the order is important since a DSF validates pNSF
+    preds = [(pDSF xs, DefaultSequenceFlow)
             ,(pCSF xs, ConditionalSequenceFlow)
-            ,(pDSF xs, DefaultSequenceFlow)
+            ,(pNSF xs, NormalSequenceFlow)
             ,(pMF xs, MessageFlow)]
 
 {-|

@@ -91,8 +91,8 @@ CatE ==
 @@ "SequenceFlow_0h7fy2d" :> NormalSeqFlow
 @@ "SequenceFlow_0xd1ing" :> NormalSeqFlow
 @@ "SequenceFlow_1djolfc" :> ConditionalSeqFlow
-@@ "SequenceFlow_0c3vv21" :> NormalSeqFlow
-@@ "SequenceFlow_01dq60h" :> NormalSeqFlow
+@@ "SequenceFlow_0c3vv21" :> DefaultSeqFlow
+@@ "SequenceFlow_01dq60h" :> DefaultSeqFlow
 @@ "SequenceFlow_0rj7tua" :> ConditionalSeqFlow
 @@ "SequenceFlow_14bv8dd" :> NormalSeqFlow
 @@ "SequenceFlow_17yc9hp" :> NormalSeqFlow
@@ -102,7 +102,7 @@ CatE ==
 @@ "SequenceFlow_0n88gkx" :> NormalSeqFlow
 @@ "SequenceFlow_1c7k30y" :> NormalSeqFlow
 @@ "SequenceFlow_1fvzdhj" :> ConditionalSeqFlow
-@@ "SequenceFlow_1kepz08" :> NormalSeqFlow
+@@ "SequenceFlow_1kepz08" :> DefaultSeqFlow
 @@ "SequenceFlow_0ql8p1h" :> ConditionalSeqFlow
 @@ "SequenceFlow_05ly3hz" :> NormalSeqFlow
 @@ "SequenceFlow_0z7crkn" :> ConditionalSeqFlow

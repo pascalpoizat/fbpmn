@@ -18,7 +18,7 @@
     },
     "catE": {
         "SequenceFlow_0xd1ing": "NormalSequenceFlow",
-        "SequenceFlow_1kepz08": "NormalSequenceFlow",
+        "SequenceFlow_1kepz08": "DefaultSequenceFlow",
         "SequenceFlow_0rj7tua": "ConditionalSequenceFlow",
         "SequenceFlow_0n88gkx": "NormalSequenceFlow",
         "SequenceFlow_14bv8dd": "NormalSequenceFlow",
@@ -29,11 +29,11 @@
         "SequenceFlow_1fvzdhj": "ConditionalSequenceFlow",
         "SequenceFlow_17yc9hp": "NormalSequenceFlow",
         "SequenceFlow_0n91hmc": "NormalSequenceFlow",
-        "SequenceFlow_01dq60h": "NormalSequenceFlow",
+        "SequenceFlow_01dq60h": "DefaultSequenceFlow",
         "SequenceFlow_1djolfc": "ConditionalSequenceFlow",
         "SequenceFlow_1c7k30y": "NormalSequenceFlow",
         "SequenceFlow_1bofvkk": "NormalSequenceFlow",
-        "SequenceFlow_0c3vv21": "NormalSequenceFlow"
+        "SequenceFlow_0c3vv21": "DefaultSequenceFlow"
     },
     "containN": {
         "Process_1": [

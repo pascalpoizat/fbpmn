@@ -46,7 +46,7 @@ CatN ==
 CatE ==
    "SequenceFlow_1bot7ik" :> NormalSeqFlow
 @@ "SequenceFlow_1t3w3h5" :> ConditionalSeqFlow
-@@ "SequenceFlow_13vrdzd" :> NormalSeqFlow
+@@ "SequenceFlow_13vrdzd" :> DefaultSeqFlow
 @@ "SequenceFlow_08o2r31" :> NormalSeqFlow
 @@ "SequenceFlow_0cvzouu" :> NormalSeqFlow
 

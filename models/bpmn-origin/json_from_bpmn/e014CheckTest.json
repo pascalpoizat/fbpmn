@@ -13,7 +13,7 @@
         "SequenceFlow_08o2r31": "NormalSequenceFlow",
         "SequenceFlow_0cvzouu": "NormalSequenceFlow",
         "SequenceFlow_1t3w3h5": "ConditionalSequenceFlow",
-        "SequenceFlow_13vrdzd": "NormalSequenceFlow"
+        "SequenceFlow_13vrdzd": "DefaultSequenceFlow"
     },
     "containN": {
         "Process_Id": [
