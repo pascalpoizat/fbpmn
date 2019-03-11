@@ -1,0 +1,14 @@
+#!/bin/sh
+
+for f in `ls src/*.bpmn`
+do
+  ff=`basename $f`
+  g=${ff%.bpmn}
+  b="src/$g"
+  j="json_from_bpmn/$g"
+  t="tla_from_bpmn/$g"
+  echo "tranforming $f"
+  fbpmn bpmn2json $b $j
+  fbpmn bpmn2tla $b $t
+done
+
