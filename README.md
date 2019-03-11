@@ -52,18 +52,23 @@ Do not forget to put this directory in your command path.
 
 ## BPMN models
 
-`fbpmn` is able to read collaborations either in BPMN or in its own JSON format. Please note that you can also deal with a standalone process model as soon as you put it in a standalone pool lane (we have some examples of this in the [model](model) directory).
+`fbpmn` is able to deal with **collaborations** either in BPMN or in its own JSON format. Please note that you can also deal with a standalone **process model** (workflow) as soon as you put it in a standalone pool lane (we have some examples of this [here](models/bpmn-origin/src)).
 
 ### BPMN format
 
 Please see [the BPMN 2.0 standard](https://www.omg.org/spec/BPMN/2.0/).
 
-For the subset of BPMN that we support, see below, *JSON format*.
+The subset of BPMN that we support is presented in Figure 1.
+
+![BPMN support.](bpmn.png)
+*Figure 1: supported subset of the BPMN notation.*
+
+`fbpmn` has been tested with models made with the Camunda Modeler, which you can get [here](https://camunda.com/products/modeler/).
 
 ### JSON format
 
 Please note that the JSON format for a model can be generated from the BPMN format of it, using `fbpmn`.
-In general, there should therefore be no need to write out models in the JSON format directly.
+In general, there should therefore be no need to write out models in the JSON format manually.
 
 Our JSON format is as follows: 
 
@@ -100,7 +105,7 @@ Edge categories are:
 NormalSequenceFlow | ConditionalSequenceFlow | DefaultSequenceFlow | MessageFlow
 ```
 
-Examples of models are given [here](models/bpmn-origin/json_from_bpmn) for files generated from BPMN, and [models/json-origin](models/json-origin) for files created manually.
+Examples of models are given [here](models/bpmn-origin/json_from_bpmn) for files generated from BPMN, and [here](models/json-origin) for files created manually.
 
 To help in writing the JSON format, `fbpmn` has a very basic output to the format of the `dot` command ([graphviz format](https://graphviz.org)).
 To transform a JSON file into DOT, run:
@@ -118,12 +123,13 @@ dot -Tpng sourcefile.dot -o targetfile.png
 
 ## Verification using TLA+
 
-This is achieved in two steps (see Figure):
+This is achieved in two steps (see Figure 2):
 
 1. generate a TLA+ representation of the BPMN collaboration
 2. use this representation and the TLA+ implementation of our FOL semantics for BPMN collaborations to perform verification (using the `tlc` model checker from the TLA+ tool box).
 
 ![Transformation overview.](overview.png)
+*Figure 2: `fbpmn` approach to the verification of BPMN collaborations.*
 
 ### Generating the TLA+ representation of a BPMN model
 
