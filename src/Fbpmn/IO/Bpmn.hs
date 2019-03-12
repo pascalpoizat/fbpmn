@@ -123,7 +123,7 @@ pNSE es e = pSE es e && (not . (pMSE es) $ e)
 -- CMIE or TMIE
 -- other intermediary events are discarded
 pITE :: [Element] -> Element -> Bool
-pITE _ = (?=) "intermediateThrowEent"
+pITE _ = (?=) "intermediateThrowEvent"
 pTMIE :: [Element] -> Element -> Bool
 pTMIE es e = pITE es e && pMx e
 pICE :: [Element] -> Element -> Bool
