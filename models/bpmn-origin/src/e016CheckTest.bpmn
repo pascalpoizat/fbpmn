@@ -4,7 +4,7 @@
     <bpmn:participant id="Sender" name="Sender" processRef="Sender_Id" />
     <bpmn:participant id="Receiver" name="Receiver" processRef="Receiver_Id" />
     <bpmn:messageFlow id="MessageFlow_095vt4e" name="m1" sourceRef="Task_1c559zv" targetRef="Task_1d78ih0" />
-    <bpmn:messageFlow id="MessageFlow_1n4m463" name="m2" sourceRef="Task_1c559zv" targetRef="Task_19wi6kk" />
+    <bpmn:messageFlow id="MessageFlow_1n4m463" name="m2" sourceRef="Task_1cbrss1" targetRef="Task_19wi6kk" />
   </bpmn:collaboration>
   <bpmn:process id="Sender_Id" name="Sender" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
@@ -42,7 +42,7 @@
       <bpmn:outgoing>SequenceFlow_0fxw5l8</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0fxw5l8" sourceRef="StartEvent_0x0o2ml" targetRef="ExclusiveGateway_1aidani" />
-    <bpmn:sequenceFlow id="SequenceFlow_01czfja" sourceRef="ExclusiveGateway_1aidani" targetRef="Task_1d78ih0"/>
+    <bpmn:sequenceFlow id="SequenceFlow_01czfja" sourceRef="ExclusiveGateway_1aidani" targetRef="Task_1d78ih0" />
     <bpmn:sequenceFlow id="SequenceFlow_0qoid9s" sourceRef="ExclusiveGateway_1aidani" targetRef="Task_19wi6kk" />
     <bpmn:endEvent id="EndEvent_1d6yy2u">
       <bpmn:incoming>SequenceFlow_0ob8kjq</bpmn:incoming>
@@ -161,12 +161,12 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="MessageFlow_1n4m463_di" bpmnElement="MessageFlow_1n4m463">
-        <di:waypoint x="462" y="170" />
-        <di:waypoint x="477" y="181" />
+        <di:waypoint x="460" y="333" />
+        <di:waypoint x="477" y="387" />
         <di:waypoint x="477" y="531" />
         <di:waypoint x="457" y="544" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="484" y="232" width="16" height="14" />
+          <dc:Bounds x="483" y="469" width="16" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EventBasedGateway_0e3wnrp_di" bpmnElement="ExclusiveGateway_1aidani">

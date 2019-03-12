@@ -4,7 +4,7 @@
     <bpmn:participant id="Sender" name="Sender" processRef="Sender_Id" />
     <bpmn:participant id="Receiver" name="Receiver" processRef="Receiver_Id" />
     <bpmn:messageFlow id="MessageFlow_095vt4e" name="m1" sourceRef="Task_1c559zv" targetRef="Task_1d78ih0" />
-    <bpmn:messageFlow id="MessageFlow_1n4m463" name="m2" sourceRef="Task_1c559zv" targetRef="Task_19wi6kk" />
+    <bpmn:messageFlow id="MessageFlow_1n4m463" name="m2" sourceRef="Task_1cbrss1" targetRef="Task_19wi6kk" />
   </bpmn:collaboration>
   <bpmn:process id="Sender_Id" name="Sender" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
@@ -166,12 +166,12 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="MessageFlow_1n4m463_di" bpmnElement="MessageFlow_1n4m463">
-        <di:waypoint x="462" y="170" />
-        <di:waypoint x="477" y="181" />
+        <di:waypoint x="462" y="331" />
+        <di:waypoint x="477" y="384" />
         <di:waypoint x="477" y="531" />
         <di:waypoint x="457" y="544" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="484" y="232" width="16" height="14" />
+          <dc:Bounds x="484" y="401" width="16" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
