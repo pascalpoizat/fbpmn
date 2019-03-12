@@ -104,6 +104,7 @@ tmie_start(n) ==
                            ELSE IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                            ELSE IF ee = eout THEN edgemarks[ee] + 1
                            ELSE edgemarks[ee] ]
+      /\ UNCHANGED nodemarks
 
 cmie_start(n) == 
   /\ CatN[n] = CatchMessageIntermediateEvent
@@ -261,7 +262,7 @@ subprocess_complete(n) ==
   /\ \A e \in Edge : source[e] \in ContainRel[n] /\ target[e] \in ContainRel[n] => edgemarks[e] = 0
   /\ \E ee \in ContainRel[n] :
       /\ CatN[ee] \in EndEventType
-      /\ nodemarks[ee] = 1
+      /\ nodemarks[ee] >= 1
       /\ \A x \in ContainRel[n] : x # ee => nodemarks[x] = 0
       /\ nodemarks' = [ nodemarks EXCEPT ![n] = 0, ![ee] = 0 ]
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
