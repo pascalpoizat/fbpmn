@@ -12,10 +12,8 @@
   </bpmn:collaboration>
   <bpmn:process id="Process_1" isExecutable="true">
     <bpmn:sequenceFlow id="SequenceFlow_1uwq0b6" name="yes" sourceRef="ExclusiveGateway_192ovii" targetRef="Task_1v9s881">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">yes</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0b6ku63" name="no" sourceRef="ExclusiveGateway_192ovii" targetRef="ExclusiveGateway_0wgdt1i">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">no</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0sfyd5z" sourceRef="Task_07u875a" targetRef="ExclusiveGateway_192ovii" />
     <bpmn:sequenceFlow id="SequenceFlow_016h32p" sourceRef="ExclusiveGateway_0wgdt1i" targetRef="Task_07u875a" />

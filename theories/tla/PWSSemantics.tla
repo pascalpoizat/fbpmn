@@ -59,7 +59,7 @@ messagestart_complete(n) ==
 
 noneend_start(n) ==
   /\ CatN[n] = NoneEndEvent
-  /\ nodemarks[n] = 0 \* why is it necessary for Terminate End but not for None End?
+  \* /\ nodemarks[n] = 0 \* why is it necessary for Terminate End but not for None End?
   /\ \E e \in intype(SeqFlowType, n) :
        /\ edgemarks[e] >= 1
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
