@@ -59,16 +59,14 @@ messagestart_complete(n) ==
 
 noneend_start(n) ==
   /\ CatN[n] = NoneEndEvent
-  \* /\ nodemarks[n] = 0 \* why is it necessary for Terminate End but not for None End?
   /\ \E e \in intype(SeqFlowType, n) :
        /\ edgemarks[e] >= 1
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
-  /\ nodemarks' = [ nodemarks EXCEPT ![n] = 1 ]
+  /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
   /\ Network!unchanged
 
 terminateend_start(n) == \* Terminate End Event clears all token in the process/subprocess (except for the n node).
   /\ CatN[n] = TerminateEndEvent
-  /\ nodemarks[n] = 0
   /\ \E e \in intype(SeqFlowType, n) :
        /\ edgemarks[e] >= 1
        /\ LET pr == ContainRelInv(n) IN
@@ -90,7 +88,7 @@ messageend_start(n) ==
      /\ edgemarks[e1] >= 1
      /\ Network!send(ProcessOf(n), ProcessOf(target[e2]), msgtype[e2])
      /\ edgemarks' = [ edgemarks EXCEPT ![e1] = @ - 1, ![e2] = @ + 1 ]
-  /\ nodemarks' = [ nodemarks EXCEPT ![n] = 1 ]
+  /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
 
 (* ---- TMIE / CMIE ---- *)
 
@@ -228,7 +226,7 @@ send_complete(n) ==
   /\ nodemarks[n] >= 1
   /\ \E e \in outtype(MsgFlowType, n) :
       /\ Network!send(ProcessOf(n), ProcessOf(target[e]), msgtype[e])
-      /\ nodemarks' = [ nodemarks EXCEPT ![n] = 0 ]
+      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
       /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
                            IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                            ELSE IF ee = e THEN edgemarks[ee] + 1
@@ -286,6 +284,11 @@ subprocess_complete(n) ==
 
 process_complete(n) ==
   /\ CatN[n] = Process
+  /\ UNCHANGED var
+  
+(*
+process_complete(n) ==
+  /\ CatN[n] = Process
   /\ nodemarks[n] = 1
   /\ \A e \in Edge : source[e] \in ContainRel[n] /\ target[e] \in ContainRel[n] => edgemarks[e] = 0
   /\ \E ee \in ContainRel[n] :
@@ -295,6 +298,7 @@ process_complete(n) ==
       /\ nodemarks' = [ nodemarks EXCEPT ![n] = 0, ![ee] = 0 ]
   /\ UNCHANGED edgemarks
   /\ Network!unchanged
+*)
 
 ----------------------------------------------------------------
 
@@ -319,7 +323,7 @@ step(n) ==
 Next == \E n \in Node : step(n)
         \* \/ (\A n \in Node : nodemarks[n] = 0) /\ (\A n \in Edge : edgemarks[n] = 0) /\ UNCHANGED var
         \* Would be to avoid deadlock when done. But deadlock occurs too often and is
-        \* catched by unsoundness => it seems better to disable deadlock detection in TLC.
+        \* catched by unsoundness => it is better to disable deadlock detection in TLC.
 
 Init ==
   /\ nodemarks = [ n \in Node |->
@@ -374,17 +378,22 @@ NoUndeliveredMessages ==
 SafeCollaboration ==
    [](\A e \in Edge : CatE[e] \in SeqFlowType => edgemarks[e] <= 1)
 
-(* Either all end events are marked and there are no token anywhere else, or no tokens are left anywhere at all. *)
-\* sould we include MessageEndEvent?
+(* A process is sound if there are no token on inside edges, and one token only on EndEvents. *)
+LOCAL SoundProcessInt(p) ==
+   /\ \A e \in Edge : source[e] \in ContainRel[p] /\ target[e] \in ContainRel[p] => edgemarks[e] = 0
+   /\ \A n \in ContainRel[p] :
+            \/ nodemarks[n] = 0
+            \/ nodemarks[n] = 1 /\ CatN[n] \in EndEventType
+
+SoundProcess(p) == <> SoundProcessInt(p)
+
+(* All processes are sound and there are no undelivered messages. *)
 SoundCollaboration ==
-   <>(/\ \A e \in Edge : edgemarks[e] = 0
-      /\ \/ \A n \in Node : nodemarks[n] = IF CatN[n] \in {NoneEndEvent} THEN 1 ELSE 0
-         \/ \A n \in Node : nodemarks[n] = 0)
+   <>(/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n)
+      /\ \A e \in Edge : CatE[e] = MsgFlow => edgemarks[e] = 0)
 
 (* Like SoundCollaboration, but ignore messages in transit. *)
 MessageRelaxedSoundCollaboration ==
-   <>(/\ \A e \in Edge : CatE[e] \in SeqFlowType => edgemarks[e] = 0
-      /\ \/ \A n \in Node : nodemarks[n] = IF CatN[n] \in {NoneEndEvent} THEN 1 ELSE 0
-         \/ \A n \in Node : nodemarks[n] = 0)
+   <>(/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n))
 
 ================================================================
