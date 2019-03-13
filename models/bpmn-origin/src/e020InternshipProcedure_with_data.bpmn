@@ -39,7 +39,20 @@
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1hv2qod</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_04fa4c4</bpmn:outgoing>
+      <bpmn:property id="Property_0lp4d6w" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1omka9p">
+        <bpmn:sourceRef>DataObjectReference_0mvubfb</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0lp4d6w</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:task>
+    <bpmn:dataObjectReference id="DataObjectReference_19n6321" name="Occupational Saefty" dataObjectRef="DataObject_1cxg59q">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="OccupationalSafety_certificate" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_1cxg59q" />
     <bpmn:task id="Task_12w7z0s" name="Do Internship">
       <bpmn:extensionElements>
         <mida:taskType>
@@ -62,6 +75,11 @@
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1716tm6</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1e21rh4</bpmn:outgoing>
+      <bpmn:property id="Property_0sc4uzy" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0omz7gi">
+        <bpmn:sourceRef>DataObjectReference_0mvubfb</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0sc4uzy</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:sendTask>
     <bpmn:task id="Task_16mub7w" name="Attend Occupational Safety Course">
       <bpmn:extensionElements>
@@ -75,6 +93,9 @@
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1nsmz5l</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1716tm6</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1f0n9aw">
+        <bpmn:targetRef>DataObjectReference_19n6321</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:task>
     <bpmn:receiveTask id="Task_0y40xht" name="Internship Registration">
       <bpmn:extensionElements>
@@ -88,10 +109,30 @@
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_07e105b</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_19jde9o</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1lp1muf">
+        <bpmn:targetRef>DataObjectReference_0eaxd5n</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:receiveTask>
+    <bpmn:dataObjectReference id="DataObjectReference_0eaxd5n" name="Transcript" dataObjectRef="DataObject_0xqmnc0">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Transcript_internship" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_0xqmnc0" />
     <bpmn:endEvent id="EndEvent_131pwct" name="Internship Performed">
       <bpmn:incoming>SequenceFlow_19jde9o</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:dataObjectReference id="DataObjectReference_0mvubfb" name="Student" dataObjectRef="DataObject_1mcets4" dataobjtype="input">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Student_id = &#39;Alan Turing&#39;" />
+          <mida:dataField dataField="Student_ECTS = 140" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_1mcets4" />
     <bpmn:sequenceFlow id="SequenceFlow_1e21rh4" sourceRef="Task_0kueqty" targetRef="Task_12w7z0s" />
     <bpmn:sequenceFlow id="SequenceFlow_1716tm6" sourceRef="Task_16mub7w" targetRef="Task_0kueqty" />
     <bpmn:sequenceFlow id="SequenceFlow_0epxxie" sourceRef="StartEvent_0efqept" targetRef="ExclusiveGateway_10r796g" />
@@ -117,57 +158,93 @@
     <bpmn:sequenceFlow id="SequenceFlow_1v26cki" sourceRef="Task_16a1dy1" targetRef="Task_1awa0vf" />
     <bpmn:sequenceFlow id="SequenceFlow_0oaajbr" sourceRef="Task_1awa0vf" targetRef="Task_0z00tzq" />
     <bpmn:sequenceFlow id="SequenceFlow_0nlul5d" sourceRef="Task_0z00tzq" targetRef="EndEvent_0g8hfyq" />
-    <bpmn:sendTask id="Task_1ukgtgd" name="Register to Internship Program">
-      <bpmn:extensionElements>
-        <mida:taskType>
-          <mida:type>a</mida:type>
-        </mida:taskType>
-        <mida:guard />
-        <mida:message>
-          <mida:field field="&#39;registration&#39;" />
-        </mida:message>
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1wxr7td</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0upqxnz</bpmn:outgoing>
-    </bpmn:sendTask>
-    <bpmn:sendTask id="Task_0k3desy" name="Log In to Internship Program">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1wor220" name="Â Does the company have a convention?">
+      <bpmn:incoming>SequenceFlow_007i0gb</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1hrqezf</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1wxr7td</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:startEvent id="StartEvent_1wgj96l" name="Propose Internship">
+      <bpmn:outgoing>SequenceFlow_12e7qby</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sendTask id="Task_0ieueaf" name="Access Unicam Internship Program">
       <bpmn:extensionElements>
         <mida:taskType>
           <mida:type>a</mida:type>
         </mida:taskType>
         <mida:guard>
-          <mida:exp>'login'</mida:exp>
+          <mida:exp>Company_name != undefined &amp; Company_internship  != undefined &amp; Company_convention  != undefined</mida:exp>
         </mida:guard>
+        <mida:message>
+          <mida:field field="Company_name" />
+        </mida:message>
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1hrqezf</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0rqes4b</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_12e7qby</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_007i0gb</bpmn:outgoing>
+      <bpmn:property id="Property_16hf86t" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_04mn8vg">
+        <bpmn:sourceRef>DataObjectReference_0k2hakd</bpmn:sourceRef>
+        <bpmn:targetRef>Property_16hf86t</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:sendTask>
-    <bpmn:endEvent id="EndEvent_0g8hfyq" name="Internship Finished">
-      <bpmn:incoming>SequenceFlow_0nlul5d</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sendTask id="Task_0z00tzq" name="Notify Delegate">
+    <bpmn:task id="Task_16a1dy1" name="Internship">
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0bferc8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1v26cki</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1ojvmkc">
+      <bpmn:incoming>SequenceFlow_0upqxnz</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0rqes4b</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_19fg7gc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:receiveTask id="Task_0zi619x" name="Internship Agreement">
       <bpmn:extensionElements>
         <mida:taskType>
           <mida:type>a</mida:type>
         </mida:taskType>
         <mida:guard />
         <mida:message>
-          <mida:field field="&#39;done&#39;" />
+          <mida:field field="InternshipDoc_student" />
         </mida:message>
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0oaajbr</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0nlul5d</bpmn:outgoing>
-    </bpmn:sendTask>
-    <bpmn:task id="Task_1awa0vf" name="Terminate Internship">
+      <bpmn:incoming>SequenceFlow_036yd4w</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ye9pwd</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_177fipe">
+        <bpmn:targetRef>DataObjectReference_0w9jxqz</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:receiveTask>
+    <bpmn:task id="Task_06e9es5" name="Accept Internship">
       <bpmn:extensionElements>
         <mida:taskType>
           <mida:type>a</mida:type>
         </mida:taskType>
         <mida:guard />
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1v26cki</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0oaajbr</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_0ye9pwd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0tbrrh9</bpmn:outgoing>
     </bpmn:task>
+    <bpmn:sendTask id="Task_10ik9d4" name="Send Internship Documentation">
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
+        <mida:message>
+          <mida:field field="InternshipDoc_student" />
+        </mida:message>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0tbrrh9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0bferc8</bpmn:outgoing>
+      <bpmn:property id="Property_0unmcx5" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1k9u2y4">
+        <bpmn:sourceRef>DataObjectReference_0w9jxqz</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0unmcx5</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:sendTask>
     <bpmn:sendTask id="Task_13r7bmt" name="Insert Internship Announcement">
       <bpmn:extensionElements>
         <mida:taskType>
@@ -184,81 +261,94 @@
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_19fg7gc</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_036yd4w</bpmn:outgoing>
+      <bpmn:property id="Property_10hohxo" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1jx7ir4">
+        <bpmn:sourceRef>DataObjectReference_0k2hakd</bpmn:sourceRef>
+        <bpmn:targetRef>Property_10hohxo</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1abrhyn">
+        <bpmn:targetRef>DataObjectReference_0w9jxqz</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:sendTask>
-    <bpmn:sendTask id="Task_10ik9d4" name="Send Internship Documentation">
+    <bpmn:task id="Task_1awa0vf" name="Terminate Internship">
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1v26cki</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0oaajbr</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sendTask id="Task_0z00tzq" name="Notify Delegate">
       <bpmn:extensionElements>
         <mida:taskType>
           <mida:type>a</mida:type>
         </mida:taskType>
         <mida:guard />
         <mida:message>
-          <mida:field field="InternshipDoc_student" />
+          <mida:field field="&#39;done&#39;" />
         </mida:message>
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0tbrrh9</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0bferc8</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_0oaajbr</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0nlul5d</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:task id="Task_06e9es5" name="Accept Internship">
-      <bpmn:extensionElements>
-        <mida:taskType>
-          <mida:type>a</mida:type>
-        </mida:taskType>
-        <mida:guard />
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0ye9pwd</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0tbrrh9</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:receiveTask id="Task_0zi619x" name="Internship Agreement">
-      <bpmn:extensionElements>
-        <mida:taskType>
-          <mida:type>a</mida:type>
-        </mida:taskType>
-        <mida:guard />
-        <mida:message>
-          <mida:field field="InternshipDoc_student" />
-        </mida:message>
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_036yd4w</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0ye9pwd</bpmn:outgoing>
-    </bpmn:receiveTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_1ojvmkc">
-      <bpmn:incoming>SequenceFlow_0upqxnz</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_0rqes4b</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_19fg7gc</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:task id="Task_16a1dy1" name="Internship">
-      <bpmn:extensionElements>
-        <mida:taskType>
-          <mida:type>a</mida:type>
-        </mida:taskType>
-        <mida:guard />
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_0bferc8</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1v26cki</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:sendTask id="Task_0ieueaf" name="Access Unicam Internship Program">
+    <bpmn:endEvent id="EndEvent_0g8hfyq" name="Internship Finished">
+      <bpmn:incoming>SequenceFlow_0nlul5d</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="Task_0k3desy" name="Log In to Internship Program">
       <bpmn:extensionElements>
         <mida:taskType>
           <mida:type>a</mida:type>
         </mida:taskType>
         <mida:guard>
-          <mida:exp>Company_name != undefined &amp; Company_internship  != undefined &amp; Company_convention  != undefined</mida:exp>
+          <mida:exp>'login'</mida:exp>
         </mida:guard>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1hrqezf</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0rqes4b</bpmn:outgoing>
+      <bpmn:property id="Property_1wwn9wj" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_11holp3">
+        <bpmn:sourceRef>DataObjectReference_0k2hakd</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1wwn9wj</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:sendTask>
+    <bpmn:dataObjectReference id="DataObjectReference_0k2hakd" name="Company" dataObjectRef="DataObject_11aqkd6">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Company_name = &#39;MI6&#39;" />
+          <mida:dataField dataField="Company_internship = &#39;Enigma Project&#39;" />
+          <mida:dataField dataField="Company_convention = false" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_11aqkd6" />
+    <bpmn:dataObjectReference id="DataObjectReference_0w9jxqz" name="Internship Doc" dataObjectRef="DataObject_0lt7em4">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="InternshipDoc_company" />
+          <mida:dataField dataField="InternshipDoc_title" />
+          <mida:dataField dataField="InternshipDoc_student" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_0lt7em4" />
+    <bpmn:sendTask id="Task_1ukgtgd" name="Register to Internship Program">
+      <bpmn:extensionElements>
+        <mida:taskType>
+          <mida:type>a</mida:type>
+        </mida:taskType>
+        <mida:guard />
         <mida:message>
-          <mida:field field="Company_name" />
+          <mida:field field="&#39;registration&#39;" />
         </mida:message>
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_12e7qby</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_007i0gb</bpmn:outgoing>
+      <bpmn:incoming>SequenceFlow_1wxr7td</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0upqxnz</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0o1m9gu">
+        <bpmn:targetRef>DataObjectReference_0k2hakd</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:sendTask>
-    <bpmn:startEvent id="StartEvent_1wgj96l" name="Propose Internship">
-      <bpmn:outgoing>SequenceFlow_12e7qby</bpmn:outgoing>
-    </bpmn:startEvent>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_1wor220" name="Â Does the company have a convention?">
-      <bpmn:incoming>SequenceFlow_007i0gb</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1hrqezf</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_1wxr7td</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
   </bpmn:process>
   <bpmn:process id="Process_0bvuk0f" isExecutable="false">
     <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_180guhd" name="Login">
@@ -302,6 +392,12 @@
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1nxvmw1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0f1t7q4</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1q5mfvh">
+        <bpmn:targetRef>DataStoreReference_0zbja9q</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1drjgbn">
+        <bpmn:targetRef>DataObjectReference_0vfpgwt</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:receiveTask>
     <bpmn:endEvent id="EndEvent_0zeqiic">
       <bpmn:incoming>SequenceFlow_0f1t7q4</bpmn:incoming>
@@ -327,6 +423,15 @@
     <bpmn:sequenceFlow id="SequenceFlow_0lkr4ww" sourceRef="EventBasedGateway_1d92ix7" targetRef="IntermediateCatchEvent_0oxyhte" />
     <bpmn:sequenceFlow id="SequenceFlow_0cxrm8j" sourceRef="IntermediateCatchEvent_180guhd" targetRef="ExclusiveGateway_025el3u" />
     <bpmn:sequenceFlow id="SequenceFlow_09fa10u" sourceRef="EventBasedGateway_1d92ix7" targetRef="IntermediateCatchEvent_180guhd" />
+    <bpmn:dataObjectReference id="DataObjectReference_0vfpgwt" name="Proposal" dataObjectRef="DataObject_0nwz9gj">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Proposal_company" />
+          <mida:dataField dataField="Proposal_title" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_0nwz9gj" />
   </bpmn:process>
   <bpmn:process id="Process_0i8jx5m" isExecutable="false">
     <bpmn:startEvent id="StartEvent_0sg8ueb" name="Register Internship">
@@ -350,6 +455,11 @@
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1ifwhto</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ol0c8s</bpmn:outgoing>
+      <bpmn:property id="Property_0q3aoaf" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0ecl68h">
+        <bpmn:sourceRef>DataStoreReference_0zbja9q</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0q3aoaf</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:sendTask>
     <bpmn:receiveTask id="ReceiveTask_1eiaojy" name="Internship Completion Notification">
       <bpmn:extensionElements>
@@ -363,21 +473,51 @@
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0woxsim</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ifwhto</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1xae7gg">
+        <bpmn:targetRef>DataStoreReference_0zbja9q</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:receiveTask>
     <bpmn:endEvent id="EndEvent_0r34c4w" name="Internship Registered">
       <bpmn:incoming>SequenceFlow_0ol0c8s</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:dataObjectReference id="DataObjectReference_1ua4t7q" name="Tutor" dataObjectRef="DataObject_1r8wvdi">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Tutor_name = &#39;Alastair Denniston&#39;" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataObjectReference>
+    <bpmn:dataObject id="DataObject_1r8wvdi" />
     <bpmn:sequenceFlow id="SequenceFlow_0ol0c8s" sourceRef="SendTask_0bu2egl" targetRef="EndEvent_0r34c4w" />
     <bpmn:sequenceFlow id="SequenceFlow_1ifwhto" sourceRef="ReceiveTask_1eiaojy" targetRef="SendTask_0bu2egl" />
     <bpmn:sequenceFlow id="SequenceFlow_0woxsim" sourceRef="SendTask_1sfy3aq" targetRef="ReceiveTask_1eiaojy" />
     <bpmn:sequenceFlow id="SequenceFlow_07c1y6g" sourceRef="StartEvent_0sg8ueb" targetRef="SendTask_1sfy3aq" />
+    <bpmn:dataStoreReference id="DataStoreReference_0zbja9q" name="Internship">
+      <bpmn:extensionElements>
+        <mida:dataObjFields>
+          <mida:dataField dataField="Internship_company" />
+          <mida:dataField dataField="Internship_title" />
+          <mida:dataField dataField="Internship_student" />
+          <mida:dataField dataField="Internship_tutor" />
+          <mida:dataField dataField="Internship_completed" />
+        </mida:dataObjFields>
+      </bpmn:extensionElements>
+    </bpmn:dataStoreReference>
     <bpmn:task id="SendTask_1sfy3aq" name="Assign Tutor">
       <bpmn:incoming>SequenceFlow_07c1y6g</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0woxsim</bpmn:outgoing>
+      <bpmn:property id="Property_0aqkbiw" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_107wlp9">
+        <bpmn:sourceRef>DataObjectReference_1ua4t7q</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0aqkbiw</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1i261o5">
+        <bpmn:targetRef>DataStoreReference_0zbja9q</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:task>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="e020InternshipProcedure">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="InternshipProcedure">
       <bpmndi:BPMNShape id="Participant_0hae7ry_di" bpmnElement="Participant_0hae7ry">
         <dc:Bounds x="550" y="719" width="1154" height="238" />
       </bpmndi:BPMNShape>
@@ -448,7 +588,7 @@
       <bpmndi:BPMNShape id="ExclusiveGateway_1wor220_di" bpmnElement="ExclusiveGateway_1wor220" isMarkerVisible="true" bioc:stroke="#000" bioc:fill="#fff">
         <dc:Bounds x="565" y="1361" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="612" y="1391" width="81" height="40" />
+          <dc:Bounds x="607" y="1391" width="90" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_12e7qby_di" bpmnElement="SequenceFlow_12e7qby">
@@ -490,6 +630,17 @@
       <bpmndi:BPMNEdge id="SequenceFlow_007i0gb_di" bpmnElement="SequenceFlow_007i0gb">
         <di:waypoint x="525" y="1386" />
         <di:waypoint x="565" y="1386" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_0k2hakd_di" bpmnElement="DataObjectReference_0k2hakd" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="519" y="1508" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="513" y="1564" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataInputAssociation_04mn8vg_di" bpmnElement="DataInputAssociation_04mn8vg">
+        <di:waypoint x="519" y="1533" />
+        <di:waypoint x="501" y="1533" />
+        <di:waypoint x="501" y="1426" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Task_06e9es5_di" bpmnElement="Task_06e9es5">
         <dc:Bounds x="1142" y="1346" width="100" height="80" />
@@ -609,9 +760,42 @@
           <dc:Bounds x="1650" y="964" width="54" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_0mvubfb_di" bpmnElement="DataObjectReference_0mvubfb" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="889" y="748" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="888" y="805" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1omka9p_di" bpmnElement="DataInputAssociation_1omka9p">
+        <di:waypoint x="889" y="773" />
+        <di:waypoint x="800" y="772" />
+        <di:waypoint x="800" y="832" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1716tm6_di" bpmnElement="SequenceFlow_1716tm6">
         <di:waypoint x="1098" y="872" />
         <di:waypoint x="1155" y="872" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0o1m9gu_di" bpmnElement="DataOutputAssociation_0o1m9gu">
+        <di:waypoint x="621" y="1316" />
+        <di:waypoint x="536" y="1316" />
+        <di:waypoint x="537" y="1508" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_19n6321_di" bpmnElement="DataObjectReference_19n6321" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1109" y="761" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1095" y="811" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1f0n9aw_di" bpmnElement="DataOutputAssociation_1f0n9aw">
+        <di:waypoint x="1048" y="832" />
+        <di:waypoint x="1048" y="786" />
+        <di:waypoint x="1109" y="786" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0omz7gi_di" bpmnElement="DataInputAssociation_0omz7gi">
+        <di:waypoint x="907" y="748" />
+        <di:waypoint x="907" y="731" />
+        <di:waypoint x="1174" y="731" />
+        <di:waypoint x="1174" y="832" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1e21rh4_di" bpmnElement="SequenceFlow_1e21rh4">
         <di:waypoint x="1255" y="872" />
@@ -619,6 +803,47 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1124" y="516" width="0" height="13" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_0eaxd5n_di" bpmnElement="DataObjectReference_0eaxd5n" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1563" y="761" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1557" y="814" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1lp1muf_di" bpmnElement="DataOutputAssociation_1lp1muf">
+        <di:waypoint x="1499" y="832" />
+        <di:waypoint x="1499" y="783" />
+        <di:waypoint x="1563" y="783" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_11holp3_di" bpmnElement="DataInputAssociation_11holp3">
+        <di:waypoint x="555" y="1520" />
+        <di:waypoint x="666" y="1520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1jx7ir4_di" bpmnElement="DataInputAssociation_1jx7ir4">
+        <di:waypoint x="557" y="1547" />
+        <di:waypoint x="886" y="1547" />
+        <di:waypoint x="886" y="1426" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_0w9jxqz_di" bpmnElement="DataObjectReference_0w9jxqz" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1065" y="1472" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1048" y="1525" width="71" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1abrhyn_di" bpmnElement="DataOutputAssociation_1abrhyn">
+        <di:waypoint x="899" y="1426" />
+        <di:waypoint x="899" y="1504" />
+        <di:waypoint x="1065" y="1504" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_177fipe_di" bpmnElement="DataOutputAssociation_177fipe">
+        <di:waypoint x="1045" y="1426" />
+        <di:waypoint x="1045" y="1480" />
+        <di:waypoint x="1065" y="1480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1k9u2y4_di" bpmnElement="DataInputAssociation_1k9u2y4">
+        <di:waypoint x="1101" y="1497" />
+        <di:waypoint x="1322" y="1497" />
+        <di:waypoint x="1322" y="1426" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="MessageFlow_0whwr08_di" bpmnElement="MessageFlow_0whwr08" bioc:stroke="#000" bioc:fill="#fff">
         <di:waypoint x="1361" y="1346" />
@@ -743,13 +968,34 @@
           <dc:Bounds x="1853" y="1169" width="54" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_1ua4t7q_di" bpmnElement="DataObjectReference_1ua4t7q" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1400" y="1030" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1405" y="1083" width="26" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataInputAssociation_107wlp9_di" bpmnElement="DataInputAssociation_107wlp9">
+        <di:waypoint x="1436" y="1055" />
+        <di:waypoint x="1486" y="1055" />
+        <di:waypoint x="1486" y="1104" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_07c1y6g_di" bpmnElement="SequenceFlow_07c1y6g">
         <di:waypoint x="1379" y="1144" />
         <di:waypoint x="1447" y="1144" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1i261o5_di" bpmnElement="DataOutputAssociation_1i261o5">
+        <di:waypoint x="1497" y="1104" />
+        <di:waypoint x="1497" y="1046" />
+        <di:waypoint x="1526" y="1046" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0woxsim_di" bpmnElement="SequenceFlow_0woxsim">
         <di:waypoint x="1547" y="1144" />
         <di:waypoint x="1582" y="1144" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0ecl68h_di" bpmnElement="DataInputAssociation_0ecl68h">
+        <di:waypoint x="1576" y="1046" />
+        <di:waypoint x="1737" y="1046" />
+        <di:waypoint x="1737" y="1104" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1ifwhto_di" bpmnElement="SequenceFlow_1ifwhto">
         <di:waypoint x="1682" y="1144" />
@@ -758,6 +1004,34 @@
       <bpmndi:BPMNEdge id="SequenceFlow_0ol0c8s_di" bpmnElement="SequenceFlow_0ol0c8s">
         <di:waypoint x="1820" y="1144" />
         <di:waypoint x="1862" y="1144" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1xae7gg_di" bpmnElement="DataOutputAssociation_1xae7gg">
+        <di:waypoint x="1632" y="1104" />
+        <di:waypoint x="1632" y="1057" />
+        <di:waypoint x="1576" y="1057" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1q5mfvh_di" bpmnElement="DataOutputAssociation_1q5mfvh">
+        <di:waypoint x="899" y="1093" />
+        <di:waypoint x="899" y="978" />
+        <di:waypoint x="1551" y="978" />
+        <di:waypoint x="1551" y="1021" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataStoreReference_0zbja9q_di" bpmnElement="DataStoreReference_0zbja9q" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1526" y="1021" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1527" y="1078" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_0vfpgwt_di" bpmnElement="DataObjectReference_0vfpgwt" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="777" y="1047" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="773" y="1104" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1drjgbn_di" bpmnElement="DataOutputAssociation_1drjgbn">
+        <di:waypoint x="873" y="1093" />
+        <di:waypoint x="873" y="1072" />
+        <di:waypoint x="813" y="1072" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Task_1biaf0y_di" bpmnElement="SendTask_1sfy3aq">
         <dc:Bounds x="1447" y="1104" width="100" height="80" />
