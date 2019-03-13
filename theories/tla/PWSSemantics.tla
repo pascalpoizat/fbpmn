@@ -122,14 +122,21 @@ cmie_start(n) ==
 
 (* ---- Exclusive Or / XOR ---- *)
 
-xor_complete(n) ==
-  /\ CatN[n] = ExclusiveOr
-  /\ \E ein \in intype(SeqFlowType, n), eout \in outtype(SeqFlowType, n) : \* eout may be Conditional or Default
+LOCAL xor_complete_out(n,eout) ==
+  /\ \E ein \in intype(SeqFlowType, n) :
        /\ edgemarks[ein] >= 1
        /\ edgemarks' = [ edgemarks EXCEPT ![ein] = @ - 1, ![eout] = @ + 1 ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
 
+xor_complete(n) ==
+  /\ CatN[n] = ExclusiveOr
+  /\ \E eout \in outtype(SeqFlowType, n) : \* eout may be Conditional or Default
+         xor_complete_out(n, eout)
+
+LOCAL xor_fairness(n) ==
+   \A eout \in outtype(SeqFlowType, n) : SF_var(xor_complete_out(n,eout))
+  
 (* ---- Parallel / AND ---- *)
 
 parallel_complete(n) ==
@@ -144,41 +151,46 @@ parallel_complete(n) ==
 
 (* ---- Inclusive Or / OR ---- *)
 
-or_complete(n) ==
-  /\ CatN[n] = InclusiveOr
-  /\ LET InPlus == { e \in intype(SeqFlowType, n) : edgemarks[e] >= 1 } IN
-     LET InMinus == { e \in intype(SeqFlowType, n) : edgemarks[e] = 0 } IN
-     LET ignoredpreedges == UNION { PreEdges(n,e) : e \in InPlus } IN
-     LET ignoredprenodes == UNION { PreNodes(n,e) : e \in InPlus } IN
+LOCAL or_complete_outs(n, eouts) ==
+  LET InPlus == { e \in intype(SeqFlowType, n) : edgemarks[e] >= 1 } IN
+  LET InMinus == { e \in intype(SeqFlowType, n) : edgemarks[e] = 0 } IN
+  LET ignoredpreedges == UNION { PreEdges(n,e) : e \in InPlus } IN
+  LET ignoredprenodes == UNION { PreNodes(n,e) : e \in InPlus } IN
         /\ InPlus # {}
+        /\ eouts # {}
         /\ \A ezero \in InMinus : /\ \A ee \in (PreEdges(n, ezero) \ ignoredpreedges) : edgemarks[ee] = 0
                                   /\ \A nn \in (PreNodes(n, ezero) \ ignoredprenodes) : nodemarks[nn] = 0
-        /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) :
-                 /\ eouts # {}
-                 /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+        /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                                    IF e \in InPlus THEN edgemarks[e] - 1
                                    ELSE IF e \in eouts THEN edgemarks[e] + 1
                                    ELSE edgemarks[e] ]
-                 /\ UNCHANGED nodemarks
-                 /\ Network!unchanged
-           \/ \E eout \in outtype({ DefaultSeqFlow }, n) :
-                 /\ edgemarks' = [ e \in DOMAIN edgemarks |->
-                                   IF e \in InPlus THEN edgemarks[e] - 1
-                                   ELSE IF e = eout THEN edgemarks[e] + 1
-                                   ELSE edgemarks[e] ]
-                 /\ UNCHANGED nodemarks
-                 /\ Network!unchanged
+        /\ UNCHANGED nodemarks
+        /\ Network!unchanged
+
+or_complete(n) ==
+  /\ CatN[n] = InclusiveOr
+  /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : or_complete_outs(n, eouts)
+     \/ \E eout \in outtype({ DefaultSeqFlow }, n) : or_complete_outs(n, {eout})
+
+LOCAL or_fairness(n) == \* do we need fairness on DefaultSeqFlow?
+     \A eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, eouts))
 
 (* ---- Event Based / EXOR ---- *)
 
-eventbased_complete(n) ==
-  /\ CatN[n] = EventBasedGateway
-  /\ \E ein \in intype(SeqFlowType, n), eout \in outtype(SeqFlowType, n) :
+LOCAL eventbased_complete_out(n, eout) ==
+  /\ \E ein \in intype(SeqFlowType, n) :
       /\ edgemarks[ein] >= 1
       /\ \E emsg \in intype(MsgFlowType, target[eout]) : edgemarks[emsg] # 0
       /\ edgemarks' = [ edgemarks EXCEPT ![ein] = @ - 1, ![eout] = @ + 1 ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
+
+eventbased_complete(n) ==
+  /\ CatN[n] = EventBasedGateway
+  /\ \E eout \in outtype(SeqFlowType, n) : eventbased_complete_out(n, eout)
+
+LOCAL eventbased_fairness(n) ==
+   \A eout \in outtype(SeqFlowType, n) : SF_var(eventbased_complete_out(n,eout))
 
 ----------------------------------------------------------------
 
@@ -317,7 +329,11 @@ Init ==
   /\ Network!init
 
 (* Fairness == WF_var(Next) *)
-Fairness == \A n \in Node : WF_var(step(n))
+Fairness ==
+  /\ \A n \in Node : WF_var(step(n))
+  /\ \A n \in Node : CatN[n] = ExclusiveOr => xor_fairness(n)
+  /\ \A n \in Node : CatN[n] = EventBasedGateway => eventbased_fairness(n)
+  /\ \A n \in Node : CatN[n] = InclusiveOr => or_fairness(n)
 
 Spec == Init /\ [][Next]_var /\ Fairness
 
@@ -327,8 +343,9 @@ Spec == Init /\ [][Next]_var /\ Fairness
 
 (* Every task may be enabled (in some executions).
    A possibility property => we check the *failure* of the following property *)
-(* Bug TLC: one needs to manually expand the disjonction. *)
-OneNodeNeverActive == \E n \in { p \in Node : CatN[p] \in TaskType } : [](nodemarks[n] = 0)
+(* Bug TLC: one needs to manually expand the disjonction and check individually each case. *)
+OneNodeNeverActive == LET tasks == { p \in Node : CatN[p] \in TaskType } IN
+                       \E n \in tasks : [](nodemarks[n] = 0)
 
 (* Simple Termination: an EndEvent occurs for each process *)
 SimpleTermination ==
