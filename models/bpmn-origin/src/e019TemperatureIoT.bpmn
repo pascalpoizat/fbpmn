@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1ljl77o" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
-  <bpmn:collaboration id="e018TemperatureIoT">
+  <bpmn:collaboration id="e019TemperatureIoT">
     <bpmn:participant id="Participant_1sz62cd" name="User" processRef="Process_1pqwd18" />
     <bpmn:participant id="Participant_0bp9fcx" name="Thermostat" processRef="Process_0de8xa0" />
     <bpmn:participant id="Participant_1bnd8zh" name="WSNGateway" processRef="Process_0bvyh41" />
