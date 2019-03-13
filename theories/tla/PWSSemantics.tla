@@ -365,9 +365,13 @@ CorrectTermination ==
 NoAbnormalTermination ==
   \A n \in Node : CatN[n] = TerminateEndEvent => [](nodemarks[n] = 0)
 
-(* No messages are left in transit. *)
-NoUndeliveredMessages ==
-  \A m \in Processes \X Processes \X Message : [](Network!intransit(m) => <>(~ Network!intransit(m)))
+(* No messages are eventually left in transit. *)
+NoUndeliveredMessages == LET msgflows == { ee \in Edge : CatE[ee] = MsgFlow } IN
+                         (\E e \in msgflows : edgemarks[e] > 0) ~>  (\A e \in msgflows : edgemarks[e] = 0)
+
+\* Any message is eventually delivered.
+\* NoUndeliveredMessages2 ==
+\*  \A m \in Processes \X Processes \X Message : [](Network!intransit(m) => <>(~ Network!intransit(m)))
 
 (* ---------------------------------------------------------------- *)
 

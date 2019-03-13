@@ -24,6 +24,4 @@ receive(from, to, m) ==
 
 unchanged == UNCHANGED net
 
-intransit(m) == net = {m}
-
 ================================================================
