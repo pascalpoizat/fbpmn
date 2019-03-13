@@ -23,4 +23,6 @@ receive(from, to, m) ==
 
 unchanged == UNCHANGED net
 
+intransit(m) == \E k \in DOMAIN net : m = net[k]
+
 =============================================================================

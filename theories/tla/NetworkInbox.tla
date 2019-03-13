@@ -28,4 +28,8 @@ receive(from, to, m) ==
 
 unchanged == UNCHANGED net
 
+intransit(m) ==
+   /\ m[2] \in DOMAIN net
+   /\ \E k \in DOMAIN net[m[2]] : <<m[1],m[3]>> = net[m[2]][k]
+
 =============================================================================

@@ -22,4 +22,6 @@ receive(from, to, m) ==
 
 unchanged == UNCHANGED net
 
+intransit(m) == BagIn(m, net)
+
 ================================================================

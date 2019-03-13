@@ -18,4 +18,6 @@ receive(from, to, m) == NetworkImpl!receive(from, to, m)
 
 unchanged == NetworkImpl!unchanged
 
+intransit(m) == NetworkImpl!intransit(m)
+
 ================================================================

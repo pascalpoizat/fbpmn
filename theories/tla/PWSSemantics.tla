@@ -365,9 +365,9 @@ CorrectTermination ==
 NoAbnormalTermination ==
   \A n \in Node : CatN[n] = TerminateEndEvent => [](nodemarks[n] = 0)
 
-(* When all processes have ended, there are no messages left in transit. *)
+(* No messages are left in transit. *)
 NoUndeliveredMessages ==
-  []((\A p \in Processes : nodemarks[p] = 0) => (\A e \in Edge : CatE[e] = MsgFlow => edgemarks[e] = 0))
+  \A m \in Processes \X Processes \X Message : [](Network!intransit(m) => <>(~ Network!intransit(m)))
 
 (* ---------------------------------------------------------------- *)
 
