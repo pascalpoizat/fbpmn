@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:mida="http://mida.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
   <bpmn:collaboration id="e020InternshipProcedure">
+    <bpmn:documentation>from MIDA examples https://bitbucket.org/proslabteam/mida/src/master/assets/examples/</bpmn:documentation>
     <bpmn:participant id="Participant_0hae7ry" name="Student" processRef="Process_0xgexxt" />
     <bpmn:participant id="Participant_1oy1vvq" name="Company" processRef="Process_158k3ep" />
     <bpmn:participant id="Participant_0qgtjuz" name="Internship Offie" processRef="Process_0bvuk0f" />
@@ -517,7 +518,7 @@
     </bpmn:task>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="InternshipProcedure">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="e020InternshipProcedure">
       <bpmndi:BPMNShape id="Participant_0hae7ry_di" bpmnElement="Participant_0hae7ry">
         <dc:Bounds x="550" y="719" width="1154" height="238" />
       </bpmndi:BPMNShape>
