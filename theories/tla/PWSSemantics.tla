@@ -171,7 +171,8 @@ or_complete(n) ==
      \/ \E eout \in outtype({ DefaultSeqFlow }, n) : or_complete_outs(n, {eout})
 
 LOCAL or_fairness(n) == \* do we need fairness on DefaultSeqFlow?
-     \A eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, eouts))
+\*     \A eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, eouts))
+     \A eout \in  outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, {eout}))
 
 (* ---- Event Based / EXOR ---- *)
 
@@ -285,17 +286,19 @@ subprocess_complete(n) ==
 process_complete(n) ==
   /\ CatN[n] = Process
   /\ UNCHANGED var
-  
+
 (*
 process_complete(n) ==
   /\ CatN[n] = Process
   /\ nodemarks[n] = 1
   /\ \A e \in Edge : source[e] \in ContainRel[n] /\ target[e] \in ContainRel[n] => edgemarks[e] = 0
-  /\ \E ee \in ContainRel[n] :
-      /\ CatN[ee] \in EndEventType
-      /\ nodemarks[ee] = 1
-      /\ \A x \in ContainRel[n] : x # ee => nodemarks[x] = 0
-      /\ nodemarks' = [ nodemarks EXCEPT ![n] = 0, ![ee] = 0 ]
+  /\ \A nn \in ContainRel[n] :
+            \/ nodemarks[nn] = 0
+            \/ nodemarks[nn] = 1 /\ CatN[nn] \in EndEventType
+  /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
+                    IF nn = n THEN 0
+                    ELSE IF nn \in ContainRel[n] THEN 0
+                    ELSE nodemarks[nn] ]
   /\ UNCHANGED edgemarks
   /\ Network!unchanged
 *)
@@ -321,9 +324,6 @@ step(n) ==
     [] CatN[n] = Process -> process_complete(n)
 
 Next == \E n \in Node : step(n)
-        \* \/ (\A n \in Node : nodemarks[n] = 0) /\ (\A n \in Edge : edgemarks[n] = 0) /\ UNCHANGED var
-        \* Would be to avoid deadlock when done. But deadlock occurs too often and is
-        \* catched by unsoundness => it is better to disable deadlock detection in TLC.
 
 Init ==
   /\ nodemarks = [ n \in Node |->
@@ -337,7 +337,7 @@ Fairness ==
   /\ \A n \in Node : WF_var(step(n))
   /\ \A n \in Node : CatN[n] = ExclusiveOr => xor_fairness(n)
   /\ \A n \in Node : CatN[n] = EventBasedGateway => eventbased_fairness(n)
-  /\ \A n \in Node : CatN[n] = InclusiveOr => or_fairness(n)
+  /\ \A n \in { nn \in Node : CatN[nn] = InclusiveOr } : or_fairness(n)
 
 Spec == Init /\ [][Next]_var /\ Fairness
 

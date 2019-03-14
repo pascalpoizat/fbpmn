@@ -62,7 +62,7 @@ C14_EXOR_NextElements ==
 
 (*
 Cx_MessageFlowEdge ==
-    \A e \in Edge : CatE[e] = MsgFlow <=> (CatN[source[e]] = SendTask /\ CatN[target[e]] = ReceiveTask)
+    \A e \in Edge : CatE[e] = MsgFlow <=> (CatN[source[e]] \in {SendTask,MessageEndEvent,ThrowMessageIntermediateEvent} /\ CatN[target[e]] = {ReceiveTask,MessageStartEvent,CatchMessageIntermediateEvent})
 *)
 
 LOCAL AllConditions == /\ C1_StartNoIncomingEdge
