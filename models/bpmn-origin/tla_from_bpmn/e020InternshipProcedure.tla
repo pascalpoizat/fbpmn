@@ -8,10 +8,10 @@ ContainRel ==
   "Process_0bvuk0f" :> { "IntermediateCatchEvent_180guhd", "IntermediateCatchEvent_0oxyhte", "ExclusiveGateway_025el3u", "ReceiveTask_146lfh4", "EndEvent_0zeqiic", "StartEvent_0y07koo", "EventBasedGateway_1d92ix7" }
   @@ "Process_0i8jx5m" :> { "StartEvent_0sg8ueb", "SendTask_0bu2egl", "ReceiveTask_1eiaojy", "EndEvent_0r34c4w", "SendTask_1sfy3aq" }
   @@ "Process_0xgexxt" :> { "StartEvent_0efqept", "ExclusiveGateway_1pvytgl", "ExclusiveGateway_10r796g", "Task_05rcgao", "Task_12w7z0s", "Task_0kueqty", "Task_16mub7w", "Task_0y40xht", "EndEvent_131pwct" }
-  @@ "Process_158k3ep" :> { "ExclusiveGateway_1wor220", "StartEvent_1wgj96l", "Task_0ieueaf", "Task_16a1dy1", "ExclusiveGateway_1ojvmkc", "Task_0zi619x", "Task_06e9es5", "Task_10ik9d4", "Task_13r7bmt", "Task_1awa0vf", "Task_0z00tzq", "EndEvent_0g8hfyq", "Task_0k3desy", "Task_1ukgtgd" }
+  @@ "Process_158k3ep" :> { "Task_1ukgtgd", "Task_0k3desy", "EndEvent_0g8hfyq", "Task_0z00tzq", "Task_1awa0vf", "Task_13r7bmt", "Task_10ik9d4", "Task_06e9es5", "Task_0zi619x", "ExclusiveGateway_1ojvmkc", "Task_16a1dy1", "Task_0ieueaf", "StartEvent_1wgj96l", "ExclusiveGateway_1wor220" }
 
 Node == {
-  "Process_0xgexxt","Process_158k3ep","Process_0bvuk0f","Process_0i8jx5m","StartEvent_0efqept","ExclusiveGateway_1pvytgl","ExclusiveGateway_10r796g","Task_05rcgao","Task_12w7z0s","Task_0kueqty","Task_16mub7w","Task_0y40xht","EndEvent_131pwct","ExclusiveGateway_1wor220","StartEvent_1wgj96l","Task_0ieueaf","Task_16a1dy1","ExclusiveGateway_1ojvmkc","Task_0zi619x","Task_06e9es5","Task_10ik9d4","Task_13r7bmt","Task_1awa0vf","Task_0z00tzq","EndEvent_0g8hfyq","Task_0k3desy","Task_1ukgtgd","IntermediateCatchEvent_180guhd","IntermediateCatchEvent_0oxyhte","ExclusiveGateway_025el3u","ReceiveTask_146lfh4","EndEvent_0zeqiic","StartEvent_0y07koo","EventBasedGateway_1d92ix7","StartEvent_0sg8ueb","SendTask_0bu2egl","ReceiveTask_1eiaojy","EndEvent_0r34c4w","SendTask_1sfy3aq"
+  "Process_0xgexxt","Process_158k3ep","Process_0bvuk0f","Process_0i8jx5m","StartEvent_0efqept","ExclusiveGateway_1pvytgl","ExclusiveGateway_10r796g","Task_05rcgao","Task_12w7z0s","Task_0kueqty","Task_16mub7w","Task_0y40xht","EndEvent_131pwct","Task_1ukgtgd","Task_0k3desy","EndEvent_0g8hfyq","Task_0z00tzq","Task_1awa0vf","Task_13r7bmt","Task_10ik9d4","Task_06e9es5","Task_0zi619x","ExclusiveGateway_1ojvmkc","Task_16a1dy1","Task_0ieueaf","StartEvent_1wgj96l","ExclusiveGateway_1wor220","IntermediateCatchEvent_180guhd","IntermediateCatchEvent_0oxyhte","ExclusiveGateway_025el3u","ReceiveTask_146lfh4","EndEvent_0zeqiic","StartEvent_0y07koo","EventBasedGateway_1d92ix7","StartEvent_0sg8ueb","SendTask_0bu2egl","ReceiveTask_1eiaojy","EndEvent_0r34c4w","SendTask_1sfy3aq"
 }
 
 Edge == {
@@ -132,20 +132,20 @@ CatN ==
 @@ "Task_16mub7w" :> AbstractTask
 @@ "Task_0y40xht" :> ReceiveTask
 @@ "EndEvent_131pwct" :> NoneEndEvent
-@@ "ExclusiveGateway_1wor220" :> ExclusiveOr
-@@ "StartEvent_1wgj96l" :> NoneStartEvent
-@@ "Task_0ieueaf" :> SendTask
-@@ "Task_16a1dy1" :> AbstractTask
-@@ "ExclusiveGateway_1ojvmkc" :> ExclusiveOr
-@@ "Task_0zi619x" :> ReceiveTask
-@@ "Task_06e9es5" :> AbstractTask
-@@ "Task_10ik9d4" :> SendTask
-@@ "Task_13r7bmt" :> SendTask
-@@ "Task_1awa0vf" :> AbstractTask
-@@ "Task_0z00tzq" :> SendTask
-@@ "EndEvent_0g8hfyq" :> NoneEndEvent
-@@ "Task_0k3desy" :> SendTask
 @@ "Task_1ukgtgd" :> SendTask
+@@ "Task_0k3desy" :> SendTask
+@@ "EndEvent_0g8hfyq" :> NoneEndEvent
+@@ "Task_0z00tzq" :> SendTask
+@@ "Task_1awa0vf" :> AbstractTask
+@@ "Task_13r7bmt" :> SendTask
+@@ "Task_10ik9d4" :> SendTask
+@@ "Task_06e9es5" :> AbstractTask
+@@ "Task_0zi619x" :> ReceiveTask
+@@ "ExclusiveGateway_1ojvmkc" :> ExclusiveOr
+@@ "Task_16a1dy1" :> AbstractTask
+@@ "Task_0ieueaf" :> SendTask
+@@ "StartEvent_1wgj96l" :> NoneStartEvent
+@@ "ExclusiveGateway_1wor220" :> ExclusiveOr
 @@ "IntermediateCatchEvent_180guhd" :> CatchMessageIntermediateEvent
 @@ "IntermediateCatchEvent_0oxyhte" :> CatchMessageIntermediateEvent
 @@ "ExclusiveGateway_025el3u" :> ExclusiveOr

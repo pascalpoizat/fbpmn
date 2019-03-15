@@ -55,8 +55,8 @@
             "Task_07u875a",
             "EndEvent_055yt9k",
             "EndEvent_0u6deep",
-            "Task_1q91vog",
-            "IntermediateThrowEvent_12d113r"
+            "IntermediateThrowEvent_12d113r",
+            "Task_1q91vog"
         ],
         "Process_14x2mcf": [
             "StartEvent_1f3jj6d",
@@ -116,15 +116,15 @@
             "SequenceFlow_1qku5do"
         ],
         "Process_14x2mcf": [
-            "SequenceFlow_1fn4lqy",
-            "SequenceFlow_0b34324",
-            "SequenceFlow_0mdvaai",
-            "SequenceFlow_13z4ilm",
-            "SequenceFlow_0rfye55",
-            "SequenceFlow_1rlj8av",
-            "SequenceFlow_0n80biv",
+            "SequenceFlow_11rxzkm",
             "SequenceFlow_00s838q",
-            "SequenceFlow_11rxzkm"
+            "SequenceFlow_0n80biv",
+            "SequenceFlow_1rlj8av",
+            "SequenceFlow_0rfye55",
+            "SequenceFlow_13z4ilm",
+            "SequenceFlow_0mdvaai",
+            "SequenceFlow_0b34324",
+            "SequenceFlow_1fn4lqy"
         ]
     },
     "edges": [
@@ -142,15 +142,15 @@
         "SequenceFlow_1h5h7h5",
         "SequenceFlow_0ljbxox",
         "SequenceFlow_1qku5do",
-        "SequenceFlow_1fn4lqy",
-        "SequenceFlow_0b34324",
-        "SequenceFlow_0mdvaai",
-        "SequenceFlow_13z4ilm",
-        "SequenceFlow_0rfye55",
-        "SequenceFlow_1rlj8av",
-        "SequenceFlow_0n80biv",
+        "SequenceFlow_11rxzkm",
         "SequenceFlow_00s838q",
-        "SequenceFlow_11rxzkm"
+        "SequenceFlow_0n80biv",
+        "SequenceFlow_1rlj8av",
+        "SequenceFlow_0rfye55",
+        "SequenceFlow_13z4ilm",
+        "SequenceFlow_0mdvaai",
+        "SequenceFlow_0b34324",
+        "SequenceFlow_1fn4lqy"
     ],
     "messages": [
         "Offer",
@@ -194,8 +194,8 @@
         "Task_07u875a",
         "EndEvent_055yt9k",
         "EndEvent_0u6deep",
-        "Task_1q91vog",
         "IntermediateThrowEvent_12d113r",
+        "Task_1q91vog",
         "StartEvent_1f3jj6d",
         "ExclusiveGateway_1dc5v3z",
         "Task_1bn6n5q",
