@@ -21,14 +21,14 @@ formal tools for BPMN
 
 1. You will need `stack` to compile the source code of `fbpmn`. See [here](https://docs.haskellstack.org/en/stable/README/).
 
-	For Windows, due to a bug (not related to fbpmn), please use:
+	For Windows, due to a bug (not related to `fbpmn`), please use:
 	
 	```shell
 	curl -sS -ostack.zip -L --insecure https://www.stackage.org/stack/windows-x86_64
 	7z x stack.zip stack.exe
 	```
 
-2. You will need a JDK to run the verification. There is an issue with version 11 so you will need to install version 8. See [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+2. You will need a JDK to run the verification. There is an issue (not related to `fbpmn`) with version 11 so you will need to install version 8. See [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 
 3. You will need the TLA+ tools to run the verification. Get `tla2tools.jar`, [here](https://github.com/tlaplus/tlaplus/releases).
 
