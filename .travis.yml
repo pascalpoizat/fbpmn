@@ -1,8 +1,8 @@
 sudo: true
-# branches:
-#   only:
-#   -master
-#   -develop
+branches:
+  only:
+  -master
+  -develop
 language: haskell
 git:
   depth: 5
