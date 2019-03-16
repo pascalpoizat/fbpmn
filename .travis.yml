@@ -49,16 +49,22 @@ after_script:
 notifications:
   email: false
 before_deploy:
-  - export VERSION=$(fbpmn version)
-  - export ARCHIVE=${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}
+  - |
+      if [ $TRAVIS_BRANCH = "develop" ]
+      then
+        export VERSION=$(fbpmn version)-SNAPSHOT
+      else
+        export VERSION=$(fbpmn version)
+      fi
+  - export ARCHIVE="${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}"
   - tar czf ${ARCHIVE}.tar.gz -C ${BINDIR} fbpmn
   - zip -j ${ARCHIVE}.zip ${BINDIR}/fbpmn
   - export TRAVIS_TAG=v${VERSION}
   - |
       if [ $TRAVIS_BRANCH = "develop" ]
       then
-        git tag ${TRAVIS_TAG}-SNAPSHOT
-        echo tag ${TRAVIS_TAG}-SNAPSHOT
+        git tag ${TRAVIS_TAG}
+        echo tag ${TRAVIS_TAG}
       else
         echo no tag
       fi
@@ -90,4 +96,4 @@ deploy:
       repo: pascalpoizat/fbpmn
       branch: develop
       tags: false
-    name: ${TRAVIS_TAG}-SNAPSHOT
+    name: ${TRAVIS_TAG}
