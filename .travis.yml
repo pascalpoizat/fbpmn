@@ -23,7 +23,8 @@ matrix:
         packages:
         - libgmp-dev
   # - env: BUILD=stack ARGS="--resolver lts-12.12" STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml" BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-osx/lts-12.12/8.4.3/bin" OS="osx" ARCH="x86_64"
-   #   os: osx
+  #   compiler: ": #stack 8.4.4 osx"
+  #   os: osx
 install:
 - mkdir -p ~/.local/bin
 - export PATH="$HOME/.local/bin:$PATH"
@@ -53,9 +54,14 @@ before_deploy:
   - tar czf ${ARCHIVE}.tar.gz -C ${BINDIR} fbpmn
   - zip -j ${ARCHIVE}.zip ${BINDIR}/fbpmn
   - export TRAVIS_TAG=v${VERSION}
-  # - if [[ "$TRAVIS_BRANCH" == "develop" ]]; then
-  #     git tag ${TRAVIS_TAG}-SNAPSHOT;
-  #   fi
+  - |
+      if [ $TRAVIS_BRANCH = "develop" ]
+      then
+        git tag ${TRAVIS_TAG}-SNAPSHOT
+        echo tag ${TRAVIS_TAG}-SNAPSHOT
+      else
+        echo no tag
+      fi
 deploy:
   - provider: releases
     api_key:
