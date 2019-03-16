@@ -1,7 +1,4 @@
 sudo: true
-branches:
-  only:
-  - master
 language: haskell
 git:
   depth: 5
