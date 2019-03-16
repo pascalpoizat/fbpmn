@@ -18,8 +18,8 @@ matrix:
       apt:
         packages:
         - libgmp-dev
-  # - env: BUILD=stack ARGS="--resolver lts-12.12" STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml" BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-osx/lts-12.12/8.4.3/bin" OS="osx" ARCH="x86_64"
-   #   os: osx
+  - env: BUILD=stack ARGS="--resolver lts-12.12" STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml" BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-osx/lts-12.12/8.4.3/bin" OS="osx" ARCH="x86_64"
+    os: osx
 install:
 - mkdir -p ~/.local/bin
 - export PATH="$HOME/.local/bin:$PATH"
