@@ -1,4 +1,8 @@
 sudo: true
+branches:
+  only:
+  -master
+  -develop
 language: haskell
 git:
   depth: 5
@@ -48,19 +52,36 @@ before_deploy:
   - export ARCHIVE=${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}
   - tar czf ${ARCHIVE}.tar.gz -C ${BINDIR} fbpmn
   - zip -j ${ARCHIVE}.zip ${BINDIR}/fbpmn
-  #- export TRAVIS_TAG=${VERSION}
-  #- git tag ${TRAVIS_TAG}
+  - export TRAVIS_TAG=v${VERSION};
+  - if [[ "$TRAVIS_BRANCH" == "develop" ]]; then
+      git tag ${TRAVIS_TAG}-SNAPSHOT;
+    fi
 deploy:
-  provider: releases
-  api_key:
-    secure: aVme28spW6hNmDtHHQBuffcKNG7FRsN4Qa8GrRQzsIlTG9dIvnCMp64Wtz/PFr4Cm7NRgR3YshaL3GHQaxaGZLnJCmHRVrHQHa7oPd+mfo1/4Azzh73N91aIn6UqKr0Cd/nZtXa9+fDPD4UZARt8j3pkOf4e5ghwi3k6fQNAHdPIKlr+9o00BdursmlbU9E0Kwu7jNa1kPrxa/6XdFRLXRgsEqYARq2069OXXBU/tkfz6e4klAswR5ZxgoaqxhKjyZogDQOeffyGc1TR8TemmXDaOGknC0fc5+V7C7z4W7o/MWjARL3c8RTkkGFvQhTynJ55Txs88W3ueYa1AsN6UFJ5RYp6zD4KODYb0yU/g1RJ91On9YAcI+ObOpq6os7t5CAjgX2jw49/bfQwaPF/WTrY3sijjsG9VVBm86El8bTHO/qEu9rypgA2DHLFAl7Kzd/we2TBTjYSs9Dj6Zi0pSzyVmAJ8VaemmkAZEW8dDJBfnvoLvRsI+V5Rpk626qa/fF7gIJPpgMAYn32k07wVRgUK/ajoYqKQElTphoNpmq2tl9TctaRi8mj32UOf8P71ehQ2ZCSeagYXWjhhMxgVl8/j8TGxVu6SQNi8nzOM/wxtZQNS3jTtMiRz/ONF+3RS2nVi5EuX7pOGlEnXMvhNWQbd7xMZdWiTdes7a1lW9c=
-  file:
-    - ${ARCHIVE}.tar.gz
-    - ${ARCHIVE}.zip
-  skip_cleanup: true
-  overwrite: true
-  draft: false
-  on:
-    repo: pascalpoizat/fbpmn
-    tags: true
-  # name: ${TRAVIS_TAG}
+  - provider: releases
+    api_key:
+      secure: aVme28spW6hNmDtHHQBuffcKNG7FRsN4Qa8GrRQzsIlTG9dIvnCMp64Wtz/PFr4Cm7NRgR3YshaL3GHQaxaGZLnJCmHRVrHQHa7oPd+mfo1/4Azzh73N91aIn6UqKr0Cd/nZtXa9+fDPD4UZARt8j3pkOf4e5ghwi3k6fQNAHdPIKlr+9o00BdursmlbU9E0Kwu7jNa1kPrxa/6XdFRLXRgsEqYARq2069OXXBU/tkfz6e4klAswR5ZxgoaqxhKjyZogDQOeffyGc1TR8TemmXDaOGknC0fc5+V7C7z4W7o/MWjARL3c8RTkkGFvQhTynJ55Txs88W3ueYa1AsN6UFJ5RYp6zD4KODYb0yU/g1RJ91On9YAcI+ObOpq6os7t5CAjgX2jw49/bfQwaPF/WTrY3sijjsG9VVBm86El8bTHO/qEu9rypgA2DHLFAl7Kzd/we2TBTjYSs9Dj6Zi0pSzyVmAJ8VaemmkAZEW8dDJBfnvoLvRsI+V5Rpk626qa/fF7gIJPpgMAYn32k07wVRgUK/ajoYqKQElTphoNpmq2tl9TctaRi8mj32UOf8P71ehQ2ZCSeagYXWjhhMxgVl8/j8TGxVu6SQNi8nzOM/wxtZQNS3jTtMiRz/ONF+3RS2nVi5EuX7pOGlEnXMvhNWQbd7xMZdWiTdes7a1lW9c=
+    file:
+      - ${ARCHIVE}.tar.gz
+      - ${ARCHIVE}.zip
+    skip_cleanup: true
+    overwrite: true
+    draft: false
+    on:
+      repo: pascalpoizat/fbpmn
+      branch: master
+      tags: true
+    name: ${TRAVIS_TAG}
+  - provider: releases
+    api_key:
+      secure: aVme28spW6hNmDtHHQBuffcKNG7FRsN4Qa8GrRQzsIlTG9dIvnCMp64Wtz/PFr4Cm7NRgR3YshaL3GHQaxaGZLnJCmHRVrHQHa7oPd+mfo1/4Azzh73N91aIn6UqKr0Cd/nZtXa9+fDPD4UZARt8j3pkOf4e5ghwi3k6fQNAHdPIKlr+9o00BdursmlbU9E0Kwu7jNa1kPrxa/6XdFRLXRgsEqYARq2069OXXBU/tkfz6e4klAswR5ZxgoaqxhKjyZogDQOeffyGc1TR8TemmXDaOGknC0fc5+V7C7z4W7o/MWjARL3c8RTkkGFvQhTynJ55Txs88W3ueYa1AsN6UFJ5RYp6zD4KODYb0yU/g1RJ91On9YAcI+ObOpq6os7t5CAjgX2jw49/bfQwaPF/WTrY3sijjsG9VVBm86El8bTHO/qEu9rypgA2DHLFAl7Kzd/we2TBTjYSs9Dj6Zi0pSzyVmAJ8VaemmkAZEW8dDJBfnvoLvRsI+V5Rpk626qa/fF7gIJPpgMAYn32k07wVRgUK/ajoYqKQElTphoNpmq2tl9TctaRi8mj32UOf8P71ehQ2ZCSeagYXWjhhMxgVl8/j8TGxVu6SQNi8nzOM/wxtZQNS3jTtMiRz/ONF+3RS2nVi5EuX7pOGlEnXMvhNWQbd7xMZdWiTdes7a1lW9c=
+    file:
+      - ${ARCHIVE}.tar.gz
+      - ${ARCHIVE}.zip
+    skip_cleanup: true
+    overwrite: true
+    draft: true
+    on:
+      repo: pascalpoizat/fbpmn
+      branch: develop
+      tags: false
+    name: ${TRAVIS_TAG}-SNAPSHOT
