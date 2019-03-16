@@ -1,61 +1,42 @@
-# information:
-# https://www.fpcomplete.com/blog/2016/02/updated-haskell-travis-config
-
 sudo: true
-
-# Choose a lightweight base image; we provide our own build tools.
-language: c
-
-# Git clone depth and submodules treatment.
+language: haskell
 git:
   depth: 5
-  # submodules: false
-
-# Caching so the next build will be fast too.
 cache:
   directories:
   - $HOME/.ghc
-  - $HOME/.cabal
+  # - $HOME/.cabal
   - $HOME/.stack
-  - $HOME/.local/bin
   - $TRAVIS_BUILD_DIR/.stack-work
-
-# The configurations to test.
-# We grab the appropriate GHC and cabal-install versions from hvr's PPA. See:
-# https://github.com/hvr/multi-ghc-travis
 matrix:
   fast_finish: true
   include:
-  - env: BUILD=stack ARGS="--resolver lts-12 --stack-yaml=$TRAVIS_BUILD_DIR/stack.yaml" BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-linux/lts-12.12/8.4.3/bin" OS="linux" ARCH="x86_64"
-    compiler: ": #stack 8.4.3"
-    addons: {apt: {packages: [ghc-8.4.3,libgmp-dev], sources=[hvr-ghc]}}
+  - ghc: 8.4.3
+    env: GHCVER='8.4.3' STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml" BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-linux/lts-12.12/8.4.3/bin" OS="linux" ARCH="x86_64"
     os: linux
-  # - env: BUILD=stack ARGS="--resolver lts-12 --stack-yaml=$TRAVIS_BUILD_DIR/stack.yaml"
-  #        BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-osx/lts-12.12/8.4.3/bin"
-  #        OS="osx" ARCH="x86_64"
-  #   compiler: ": #stack 8.4.3 osx"
-  #   os: osx
-before_install:
-- unset CC
+    addons:
+      apt:
+        packages:
+        - libgmp-dev
+  # - env: BUILD=stack ARGS="--resolver lts-12.12" STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml" BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-osx/lts-12.12/8.4.3/bin" OS="osx" ARCH="x86_64"
+   #   os: osx
+install:
 - mkdir -p ~/.local/bin
-- export PATH=$HOME/.local/bin:$PATH
+- export PATH="$HOME/.local/bin:$PATH"
 - |
     if [ `uname` = "Darwin" ]
     then
-      travis_retry curl --insecure -L https://www.stackage.org/stack/osx-x86_64 | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+      travis_retry curl --insecure -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
     else
-      travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+      travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
     fi
-install:
-- echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
-- if [ -f configure.ac ]; then autoreconf -i; fi
 - stack --version
-- stack --no-terminal --install-ghc $ARGS test --only-dependencies
+- stack setup --no-terminal --install-cabal 2.2.0.1
 - stack ghc -- --version
-#- stack setup --no-terminal --install-cabal 2.2.0.1
-#- stack build --only-dependencies --no-terminal
+- stack build --only-dependencies --no-terminal
 script:
-- stack build --test :fbpmn-test --coverage --bench --no-run-benchmarks --no-terminal --ghc-options=-Werror
+- stack build --test :fbpmn-test --coverage --bench --no-run-benchmarks --no-terminal
+  --ghc-options=-Werror
 after_script:
 - travis_retry curl -L https://github.com/rubik/stack-hpc-coveralls/releases/download/v0.0.4.0/shc-linux-x64-8.0.1.tar.bz2
   | tar -xj
@@ -83,4 +64,3 @@ deploy:
     repo: pascalpoizat/fbpmn
     tags: false
   name: ${TRAVIS_TAG}
-
