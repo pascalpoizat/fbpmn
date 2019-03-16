@@ -44,7 +44,7 @@ after_script:
 notifications:
   email: false
 before_deploy:
-  - export VERSION=latest
+  - export VERSION=SNAPSHOT
   - export ARCHIVE=${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}
   - tar czf ${ARCHIVE}.tar.gz -C ${BINDIR} fbpmn
   - zip -j ${ARCHIVE}.zip ${BINDIR}/fbpmn
