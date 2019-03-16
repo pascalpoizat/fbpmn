@@ -44,14 +44,18 @@ after_script:
 notifications:
   email: false
 before_deploy:
-  - export VERSION="test"
-  - zip ${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}.zip ${BINDIR}/fbpmn
+  - export VERSION=test
+  - export ZIPFILE=${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}.zip
+  - zip ${ZIPFILE} ${BINDIR}/fbpmn
+  - echo ${ZIPFILE} created
+  - export TRAVIS_TAG=v${VERSION}-SNAPSHOT
+  - git tag ${TRAVIS_TAG}
 deploy:
   provider: releases
   api_key:
     secure: aVme28spW6hNmDtHHQBuffcKNG7FRsN4Qa8GrRQzsIlTG9dIvnCMp64Wtz/PFr4Cm7NRgR3YshaL3GHQaxaGZLnJCmHRVrHQHa7oPd+mfo1/4Azzh73N91aIn6UqKr0Cd/nZtXa9+fDPD4UZARt8j3pkOf4e5ghwi3k6fQNAHdPIKlr+9o00BdursmlbU9E0Kwu7jNa1kPrxa/6XdFRLXRgsEqYARq2069OXXBU/tkfz6e4klAswR5ZxgoaqxhKjyZogDQOeffyGc1TR8TemmXDaOGknC0fc5+V7C7z4W7o/MWjARL3c8RTkkGFvQhTynJ55Txs88W3ueYa1AsN6UFJ5RYp6zD4KODYb0yU/g1RJ91On9YAcI+ObOpq6os7t5CAjgX2jw49/bfQwaPF/WTrY3sijjsG9VVBm86El8bTHO/qEu9rypgA2DHLFAl7Kzd/we2TBTjYSs9Dj6Zi0pSzyVmAJ8VaemmkAZEW8dDJBfnvoLvRsI+V5Rpk626qa/fF7gIJPpgMAYn32k07wVRgUK/ajoYqKQElTphoNpmq2tl9TctaRi8mj32UOf8P71ehQ2ZCSeagYXWjhhMxgVl8/j8TGxVu6SQNi8nzOM/wxtZQNS3jTtMiRz/ONF+3RS2nVi5EuX7pOGlEnXMvhNWQbd7xMZdWiTdes7a1lW9c=
   file:
-    - ${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}.zip
+    - ${ZIPFILE}
   skip_cleanup: true
   overwrite: true
   draft: true
