@@ -37,6 +37,20 @@ after_script:
   - travis_retry curl -L https://github.com/rubik/stack-hpc-coveralls/releases/download/v0.0.4.0/shc-linux-x64-8.0.1.tar.bz2 | tar -xj
   - ./shc fbpmn fbpmn-test
 
+# https://docs.travis-ci.com/user/deployment/releases/
+deploy:
+  provider: releases
+  api_key:
+    secure: "xxx"
+  # file_glob: true
+  file:
+    - ".stack-work/install/x86_64-osx/lts-12.12/8.4.3/bin/fbpmn"
+  skip_cleanup: true
+  overwrite: true
+  draft: true   # true for draft releases
+  on:
+    tags: false # true for tagged builds only
+
 notifications:
   email: false
 
