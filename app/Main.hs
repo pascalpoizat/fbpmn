@@ -47,17 +47,15 @@ bpmnSuffix = ".bpmn"
 tlaSuffix :: Text
 tlaSuffix = ".tla"
 
-newtype Options = Options
-  { optCommand :: Command
-  }
+newtype Options = Options Command
 
 data Command
   = CVersion
   | CRepl
-  | CJson2Dot { optPathIn :: Text, optPathOut :: Text }
-  | CJson2Tla { optPathIn :: Text, optPathOut :: Text }
-  | CBpmn2Json { optPath :: Text, optPathOut :: Text }
-  | CBpmn2Tla { optPath :: Text, optPathOut :: Text }
+  | CJson2Dot Text Text
+  | CJson2Tla Text Text
+  | CBpmn2Json Text Text
+  | CBpmn2Tla Text Text
 
 parserOptions :: Parser Options
 parserOptions = Options <$> subparser
@@ -149,16 +147,6 @@ run (Options (CJson2Dot  pin pout)) = json2dot True pin pout
 run (Options (CJson2Tla  pin pout)) = json2tla True pin pout
 run (Options (CBpmn2Json pin pout)) = bpmn2json False pin pout
 run (Options (CBpmn2Tla  pin pout)) = bpmn2tla False pin pout
-
-transform :: Text
-          -> Text
-          -> (String -> IO (Maybe BpmnGraph))
-          -> (String -> BpmnGraph -> IO ())
-          -> Bool
-          -> Text
-          -> IO ()
-transform sourceSuffix targetSuffix mreader mwriter withValidation path =
-  transform2 sourceSuffix targetSuffix mreader mwriter withValidation path path
 
 transform2 :: Text
            -> Text
