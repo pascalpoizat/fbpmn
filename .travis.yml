@@ -1,24 +1,43 @@
-sudo: true
+# information:
+# https://www.fpcomplete.com/blog/2016/02/updated-haskell-travis-config
+
+# Use new container infrastructure to enable caching.
+sudo: false
+
+# Choose a lightweight base image; we provide our own build tools.
 language: c
+
+# Git clone depth and submodules treatment.
 git:
   depth: 5
+  # submodules: false
+
+# Caching so the next build will be fast too.
 cache:
   directories:
   - $HOME/.ghc
   - $HOME/.cabal
   - $HOME/.stack
-  - $HOME/.local/.bin
+  - $HOME/.local/bin
   - $TRAVIS_BUILD_DIR/.stack-work
+
+# The configurations to test.
+# We grab the appropriate GHC and cabal-install versions from hvr's PPA. See:
+# https://github.com/hvr/multi-ghc-travis
 matrix:
   fast_finish: true
   include:
-  - env: BUILD=stack ARGS="--resolver lts-12" STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml" BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-linux/lts-12.12/8.4.3/bin" OS="linux" ARCH="x86_64"
+  - env: BUILD=stack ARGS="--resolver lts-12 --stack-yaml=$TRAVIS_BUILD_DIR/stack.yaml"
+         BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-linux/lts-12.12/8.4.3/bin"
+         OS="linux" ARCH="x86_64"
     compiler: ": #stack 8.4.3"
-    addons: {apt: {packages: [ghc-8.4.3], sources=[hvr-ghc]}}
+    addons: {apt: {packages: [ghc-8.4.3,libgmp-dev], sources=[hvr-ghc]}}
     os: linux
-  - env: BUILD=stack ARGS="--resolver lts-12" STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml" BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-osx/lts-12.12/8.4.3/bin" OS="osx" ARCH="x86_64"
-    compiler: ": #stack 8.4.3 osx"
-    os: osx
+  # - env: BUILD=stack ARGS="--resolver lts-12 --stack-yaml=$TRAVIS_BUILD_DIR/stack.yaml"
+  #        BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-osx/lts-12.12/8.4.3/bin"
+  #        OS="osx" ARCH="x86_64"
+  #   compiler: ": #stack 8.4.3 osx"
+  #   os: osx
 before_install:
 - unset CC
 - mkdir -p ~/.local/bin
