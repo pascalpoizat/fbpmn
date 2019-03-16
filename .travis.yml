@@ -40,10 +40,9 @@ install:
 - stack ghc -- --version
 - stack build --only-dependencies --no-terminal
 script:
-- stack build --test :fbpmn-test --coverage --bench --no-run-benchmarks --no-terminal
+- stack install --test :fbpmn-test --coverage --bench --no-run-benchmarks --no-terminal
   --ghc-options=-Werror
 after_script:
-- stack install
 - travis_retry curl -L https://github.com/rubik/stack-hpc-coveralls/releases/download/v0.0.4.0/shc-linux-x64-8.0.1.tar.bz2
   | tar -xj
 - "./shc fbpmn fbpmn-test"
