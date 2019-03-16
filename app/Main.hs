@@ -24,13 +24,10 @@ data RCommand = RQuit        -- quit REPL
              -- | RSmt Text    -- save current graph as SMT
 
 fversion :: Text
-fversion = "0.1"
-
-fname :: Text
-fname = "fbpmn"
+fversion = "0.1.0"
 
 toolversion :: Text
-toolversion = fname <> " " <> fversion
+toolversion = fversion
 
 data Suffix = JsonSuffix | BpmnSuffix | TlaSuffix
   deriving (Eq)
