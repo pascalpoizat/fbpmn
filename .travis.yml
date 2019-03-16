@@ -1,4 +1,7 @@
 sudo: true
+branches:
+  only:
+  - master
 language: haskell
 git:
   depth: 5
@@ -44,12 +47,12 @@ after_script:
 notifications:
   email: false
 before_deploy:
-  - export VERSION=SNAPSHOT
+  - export VERSION=$(fbpmn version)
   - export ARCHIVE=${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}
   - tar czf ${ARCHIVE}.tar.gz -C ${BINDIR} fbpmn
   - zip -j ${ARCHIVE}.zip ${BINDIR}/fbpmn
-  - export TRAVIS_TAG=${VERSION}
-  - git tag ${TRAVIS_TAG}
+  #- export TRAVIS_TAG=${VERSION}
+  #- git tag ${TRAVIS_TAG}
 deploy:
   provider: releases
   api_key:
@@ -59,8 +62,8 @@ deploy:
     - ${ARCHIVE}.zip
   skip_cleanup: true
   overwrite: true
-  draft: true
+  draft: false
   on:
     repo: pascalpoizat/fbpmn
-    tags: false
-  name: ${TRAVIS_TAG}
+    tags: true
+  # name: ${TRAVIS_TAG}
