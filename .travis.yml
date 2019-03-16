@@ -45,7 +45,7 @@ notifications:
   email: false
 before_deploy:
   - export VERSION=test
-  - export ARCHIVE=${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}.zip
+  - export ARCHIVE=${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}.tar.gz
   - tar czf ${ARCHIVE} -C ${BINDIR} fbpmn
   - echo ${ARCHIVE} created
   - export TRAVIS_TAG=v${VERSION}-SNAPSHOT
