@@ -56,6 +56,7 @@ before_deploy:
       else
         export VERSION=$(fbpmn version)
       fi
+  - echo version is $VERSION
   - export ARCHIVE="${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}"
   - echo archive basename is $ARCHIVE
   - tar czf "${ARCHIVE}.tar.gz" -C ${BINDIR} fbpmn
