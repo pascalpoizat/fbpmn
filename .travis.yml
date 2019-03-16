@@ -1,8 +1,8 @@
 sudo: true
-branches:
-  only:
-  -master
-  -develop
+# branches:
+#   only:
+#   -master
+#   -develop
 language: haskell
 git:
   depth: 5
@@ -52,10 +52,10 @@ before_deploy:
   - export ARCHIVE=${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}
   - tar czf ${ARCHIVE}.tar.gz -C ${BINDIR} fbpmn
   - zip -j ${ARCHIVE}.zip ${BINDIR}/fbpmn
-  - export TRAVIS_TAG=v${VERSION};
-  - if [[ "$TRAVIS_BRANCH" == "develop" ]]; then
-      git tag ${TRAVIS_TAG}-SNAPSHOT;
-    fi
+  - export TRAVIS_TAG=v${VERSION}
+  # - if [[ "$TRAVIS_BRANCH" == "develop" ]]; then
+  #     git tag ${TRAVIS_TAG}-SNAPSHOT;
+  #   fi
 deploy:
   - provider: releases
     api_key:
