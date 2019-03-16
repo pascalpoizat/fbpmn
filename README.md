@@ -17,23 +17,37 @@
 
 formal tools for BPMN
 
-## Requisites
+## 1. Requisites
 
-1. You will need `stack` to compile the source code of `fbpmn`. See [here](https://docs.haskellstack.org/en/stable/README/).
+To run the verification, you will need:
 
-	For Windows, due to a bug (not related to `fbpmn`), please use:
+1. A Java SE Development Kit (JDK 8), get it [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+
+	There is an issue (due to `tla2tools.jar`) with version 11 so you will need to install version 8. 
+	
+2. The TLA+ tools, get `tla2tools.jar` [here](https://github.com/tlaplus/tlaplus/releases).
+
+If you want to build `fbpmn` from sources (required for OSX and Windows), you will need:
+
+1. The `stack` build system for Haskell, see [here](https://docs.haskellstack.org/en/stable/README/).
+
+	For Windows, due to a bug (due to the Haskell compiler), please use:
 	
 	```shell
 	curl -sS -ostack.zip -L --insecure https://www.stackage.org/stack/windows-x86_64
 	7z x stack.zip stack.exe
 	```
 
-2. You will need a JDK to run the verification. There is an issue (not related to `fbpmn`) with version 11 so you will need to install version 8. See [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 
-3. You will need the TLA+ tools to run the verification. Get `tla2tools.jar`, [here](https://github.com/tlaplus/tlaplus/releases).
+## 2. Getting binaries (Linux x86_64, experimental)
 
+Linux binaries of stable versions of `fbpmn` are built using the continous integration server and are available [here](https://github.com/pascalpoizat/fbpmn/releases).
 
-## Getting source files
+We are working on having binaries for OSX and Windows.
+
+## 3. Building from source
+
+### Getting source files
 
 You can get the source code from [the fbpmn repository](https://github.com/pascalpoizat/fbpmn) by clicking the "Clone or download" button.
 
@@ -43,10 +57,11 @@ You can also use the `git` command (see [here](https://git-scm.com/downloads) to
 git clone https://github.com/pascalpoizat/fbpmn
 ```
 
-## Compiling
+### Compiling
 
 ```shell
 cd fbpmn
+stack clean
 stack build
 stack install
 ```
@@ -55,7 +70,7 @@ This will install the `fbpmn` command in some place that depends on your OS.
 You can use `stack path --local-bin` to find out which directory it is.
 Do not forget to put this directory in your command path.
 
-## BPMN models
+## 4. BPMN models
 
 `fbpmn` is able to deal with **collaborations** either in BPMN or in its own JSON format. Please note that you can also deal with a standalone **process model** (workflow) as soon as you put it in a standalone pool lane (we have some examples of this [here](models/bpmn-origin/src)).
 
@@ -129,7 +144,7 @@ Then provided you have `dot` installed, you can generate a picture for your coll
 dot -Tpng sourcefile.dot -o targetfile.png
 ```
 
-## Verification using TLA+
+## 5. Verification using TLA+
 
 This is achieved in two steps (see Figure 2):
 
