@@ -39,6 +39,7 @@ install:
 - stack setup --no-terminal --install-cabal 2.2.0.1
 - stack ghc -- --version
 - stack build --only-dependencies --no-terminal
+- stack clean
 script:
 - stack build --test :fbpmn-test --coverage --bench --no-run-benchmarks --no-terminal
   --ghc-options=-Werror
