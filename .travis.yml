@@ -1,8 +1,8 @@
 sudo: true
-branches:
-  only:
-  - master
-  - develop
+# branches:
+#   only:
+#   - master
+#   - develop
 language: haskell
 git:
   depth: 5
@@ -81,8 +81,9 @@ deploy:
     draft: false
     on:
       repo: pascalpoizat/fbpmn
-      branch: master
+      # branch: master
       tags: true
+      all_branches: true
     name: $TRAVIS_TAG
   - provider: releases
     api_key:
