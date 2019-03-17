@@ -80,7 +80,6 @@ deploy:
     overwrite: true
     draft: false
     on:
-      repo: pascalpoizat/fbpmn
       # branch: master
       tags: true
       all_branches: true
@@ -95,7 +94,6 @@ deploy:
     overwrite: true
     draft: true
     on:
-      repo: pascalpoizat/fbpmn
       branch: develop
       tags: false
     name: $TRAVIS_TAG
