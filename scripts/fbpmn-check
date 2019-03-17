@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if [ -z $FBPMN_HOME ]; then
+        echo FBPMN_HOME is not set; exit 1
+fi
+if [ ! -d $FBPMN_HOME/theories/tla ]; then
+        echo "wrong FBPMN_HOME (theories/tla not found)"; exit 1
+fi
+if [ -z $TLA2TOOLS_HOME ]; then
+        echo TLATOOLS_HOME is no set; exit 1
+fi
+if [ ! -f $TLA2TOOLS_HOME/tla2tools.jar ]; then
+        echo "wrong TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
+fi
+if [ -z $1 ]; then
+        echo model not supplied; exit 1
+fi
+if [ ! -f $1 ]; then
+        echo file $1 is not found; exit 1
+fi
+fullpath=`realpath $1`
+model=${fullpath%%.*}
+modelname=`basename $model`
+mkdir test-$modelname
+cd test-$modelname
+cp -f $fullpath .
+fbpmn bpmn2tla $modelname $modelname
+cp $FBPMN_HOME/theories/tla/* .
+cp configuration.cfg $modelname.cfg
+java -classpath $TLA2TOOLS_HOME/tla2tools.jar tlc2.TLC -deadlock $modelname.tla
+

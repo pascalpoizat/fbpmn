@@ -19,45 +19,46 @@ formal tools for BPMN
 
 ## 1. Requisites
 
-To run the verification, you will need:
+To verify your BPMN models, you will need:
 
-1. A Java SE Development Kit (JDK 8), get it [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+- 1.1. The TLA+ tools, get `tla2tools.jar` [here](https://github.com/tlaplus/tlaplus/releases).
 
-	There is an issue (due to `tla2tools.jar`) with version 11 so you will need to install version 8. 
+- 1.2. A Java SE Development Kit (JDK 8), get it [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+
+	There is an issue (wrt. `tla2tools.jar`) with version 11 so you will need to install version 8. 
 	
-2. The TLA+ tools, get `tla2tools.jar` [here](https://github.com/tlaplus/tlaplus/releases).
+If you build `fbpmn` from sources (required for OSX and Windows), you will also need:
 
-If you want to build `fbpmn` from sources (required for OSX and Windows), you will need:
+- 1.3. The `stack` build system for Haskell, see [here](https://docs.haskellstack.org/en/stable/README/).
 
-1. The `stack` build system for Haskell, see [here](https://docs.haskellstack.org/en/stable/README/).
-
-	For Windows, due to a bug (due to the Haskell compiler), please use:
+	Under **Windows**, due to a bug, please use:
 	
 	```shell
 	curl -sS -ostack.zip -L --insecure https://www.stackage.org/stack/windows-x86_64
 	7z x stack.zip stack.exe
 	```
 
+## 2. Getting source files
 
-## 2. Getting binaries (Linux x86_64, experimental)
+You can get the source files in either way:
 
-Linux binaries of stable versions of `fbpmn` are built using the continous integration server and are available [here](https://github.com/pascalpoizat/fbpmn/releases).
+- 2a. as an archive from [the fbpmn repository](https://github.com/pascalpoizat/fbpmn) by clicking the "Clone or download" button.
 
-We are working on having binaries for OSX and Windows.
+- 2b. by cloning the repository using the `git` command (see [here](https://git-scm.com/downloads) to get it).
 
-## 3. Building from source
+	```shell
+	git clone https://github.com/pascalpoizat/fbpmn
+	```
 
-### Getting source files
+## 3a. Getting a pre-built `fbpmn` binary
 
-You can get the source code from [the fbpmn repository](https://github.com/pascalpoizat/fbpmn) by clicking the "Clone or download" button.
+**Linux** binaries of stable versions of `fbpmn` are built using the continous integration server and are available [here](https://github.com/pascalpoizat/fbpmn/releases).
 
-You can also use the `git` command (see [here](https://git-scm.com/downloads) to get it) as follows:
+*We are working on having binaries automatically built for OSX and Windows.*
 
-```shell
-git clone https://github.com/pascalpoizat/fbpmn
-```
+## 3b. Building `fbpmn` from source
 
-### Compiling
+Required for **OSX** and **Windows**.
 
 ```shell
 cd fbpmn
@@ -68,11 +69,11 @@ stack install
 
 This will install the `fbpmn` command in some place that depends on your OS.
 You can use `stack path --local-bin` to find out which directory it is.
-Do not forget to put this directory in your command path.
+Do not forget to put this directory in your command `PATH`.
 
-## 4. BPMN models
+## 3. BPMN models
 
-`fbpmn` is able to deal with **collaborations** either in BPMN or in its own JSON format. Please note that you can also deal with a standalone **process model** (workflow) as soon as you put it in a standalone pool lane (we have some examples of this [here](models/bpmn-origin/src)).
+`fbpmn` is able to deal with **collaborations** either in BPMN or in its own JSON format (see *6.*, below). Please note that you can also deal with a standalone **process model** (workflow) as soon as you put it in a standalone pool lane (we have some examples of this [here](models/bpmn-origin/src)).
 
 ### BPMN format
 
@@ -85,9 +86,102 @@ The subset of BPMN that we support is presented in Figure 1.
 
 `fbpmn` has been tested with models made with the Camunda Modeler, which you can get [here](https://camunda.com/products/modeler/).
 
-### JSON format
+## 4. Verification using TLA+
 
-Please note that the JSON format for a model can be generated from the BPMN format of it, using `fbpmn`.
+`fbpmn` supports the verification of:
+
+- option to complete
+- proper completion
+- no dead activity
+- safety
+- soundness
+- message-relaxed soundness
+
+This is achieved in two steps (see Figure 2):
+
+1. generate a TLA+ representation of the BPMN collaboration
+2. use this representation and the TLA+ implementation of our FOL semantics for BPMN collaborations to perform verification (using the `tlc` model checker from the TLA+ tool box).
+
+![Transformation overview.](overview.png)
+*Figure 2: `fbpmn` approach to the verification of BPMN collaborations.*
+
+Verification requires that:
+
+- `FBPMN_HOME` is set to the place where `fbpmn` is installed.
+- `TLA2TOOLS_HOME` is set to the place where `tla2tools.jar` is installed.
+- `fbpmn` is found on the command `PATH`.
+
+
+**For Linux and OSX users**, we provide you with a script (`scripts/fbpmn-check`) that performs the two steps for you:
+
+```sh
+fbpmn-check myModel.bpmn
+```
+
+**For Windows users**, you will have to run the commands by hand:
+
+1. generate the TLA+ representation of your model:
+
+	```sh
+	fbpmn bpmn2tla myModel myModel # no suffixes
+	```
+	
+2. copy the files from `$FBPMN_HOME/theories/tla` to your working directory
+
+3. copy `configuration.cfg` to `myModel.cfg`
+
+3. run TLC:
+
+	```sh
+	java -classpath $TLA2TOOLS_HOME/tla2tools.jar tlc2.TLC -deadlock myModel.tla
+	```
+
+*We are working on providing a script for Windows users too.*
+
+## 5. Help with `fbpmn`
+
+To get help with `fbpmn`, run `fbpmn -h`.
+
+```sh
+❯ fbpmn -h
+0.1.0
+
+Usage: fbpmn COMMAND
+  formal transformations for BPMN models
+
+Available options:
+  -h,--help                Show this help text
+
+Available commands:
+  version                  prints the version
+  repl                     launches the REPL
+  json2dot                 transforms a collaboration from JSON to DOT
+  json2tla                 transforms a collaboration from JSON to TLA+
+  bpmn2json                transforms a collaboration from BPMN to JSON
+  bpmn2tla                 transforms a collaboration from BPMN to TLA+
+```
+
+But for the `version`and `repl` commands, you must provide two arguments: the source file and the target file for the transformation.
+
+**No suffixes are to be given for source/target files when running `fbpmn`.**
+
+`fbpmn` also has a REPL mode (run it using `fbpmn repl`) including the following commands:
+
+```
+quit (quit REPL)
+help (list commands)
+load (load current graph from JSON and verify file)
+bpmn (load current graph from BPMN)
+json (save current graph to JSON)
+dot  (save current graph to DOT)
+tla  (save current graph to TLA+)
+```
+
+**Suffixes are to be given when using the REPL.**
+
+## 6. JSON format
+
+Please note that the JSON format for a model can be generated from the BPMN format of it, using `fbpmn bpmn2json`.
 In general, there should therefore be no need to write out models in the JSON format manually.
 
 Our JSON format is as follows: 
@@ -144,63 +238,3 @@ Then provided you have `dot` installed, you can generate a picture for your coll
 dot -Tpng sourcefile.dot -o targetfile.png
 ```
 
-## 5. Verification using TLA+
-
-This is achieved in two steps (see Figure 2):
-
-1. generate a TLA+ representation of the BPMN collaboration
-2. use this representation and the TLA+ implementation of our FOL semantics for BPMN collaborations to perform verification (using the `tlc` model checker from the TLA+ tool box).
-
-![Transformation overview.](overview.png)
-*Figure 2: `fbpmn` approach to the verification of BPMN collaborations.*
-
-### Generating the TLA+ representation of a BPMN model
-
-To transform a BPMN collaboration model into TLA+ for verification, run:
-
-```shell
-fbpmn bpmn2tla sourcefile targetfile
-```
-
-where neither `sourcefile` nor `targetfile` have a suffix (the correct ones will be added by `fbpmn`).
-`fbpmn` also has a REPL mode (run it using `fbpmn repl`) including the following commands (**subject to evolution**):
-
-```
-quit (quit REPL)
-help (list commands)
-load (load current graph from JSON and verify file)
-bpmn (load current graph from BPMN)
-json (save current graph to JSON)
-dot  (save current graph to DOT)
-tla  (save current graph to TLA+)
-```
-
-In the REPL you have to specify the full name of the files (including the `.json` or `.tla` suffix).
-
-### Verification
-
-`fbpmn` supports the verification of:
-
-- option to complete
-- proper completion
-- no dead activity
-- safety
-- soundness
-- message-relaxed soundness
-
-For verification, given that
-
-- your model is in `$MODEL.tla`
-- `$FBPMN_HOME` is the `fbpmn` source directory
-- `$TLA2TOOLS_HOME`is the place where `tla2tools.jar` is installed
-
-run:
-
-```sh
-mkdir test-${MODEL}
-cd test-${MODEL}
-cp ../${MODEL}.tla .
-cp ${FBPMN_HOME}/theories/tla/* .
-cp configuration.cfg ${MODEL}.cfg
-java -classpath ${TLA2TOOLS_HOME}/tla2tools.jar tlc2.TLC -deadlock $MODEL.tla
-```
