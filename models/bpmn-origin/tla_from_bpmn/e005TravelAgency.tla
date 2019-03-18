@@ -93,7 +93,7 @@ CatN ==
 @@ "ExclusiveGateway_0i09ijx" :> Parallel
 @@ "IntermediateThrowEvent_0xjpikb" :> CatchMessageIntermediateEvent
 @@ "Task_1ne4gpy" :> SendTask
-@@ "EndEvent_10gqkzy" :> NoneEndEvent
+@@ "EndEvent_10gqkzy" :> TerminateEndEvent
 @@ "IntermediateThrowEvent_0neineb" :> CatchMessageIntermediateEvent
 @@ "Task_002ndsu" :> SendTask
 

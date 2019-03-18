@@ -95,7 +95,7 @@ CatN ==
 @@ "Task_002ndsu" :> SendTask
 @@ "IntermediateThrowEvent_0neineb" :> CatchMessageIntermediateEvent
 @@ "Task_1ne4gpy" :> SendTask
-@@ "EndEvent_10gqkzy" :> NoneEndEvent
+@@ "EndEvent_10gqkzy" :> TerminateEndEvent
 
 CatE ==
    "MessageFlow_0knd10s" :> MsgFlow

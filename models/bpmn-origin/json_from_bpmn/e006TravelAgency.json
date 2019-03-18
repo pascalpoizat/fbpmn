@@ -13,7 +13,7 @@
         "Task_07u875a": "ReceiveTask",
         "Task_1bn6n5q": "SendTask",
         "EndEvent_055yt9k": "NoneEndEvent",
-        "EndEvent_10gqkzy": "NoneEndEvent",
+        "EndEvent_10gqkzy": "TerminateEndEvent",
         "Task_002ndsu": "SendTask",
         "Task_1ne4gpy": "SendTask",
         "Process_14x2mcf": "Process",

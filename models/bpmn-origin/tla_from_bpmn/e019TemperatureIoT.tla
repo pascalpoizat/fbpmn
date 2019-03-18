@@ -200,7 +200,7 @@ CatN ==
 @@ "Task_01tkb3r" :> SendTask
 @@ "IntermediateThrowEvent_0moj9p9" :> ThrowMessageIntermediateEvent
 @@ "ExclusiveGateway_1u3y4si" :> ExclusiveOr
-@@ "EndEvent_14513uv" :> NoneEndEvent
+@@ "EndEvent_14513uv" :> TerminateEndEvent
 @@ "IntermediateThrowEvent_1dkrxqj" :> CatchMessageIntermediateEvent
 @@ "Task_0ca58zk" :> ReceiveTask
 @@ "ReceiveTask_1cc6gb0" :> SendTask
@@ -212,7 +212,7 @@ CatN ==
 @@ "IntermediateThrowEvent_1ab6lzx" :> ThrowMessageIntermediateEvent
 @@ "IntermediateThrowEvent_0zn5r2p" :> ThrowMessageIntermediateEvent
 @@ "ExclusiveGateway_04luead" :> Parallel
-@@ "EndEvent_0wj7yv1" :> NoneEndEvent
+@@ "EndEvent_0wj7yv1" :> TerminateEndEvent
 @@ "Task_0yh5jmb" :> SendTask
 @@ "ExclusiveGateway_1mr7igy" :> ExclusiveOr
 @@ "Task_1pc6d9t" :> ReceiveTask
@@ -227,7 +227,7 @@ CatN ==
 @@ "IntermediateThrowEvent_1cd7dmz" :> CatchMessageIntermediateEvent
 @@ "ExclusiveGateway_1alxwt7" :> Parallel
 @@ "IntermediateThrowEvent_1ajpgtk" :> CatchMessageIntermediateEvent
-@@ "EndEvent_0joc303" :> NoneEndEvent
+@@ "EndEvent_0joc303" :> TerminateEndEvent
 @@ "ExclusiveGateway_0d9bxab" :> ExclusiveOr
 @@ "StartEvent_12o3x3s" :> MessageStartEvent
 @@ "Task_0aihuup" :> AbstractTask
@@ -240,7 +240,7 @@ CatN ==
 @@ "ExclusiveGateway_0sum07m" :> ExclusiveOr
 @@ "Task_169t347" :> AbstractTask
 @@ "ExclusiveGateway_19mjt5y" :> ExclusiveOr
-@@ "EndEvent_0pa5oys" :> NoneEndEvent
+@@ "EndEvent_0pa5oys" :> TerminateEndEvent
 @@ "Task_1e85hli" :> AbstractTask
 @@ "Task_1spxdy2" :> AbstractTask
 @@ "ExclusiveGateway_1izjr9z" :> ExclusiveOr
