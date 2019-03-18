@@ -29,7 +29,7 @@ To verify your BPMN models, you will need:
 
 	There is an issue (wrt. `tla2tools.jar`) with version 11 so you will need to install version 8. 
 	
-If you build `fbpmn` from sources (required for OSX and Windows), you will also need:
+If you build `fbpmn` from sources (required for **Windows**, optional for **Linux** and **OSX**), you will also need:
 
 - 1.3. The `stack` build system for Haskell, see [here](https://docs.haskellstack.org/en/stable/README/).
 
@@ -41,6 +41,8 @@ If you build `fbpmn` from sources (required for OSX and Windows), you will also 
 	```
 
 ## 2. Getting source files
+
+Required for **all platforms** to get the TLA+ theories that are used in the verification process.
 
 You can get the source files in either way:
 
@@ -54,13 +56,13 @@ You can get the source files in either way:
 
 ## 3a. Getting a pre-built `fbpmn` binary
 
-**Linux** binaries of stable versions of `fbpmn` are built using the continous integration server and are available [here](https://github.com/pascalpoizat/fbpmn/releases).
+**Linux** and **OSX** binaries of stable versions of `fbpmn` are built using the continous integration server and are available [here](https://github.com/pascalpoizat/fbpmn/releases).
 
-*We are working on having binaries automatically built for OSX and Windows.*
+*We are working on having binaries automatically built for Windows.*
 
 ## 3b. Building `fbpmn` from source
 
-Required for **OSX** and **Windows**.
+Required for **Windows**.
 
 ```shell
 cd fbpmn
