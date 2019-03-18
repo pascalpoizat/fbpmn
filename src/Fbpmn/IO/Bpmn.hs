@@ -141,7 +141,7 @@ pEE _ = (?=) "endEvent"
 pMEE :: [Element] -> Element -> Bool
 pMEE es e = pEE es e && pMx e
 pTEE :: [Element] -> Element -> Bool
-pTEE es e = pSE es e && pTx e
+pTEE es e = pEE es e && pTx e
 pNEE :: [Element] -> Element -> Bool
 pNEE es e = pEE es e && (not $ e `oneOf` [pMEE es, pTEE es])
 
