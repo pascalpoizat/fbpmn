@@ -1,74 +1,76 @@
 sudo: true
-# branches:
-#   only:
-#   - master
-#   - develop
-language: haskell
+notifications:
+  email: false
+language: generic
 git:
   depth: 5
 cache:
   directories:
-  - $HOME/.ghc
-  # - $HOME/.cabal
-  - $HOME/.stack
-  - $TRAVIS_BUILD_DIR/.stack-work
+  - "$HOME/.ghc"
+  - "$HOME/.cabal"
+  - "$HOME/.stack"
+  - "$TRAVIS_BUILD_DIR/.stack-work"
 matrix:
-  fast_finish: true
   include:
-  - ghc: 8.4.3
-    env: GHCVER='8.4.3' STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml" BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-linux/lts-12.12/8.4.3/bin" OS="linux" ARCH="x86_64"
-    os: linux
+  - env: BUILD=stack ARGS="--resolver lts-12" OS=linux ARCH=x86_64 BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-linux/lts-12.26/8.4.4/bin"
+    compiler: ": #stack 8.4.4"
     addons:
       apt:
         packages:
         - libgmp-dev
-  # - env: BUILD=stack ARGS="--resolver lts-12.12" STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml" BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-osx/lts-12.12/8.4.3/bin" OS="osx" ARCH="x86_64"
-  #   compiler: ": #stack 8.4.4 osx"
-  #   os: osx
-install:
+    os: linux
+  - env: BUILD=stack ARGS="--resolver lts-12" OS=osx ARCH=x86_64 BINDIR="$TRAVIS_BUILD_DIR/.stack-work/install/x86_64-osx/lts-12.26/8.4.4/bin"
+    compiler: ": #stack 8.4.4 osx"
+    os: osx
+before_install:
+- unset CC
+- export PATH=$HOME/.local/bin:$PATH
 - mkdir -p ~/.local/bin
-- export PATH="$HOME/.local/bin:$PATH"
 - |
-    if [ `uname` = "Darwin" ]
-    then
-      travis_retry curl --insecure -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
-    else
-      travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-    fi
-- stack --version
-- stack setup --no-terminal --install-cabal 2.2.0.1
-- stack ghc -- --version
-- stack build --only-dependencies --no-terminal
-- stack clean
+  if [ `uname` = "Darwin" ]
+  then
+    travis_retry curl --insecure -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
+  else
+    travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+  fi
+  # Use the more reliable S3 mirror of Hackage
+  # mkdir -p $HOME/.cabal
+  # echo 'remote-repo: hackage.haskell.org:http://hackage.fpcomplete.com/' > $HOME/.cabal/config
+  # echo 'remote-repo-cache: $HOME/.cabal/packages' >> $HOME/.cabal/config
+install:
+- echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo
+  '?')]"
+- if [ -f configure.ac ]; then autoreconf -i; fi
+- |
+  set -ex
+  stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
+  set +ex
 script:
-- stack build --test :fbpmn-test --coverage --bench --no-run-benchmarks --no-terminal
-  --ghc-options=-Werror
-after_script:
-- travis_retry curl -L https://github.com/rubik/stack-hpc-coveralls/releases/download/v0.0.4.0/shc-linux-x64-8.0.1.tar.bz2
-  | tar -xj
-- "./shc fbpmn fbpmn-test"
-notifications:
-  email: false
+- |
+  set -ex
+  stack --no-terminal $ARGS test --bench --no-run-benchmarks --haddock --no-haddock-deps
+  set +ex
 before_deploy:
-  - |
-      if [ $TRAVIS_BRANCH = "develop" ]
-      then
-        export VERSION=$(${BINDIR}/fbpmn version)-SNAPSHOT
-      else
-        export VERSION=$(${BINDIR}/fbpmn version)
-      fi
-  - export ARCHIVE="${BINDIR}/fbpmn-${VERSION}-${OS}.${ARCH}"
-  - tar czf "${ARCHIVE}.tar.gz" -C ${BINDIR} fbpmn
-  - zip -j "${ARCHIVE}.zip" ${BINDIR}/fbpmn
-  - export TRAVIS_TAG=v${VERSION}
-  - |
-      if [ $TRAVIS_BRANCH = "develop" ]
-      then
-        git tag ${TRAVIS_TAG}
-        echo tag ${TRAVIS_TAG}
-      else
-        echo no tag
-      fi
+- export PROG=fbpmn
+- |
+  if [ $TRAVIS_BRANCH = "develop" ]
+  then
+    export VERSION=$(${BINDIR}/${PROG} version)-SNAPSHOT
+  else
+    export VERSION=$(${BINDIR}/${PROG} version)
+  fi
+- export ARCHIVE="${BINDIR}/${PROG}-${VERSION}-${OS}.${ARCH}"
+- tar czf "${ARCHIVE}.tar.gz" -C ${BINDIR} ${PROG}
+- zip -j "${ARCHIVE}.zip" ${BINDIR}/${PROG}
+- export TRAVIS_TAG=v${VERSION}
+- |
+  if [ $TRAVIS_BRANCH = "develop" ]
+  then
+    git tag ${TRAVIS_TAG}
+    echo tag ${TRAVIS_TAG}
+  else
+    echo no tag
+  fi
 deploy:
   - provider: releases
     api_key:
@@ -97,3 +99,16 @@ deploy:
       branch: develop
       tags: false
     name: $TRAVIS_TAG
+
+# - stack --version
+# - stack setup --no-terminal --install-cabal 2.2.0.1
+# - stack ghc -- --version
+# - stack build --only-dependencies --no-terminal
+# - stack clean
+# script:
+# - stack build --test :fbpmn-test --coverage --bench --no-run-benchmarks --no-terminal
+#   --ghc-options=-Werror
+# after_script:
+# - travis_retry curl -L https://github.com/rubik/stack-hpc-coveralls/releases/download/v0.0.4.0/shc-linux-x64-8.0.1.tar.bz2
+#   | tar -xj
+# - "./shc fbpmn fbpmn-test"
