@@ -31,6 +31,7 @@ encodeBpmnGraphToTla g =
         , encodeBpmnGraphCatEToTla            -- edge categories
         , encodeBpmnGraphPreEToTla            -- preE relation
         , encodeBpmnGraphPreNToTla            -- preN relation
+        , encodeBpmnBoundaryEventsToTla       -- information about boundary events
         , encodeBpmnGraphFooterToTla          -- footer
         ]
     <*> [g]
@@ -203,12 +204,24 @@ encodeBpmnGraphPreNToTla _ =
             \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
   |]
     
+encodeBpmnBoundaryEventsToTla :: BpmnGraph -> Text
+encodeBpmnBoundaryEventsToTla g = 
+  [text|
+    CABoundaries == {
+    $scambes
+  }
+  |]
+  where
+    scambes = T.intercalate "," $ show <$> cambes
+    cambes = nodesTs g [MessageBoundaryEvent True]
+
 nodeTypeToTLA :: NodeType -> Text
 nodeTypeToTLA AbstractTask   = "AbstractTask"
 nodeTypeToTLA SendTask       = "SendTask"
 nodeTypeToTLA ReceiveTask    = "ReceiveTask"
 nodeTypeToTLA ThrowMessageIntermediateEvent = "ThrowMessageIntermediateEvent"
 nodeTypeToTLA CatchMessageIntermediateEvent = "CatchMessageIntermediateEvent"
+nodeTypeToTLA (MessageBoundaryEvent _) = "MessageBoundaryEvent"
 nodeTypeToTLA SubProcess     = "SubProcess"
 nodeTypeToTLA XorGateway     = "ExclusiveOr"
 nodeTypeToTLA OrGateway      = "InclusiveOr"

@@ -22,6 +22,7 @@ data NodeType = AbstractTask
               | ReceiveTask
               | ThrowMessageIntermediateEvent
               | CatchMessageIntermediateEvent
+              | MessageBoundaryEvent {cancelActivity :: Bool }
               | SubProcess
               | XorGateway
               | OrGateway

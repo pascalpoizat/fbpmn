@@ -83,13 +83,12 @@ isIdOf' :: String -> Element -> Bool
 isIdOf' s e = fromMaybe False $ isIdOf s e
 
 findById :: [Element] -> String -> Maybe Element
-findById es eid =
-    do
-    ess <- nonEmpty [e | e <- es, isIdOf' eid e]
-    Just $ head ess
+findById es eid = do
+  ess <- nonEmpty [ e | e <- es, isIdOf' eid e ]
+  Just $ head ess
 
 findByIds :: [Element] -> [String] -> [Element]
-findByIds es ids = [e | e <- es, eid <- ids, isIdOf' eid e]
+findByIds es ids = [ e | e <- es, eid <- ids, isIdOf' eid e ]
 
 --
 -- helpers for names vs ids
@@ -117,7 +116,7 @@ pSE _ = (?=) "startEvent"
 pMSE :: [Element] -> Element -> Bool
 pMSE es e = pSE es e && pMx e
 pNSE :: [Element] -> Element -> Bool
-pNSE es e = pSE es e && (not . (pMSE es) $ e)
+pNSE es e = pSE es e && (not . pMSE es $ e)
 
 -- intermediary events
 -- CMIE or TMIE
@@ -143,7 +142,15 @@ pMEE es e = pEE es e && pMx e
 pTEE :: [Element] -> Element -> Bool
 pTEE es e = pEE es e && pTx e
 pNEE :: [Element] -> Element -> Bool
-pNEE es e = pEE es e && (not $ e `oneOf` [pMEE es, pTEE es])
+pNEE es e = pEE es e && not (e `oneOf` [pMEE es, pTEE es])
+
+-- boundary events
+-- MBE
+-- other boundary events are discarded
+pBE :: [Element] -> Element -> Bool
+pBE _ = (?=) "boundaryEvent"
+pMBE :: [Element] -> Element -> Bool
+pMBE es e = pBE es e && pMx e
 
 -- events
 pE :: [Element] -> Element -> Bool
@@ -240,7 +247,7 @@ Enhancements:
 -}
 decode :: [Content] -> Maybe BpmnGraph
 decode cs = do
-    -- top-level elements
+  -- top-level elements
   topElements      <- pure $ onlyElems cs
   -- collaboration (1st one to be found)
   c <- listToMaybe $ concatMap (findChildren (nE "collaboration")) topElements
@@ -282,24 +289,25 @@ decode cs = do
 compute :: Element -> Maybe BpmnGraph
 compute e = do
   allElements <- pure $ elChildren e
-  pid  <- getId e
-  ns   <- pure $ filterChildren (pNode allElements) e
-  nids <- sequence $ getId <$> ns
-  es   <- pure $ filterChildren (pEdge allElements) e
-  eids <- sequence $ getId <$> es
-  sps  <- pure $ findChildren (nE "subProcess") e
-  g    <- pure $ BpmnGraph ""
-                           nids
-                           eids
-                           (M.fromList $ catMaybes $ tlift2 . bcatN allElements <$> ns)
-                           (M.fromList $ catMaybes $ tlift2 . bcatE allElements <$> es)
-                           (M.fromList $ catMaybes $ tlift2 . bsource <$> es)
-                           (M.fromList $ catMaybes $ tlift2 . btarget <$> es)
-                           (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
-                           (M.singleton pid nids)
-                           (M.singleton pid eids)
-                           []
-                           M.empty
+  pid         <- getId e
+  ns          <- pure $ filterChildren (pNode allElements) e
+  nids        <- sequence $ getId <$> ns
+  es          <- pure $ filterChildren (pEdge allElements) e
+  eids        <- sequence $ getId <$> es
+  sps         <- pure $ findChildren (nE "subProcess") e
+  g           <- pure $ BpmnGraph
+    ""
+    nids
+    eids
+    (M.fromList $ catMaybes $ tlift2 . bcatN allElements <$> ns)
+    (M.fromList $ catMaybes $ tlift2 . bcatE allElements <$> es)
+    (M.fromList $ catMaybes $ tlift2 . bsource <$> es)
+    (M.fromList $ catMaybes $ tlift2 . btarget <$> es)
+    (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
+    (M.singleton pid nids)
+    (M.singleton pid eids)
+    []
+    M.empty
   spgs <- sequence $ compute <$> sps
   pure $ g <> mconcat spgs
 
@@ -314,38 +322,41 @@ bname mf = (getId mf, getName mf)
 
 bcatN :: [Element] -> Element -> (Maybe Node, Maybe NodeType)
 bcatN xs e = f e preds
-  where
-    f :: Element -> [(Element -> Bool, NodeType)] -> (Maybe Node, Maybe NodeType)
-    f e' ((p, t):r) = if p e' then (getId e', Just t) else f e' r
-    f e' [] = (getId e', Nothing)
-    preds = [(pNSE xs, NoneStartEvent)
-            ,(pMSE xs, MessageStartEvent)
-            ,(pCMIE xs, CatchMessageIntermediateEvent)
-            ,(pTMIE xs, ThrowMessageIntermediateEvent)
-            ,(pNEE xs, NoneEndEvent)
-            ,(pMEE xs, MessageEndEvent)
-            ,(pTEE xs, TerminateEndEvent)
-            ,(pAndGateway xs, AndGateway)
-            ,(pXorGateway xs, XorGateway)
-            ,(pOrGateway xs, OrGateway)
-            ,(pEventBasedGateway xs, EventBasedGateway)
-            ,(pST xs, SendTask)
-            ,(pRT xs, ReceiveTask)
-            ,(pAsAT xs, AbstractTask)
-            ,(pSP xs, SubProcess)
-            ]
+ where
+  f :: Element -> [(Element -> Bool, NodeType)] -> (Maybe Node, Maybe NodeType)
+  f e' ((p, t) : r) = if p e' then (getId e', Just t) else f e' r
+  f e' []           = (getId e', Nothing)
+  preds =
+    [ (pNSE xs              , NoneStartEvent)
+    , (pMSE xs              , MessageStartEvent)
+    , (pCMIE xs             , CatchMessageIntermediateEvent)
+    , (pTMIE xs             , ThrowMessageIntermediateEvent)
+    , (pNEE xs              , NoneEndEvent)
+    , (pMEE xs              , MessageEndEvent)
+    , (pTEE xs              , TerminateEndEvent)
+    , (pAndGateway xs       , AndGateway)
+    , (pXorGateway xs       , XorGateway)
+    , (pOrGateway xs        , OrGateway)
+    , (pEventBasedGateway xs, EventBasedGateway)
+    , (pST xs               , SendTask)
+    , (pRT xs               , ReceiveTask)
+    , (pAsAT xs             , AbstractTask)
+    , (pSP xs               , SubProcess)
+    ]
 
 bcatE :: [Element] -> Element -> (Maybe Edge, Maybe EdgeType)
 bcatE xs e = f e preds
-  where
-    f :: Element -> [(Element -> Bool, EdgeType)] -> (Maybe Edge, Maybe EdgeType)
-    f e' ((p, t):r) = if p e' then (getId e', Just t) else f e' r
-    f e' [] = (getId e', Nothing)
-    -- in preds, the order is important since a DSF validates pNSF
-    preds = [(pDSF xs, DefaultSequenceFlow)
-            ,(pCSF xs, ConditionalSequenceFlow)
-            ,(pNSF xs, NormalSequenceFlow)
-            ,(pMF xs, MessageFlow)]
+ where
+  f :: Element -> [(Element -> Bool, EdgeType)] -> (Maybe Edge, Maybe EdgeType)
+  f e' ((p, t) : r) = if p e' then (getId e', Just t) else f e' r
+  f e' []           = (getId e', Nothing)
+  -- in preds, the order is important since a DSF validates pNSF
+  preds =
+    [ (pDSF xs, DefaultSequenceFlow)
+    , (pCSF xs, ConditionalSequenceFlow)
+    , (pNSF xs, NormalSequenceFlow)
+    , (pMF xs , MessageFlow)
+    ]
 
 {-|
 Read a BPMN Graph from a BPMN file.
@@ -353,7 +364,6 @@ Read a BPMN Graph from a BPMN file.
 readFromBPMN :: FilePath -> IO (Maybe BpmnGraph)
 readFromBPMN p = (decode . parseXML <$> BS.readFile p) `catchIOError` handler
  where
-
   handler :: IOError -> IO (Maybe BpmnGraph)
   handler e
     | isDoesNotExistError e = do
