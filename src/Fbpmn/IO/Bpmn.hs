@@ -65,7 +65,7 @@ oneOf :: Element -> [Element -> Bool] -> Bool
 oneOf e ps = getAny . foldMap Any $ ps <*> [e]
 
 oneMaybeOf :: Element -> [Element -> Maybe a] -> Bool
-oneMaybeOf e ps = not . null . (filter isJust) $ ps <*> [e]
+oneMaybeOf e ps = any isJust $ ps <*> [e]
 
 --
 -- helpers for ids
@@ -291,6 +291,7 @@ decode cs = do
     (M.fromList $ catMaybes $ tlift2 . btarget <$> cMessageFlows)
     M.empty -- (M.fromList $ catMaybes $ tlift2 . bname <$> cParticipants)
     M.empty
+    M.empty -- TODO:
     M.empty
     cMessageTypes
     (M.fromList $ catMaybes $ tlift2 . bname <$> cMessageFlows)
@@ -323,6 +324,7 @@ compute e = do
     (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
     (M.singleton pid nids)
     (M.singleton pid eids)
+    M.empty -- TODO:
     []
     M.empty
   spgs <- sequence $ compute <$> sps

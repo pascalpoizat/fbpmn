@@ -2,8 +2,8 @@
 module Fbpmn.IO.Tla where
 
 import qualified Data.Text         as T
-import           Fbpmn.Model
 import           Fbpmn.Helper
+import           Fbpmn.Model
 import           NeatInterpolation (text)
 -- import           Data.List                      ( intercalate )
 import           Data.Map.Strict   ((!?))
@@ -54,9 +54,9 @@ encodeBpmnGraphFooterToTla _ =
   [text|
   WF == INSTANCE PWSWellFormed
   ASSUME WF!WellFormedness
-  
+
   INSTANCE PWSSemantics
-  
+
   ================================================================
   |]
 
@@ -220,7 +220,7 @@ encodeBpmnBoundaryEventsToTla g =
     satbes = if null bes
               then emptySetTla
               else "   " <> T.intercalate "@@ " (atbeToTla <$> bes)
-    atbeToTla e = undefined -- TODO:
+    atbeToTla _ = undefined -- TODO:
     cabeToTla e = case catN g !? e of
       Just (MessageBoundaryEvent v) -> [text|$side :> $scae|]
         where
@@ -233,26 +233,26 @@ emptySetTla :: Text
 emptySetTla = "  [ i \\in {} |-> {}]"
 
 nodeTypeToTLA :: NodeType -> Text
-nodeTypeToTLA AbstractTask   = "AbstractTask"
-nodeTypeToTLA SendTask       = "SendTask"
-nodeTypeToTLA ReceiveTask    = "ReceiveTask"
+nodeTypeToTLA AbstractTask                  = "AbstractTask"
+nodeTypeToTLA SendTask                      = "SendTask"
+nodeTypeToTLA ReceiveTask                   = "ReceiveTask"
 nodeTypeToTLA ThrowMessageIntermediateEvent = "ThrowMessageIntermediateEvent"
 nodeTypeToTLA CatchMessageIntermediateEvent = "CatchMessageIntermediateEvent"
-nodeTypeToTLA (MessageBoundaryEvent _) = "MessageBoundaryEvent"
-nodeTypeToTLA SubProcess     = "SubProcess"
-nodeTypeToTLA XorGateway     = "ExclusiveOr"
-nodeTypeToTLA OrGateway      = "InclusiveOr"
-nodeTypeToTLA AndGateway     = "Parallel"
-nodeTypeToTLA EventBasedGateway = "EventBasedGateway"
-nodeTypeToTLA NoneStartEvent = "NoneStartEvent"
-nodeTypeToTLA MessageStartEvent = "MessageStartEvent"
-nodeTypeToTLA NoneEndEvent      = "NoneEndEvent"
-nodeTypeToTLA TerminateEndEvent = "TerminateEndEvent"
-nodeTypeToTLA MessageEndEvent   = "MessageEndEvent"
-nodeTypeToTLA Process           = "Process"
+nodeTypeToTLA (MessageBoundaryEvent _)      = "MessageBoundaryEvent"
+nodeTypeToTLA SubProcess                    = "SubProcess"
+nodeTypeToTLA XorGateway                    = "ExclusiveOr"
+nodeTypeToTLA OrGateway                     = "InclusiveOr"
+nodeTypeToTLA AndGateway                    = "Parallel"
+nodeTypeToTLA EventBasedGateway             = "EventBasedGateway"
+nodeTypeToTLA NoneStartEvent                = "NoneStartEvent"
+nodeTypeToTLA MessageStartEvent             = "MessageStartEvent"
+nodeTypeToTLA NoneEndEvent                  = "NoneEndEvent"
+nodeTypeToTLA TerminateEndEvent             = "TerminateEndEvent"
+nodeTypeToTLA MessageEndEvent               = "MessageEndEvent"
+nodeTypeToTLA Process                       = "Process"
 
 edgeTypeToTLA :: EdgeType -> Text
-edgeTypeToTLA NormalSequenceFlow = "NormalSeqFlow"
+edgeTypeToTLA NormalSequenceFlow      = "NormalSeqFlow"
 edgeTypeToTLA ConditionalSequenceFlow = "ConditionalSeqFlow"
-edgeTypeToTLA DefaultSequenceFlow = "DefaultSeqFlow"
-edgeTypeToTLA MessageFlow = "MsgFlow"
+edgeTypeToTLA DefaultSequenceFlow     = "DefaultSeqFlow"
+edgeTypeToTLA MessageFlow             = "MsgFlow"
