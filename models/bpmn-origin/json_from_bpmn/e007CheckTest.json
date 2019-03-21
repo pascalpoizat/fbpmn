@@ -1,13 +1,29 @@
 {
     "catN": {
-        "Task_1eirt50": "AbstractTask",
-        "Task_1rt44mz": "AbstractTask",
-        "StartEvent_1": "NoneStartEvent",
-        "Process_1": "Process",
-        "EndEvent_0v9lt5i": "NoneEndEvent",
-        "ExclusiveGateway_0079typ": "XorGateway",
-        "Task_097548f": "AbstractTask",
-        "ExclusiveGateway_1j1chqb": "AndGateway"
+        "Task_1eirt50": {
+            "tag": "AbstractTask"
+        },
+        "Task_1rt44mz": {
+            "tag": "AbstractTask"
+        },
+        "StartEvent_1": {
+            "tag": "NoneStartEvent"
+        },
+        "Process_1": {
+            "tag": "Process"
+        },
+        "EndEvent_0v9lt5i": {
+            "tag": "NoneEndEvent"
+        },
+        "ExclusiveGateway_0079typ": {
+            "tag": "XorGateway"
+        },
+        "Task_097548f": {
+            "tag": "AbstractTask"
+        },
+        "ExclusiveGateway_1j1chqb": {
+            "tag": "AndGateway"
+        }
     },
     "catE": {
         "SequenceFlow_0z2xwql": "NormalSequenceFlow",

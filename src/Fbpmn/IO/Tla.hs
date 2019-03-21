@@ -111,7 +111,7 @@ encodeBpmnGraphMsgDeclToTla g =
   |]
   where
     msgs = T.intercalate ", " (show <$> messages g)
-    mts = if null (messages g) then "  [ i \\in {} |-> {}]" else "    " <> T.intercalate "@@ " (edgeToMsgDecl <$> (edgesT g MessageFlow))
+    mts = if null (messages g) then emptySetTla else "    " <> T.intercalate "@@ " (edgeToMsgDecl <$> (edgesT g MessageFlow))
     edgeToMsgDecl e = case messageE g !? e of
       Nothing -> ""
       Just m -> [text|$e' :> $m'|]
@@ -188,7 +188,7 @@ encodeBpmnGraphPreEToTla g =
   |]
   where
     gws = nodesT g OrGateway
-    spres = if null pres then "  [ i \\in {} |-> {}]" else T.intercalate "@@ " $ preToTLA <$> pres
+    spres = if null pres then emptySetTla else T.intercalate "@@ " $ preToTLA <$> pres
     preToTLA (n, e, es) = [text|<<$sn, $se>> :> {$ses}|]
       where
         sn = show n
@@ -203,17 +203,34 @@ encodeBpmnGraphPreNToTla _ =
   PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
             \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
   |]
-    
+
 encodeBpmnBoundaryEventsToTla :: BpmnGraph -> Text
-encodeBpmnBoundaryEventsToTla g = 
+encodeBpmnBoundaryEventsToTla g =
   [text|
-    CABoundaries == {
-    $scambes
-  }
+    CABoundaries ==
+    $scabes
+
+    ATBoundaries ==
+    $satbes
   |]
   where
-    scambes = T.intercalate "," $ show <$> cambes
-    cambes = nodesTs g [MessageBoundaryEvent True]
+    scabes = if null bes
+              then emptySetTla
+              else "   " <> T.intercalate "@@ " (cabeToTla <$> bes)
+    satbes = if null bes
+              then emptySetTla
+              else "   " <> T.intercalate "@@ " (atbeToTla <$> bes)
+    atbeToTla e = undefined -- TODO:
+    cabeToTla e = case catN g !? e of
+      Just (MessageBoundaryEvent v) -> [text|$side :> $scae|]
+        where
+          side = show e
+          scae = show v
+      _ -> ""
+    bes = nodesTs g $ [MessageBoundaryEvent] <*> [True, False]
+
+emptySetTla :: Text
+emptySetTla = "  [ i \\in {} |-> {}]"
 
 nodeTypeToTLA :: NodeType -> Text
 nodeTypeToTLA AbstractTask   = "AbstractTask"

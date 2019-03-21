@@ -110,6 +110,7 @@ data BpmnGraph = BpmnGraph { name     :: Text -- name of the model
                            , nameN    :: Map Node Name -- gives the name of a node
                            , containN :: Map Node [Node] -- gives the nodes directly contained in a node n (n must be a subprocess or a process)
                            , containE :: Map Node [Edge] -- gives the edges (not the messageFlows) directly contained in a node n (n must be a subprocess of a process)
+                           , attached :: Map Node Node -- gives the sub process a boundary event is attached to
                            , messages :: [Message] -- gives all messages types
                            , messageE :: Map Edge Message -- message types associated to message flows
 }
@@ -119,8 +120,8 @@ instance FromJSON BpmnGraph
 
 instance Semigroup BpmnGraph
   where
-      (BpmnGraph n ns es cn ce se te nn rn re m me)
-        <> (BpmnGraph n' ns' es' cn' ce' se' te' nn' rn' re' m' me')
+      (BpmnGraph n ns es cn ce se te nn rn re at m me)
+        <> (BpmnGraph n' ns' es' cn' ce' se' te' nn' rn' re' at' m' me')
         =
         BpmnGraph
           (n <> n')
@@ -133,6 +134,7 @@ instance Semigroup BpmnGraph
           (nn <> nn')
           (rn <> rn')
           (re <> re')
+          (at <> at')
           (m <> m')
           (me <> me')
 
@@ -144,7 +146,7 @@ instance Monoid BpmnGraph
         [] [] M.empty M.empty
         M.empty M.empty
         M.empty
-        M.empty M.empty
+        M.empty M.empty M.empty
         [] M.empty
 
 mkGraph :: Text
@@ -157,10 +159,11 @@ mkGraph :: Text
         -> Map Node Name
         -> Map Node [Node]
         -> Map Node [Edge]
+        -> Map Node Node
         -> [Message]
         -> Map Edge Message
         -> BpmnGraph
-mkGraph n ns es catN catE sourceE targetE nameN containN containE messages messageE
+mkGraph n ns es catN catE sourceE targetE nameN containN containE attached messages messageE
   = let graph = BpmnGraph n
                           ns
                           es
@@ -171,6 +174,7 @@ mkGraph n ns es catN catE sourceE targetE nameN containN containE messages messa
                           nameN
                           containN
                           containE
+                          attached
                           messages
                           messageE
     in  graph

@@ -1,25 +1,65 @@
 {
     "catN": {
-        "Task_1q91vog": "SendTask",
-        "IntermediateThrowEvent_0neineb": "CatchMessageIntermediateEvent",
-        "ExclusiveGateway_0i09ijx": "AndGateway",
-        "IntermediateThrowEvent_12d113r": "CatchMessageIntermediateEvent",
-        "ExclusiveGateway_192ovii": "XorGateway",
-        "StartEvent_1": "NoneStartEvent",
-        "Process_1": "Process",
-        "StartEvent_1f3jj6d": "NoneStartEvent",
-        "ExclusiveGateway_1dc5v3z": "XorGateway",
-        "EndEvent_0u6deep": "CatchMessageIntermediateEvent",
-        "Task_07u875a": "ReceiveTask",
-        "Task_1bn6n5q": "SendTask",
-        "EndEvent_055yt9k": "NoneEndEvent",
-        "EndEvent_10gqkzy": "TerminateEndEvent",
-        "Task_002ndsu": "SendTask",
-        "Task_1ne4gpy": "SendTask",
-        "Process_14x2mcf": "Process",
-        "IntermediateThrowEvent_0xjpikb": "CatchMessageIntermediateEvent",
-        "Task_1v9s881": "SendTask",
-        "ExclusiveGateway_0wgdt1i": "XorGateway"
+        "Task_1q91vog": {
+            "tag": "SendTask"
+        },
+        "IntermediateThrowEvent_0neineb": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "ExclusiveGateway_0i09ijx": {
+            "tag": "AndGateway"
+        },
+        "IntermediateThrowEvent_12d113r": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "ExclusiveGateway_192ovii": {
+            "tag": "XorGateway"
+        },
+        "StartEvent_1": {
+            "tag": "NoneStartEvent"
+        },
+        "Process_1": {
+            "tag": "Process"
+        },
+        "StartEvent_1f3jj6d": {
+            "tag": "NoneStartEvent"
+        },
+        "ExclusiveGateway_1dc5v3z": {
+            "tag": "XorGateway"
+        },
+        "EndEvent_0u6deep": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "Task_07u875a": {
+            "tag": "ReceiveTask"
+        },
+        "Task_1bn6n5q": {
+            "tag": "SendTask"
+        },
+        "EndEvent_055yt9k": {
+            "tag": "NoneEndEvent"
+        },
+        "EndEvent_10gqkzy": {
+            "tag": "TerminateEndEvent"
+        },
+        "Task_002ndsu": {
+            "tag": "SendTask"
+        },
+        "Task_1ne4gpy": {
+            "tag": "SendTask"
+        },
+        "Process_14x2mcf": {
+            "tag": "Process"
+        },
+        "IntermediateThrowEvent_0xjpikb": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "Task_1v9s881": {
+            "tag": "SendTask"
+        },
+        "ExclusiveGateway_0wgdt1i": {
+            "tag": "XorGateway"
+        }
     },
     "catE": {
         "SequenceFlow_09i1nd5": "NormalSequenceFlow",
