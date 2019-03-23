@@ -116,6 +116,19 @@ cmie_start(n) ==
                         ELSE edgemarks[e] ]
      /\ UNCHANGED nodemarks
 
+(* ---- message boundary event (non interrupting) ---- *)
+
+mbe_start(n) ==
+  /\ CatN[n] = MessageBoundaryEvent
+  /\ \E e2 \in intype(MsgFlowType, n) :
+     /\ edgemarks[e2] >= 1
+     /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
+     /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                        IF e \in {e2} THEN edgemarks[e] - 1
+                        ELSE IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
+                        ELSE edgemarks[e] ]
+     /\ UNCHANGED nodemarks
+
 ----------------------------------------------------------------
 
 (* ---- Exclusive Or / XOR ---- *)
@@ -316,6 +329,7 @@ step(n) ==
     [] CatN[n] = ReceiveTask -> receive_start(n) \/ receive_complete(n)
     [] CatN[n] = ThrowMessageIntermediateEvent -> tmie_start(n)
     [] CatN[n] = CatchMessageIntermediateEvent -> cmie_start(n)
+    [] CatN[n] = MessageBoundaryEvent -> mbe_start(n)
     [] CatN[n] = SubProcess -> subprocess_start(n) \/ subprocess_complete(n)
     [] CatN[n] = ExclusiveOr -> xor_complete(n)
     [] CatN[n] = InclusiveOr -> or_complete(n)
