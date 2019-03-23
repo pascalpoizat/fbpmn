@@ -30,9 +30,9 @@ C6_NoLoopingEdge ==
     \A e \in Edge : source[e] # target[e]
 
 C7_NotIsolation ==
-    \A n \in Node : CatN[n] # Process => incoming(n) # {} \/ outgoing(n) # {}
+    \A n \in Node : (CatN[n] # Process /\ CatN[n] # MessageBoundaryEvent) => incoming(n) # {} \/ outgoing(n) # {}
 
-(* Formula in the paper, which is false.
+(* old
 C8_DefaultSeqFlow ==
     \A n \in Node : CatN[n] # Parallel => Cardinality(outtype({ConditionalSeqFlow},n)) >= 1 /\ Cardinality(outtype({DefaultSeqFlow},n)) = 1
 *)
