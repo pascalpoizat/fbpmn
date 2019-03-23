@@ -17,6 +17,7 @@ TerminateEndEvent == "TerminateEndEvent"
 MessageEndEvent == "MessageEndEvent"
 ThrowMessageIntermediateEvent == "ThrowMessageIntermediateEvent"
 CatchMessageIntermediateEvent == "CatchMessageIntermediateEvent"
+MessageBoundaryEvent == "MessageBoundaryEvent"
 (* edges *)
 NormalSeqFlow == "NormalSeqFlow"
 ConditionalSeqFlow == "ConditionalSeqFlow"

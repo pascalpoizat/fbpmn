@@ -126,7 +126,7 @@ encodeBpmnGraphCatNToTla g =
     $ns
   |]
  where
-  ns = "   " <> T.intercalate "@@ " (nodeToNodeCatDecl <$> nodes g)
+  ns = relationTla nodeToNodeCatDecl (nodes g)
   nodeToNodeCatDecl n = case catN g !? n of
     Nothing -> ""
     Just c  -> [text|$n' :> $c'|]
@@ -141,7 +141,7 @@ encodeBpmnGraphCatEToTla g =
     $es
   |]
  where
-  es = "   " <> T.intercalate "@@ " (edgeToEdgeCatDecl <$> edges g)
+  es = relationTla edgeToEdgeCatDecl (edges g)
   edgeToEdgeCatDecl e = case catE g !? e of
     Nothing -> ""
     Just c  -> [text|$e' :> $c'|]
@@ -156,7 +156,7 @@ encodeBpmnGraphEdgeSourceDeclToTla g =
     $es
   |]
  where
-  es = "   " <> T.intercalate "@@ " (edgeToEdgeSourceDecl <$> edges g)
+  es = relationTla edgeToEdgeSourceDecl (edges g)
   edgeToEdgeSourceDecl e = case sourceE g !? e of
     Nothing -> ""
     Just c  -> [text|$e' :> $c'|]
@@ -171,7 +171,7 @@ encodeBpmnGraphEdgeTargetDeclToTla g =
     $es
   |]
  where
-  es = "   " <> T.intercalate "@@ " (edgeToEdgeTargetDecl <$> edges g)
+  es = relationTla edgeToEdgeTargetDecl (edges g)
   edgeToEdgeTargetDecl e = case targetE g !? e of
     Nothing -> ""
     Just c  -> [text|$e' :> $c'|]
@@ -188,8 +188,8 @@ encodeBpmnGraphPreEToTla g =
   |]
   where
     gws = nodesT g OrGateway
-    spres = if null pres then emptySetTla else T.intercalate "@@ " $ preToTLA <$> pres
-    preToTLA (n, e, es) = [text|<<$sn, $se>> :> {$ses}|]
+    spres = relationTla preToTla pres
+    preToTla (n, e, es) = [text|<<$sn, $se>> :> {$ses}|]
       where
         sn = show n
         se = show e
@@ -207,30 +207,43 @@ encodeBpmnGraphPreNToTla _ =
 encodeBpmnBoundaryEventsToTla :: BpmnGraph -> Text
 encodeBpmnBoundaryEventsToTla g =
   [text|
-    CABoundaries ==
+    cancelActivity ==
     $scabes
 
-    ATBoundaries ==
+    attachedTo ==
     $satbes
   |]
   where
-    scabes = if null bes
-              then emptySetTla
-              else "   " <> T.intercalate "@@ " (cabeToTla <$> bes)
-    satbes = if null bes
-              then emptySetTla
-              else "   " <> T.intercalate "@@ " (atbeToTla <$> bes)
-    atbeToTla _ = undefined -- TODO:
+    scabes = relationTla cabeToTla bes
+    satbes = relationTla atbeToTla bes
     cabeToTla e = case catN g !? e of
       Just (MessageBoundaryEvent v) -> [text|$side :> $scae|]
         where
           side = show e
-          scae = show v
+          scae = if v then trueTla else falseTla
+      _ -> ""
+    atbeToTla e = case attached g !? e of
+      Just spid -> [text|$side :> $sspid|]
+        where
+          side = show e
+          sspid = show spid
       _ -> ""
     bes = nodesTs g $ [MessageBoundaryEvent] <*> [True, False]
 
+trueTla :: Text
+trueTla = "TRUE"
+
+falseTla :: Text
+falseTla = "FALSE"
+
 emptySetTla :: Text
 emptySetTla = "  [ i \\in {} |-> {}]"
+
+relationTla :: (a -> Text) -> [a] -> Text
+relationTla f xs =
+  if null xs
+  then emptySetTla
+  else "   " <> T.intercalate "@@ " (f <$> xs)
 
 nodeTypeToTLA :: NodeType -> Text
 nodeTypeToTLA AbstractTask                  = "AbstractTask"

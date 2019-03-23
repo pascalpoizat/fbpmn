@@ -291,7 +291,7 @@ decode cs = do
     (M.fromList $ catMaybes $ tlift2 . btarget <$> cMessageFlows)
     M.empty -- (M.fromList $ catMaybes $ tlift2 . bname <$> cParticipants)
     M.empty
-    M.empty -- TODO:
+    M.empty
     M.empty
     cMessageTypes
     (M.fromList $ catMaybes $ tlift2 . bname <$> cMessageFlows)
@@ -309,6 +309,7 @@ compute e = do
   allElements <- pure $ elChildren e
   pid         <- getId e
   ns          <- pure $ filterChildren (pNode allElements) e
+  nbes        <- pure $ filterChildren (pBE allElements) e
   nids        <- sequence $ getId <$> ns
   es          <- pure $ filterChildren (pEdge allElements) e
   eids        <- sequence $ getId <$> es
@@ -324,11 +325,14 @@ compute e = do
     (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
     (M.singleton pid nids)
     (M.singleton pid eids)
-    M.empty -- TODO:
+    (M.fromList $ catMaybes $ tlift2 . battached <$> nbes)
     []
     M.empty
   spgs <- sequence $ compute <$> sps
   pure $ g <> mconcat spgs
+
+battached :: Element -> (Maybe Node, Maybe Node)
+battached n = (getId n, findAttr (nA "attachedToRef") n)
 
 bsource :: Element -> (Maybe Edge, Maybe Node)
 bsource mf = (getId mf, findAttr (nA "sourceRef") mf)

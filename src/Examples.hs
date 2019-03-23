@@ -25,6 +25,7 @@ g0 = mkGraph
   name
   containN
   containE
+  attached
   messages
   messageE
  where
@@ -53,6 +54,7 @@ g0 = mkGraph
   containN = fromList
     [("Sender", ["NSE1", "ST1", "NEE1"]), ("Receiver", ["NSE2", "RT2", "NEE2"])]
   containE = fromList [("Sender", ["a", "b"]), ("Receiver", ["c", "d"])]
+  attached = fromList []
   messages = ["message"]
   messageE = fromList [("m", "message")]
 
@@ -73,6 +75,7 @@ g1 = mkGraph
   name
   containN
   containE
+  attached
   messages
   messageN
  where
@@ -125,6 +128,7 @@ g1 = mkGraph
     ]
   containE = fromList
     [("Process", ["e1", "es+a", "es+b", "e2a", "e2b", "ej+a", "ej+b", "e3"])]
+  attached = fromList []
   messages = []
   messageN = fromList []
 
