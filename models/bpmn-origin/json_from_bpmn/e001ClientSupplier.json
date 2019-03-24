@@ -117,6 +117,7 @@
         "sE7": "sShipCommand"
     },
     "name": "e001ClientSupplier",
+    "attached": {},
     "containE": {
         "Process_Client": [
             "cE1",

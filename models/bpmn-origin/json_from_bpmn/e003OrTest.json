@@ -98,6 +98,7 @@
         "e15": "Xor0"
     },
     "name": "e003OrTest",
+    "attached": {},
     "containE": {
         "Process_1": [
             "e0",

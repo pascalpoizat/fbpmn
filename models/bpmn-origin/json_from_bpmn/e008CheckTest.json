@@ -74,6 +74,7 @@
         "SequenceFlow_01wc4ks": "ExclusiveGateway_0079typ"
     },
     "name": "e008CheckTest",
+    "attached": {},
     "containE": {
         "Process_1": [
             "SequenceFlow_1vue23p",

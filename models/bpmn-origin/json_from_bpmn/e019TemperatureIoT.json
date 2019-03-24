@@ -412,6 +412,7 @@
         "SequenceFlow_05ihnu4": "ExclusiveGateway_0sum07m"
     },
     "name": "e019TemperatureIoT",
+    "attached": {},
     "containE": {
         "Process_17upgh4": [
             "SequenceFlow_0j98n24",

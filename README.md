@@ -93,7 +93,7 @@ The subset of BPMN that we support is presented in Figure 1.
 
 ## 4. Verification using TLA+
 
-`fbpmn` supports the verification of:
+`fbpmn` supports the verification of (see Figure 3):
 
 - option to complete
 - proper completion
@@ -102,13 +102,25 @@ The subset of BPMN that we support is presented in Figure 1.
 - soundness
 - message-relaxed soundness
 
-This is achieved in two steps (see Figure 2):
+for six different communication semantics:
+
+- unordered (bag of messages)
+- fifo between each couple of processes (array of queues)
+- fifo inbox (input queue at each process where messages are added)
+- fifo outbox (output queue at each process where messages at fetched)
+- global fifo (unique shared queue)
+- RSC (realizable with synchronous communication)
+
+![Variations.](MBE.png)
+*Figure 2: variations and properties (network unordered semantics).*
+
+Verification is achieved in two steps (see Figure 2):
 
 1. generate a TLA+ representation of the BPMN collaboration
 2. use this representation and the TLA+ implementation of our FOL semantics for BPMN collaborations to perform verification (using the `tlc` model checker from the TLA+ tool box).
 
 ![Transformation overview.](overview.png)
-*Figure 2: `fbpmn` approach to the verification of BPMN collaborations.*
+*Figure 3: `fbpmn` approach to the verification of BPMN collaborations.*
 
 Verification requires that:
 
@@ -186,46 +198,8 @@ tla  (save current graph to TLA+)
 
 ## 6. JSON format
 
-Please note that the JSON format for a model can be generated from the BPMN format of it, using `fbpmn bpmn2json`.
+The JSON format for a model can be generated from the BPMN format of it, using `fbpmn bpmn2json`.
 In general, there should therefore be no need to write out models in the JSON format manually.
-
-Our JSON format is as follows: 
-
-```
-{
-  "name": "name of the process/collaboration",
-  "messages": [ list of messages names (strings) ],
-  "nodes": [ list of node ids (strings) ],
-  "edges": [ list of edge ids (strings) ],
-  "nameN": {},
-  "catN": { couples id : type (both strings), giving node categories, should be defined for each node },
-  "catE": { couples id : type (both strings), giving edge categories, should be defined for each edge },
-  "sourceE": { couples edge id : node id, giving sources of edges, should be defined for each edge },
-  "targetE": { couples edge id : node id, giving targets of edges, should be defined for each edge },
-  "messageE": { couples edge id : message name, should be defined for each message flow edge }, 
-  "containN": { map pool name : list of node ids, where pool name should be in nodes, giving direct containment relation for nodes },
-  "containE": { map pool name : list of edge ids, where pool name should be in nodes, giving direct containment relation for edges },
-}
-```
-
-Node categories are:
-
-```
-SubProcess | Process |
-AbstractTask | 
-SendTask | ReceiveTask | ThrowMessageIntermediateEvent | CatchMessageIntermediateEvent | 
-XorGateway | OrGateway | AndGateway | EventBasedGateway |
-NoneStartEvent | MessageStartEvent | NoneEndEvent | TerminateEndEvent | MessageEndEvent
-```
-
-Please note that some kinds of BPMN tasks are treated as `AbstractTask`s in the semantics.
-If you have manual tasks, user tasks, service tasks, script tasks, or business rule tasks, you may use directly `AbstractTask` in your JSON model.
-
-Edge categories are:
-
-```
-NormalSequenceFlow | ConditionalSequenceFlow | DefaultSequenceFlow | MessageFlow
-```
 
 Examples of models are given [here](models/bpmn-origin/json_from_bpmn) for files generated from BPMN, and [here](models/json-origin) for files created manually.
 

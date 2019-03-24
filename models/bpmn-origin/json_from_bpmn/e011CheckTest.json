@@ -99,6 +99,7 @@
         "SequenceFlow_01wc4ks": "ExclusiveGateway_0079typ"
     },
     "name": "e011CheckTest",
+    "attached": {},
     "containE": {
         "Process_A": [
             "SequenceFlow_00aes3w",

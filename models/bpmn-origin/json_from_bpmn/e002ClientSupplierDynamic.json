@@ -111,6 +111,7 @@
         "sE7": "sSendInvoice"
     },
     "name": "e002ClientSupplierDynamic",
+    "attached": {},
     "containE": {
         "Process_Client": [
             "cE1",

@@ -169,7 +169,7 @@ CatE ==
 @@ "flow63" :> NormalSeqFlow
 
 LOCAL preEdges ==
-<<"inclusivegateway2", "flow14">> :> {"flow10", "flow11", "flow3", "flow4", "flow5", "flow6", "flow7", "flow8", "flow9"}
+   <<"inclusivegateway2", "flow14">> :> {"flow10", "flow11", "flow3", "flow4", "flow5", "flow6", "flow7", "flow8", "flow9"}
 @@ <<"inclusivegateway2", "flow15">> :> {"flow10", "flow12", "flow3", "flow4", "flow5", "flow6", "flow7", "flow8", "flow9"}
 @@ <<"inclusivegateway1", "flow10">> :> {"flow3", "flow4", "flow5", "flow6", "flow7", "flow8", "flow9"}
 PreEdges(n,e) == preEdges[n,e]
@@ -177,7 +177,10 @@ PreEdges(n,e) == preEdges[n,e]
 PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
           \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
 
-CABoundaries ==
+cancelActivity ==
+  [ i \in {} |-> {}]
+
+attachedTo ==
   [ i \in {} |-> {}]
 
 WF == INSTANCE PWSWellFormed

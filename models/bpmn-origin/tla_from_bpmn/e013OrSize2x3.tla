@@ -109,7 +109,7 @@ CatE ==
 @@ "SequenceFlow_1si0iqd" :> NormalSeqFlow
 
 LOCAL preEdges ==
-<<"ExclusiveGateway_1dofiof", "SequenceFlow_0h7fy2d">> :> {"SequenceFlow_00e481v", "SequenceFlow_01dq60h", "SequenceFlow_05ly3hz", "SequenceFlow_0c3vv21", "SequenceFlow_0mxxo9x", "SequenceFlow_0n88gkx", "SequenceFlow_0n91hmc", "SequenceFlow_0ql8p1h", "SequenceFlow_0rj7tua", "SequenceFlow_0xd1ing", "SequenceFlow_0z7crkn", "SequenceFlow_14bv8dd", "SequenceFlow_17yc9hp", "SequenceFlow_1bofvkk", "SequenceFlow_1c7k30y", "SequenceFlow_1djolfc", "SequenceFlow_1fvzdhj", "SequenceFlow_1si0iqd", "SequenceFlow_1wcsu5r"}
+   <<"ExclusiveGateway_1dofiof", "SequenceFlow_0h7fy2d">> :> {"SequenceFlow_00e481v", "SequenceFlow_01dq60h", "SequenceFlow_05ly3hz", "SequenceFlow_0c3vv21", "SequenceFlow_0mxxo9x", "SequenceFlow_0n88gkx", "SequenceFlow_0n91hmc", "SequenceFlow_0ql8p1h", "SequenceFlow_0rj7tua", "SequenceFlow_0xd1ing", "SequenceFlow_0z7crkn", "SequenceFlow_14bv8dd", "SequenceFlow_17yc9hp", "SequenceFlow_1bofvkk", "SequenceFlow_1c7k30y", "SequenceFlow_1djolfc", "SequenceFlow_1fvzdhj", "SequenceFlow_1si0iqd", "SequenceFlow_1wcsu5r"}
 @@ <<"ExclusiveGateway_1v72kao", "SequenceFlow_0xd1ing">> :> {"SequenceFlow_00e481v", "SequenceFlow_01dq60h", "SequenceFlow_05ly3hz", "SequenceFlow_0c3vv21", "SequenceFlow_0h7fy2d", "SequenceFlow_0mxxo9x", "SequenceFlow_0n88gkx", "SequenceFlow_0n91hmc", "SequenceFlow_0ql8p1h", "SequenceFlow_0rj7tua", "SequenceFlow_0z7crkn", "SequenceFlow_14bv8dd", "SequenceFlow_17yc9hp", "SequenceFlow_1bofvkk", "SequenceFlow_1c7k30y", "SequenceFlow_1djolfc", "SequenceFlow_1fvzdhj", "SequenceFlow_1si0iqd", "SequenceFlow_1wcsu5r"}
 @@ <<"ExclusiveGateway_0wbb4kr", "SequenceFlow_14bv8dd">> :> {"SequenceFlow_00e481v", "SequenceFlow_01dq60h", "SequenceFlow_0c3vv21", "SequenceFlow_0h7fy2d", "SequenceFlow_0mxxo9x", "SequenceFlow_0n88gkx", "SequenceFlow_0n91hmc", "SequenceFlow_0rj7tua", "SequenceFlow_0xd1ing", "SequenceFlow_0z7crkn", "SequenceFlow_1bofvkk", "SequenceFlow_1c7k30y", "SequenceFlow_1fvzdhj", "SequenceFlow_1si0iqd", "SequenceFlow_1wcsu5r"}
 @@ <<"ExclusiveGateway_0wbb4kr", "SequenceFlow_17yc9hp">> :> {"SequenceFlow_00e481v", "SequenceFlow_0c3vv21", "SequenceFlow_0h7fy2d", "SequenceFlow_0mxxo9x", "SequenceFlow_0n88gkx", "SequenceFlow_0n91hmc", "SequenceFlow_0rj7tua", "SequenceFlow_0xd1ing", "SequenceFlow_0z7crkn", "SequenceFlow_1bofvkk", "SequenceFlow_1c7k30y", "SequenceFlow_1djolfc", "SequenceFlow_1fvzdhj", "SequenceFlow_1si0iqd", "SequenceFlow_1wcsu5r"}
@@ -122,7 +122,10 @@ PreEdges(n,e) == preEdges[n,e]
 PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
           \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
 
-CABoundaries ==
+cancelActivity ==
+  [ i \in {} |-> {}]
+
+attachedTo ==
   [ i \in {} |-> {}]
 
 WF == INSTANCE PWSWellFormed

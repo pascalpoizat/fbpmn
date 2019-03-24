@@ -81,6 +81,7 @@
         "SequenceFlow_03gudbc": "EndEvent_1wbcvef"
     },
     "name": "e009CheckTest",
+    "attached": {},
     "containE": {
         "Process_1": [
             "SequenceFlow_0uplc1a",

@@ -104,6 +104,7 @@
         "SequenceFlow_0c3vv21": "Task_1xwy18n"
     },
     "name": "e012OrSize2x2",
+    "attached": {},
     "containE": {
         "Process_1": [
             "SequenceFlow_0n91hmc",

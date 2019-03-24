@@ -94,6 +94,7 @@
         "MessageFlow_095vt4e": "Task_1d78ih0"
     },
     "name": "e015CheckTest",
+    "attached": {},
     "containE": {
         "Receiver_Id": [
             "SequenceFlow_0fxw5l8",

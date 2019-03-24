@@ -48,6 +48,7 @@
         "SequenceFlow_13vrdzd": "Task_1cbrss1"
     },
     "name": "e014CheckTest",
+    "attached": {},
     "containE": {
         "Process_Id": [
             "SequenceFlow_1bot7ik",

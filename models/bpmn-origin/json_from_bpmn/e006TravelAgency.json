@@ -143,6 +143,7 @@
         "SequenceFlow_00s838q": "Task_1ne4gpy"
     },
     "name": "e006TravelAgency",
+    "attached": {},
     "containE": {
         "Process_1": [
             "SequenceFlow_1uwq0b6",

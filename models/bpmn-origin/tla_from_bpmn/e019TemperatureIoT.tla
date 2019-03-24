@@ -328,7 +328,10 @@ PreEdges(n,e) == preEdges[n,e]
 PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
           \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
 
-CABoundaries ==
+cancelActivity ==
+  [ i \in {} |-> {}]
+
+attachedTo ==
   [ i \in {} |-> {}]
 
 WF == INSTANCE PWSWellFormed

@@ -262,6 +262,7 @@
         "SequenceFlow_036yd4w": "Task_0zi619x"
     },
     "name": "e020InternshipProcedure",
+    "attached": {},
     "containE": {
         "Process_0i8jx5m": [
             "SequenceFlow_0ol0c8s",

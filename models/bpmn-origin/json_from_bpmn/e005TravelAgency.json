@@ -143,6 +143,7 @@
         "SequenceFlow_00r0rkx": "IntermediateThrowEvent_12d113r"
     },
     "name": "e005TravelAgency",
+    "attached": {},
     "containE": {
         "Process_1": [
             "SequenceFlow_1h086yg",
