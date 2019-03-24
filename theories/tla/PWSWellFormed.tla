@@ -65,6 +65,13 @@ Cx_MessageFlowEdge ==
     \A e \in Edge : CatE[e] = MsgFlow <=> (CatN[source[e]] \in {SendTask,MessageEndEvent,ThrowMessageIntermediateEvent} /\ CatN[target[e]] = {ReceiveTask,MessageStartEvent,CatchMessageIntermediateEvent})
 *)
 
+(* TODO WellFormedness for MBE 
+- at least 1 input MF (can have more than 1?)
+- can have 0 output SF (must have at least 1?)
+- attachedTo is defined
+- cancelActivity is defined
+*)
+
 LOCAL AllConditions == /\ C1_StartNoIncomingEdge
                        /\ C2_EndNoOutgoingEdge
                        /\ C3_SubProcessUniqueStart

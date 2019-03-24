@@ -116,18 +116,26 @@ cmie_start(n) ==
                         ELSE edgemarks[e] ]
      /\ UNCHANGED nodemarks
 
-(* ---- message boundary event (non interrupting) ---- *)
+(* ---- message boundary event (interrupting) ---- *)
 
 mbe_start(n) ==
   /\ CatN[n] = MessageBoundaryEvent
-  /\ \E e2 \in intype(MsgFlowType, n) :
-     /\ edgemarks[e2] >= 1
-     /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
-     /\ edgemarks' = [ e \in DOMAIN edgemarks |->
-                        IF e \in {e2} THEN edgemarks[e] - 1
-                        ELSE IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
-                        ELSE edgemarks[e] ]
-     /\ UNCHANGED nodemarks
+  /\ LET sp == attachedTo[n] IN
+      /\ nodemarks[sp] >= 1
+      /\ \E e2 \in intype(MsgFlowType, n) :
+        /\ edgemarks[e2] >= 1
+        /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
+        /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                            IF e \in {e2} THEN edgemarks[e] - 1
+                            ELSE IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
+                            ELSE edgemarks[e] ]
+        /\ IF cancelActivity[n]
+           THEN LET includedNodes == ContainRelPlus(sp) IN
+                  nodemarks' = [ nn \in DOMAIN nodemarks |->
+                                IF nn = sp THEN 0
+                                ELSE IF nn \in includedNodes THEN 0
+                                ELSE nodemarks[nn] ]
+           ELSE UNCHANGED nodemarks
 
 ----------------------------------------------------------------
 
