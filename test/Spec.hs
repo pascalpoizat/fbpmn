@@ -124,6 +124,7 @@ g0a = mkGraph
   name
   containN
   containE
+  attached
   []
   (fromList [])
  where
@@ -173,6 +174,7 @@ g0a = mkGraph
   name = fromList []
   containN = fromList [("Process", [])]
   containE = fromList [("Process", [])]
+  attached = fromList []
 
 g0b :: BpmnGraph
 g0b = mkGraph
@@ -186,6 +188,7 @@ g0b = mkGraph
   name
   containN
   containE
+  attached
   []
   (fromList [])
  where
@@ -235,6 +238,7 @@ g0b = mkGraph
   name = fromList []
   containN = fromList [("Process", [])]
   containE = fromList [("Process", [])]
+  attached = fromList []
 
 g0c :: BpmnGraph
 g0c = mkGraph
@@ -248,6 +252,7 @@ g0c = mkGraph
   name
   containN
   containE
+  attached
   []
   (fromList [])
  where
@@ -297,6 +302,7 @@ g0c = mkGraph
   name = fromList []
   containN = fromList [("Process", [])]
   containE = fromList [("Process", [])]
+  attached = fromList []
 
 g0d :: BpmnGraph
 g0d = mkGraph
@@ -310,6 +316,7 @@ g0d = mkGraph
   name
   containN
   containE
+  attached
   []
   (fromList [])
  where
@@ -359,6 +366,7 @@ g0d = mkGraph
   name = fromList []
   containN = fromList [("Process", [])]
   containE = fromList [("Process", [])]
+  attached = fromList []
 
 g0e1 :: BpmnGraph
 g0e1 = mkGraph "g0e1"
@@ -371,6 +379,7 @@ g0e1 = mkGraph "g0e1"
                name
                containN
                containE
+               attached
                ["message"]
                (fromList [("m", "message")])
               where
@@ -399,6 +408,7 @@ g0e1 = mkGraph "g0e1"
   containN = fromList
     [("Sender", ["NSE1", "ST1", "NEE1"]), ("Receiver", ["NSE2", "RT2", "NEE2"])]
   containE = fromList [("Sender", ["a", "b"]), ("Receiver", ["c", "d"])]
+  attached = fromList []
 
 g0e2 :: BpmnGraph
 g0e2 = mkGraph "g0e2"
@@ -411,6 +421,7 @@ g0e2 = mkGraph "g0e2"
                name
                containN
                containE
+               attached
                ["message"]
                (fromList [("m", "message")])
  where
@@ -439,6 +450,7 @@ g0e2 = mkGraph "g0e2"
   containN = fromList
     [("Sender", ["NSE1", "ST1", "NEE1"]), ("Receiver", ["NSE2", "RT2", "NEE2"])]
   containE = fromList [("Sender", ["a", "b"]), ("Receiver", ["c", "d"])]
+  attached = fromList []
 
 g2 :: BpmnGraph
 g2 = mkGraph "g2"
@@ -451,6 +463,7 @@ g2 = mkGraph "g2"
     (fromList [])
     containN
     containE
+    attached
     []
     (fromList [])
   where
@@ -528,6 +541,7 @@ g2 = mkGraph "g2"
       [("Process", ["NSE", "AT1", "Xor0", "Or1", "Xor1", "AT2", "Xor2", "AT3", "Or2", "AT4", "Xor3", "AT5", "NEE"])]
     containE = fromList
       [("Process", ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14", "e15"])]
+    attached = fromList []
 
 g3 :: BpmnGraph
 g3 = mkGraph "g3"
@@ -543,6 +557,7 @@ g3 = mkGraph "g3"
     (fromList [])
     containN
     containE
+    attached
     ["message"]
     (fromList [("mf1", "message")])
   where
@@ -635,3 +650,4 @@ g3 = mkGraph "g3"
     containE = fromList
       [("Process", ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14", "e15"])
       ,("Sender", ["e16", "e17"])]
+    attached = fromList []
