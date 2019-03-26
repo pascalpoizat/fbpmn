@@ -67,8 +67,8 @@ CatN ==
 @@ "Task_19wi6kk" :> ReceiveTask
 
 CatE ==
-   "MessageFlow_095vt4e" :> MsgFlow
-@@ "MessageFlow_1n4m463" :> MsgFlow
+   "MessageFlow_095vt4e" :> MessageFlow
+@@ "MessageFlow_1n4m463" :> MessageFlow
 @@ "SequenceFlow_1bot7ik" :> NormalSeqFlow
 @@ "SequenceFlow_1t3w3h5" :> ConditionalSeqFlow
 @@ "SequenceFlow_13vrdzd" :> DefaultSeqFlow
@@ -88,7 +88,13 @@ PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
           \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
 
 WF == INSTANCE PWSWellFormed
+ASSUME WF!WellTyped
 ASSUME WF!WellFormedness
+
+ConstraintNode == TRUE \* none
+ConstraintEdge == TRUE \* none
+Constraint == TRUE     \* none
+INSTANCE PWSConstraints
 
 INSTANCE PWSSemantics
 

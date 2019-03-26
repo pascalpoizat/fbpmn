@@ -98,11 +98,11 @@ CatN ==
 @@ "Task_002ndsu" :> SendTask
 
 CatE ==
-   "MessageFlow_0knd10s" :> MsgFlow
-@@ "MessageFlow_1yfhhru" :> MsgFlow
-@@ "MessageFlow_1m551dh" :> MsgFlow
-@@ "MessageFlow_1goz1mt" :> MsgFlow
-@@ "MessageFlow_04an7oz" :> MsgFlow
+   "MessageFlow_0knd10s" :> MessageFlow
+@@ "MessageFlow_1yfhhru" :> MessageFlow
+@@ "MessageFlow_1m551dh" :> MessageFlow
+@@ "MessageFlow_1goz1mt" :> MessageFlow
+@@ "MessageFlow_04an7oz" :> MessageFlow
 @@ "SequenceFlow_1h086yg" :> NormalSeqFlow
 @@ "SequenceFlow_00r0rkx" :> NormalSeqFlow
 @@ "SequenceFlow_03104wi" :> NormalSeqFlow
@@ -130,7 +130,13 @@ PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
           \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
 
 WF == INSTANCE PWSWellFormed
+ASSUME WF!WellTyped
 ASSUME WF!WellFormedness
+
+ConstraintNode == TRUE \* none
+ConstraintEdge == TRUE \* none
+Constraint == TRUE     \* none
+INSTANCE PWSConstraints
 
 INSTANCE PWSSemantics
 

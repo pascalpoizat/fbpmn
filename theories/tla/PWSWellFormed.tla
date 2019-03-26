@@ -41,28 +41,28 @@ C8_DefaultSeqFlow == \* A gateway that has a conditional edge must have a defaul
     \A n \in Node : CatN[n] \in GatewayType /\ outtype({ConditionalSeqFlow},n) # {} => Cardinality(outtype({DefaultSeqFlow},n)) = 1
 
 C9_SendTask ==
-    \A n \in Node : CatN[n] = SendTask => intype(MsgFlowType,n) = {}
+    \A n \in Node : CatN[n] = SendTask => intype(MessageFlowType,n) = {}
 
 C10_ReceiveTask ==
-    \A n \in Node : CatN[n] = ReceiveTask => outtype(MsgFlowType,n) = {}
+    \A n \in Node : CatN[n] = ReceiveTask => outtype(MessageFlowType,n) = {}
 
 C11_MessageFlowDifferentProcesses ==
-    \A ni, nj \in Processes, e \in Edge : CatE[e] \in MsgFlowType /\ source[e] \in ContainRel[ni] /\ target[e] \in ContainRel[nj] => ni # nj
+    \A ni, nj \in Processes, e \in Edge : CatE[e] \in MessageFlowType /\ source[e] \in ContainRel[ni] /\ target[e] \in ContainRel[nj] => ni # nj
 
 C12_EXORTwoOutgoingEdges ==
-    \A n \in Node : CatN[n] = EventBasedGateway => Cardinality(outtype(SeqFlowType, n)) >= 2
+    \A n \in Node : CatN[n] = EventBased => Cardinality(outtype(SeqFlowType, n)) >= 2
 
 C13_EXOR_NoConditional ==
-    \A n \in Node : CatN[n] = EventBasedGateway => outtype({ConditionalSeqFlow}, n) = {}
+    \A n \in Node : CatN[n] = EventBased => outtype({ConditionalSeqFlow}, n) = {}
 
 C14_EXOR_NextElements ==
-    \A n \in Node : CatN[n] = EventBasedGateway =>
+    \A n \in Node : CatN[n] = EventBased =>
        \/ \A e \in outtype(SeqFlowType, n) : CatN[target[e]] = ReceiveTask
        \/ \A e \in outtype(SeqFlowType, n) : CatN[target[e]] = CatchMessageIntermediateEvent
 
 (*
 Cx_MessageFlowEdge ==
-    \A e \in Edge : CatE[e] = MsgFlow <=> (CatN[source[e]] \in {SendTask,MessageEndEvent,ThrowMessageIntermediateEvent} /\ CatN[target[e]] = {ReceiveTask,MessageStartEvent,CatchMessageIntermediateEvent})
+    \A e \in Edge : CatE[e] \in MessageFlowType <=> (CatN[source[e]] \in {SendTask,MessageEndEvent,ThrowMessageIntermediateEvent} /\ CatN[target[e]] = {ReceiveTask,MessageStartEvent,CatchMessageIntermediateEvent})
 *)
 
 LOCAL AllConditions == /\ C1_StartNoIncomingEdge
@@ -82,6 +82,6 @@ LOCAL AllConditions == /\ C1_StartNoIncomingEdge
 
 ----------------------------------------------------------------
 
-WellFormedness == TypeAssume /\ AllConditions
+WellFormedness == AllConditions
 
 ================================================================

@@ -17,12 +17,12 @@ Processes == { n \in Node : CatN[n] = Process }
 
 ProcessOf(n) == CHOOSE p \in Node : CatN[p] = Process /\ n \in ContainRelPlus(p)
 
-TypeAssume == /\ source \in [ Edge -> Node ]
-              /\ target \in [ Edge -> Node ]
-              /\ CatN \in [ Node -> NodeType ]
-              /\ CatE \in [ Edge -> EdgeType ]
-              /\ msgtype \in [ { e \in Edge : CatE[e] = MsgFlow } -> Message ]
-              /\ ContainRel \in [ { n \in Node : CatN[n] \in {Process,SubProcess} } -> SUBSET Node ]
+WellTyped == /\ source \in [ Edge -> Node ]
+             /\ target \in [ Edge -> Node ]
+             /\ CatN \in [ Node -> NodeType ]
+             /\ CatE \in [ Edge -> EdgeType ]
+             /\ msgtype \in [ { e \in Edge : CatE[e] = MessageFlow } -> Message ]
+             /\ ContainRel \in [ { n \in Node : CatN[n] \in {Process,SubProcess} } -> SUBSET Node ]
               \* PreEdges and PreNodes are tricky to type
 
 incoming(n) == { e \in Edge : target[e] = n }

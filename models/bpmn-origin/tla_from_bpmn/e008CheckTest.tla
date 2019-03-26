@@ -75,7 +75,13 @@ PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
           \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
 
 WF == INSTANCE PWSWellFormed
+ASSUME WF!WellTyped
 ASSUME WF!WellFormedness
+
+ConstraintNode == TRUE \* none
+ConstraintEdge == TRUE \* none
+Constraint == TRUE     \* none
+INSTANCE PWSConstraints
 
 INSTANCE PWSSemantics
 

@@ -52,7 +52,13 @@ encodeBpmnGraphFooterToTla :: BpmnGraph -> Text
 encodeBpmnGraphFooterToTla _ =
   [text|
   WF == INSTANCE PWSWellFormed
+  ASSUME WF!WellTyped
   ASSUME WF!WellFormedness
+  
+  ConstraintNode == TRUE \* none
+  ConstraintEdge == TRUE \* none
+  Constraint == TRUE     \* none
+  INSTANCE PWSConstraints
   
   INSTANCE PWSSemantics
   
@@ -213,7 +219,7 @@ nodeTypeToTLA SubProcess     = "SubProcess"
 nodeTypeToTLA XorGateway     = "ExclusiveOr"
 nodeTypeToTLA OrGateway      = "InclusiveOr"
 nodeTypeToTLA AndGateway     = "Parallel"
-nodeTypeToTLA EventBasedGateway = "EventBasedGateway"
+nodeTypeToTLA EventBasedGateway = "EventBased"
 nodeTypeToTLA NoneStartEvent = "NoneStartEvent"
 nodeTypeToTLA MessageStartEvent = "MessageStartEvent"
 nodeTypeToTLA NoneEndEvent      = "NoneEndEvent"
@@ -225,4 +231,4 @@ edgeTypeToTLA :: EdgeType -> Text
 edgeTypeToTLA NormalSequenceFlow = "NormalSeqFlow"
 edgeTypeToTLA ConditionalSequenceFlow = "ConditionalSeqFlow"
 edgeTypeToTLA DefaultSequenceFlow = "DefaultSeqFlow"
-edgeTypeToTLA MessageFlow = "MsgFlow"
+edgeTypeToTLA MessageFlow = "MessageFlow"
