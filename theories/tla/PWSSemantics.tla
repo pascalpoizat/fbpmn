@@ -23,7 +23,7 @@ nonestart_complete(n) ==
   /\ nodemarks[n] >= 1
   /\ LET p == ContainRelInv(n) IN
       \/ /\ CatN[p] = Process
-         /\ nodemarks[p] = 0  \* XXXX No multi-instance XXXX
+         /\ nodemarks[p] = 0
          /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
       \/ /\ CatN[p] = SubProcess
          /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
@@ -48,7 +48,7 @@ messagestart_complete(n) ==
   /\ nodemarks[n] >= 1
   /\ \E p \in Processes :
      /\ n \in ContainRel[p]
-     /\ nodemarks[p] = 0  \* XXXX No multi-instance XXXX
+     /\ nodemarks[p] = 0
      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
@@ -191,7 +191,7 @@ or_complete(n) ==
   /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : or_complete_outs(n, eouts)
      \/ \E eout \in outtype({ DefaultSeqFlow }, n) : or_complete_outs(n, {eout})
 
-LOCAL or_fairness(n) == \* do we need fairness on DefaultSeqFlow?
+LOCAL or_fairness(n) ==
 \*     \A eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, eouts))
      \A eout \in  outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, {eout}))
 
@@ -307,22 +307,6 @@ subprocess_complete(n) ==
 process_complete(n) ==
   /\ CatN[n] = Process
   /\ UNCHANGED var
-
-(*
-process_complete(n) ==
-  /\ CatN[n] = Process
-  /\ nodemarks[n] = 1
-  /\ \A e \in Edge : source[e] \in ContainRel[n] /\ target[e] \in ContainRel[n] => edgemarks[e] = 0
-  /\ \A nn \in ContainRel[n] :
-            \/ nodemarks[nn] = 0
-            \/ nodemarks[nn] = 1 /\ CatN[nn] \in EndEventType
-  /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
-                    IF nn = n THEN 0
-                    ELSE IF nn \in ContainRel[n] THEN 0
-                    ELSE nodemarks[nn] ]
-  /\ UNCHANGED edgemarks
-  /\ Network!unchanged
-*)
 
 ----------------------------------------------------------------
 

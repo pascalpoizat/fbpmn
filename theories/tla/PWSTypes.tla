@@ -6,10 +6,10 @@ SendTask == "SendTask"
 ReceiveTask == "ReceiveTask"
 Process == "Process"
 SubProcess == "SubProcess"
-ExclusiveOr == "ExclusiveOr" \* a.k.a. XOR
-InclusiveOr == "InclusiveOr" \* a.k.a. OR
-Parallel == "Parallel"       \* a.k.a AND
-EventBasedGateway == "EventBased"   \* a.k.a. EXOR
+ExclusiveOr == "ExclusiveOr"
+InclusiveOr == "InclusiveOr"
+Parallel == "Parallel"
+EventBasedGateway == "EventBased"
 NoneStartEvent == "NoneStartEvent"
 MessageStartEvent == "MessageStartEvent"
 NoneEndEvent == "NoneEndEvent"
