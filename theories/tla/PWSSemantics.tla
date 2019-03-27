@@ -123,7 +123,7 @@ mbe_start(n) ==
   /\ CatN[n] = MessageBoundaryEvent
   /\ LET sp == attachedTo[n] IN
       /\ nodemarks[sp] >= 1
-      /\ \E e2 \in intype(MsgFlowType, n) :
+      /\ \E e2 \in intype(MessageFlowType, n) :
         /\ edgemarks[e2] >= 1
         /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
         /\ edgemarks' = [ e \in DOMAIN edgemarks |->
