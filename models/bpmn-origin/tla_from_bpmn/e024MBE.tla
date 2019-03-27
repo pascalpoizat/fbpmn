@@ -92,8 +92,8 @@ CatN ==
 @@ "Task_0z3cxl5" :> SendTask
 
 CatE ==
-   "MessageFlow_01dn8b3" :> MsgFlow
-@@ "MessageFlow_1fv5g0n" :> MsgFlow
+   "MessageFlow_01dn8b3" :> MessageFlow
+@@ "MessageFlow_1fv5g0n" :> MessageFlow
 @@ "SequenceFlow_109652j" :> NormalSeqFlow
 @@ "SequenceFlow_0y8q6ot" :> NormalSeqFlow
 @@ "SequenceFlow_1sp2uu5" :> NormalSeqFlow
@@ -130,7 +130,13 @@ attachedTo ==
 @@ "BoundaryEvent_1q0fgiw" :> "SubProcess_07e2e99"
 
 WF == INSTANCE PWSWellFormed
+ASSUME WF!WellTyped
 ASSUME WF!WellFormedness
+
+ConstraintNode == TRUE \* none
+ConstraintEdge == TRUE \* none
+Constraint == TRUE     \* none
+INSTANCE PWSConstraints
 
 INSTANCE PWSSemantics
 

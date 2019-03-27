@@ -233,7 +233,7 @@ CatN ==
 @@ "Task_0aihuup" :> AbstractTask
 @@ "Task_1p5k4vg" :> SendTask
 @@ "ExclusiveGateway_1feo3um" :> ExclusiveOr
-@@ "ExclusiveGateway_0wtbkow" :> EventBasedGateway
+@@ "ExclusiveGateway_0wtbkow" :> EventBased
 @@ "ExclusiveGateway_0cpdpri" :> Parallel
 @@ "IntermediateCatchEvent_1mqziug" :> CatchMessageIntermediateEvent
 @@ "StartEvent_0tynlqh" :> MessageStartEvent
@@ -247,17 +247,17 @@ CatN ==
 @@ "IntermediateThrowEvent_12cgsc9" :> CatchMessageIntermediateEvent
 
 CatE ==
-   "MessageFlow_18pje80" :> MsgFlow
-@@ "MessageFlow_1jgvn81" :> MsgFlow
-@@ "MessageFlow_0vinqwi" :> MsgFlow
-@@ "MessageFlow_0vwhu1f" :> MsgFlow
-@@ "MessageFlow_1bpo13k" :> MsgFlow
-@@ "MessageFlow_1hyly74" :> MsgFlow
-@@ "MessageFlow_0aje9sn" :> MsgFlow
-@@ "MessageFlow_1o3tyk4" :> MsgFlow
-@@ "MessageFlow_0nqzifu" :> MsgFlow
-@@ "MessageFlow_0dguqk7" :> MsgFlow
-@@ "MessageFlow_00ca6vp" :> MsgFlow
+   "MessageFlow_18pje80" :> MessageFlow
+@@ "MessageFlow_1jgvn81" :> MessageFlow
+@@ "MessageFlow_0vinqwi" :> MessageFlow
+@@ "MessageFlow_0vwhu1f" :> MessageFlow
+@@ "MessageFlow_1bpo13k" :> MessageFlow
+@@ "MessageFlow_1hyly74" :> MessageFlow
+@@ "MessageFlow_0aje9sn" :> MessageFlow
+@@ "MessageFlow_1o3tyk4" :> MessageFlow
+@@ "MessageFlow_0nqzifu" :> MessageFlow
+@@ "MessageFlow_0dguqk7" :> MessageFlow
+@@ "MessageFlow_00ca6vp" :> MessageFlow
 @@ "SequenceFlow_1uup9ft" :> NormalSeqFlow
 @@ "SequenceFlow_02i1zog" :> NormalSeqFlow
 @@ "SequenceFlow_1ngsqgy" :> NormalSeqFlow
@@ -335,7 +335,13 @@ attachedTo ==
   [ i \in {} |-> {}]
 
 WF == INSTANCE PWSWellFormed
+ASSUME WF!WellTyped
 ASSUME WF!WellFormedness
+
+ConstraintNode == TRUE \* none
+ConstraintEdge == TRUE \* none
+Constraint == TRUE     \* none
+INSTANCE PWSConstraints
 
 INSTANCE PWSSemantics
 

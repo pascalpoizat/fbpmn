@@ -64,11 +64,11 @@ CatN ==
 @@ "EndEvent_19gcpb9" :> NoneEndEvent
 @@ "Task_1d78ih0" :> ReceiveTask
 @@ "Task_19wi6kk" :> ReceiveTask
-@@ "ExclusiveGateway_1aidani" :> EventBasedGateway
+@@ "ExclusiveGateway_1aidani" :> EventBased
 
 CatE ==
-   "MessageFlow_095vt4e" :> MsgFlow
-@@ "MessageFlow_1n4m463" :> MsgFlow
+   "MessageFlow_095vt4e" :> MessageFlow
+@@ "MessageFlow_1n4m463" :> MessageFlow
 @@ "SequenceFlow_1bot7ik" :> NormalSeqFlow
 @@ "SequenceFlow_1t3w3h5" :> ConditionalSeqFlow
 @@ "SequenceFlow_13vrdzd" :> DefaultSeqFlow
@@ -94,7 +94,13 @@ attachedTo ==
   [ i \in {} |-> {}]
 
 WF == INSTANCE PWSWellFormed
+ASSUME WF!WellTyped
 ASSUME WF!WellFormedness
+
+ConstraintNode == TRUE \* none
+ConstraintEdge == TRUE \* none
+Constraint == TRUE     \* none
+INSTANCE PWSConstraints
 
 INSTANCE PWSSemantics
 

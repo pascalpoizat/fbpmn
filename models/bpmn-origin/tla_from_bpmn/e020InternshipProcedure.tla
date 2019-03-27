@@ -152,7 +152,7 @@ CatN ==
 @@ "ReceiveTask_146lfh4" :> ReceiveTask
 @@ "EndEvent_0zeqiic" :> NoneEndEvent
 @@ "StartEvent_0y07koo" :> MessageStartEvent
-@@ "EventBasedGateway_1d92ix7" :> EventBasedGateway
+@@ "EventBasedGateway_1d92ix7" :> EventBased
 @@ "StartEvent_0sg8ueb" :> MessageStartEvent
 @@ "SendTask_0bu2egl" :> SendTask
 @@ "ReceiveTask_1eiaojy" :> ReceiveTask
@@ -160,14 +160,14 @@ CatN ==
 @@ "SendTask_1sfy3aq" :> AbstractTask
 
 CatE ==
-   "MessageFlow_1r2202w" :> MsgFlow
-@@ "MessageFlow_0vajuh0" :> MsgFlow
-@@ "MessageFlow_1exti3v" :> MsgFlow
-@@ "MessageFlow_0whwr08" :> MsgFlow
-@@ "MessageFlow_1uu4df2" :> MsgFlow
-@@ "MessageFlow_0qzpag3" :> MsgFlow
-@@ "MessageFlow_0n79ikw" :> MsgFlow
-@@ "MessageFlow_0n7crx1" :> MsgFlow
+   "MessageFlow_1r2202w" :> MessageFlow
+@@ "MessageFlow_0vajuh0" :> MessageFlow
+@@ "MessageFlow_1exti3v" :> MessageFlow
+@@ "MessageFlow_0whwr08" :> MessageFlow
+@@ "MessageFlow_1uu4df2" :> MessageFlow
+@@ "MessageFlow_0qzpag3" :> MessageFlow
+@@ "MessageFlow_0n79ikw" :> MessageFlow
+@@ "MessageFlow_0n7crx1" :> MessageFlow
 @@ "SequenceFlow_1e21rh4" :> NormalSeqFlow
 @@ "SequenceFlow_1716tm6" :> NormalSeqFlow
 @@ "SequenceFlow_0epxxie" :> NormalSeqFlow
@@ -217,7 +217,13 @@ attachedTo ==
   [ i \in {} |-> {}]
 
 WF == INSTANCE PWSWellFormed
+ASSUME WF!WellTyped
 ASSUME WF!WellFormedness
+
+ConstraintNode == TRUE \* none
+ConstraintEdge == TRUE \* none
+Constraint == TRUE     \* none
+INSTANCE PWSConstraints
 
 INSTANCE PWSSemantics
 

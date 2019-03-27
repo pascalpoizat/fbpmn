@@ -60,7 +60,7 @@ CatN ==
 @@ "Task_18t09mk" :> ReceiveTask
 
 CatE ==
-   "MessageFlow_03ylhkh" :> MsgFlow
+   "MessageFlow_03ylhkh" :> MessageFlow
 @@ "SequenceFlow_0uplc1a" :> NormalSeqFlow
 @@ "SequenceFlow_01wc4ks" :> NormalSeqFlow
 @@ "SequenceFlow_0wto9d1" :> NormalSeqFlow
@@ -85,7 +85,13 @@ attachedTo ==
   [ i \in {} |-> {}]
 
 WF == INSTANCE PWSWellFormed
+ASSUME WF!WellTyped
 ASSUME WF!WellFormedness
+
+ConstraintNode == TRUE \* none
+ConstraintEdge == TRUE \* none
+Constraint == TRUE     \* none
+INSTANCE PWSConstraints
 
 INSTANCE PWSSemantics
 

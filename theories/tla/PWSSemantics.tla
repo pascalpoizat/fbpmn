@@ -1,6 +1,7 @@
 ---------------- MODULE PWSSemantics ----------------
-
 EXTENDS Naturals, PWSTypes, PWSDefs
+
+CONSTANT Constraint
 
 VARIABLES
   edgemarks,
@@ -23,7 +24,7 @@ nonestart_complete(n) ==
   /\ nodemarks[n] >= 1
   /\ LET p == ContainRelInv(n) IN
       \/ /\ CatN[p] = Process
-         /\ nodemarks[p] = 0
+         /\ nodemarks[p] = 0  \* No multi-instance
          /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
       \/ /\ CatN[p] = SubProcess
          /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
@@ -37,7 +38,7 @@ nonestart_complete(n) ==
 messagestart_start(n) ==
   /\ CatN[n] = MessageStartEvent
   /\ nodemarks[n] = 0
-  /\ \E e \in intype(MsgFlowType, n) :
+  /\ \E e \in intype(MessageFlowType, n) :
      /\ edgemarks[e] >= 1
      /\ Network!receive(ProcessOf(source[e]), ProcessOf(n), msgtype[e])
      /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
@@ -48,7 +49,7 @@ messagestart_complete(n) ==
   /\ nodemarks[n] >= 1
   /\ \E p \in Processes :
      /\ n \in ContainRel[p]
-     /\ nodemarks[p] = 0
+     /\ nodemarks[p] = 0  \* No multi-instance
      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
@@ -84,7 +85,7 @@ terminateend_start(n) == \* Terminate End Event clears all token in the process/
 
 messageend_start(n) ==
   /\ CatN[n] = MessageEndEvent
-  /\ \E e1 \in intype(SeqFlowType, n), e2 \in outtype(MsgFlowType, n) :
+  /\ \E e1 \in intype(SeqFlowType, n), e2 \in outtype(MessageFlowType, n) :
      /\ edgemarks[e1] >= 1
      /\ Network!send(ProcessOf(n), ProcessOf(target[e2]), msgtype[e2])
      /\ edgemarks' = [ edgemarks EXCEPT ![e1] = @ - 1, ![e2] = @ + 1 ]
@@ -94,7 +95,7 @@ messageend_start(n) ==
 
 tmie_start(n) ==
   /\ CatN[n] = ThrowMessageIntermediateEvent
-  /\ \E ein \in intype(SeqFlowType, n), eout \in outtype(MsgFlowType, n) :
+  /\ \E ein \in intype(SeqFlowType, n), eout \in outtype(MessageFlowType, n) :
       /\ edgemarks[ein] >= 1
       /\ Network!send(ProcessOf(n), ProcessOf(target[eout]), msgtype[eout])
       /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
@@ -104,9 +105,9 @@ tmie_start(n) ==
                            ELSE edgemarks[ee] ]
       /\ UNCHANGED nodemarks
 
-cmie_start(n) == 
+cmie_start(n) ==
   /\ CatN[n] = CatchMessageIntermediateEvent
-  /\ \E e1 \in intype(SeqFlowType, n), e2 \in intype(MsgFlowType, n) :
+  /\ \E e1 \in intype(SeqFlowType, n), e2 \in intype(MessageFlowType, n) :
      /\ edgemarks[e1] >= 1
      /\ edgemarks[e2] >= 1
      /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
@@ -122,7 +123,7 @@ mbe_start(n) ==
   /\ CatN[n] = MessageBoundaryEvent
   /\ LET sp == BoundaryEvent[n].attachedTo IN
       /\ nodemarks[sp] >= 1
-      /\ \E e2 \in intype(MsgFlowType, n) :
+      /\ \E e2 \in intype(MessageFlowType, n) :
         /\ edgemarks[e2] >= 1
         /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
         /\ edgemarks' = [ e \in DOMAIN edgemarks |->
@@ -155,7 +156,7 @@ xor_complete(n) ==
 
 LOCAL xor_fairness(n) ==
    \A eout \in outtype(SeqFlowType, n) : SF_var(xor_complete_out(n,eout))
-  
+
 (* ---- Parallel / AND ---- *)
 
 parallel_complete(n) ==
@@ -191,8 +192,7 @@ or_complete(n) ==
   /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : or_complete_outs(n, eouts)
      \/ \E eout \in outtype({ DefaultSeqFlow }, n) : or_complete_outs(n, {eout})
 
-LOCAL or_fairness(n) ==
-\*     \A eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, eouts))
+LOCAL or_fairness(n) == \* fairness applied or not on DefaultSeqFlow?
      \A eout \in  outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, {eout}))
 
 (* ---- Event Based / EXOR ---- *)
@@ -200,13 +200,13 @@ LOCAL or_fairness(n) ==
 LOCAL eventbased_complete_out(n, eout) ==
   /\ \E ein \in intype(SeqFlowType, n) :
       /\ edgemarks[ein] >= 1
-      /\ \E emsg \in intype(MsgFlowType, target[eout]) : edgemarks[emsg] # 0
+      /\ \E emsg \in intype(MessageFlowType, target[eout]) : edgemarks[emsg] # 0
       /\ edgemarks' = [ edgemarks EXCEPT ![ein] = @ - 1, ![eout] = @ + 1 ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
 
 eventbased_complete(n) ==
-  /\ CatN[n] = EventBasedGateway
+  /\ CatN[n] = EventBased
   /\ \E eout \in outtype(SeqFlowType, n) : eventbased_complete_out(n, eout)
 
 LOCAL eventbased_fairness(n) ==
@@ -242,11 +242,11 @@ send_start(n) ==
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
   /\ Network!unchanged
-       
+
 send_complete(n) ==
   /\ CatN[n] = SendTask
   /\ nodemarks[n] >= 1
-  /\ \E e \in outtype(MsgFlowType, n) :
+  /\ \E e \in outtype(MessageFlowType, n) :
       /\ Network!send(ProcessOf(n), ProcessOf(target[e]), msgtype[e])
       /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
       /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
@@ -259,7 +259,7 @@ send_complete(n) ==
 receive_start(n) ==
   /\ CatN[n] = ReceiveTask
   /\ nodemarks[n] = 0
-  /\ \E e1 \in intype(SeqFlowType, n), e2 \in intype(MsgFlowType, n) :
+  /\ \E e1 \in intype(SeqFlowType, n), e2 \in intype(MessageFlowType, n) :
      /\ edgemarks[e1] >= 1
      /\ edgemarks[e2] >= 1
      /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
@@ -288,7 +288,7 @@ subprocess_start(n) ==
                        ELSE nodemarks[nn] ]
   /\ Network!unchanged
 
-subprocess_complete(n) == 
+subprocess_complete(n) ==
   /\ CatN[n] = SubProcess
   /\ nodemarks[n] >= 1
   /\ \A e \in Edge : source[e] \in ContainRel[n] /\ target[e] \in ContainRel[n] => edgemarks[e] = 0
@@ -304,9 +304,7 @@ subprocess_complete(n) ==
 
 (* ---- Top level Process ---- *)
 
-process_complete(n) ==
-  /\ CatN[n] = Process
-  /\ UNCHANGED var
+process_complete(n) == FALSE
 
 ----------------------------------------------------------------
 
@@ -326,7 +324,7 @@ step(n) ==
     [] CatN[n] = ExclusiveOr -> xor_complete(n)
     [] CatN[n] = InclusiveOr -> or_complete(n)
     [] CatN[n] = Parallel -> parallel_complete(n)
-    [] CatN[n] = EventBasedGateway -> eventbased_complete(n)
+    [] CatN[n] = EventBased -> eventbased_complete(n)
     [] CatN[n] = Process -> process_complete(n)
 
 Next == \E n \in Node : step(n)
@@ -338,14 +336,16 @@ Init ==
   /\ edgemarks = [ e \in Edge |-> 0 ]
   /\ Network!init
 
-(* Fairness == WF_var(Next) *)
-Fairness ==
-  /\ \A n \in Node : WF_var(step(n))
-  /\ \A n \in Node : CatN[n] = ExclusiveOr => xor_fairness(n)
-  /\ \A n \in Node : CatN[n] = EventBasedGateway => eventbased_fairness(n)
-  /\ \A n \in { nn \in Node : CatN[nn] = InclusiveOr } : or_fairness(n)
+Fairness_Next == \A n \in Node : WF_var(step(n))
 
-Spec == Init /\ [][Next]_var /\ Fairness
+Fairness_Gateway ==
+  /\ \A n \in Node : CatN[n] = ExclusiveOr => xor_fairness(n)
+  /\ \A n \in Node : CatN[n] = EventBased => eventbased_fairness(n)
+  /\ \A n \in Node : CatN[n] = InclusiveOr => or_fairness(n)
+
+Fairness == Fairness_Next /\ Fairness_Gateway
+
+Spec == Init /\ [][Next /\ Constraint']_var /\ Fairness
 
 (* ---------------------------------------------------------------- *)
 
@@ -372,7 +372,7 @@ NoAbnormalTermination ==
   \A n \in Node : CatN[n] = TerminateEndEvent => [](nodemarks[n] = 0)
 
 (* No messages are eventually left in transit. *)
-NoUndeliveredMessages == LET msgflows == { ee \in Edge : CatE[ee] = MsgFlow } IN
+NoUndeliveredMessages == LET msgflows == { ee \in Edge : CatE[ee] \in MessageFlowType } IN
                          (\E e \in msgflows : edgemarks[e] > 0) ~>  (\A e \in msgflows : edgemarks[e] = 0)
 
 \* Any message is eventually delivered.
@@ -400,7 +400,7 @@ SoundProcess(p) == <> SoundProcessInt(p)
 (* All processes are sound and there are no undelivered messages. *)
 SoundCollaboration ==
    <>(/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n)
-      /\ \A e \in Edge : CatE[e] = MsgFlow => edgemarks[e] = 0)
+      /\ \A e \in Edge : CatE[e] \in MessageFlowType => edgemarks[e] = 0)
 
 (* Like SoundCollaboration, but ignore messages in transit. *)
 MessageRelaxedSoundCollaboration ==

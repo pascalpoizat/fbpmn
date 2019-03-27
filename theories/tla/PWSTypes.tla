@@ -6,10 +6,10 @@ SendTask == "SendTask"
 ReceiveTask == "ReceiveTask"
 Process == "Process"
 SubProcess == "SubProcess"
-ExclusiveOr == "ExclusiveOr"
-InclusiveOr == "InclusiveOr"
-Parallel == "Parallel"
-EventBasedGateway == "EventBased"
+ExclusiveOr == "ExclusiveOr" \* a.k.a. XOR
+InclusiveOr == "InclusiveOr" \* a.k.a. OR
+Parallel == "Parallel"       \* a.k.a AND
+EventBased == "EventBased"   \* a.k.a. EB
 NoneStartEvent == "NoneStartEvent"
 MessageStartEvent == "MessageStartEvent"
 NoneEndEvent == "NoneEndEvent"
@@ -22,11 +22,11 @@ MessageBoundaryEvent == "MessageBoundaryEvent"
 NormalSeqFlow == "NormalSeqFlow"
 ConditionalSeqFlow == "ConditionalSeqFlow"
 DefaultSeqFlow == "DefaultSeqFlow"
-MsgFlow == "MsgFlow"
+MessageFlow == "MessageFlow"
 
 TaskType == { AbstractTask, SendTask, ReceiveTask }
 ActivityType == TaskType \union { SubProcess }
-GatewayType == { ExclusiveOr, InclusiveOr, Parallel, EventBasedGateway }
+GatewayType == { ExclusiveOr, InclusiveOr, Parallel, EventBased }
 StartEventType == { NoneStartEvent, MessageStartEvent }
 EndEventType == { NoneEndEvent, TerminateEndEvent, MessageEndEvent }
 IntermediateEventType == { ThrowMessageIntermediateEvent, CatchMessageIntermediateEvent }
@@ -35,7 +35,7 @@ EventType == StartEventType \union EndEventType \union IntermediateEventType \un
 NodeType == { Process } \union ActivityType \union GatewayType \union EventType
 
 SeqFlowType == { NormalSeqFlow, ConditionalSeqFlow, DefaultSeqFlow }
-MsgFlowType == { MsgFlow }
-EdgeType == SeqFlowType \union  MsgFlowType
+MessageFlowType == { MessageFlow }
+EdgeType == SeqFlowType \union MessageFlowType
 
 ================================================================

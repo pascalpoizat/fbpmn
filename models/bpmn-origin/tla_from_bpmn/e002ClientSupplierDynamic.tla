@@ -78,9 +78,9 @@ CatN ==
 @@ "cStoreRequest" :> AbstractTask
 
 CatE ==
-   "mf1" :> MsgFlow
-@@ "mf3" :> MsgFlow
-@@ "mf2" :> MsgFlow
+   "mf1" :> MessageFlow
+@@ "mf3" :> MessageFlow
+@@ "mf2" :> MessageFlow
 @@ "sE1" :> NormalSeqFlow
 @@ "sE2" :> NormalSeqFlow
 @@ "sE3" :> NormalSeqFlow
@@ -109,7 +109,13 @@ attachedTo ==
   [ i \in {} |-> {}]
 
 WF == INSTANCE PWSWellFormed
+ASSUME WF!WellTyped
 ASSUME WF!WellFormedness
+
+ConstraintNode == TRUE \* none
+ConstraintEdge == TRUE \* none
+Constraint == TRUE     \* none
+INSTANCE PWSConstraints
 
 INSTANCE PWSSemantics
 
