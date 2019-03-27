@@ -1,19 +1,47 @@
 {
     "catN": {
-        "Or1": "OrGateway",
-        "AT2": "AbstractTask",
-        "Xor2": "XorGateway",
-        "Process_1": "Process",
-        "AT5": "AbstractTask",
-        "NSE": "NoneStartEvent",
-        "AT4": "AbstractTask",
-        "Xor1": "XorGateway",
-        "AT1": "AbstractTask",
-        "Or2": "OrGateway",
-        "Xor0": "XorGateway",
-        "AT3": "AbstractTask",
-        "Xor3": "XorGateway",
-        "NEE": "NoneEndEvent"
+        "Or1": {
+            "tag": "OrGateway"
+        },
+        "AT2": {
+            "tag": "AbstractTask"
+        },
+        "Xor2": {
+            "tag": "XorGateway"
+        },
+        "Process_1": {
+            "tag": "Process"
+        },
+        "AT5": {
+            "tag": "AbstractTask"
+        },
+        "NSE": {
+            "tag": "NoneStartEvent"
+        },
+        "AT4": {
+            "tag": "AbstractTask"
+        },
+        "Xor1": {
+            "tag": "XorGateway"
+        },
+        "AT1": {
+            "tag": "AbstractTask"
+        },
+        "Or2": {
+            "tag": "OrGateway"
+        },
+        "Xor0": {
+            "tag": "XorGateway"
+        },
+        "AT3": {
+            "tag": "AbstractTask"
+        },
+        "Xor3": {
+            "tag": "XorGateway"
+        },
+        "NEE": {
+            "tag": "NoneEndEvent"
+        }
     },
     "catE": {
         "e1": "NormalSequenceFlow",
@@ -70,6 +98,7 @@
         "e15": "Xor0"
     },
     "name": "e003OrTest",
+    "attached": {},
     "containE": {
         "Process_1": [
             "e0",

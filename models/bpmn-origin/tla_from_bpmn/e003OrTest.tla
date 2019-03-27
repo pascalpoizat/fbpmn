@@ -91,7 +91,7 @@ CatE ==
 @@ "e15" :> DefaultSeqFlow
 
 LOCAL preEdges ==
-<<"Or1", "e2">> :> {"e0", "e1", "e15"}
+   <<"Or1", "e2">> :> {"e0", "e1", "e15"}
 @@ <<"Or2", "e5">> :> {"e0", "e1", "e15", "e2", "e4"}
 @@ <<"Or2", "e9">> :> {"e0", "e1", "e15", "e2", "e3", "e6", "e7", "e8"}
 @@ <<"Or2", "e12">> :> {"e10", "e11"}
@@ -99,6 +99,12 @@ PreEdges(n,e) == preEdges[n,e]
 
 PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
           \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
+
+cancelActivity ==
+  [ i \in {} |-> {}]
+
+attachedTo ==
+  [ i \in {} |-> {}]
 
 WF == INSTANCE PWSWellFormed
 ASSUME WF!WellTyped

@@ -1,65 +1,185 @@
 {
     "catN": {
-        "Task_1x71tep": "SendTask",
-        "ExclusiveGateway_04luead": "AndGateway",
-        "IntermediateThrowEvent_0moj9p9": "ThrowMessageIntermediateEvent",
-        "Process_17upgh4": "Process",
-        "StartEvent_12o3x3s": "MessageStartEvent",
-        "Task_0ca58zk": "ReceiveTask",
-        "Task_1spxdy2": "AbstractTask",
-        "Task_0amx3qc": "SendTask",
-        "ExclusiveGateway_1mr7igy": "XorGateway",
-        "Task_01tkb3r": "SendTask",
-        "ExclusiveGateway_0a8yao0": "AndGateway",
-        "ExclusiveGateway_1feo3um": "XorGateway",
-        "Task_1pc6d9t": "ReceiveTask",
-        "ExclusiveGateway_1t6g7zz": "XorGateway",
-        "ExclusiveGateway_186ksgk": "AndGateway",
-        "ExclusiveGateway_0k9b245": "AndGateway",
-        "EndEvent_14513uv": "TerminateEndEvent",
-        "EndEvent_0pa5oys": "TerminateEndEvent",
-        "Task_09igb82": "SendTask",
-        "ExclusiveGateway_0d9bxab": "XorGateway",
-        "Task_18tknzx": "SendTask",
-        "Task_1p5k4vg": "SendTask",
-        "IntermediateThrowEvent_1dkrxqj": "CatchMessageIntermediateEvent",
-        "ExclusiveGateway_0uhrdet": "XorGateway",
-        "Task_0yh5jmb": "SendTask",
-        "IntermediateCatchEvent_1mqziug": "CatchMessageIntermediateEvent",
-        "ExclusiveGateway_095m84g": "XorGateway",
-        "IntermediateThrowEvent_1ab6lzx": "ThrowMessageIntermediateEvent",
-        "ExclusiveGateway_0qv0dm1": "AndGateway",
-        "ExclusiveGateway_03bs3t5": "XorGateway",
-        "ExclusiveGateway_0h8c90b": "AndGateway",
-        "Task_1e6rsiy": "AbstractTask",
-        "ExclusiveGateway_0a5libn": "AndGateway",
-        "StartEvent_0mw9dyi": "NoneStartEvent",
-        "Process_0bvyh41": "Process",
-        "Process_0de8xa0": "Process",
-        "Process_0vx28va": "Process",
-        "StartEvent_0tw9hoi": "MessageStartEvent",
-        "Task_0aihuup": "AbstractTask",
-        "EndEvent_19aoxjz": "NoneEndEvent",
-        "EndEvent_0joc303": "TerminateEndEvent",
-        "IntermediateThrowEvent_12cgsc9": "CatchMessageIntermediateEvent",
-        "ExclusiveGateway_0cpdpri": "AndGateway",
-        "StartEvent_0tynlqh": "MessageStartEvent",
-        "IntermediateThrowEvent_0zn5r2p": "ThrowMessageIntermediateEvent",
-        "EndEvent_0wj7yv1": "TerminateEndEvent",
-        "ExclusiveGateway_0sum07m": "XorGateway",
-        "Task_03ohewl": "AbstractTask",
-        "ExclusiveGateway_1izjr9z": "XorGateway",
-        "Task_169t347": "AbstractTask",
-        "StartEvent_19zezl9": "MessageStartEvent",
-        "ExclusiveGateway_0wtbkow": "EventBasedGateway",
-        "ReceiveTask_1cc6gb0": "SendTask",
-        "ExclusiveGateway_19mjt5y": "XorGateway",
-        "Process_1pqwd18": "Process",
-        "Task_1e85hli": "AbstractTask",
-        "IntermediateThrowEvent_1cd7dmz": "CatchMessageIntermediateEvent",
-        "IntermediateThrowEvent_1ajpgtk": "CatchMessageIntermediateEvent",
-        "ExclusiveGateway_1u3y4si": "XorGateway",
-        "ExclusiveGateway_1alxwt7": "AndGateway"
+        "Task_1x71tep": {
+            "tag": "SendTask"
+        },
+        "ExclusiveGateway_04luead": {
+            "tag": "AndGateway"
+        },
+        "IntermediateThrowEvent_0moj9p9": {
+            "tag": "ThrowMessageIntermediateEvent"
+        },
+        "Process_17upgh4": {
+            "tag": "Process"
+        },
+        "StartEvent_12o3x3s": {
+            "tag": "MessageStartEvent"
+        },
+        "Task_0ca58zk": {
+            "tag": "ReceiveTask"
+        },
+        "Task_1spxdy2": {
+            "tag": "AbstractTask"
+        },
+        "Task_0amx3qc": {
+            "tag": "SendTask"
+        },
+        "ExclusiveGateway_1mr7igy": {
+            "tag": "XorGateway"
+        },
+        "Task_01tkb3r": {
+            "tag": "SendTask"
+        },
+        "ExclusiveGateway_0a8yao0": {
+            "tag": "AndGateway"
+        },
+        "ExclusiveGateway_1feo3um": {
+            "tag": "XorGateway"
+        },
+        "Task_1pc6d9t": {
+            "tag": "ReceiveTask"
+        },
+        "ExclusiveGateway_1t6g7zz": {
+            "tag": "XorGateway"
+        },
+        "ExclusiveGateway_186ksgk": {
+            "tag": "AndGateway"
+        },
+        "ExclusiveGateway_0k9b245": {
+            "tag": "AndGateway"
+        },
+        "EndEvent_14513uv": {
+            "tag": "TerminateEndEvent"
+        },
+        "EndEvent_0pa5oys": {
+            "tag": "TerminateEndEvent"
+        },
+        "Task_09igb82": {
+            "tag": "SendTask"
+        },
+        "ExclusiveGateway_0d9bxab": {
+            "tag": "XorGateway"
+        },
+        "Task_18tknzx": {
+            "tag": "SendTask"
+        },
+        "Task_1p5k4vg": {
+            "tag": "SendTask"
+        },
+        "IntermediateThrowEvent_1dkrxqj": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "ExclusiveGateway_0uhrdet": {
+            "tag": "XorGateway"
+        },
+        "Task_0yh5jmb": {
+            "tag": "SendTask"
+        },
+        "IntermediateCatchEvent_1mqziug": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "ExclusiveGateway_095m84g": {
+            "tag": "XorGateway"
+        },
+        "IntermediateThrowEvent_1ab6lzx": {
+            "tag": "ThrowMessageIntermediateEvent"
+        },
+        "ExclusiveGateway_0qv0dm1": {
+            "tag": "AndGateway"
+        },
+        "ExclusiveGateway_03bs3t5": {
+            "tag": "XorGateway"
+        },
+        "ExclusiveGateway_0h8c90b": {
+            "tag": "AndGateway"
+        },
+        "Task_1e6rsiy": {
+            "tag": "AbstractTask"
+        },
+        "ExclusiveGateway_0a5libn": {
+            "tag": "AndGateway"
+        },
+        "StartEvent_0mw9dyi": {
+            "tag": "NoneStartEvent"
+        },
+        "Process_0bvyh41": {
+            "tag": "Process"
+        },
+        "Process_0de8xa0": {
+            "tag": "Process"
+        },
+        "Process_0vx28va": {
+            "tag": "Process"
+        },
+        "StartEvent_0tw9hoi": {
+            "tag": "MessageStartEvent"
+        },
+        "Task_0aihuup": {
+            "tag": "AbstractTask"
+        },
+        "EndEvent_19aoxjz": {
+            "tag": "NoneEndEvent"
+        },
+        "EndEvent_0joc303": {
+            "tag": "TerminateEndEvent"
+        },
+        "IntermediateThrowEvent_12cgsc9": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "ExclusiveGateway_0cpdpri": {
+            "tag": "AndGateway"
+        },
+        "StartEvent_0tynlqh": {
+            "tag": "MessageStartEvent"
+        },
+        "IntermediateThrowEvent_0zn5r2p": {
+            "tag": "ThrowMessageIntermediateEvent"
+        },
+        "EndEvent_0wj7yv1": {
+            "tag": "TerminateEndEvent"
+        },
+        "ExclusiveGateway_0sum07m": {
+            "tag": "XorGateway"
+        },
+        "Task_03ohewl": {
+            "tag": "AbstractTask"
+        },
+        "ExclusiveGateway_1izjr9z": {
+            "tag": "XorGateway"
+        },
+        "Task_169t347": {
+            "tag": "AbstractTask"
+        },
+        "StartEvent_19zezl9": {
+            "tag": "MessageStartEvent"
+        },
+        "ExclusiveGateway_0wtbkow": {
+            "tag": "EventBasedGateway"
+        },
+        "ReceiveTask_1cc6gb0": {
+            "tag": "SendTask"
+        },
+        "ExclusiveGateway_19mjt5y": {
+            "tag": "XorGateway"
+        },
+        "Process_1pqwd18": {
+            "tag": "Process"
+        },
+        "Task_1e85hli": {
+            "tag": "AbstractTask"
+        },
+        "IntermediateThrowEvent_1cd7dmz": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "IntermediateThrowEvent_1ajpgtk": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "ExclusiveGateway_1u3y4si": {
+            "tag": "XorGateway"
+        },
+        "ExclusiveGateway_1alxwt7": {
+            "tag": "AndGateway"
+        }
     },
     "catE": {
         "SequenceFlow_1pvrfjg": "NormalSequenceFlow",
@@ -292,6 +412,7 @@
         "SequenceFlow_05ihnu4": "ExclusiveGateway_0sum07m"
     },
     "name": "e019TemperatureIoT",
+    "attached": {},
     "containE": {
         "Process_17upgh4": [
             "SequenceFlow_0j98n24",

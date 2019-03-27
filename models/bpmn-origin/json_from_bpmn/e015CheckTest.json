@@ -1,19 +1,47 @@
 {
     "catN": {
-        "Task_19wi6kk": "ReceiveTask",
-        "StartEvent_1": "NoneStartEvent",
-        "ExclusiveGateway_1gus05a": "XorGateway",
-        "EndEvent_1d6yy2u": "NoneEndEvent",
-        "EndEvent_19gcpb9": "NoneEndEvent",
-        "Task_1cbrss1": "SendTask",
-        "StartEvent_0x0o2ml": "NoneStartEvent",
-        "ExclusiveGateway_1aidani": "XorGateway",
-        "EndEvent_1e5c16l": "NoneEndEvent",
-        "Task_1c559zv": "SendTask",
-        "EndEvent_198u4gq": "NoneEndEvent",
-        "Receiver_Id": "Process",
-        "Sender_Id": "Process",
-        "Task_1d78ih0": "ReceiveTask"
+        "Task_19wi6kk": {
+            "tag": "ReceiveTask"
+        },
+        "StartEvent_1": {
+            "tag": "NoneStartEvent"
+        },
+        "ExclusiveGateway_1gus05a": {
+            "tag": "XorGateway"
+        },
+        "EndEvent_1d6yy2u": {
+            "tag": "NoneEndEvent"
+        },
+        "EndEvent_19gcpb9": {
+            "tag": "NoneEndEvent"
+        },
+        "Task_1cbrss1": {
+            "tag": "SendTask"
+        },
+        "StartEvent_0x0o2ml": {
+            "tag": "NoneStartEvent"
+        },
+        "ExclusiveGateway_1aidani": {
+            "tag": "XorGateway"
+        },
+        "EndEvent_1e5c16l": {
+            "tag": "NoneEndEvent"
+        },
+        "Task_1c559zv": {
+            "tag": "SendTask"
+        },
+        "EndEvent_198u4gq": {
+            "tag": "NoneEndEvent"
+        },
+        "Receiver_Id": {
+            "tag": "Process"
+        },
+        "Sender_Id": {
+            "tag": "Process"
+        },
+        "Task_1d78ih0": {
+            "tag": "ReceiveTask"
+        }
     },
     "catE": {
         "SequenceFlow_1bot7ik": "NormalSequenceFlow",
@@ -66,6 +94,7 @@
         "MessageFlow_095vt4e": "Task_1d78ih0"
     },
     "name": "e015CheckTest",
+    "attached": {},
     "containE": {
         "Receiver_Id": [
             "SequenceFlow_0fxw5l8",

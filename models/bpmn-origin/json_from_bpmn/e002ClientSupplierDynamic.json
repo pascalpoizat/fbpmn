@@ -1,21 +1,53 @@
 {
     "catN": {
-        "sPrepareCommand": "AbstractTask",
-        "cStoreRequest": "AbstractTask",
-        "sStart": "MessageStartEvent",
-        "cStart": "NoneStartEvent",
-        "sSendInvoice": "SendTask",
-        "sShipCommand": "SendTask",
-        "cReceiveInvoice": "ReceiveTask",
-        "sPar1": "AndGateway",
-        "sInvoiceManagement": "AbstractTask",
-        "cEnd": "NoneEndEvent",
-        "sEnd": "NoneEndEvent",
-        "sPar2": "AndGateway",
-        "Process_Client": "Process",
-        "cReceiveGoods": "ReceiveTask",
-        "Process_Supplier": "Process",
-        "cSendCommand": "SendTask"
+        "sPrepareCommand": {
+            "tag": "AbstractTask"
+        },
+        "cStoreRequest": {
+            "tag": "AbstractTask"
+        },
+        "sStart": {
+            "tag": "MessageStartEvent"
+        },
+        "cStart": {
+            "tag": "NoneStartEvent"
+        },
+        "sSendInvoice": {
+            "tag": "SendTask"
+        },
+        "sShipCommand": {
+            "tag": "SendTask"
+        },
+        "cReceiveInvoice": {
+            "tag": "ReceiveTask"
+        },
+        "sPar1": {
+            "tag": "AndGateway"
+        },
+        "sInvoiceManagement": {
+            "tag": "AbstractTask"
+        },
+        "cEnd": {
+            "tag": "NoneEndEvent"
+        },
+        "sEnd": {
+            "tag": "NoneEndEvent"
+        },
+        "sPar2": {
+            "tag": "AndGateway"
+        },
+        "Process_Client": {
+            "tag": "Process"
+        },
+        "cReceiveGoods": {
+            "tag": "ReceiveTask"
+        },
+        "Process_Supplier": {
+            "tag": "Process"
+        },
+        "cSendCommand": {
+            "tag": "SendTask"
+        }
     },
     "catE": {
         "cE2": "NormalSequenceFlow",
@@ -79,6 +111,7 @@
         "sE7": "sSendInvoice"
     },
     "name": "e002ClientSupplierDynamic",
+    "attached": {},
     "containE": {
         "Process_Client": [
             "cE1",

@@ -1,22 +1,56 @@
 {
     "catN": {
-        "Task_1jvjnjm": "AbstractTask",
-        "ExclusiveGateway_1b6y90k": "XorGateway",
-        "StartEvent_1": "NoneStartEvent",
-        "Task_1xwy18n": "AbstractTask",
-        "Process_1": "Process",
-        "ExclusiveGateway_01rg1yx": "OrGateway",
-        "EndEvent_0reyumw": "NoneEndEvent",
-        "Task_1b973ma": "AbstractTask",
-        "ExclusiveGateway_1d1alzz": "AndGateway",
-        "ExclusiveGateway_0wbb4kr": "OrGateway",
-        "ExclusiveGateway_1v72kao": "OrGateway",
-        "ExclusiveGateway_15k9ix7": "XorGateway",
-        "Task_1bno414": "AbstractTask",
-        "Task_1o166o0": "AbstractTask",
-        "Task_0h7uj4l": "AbstractTask",
-        "ExclusiveGateway_1dofiof": "OrGateway",
-        "ExclusiveGateway_1ovxz2d": "AndGateway"
+        "Task_1jvjnjm": {
+            "tag": "AbstractTask"
+        },
+        "ExclusiveGateway_1b6y90k": {
+            "tag": "XorGateway"
+        },
+        "StartEvent_1": {
+            "tag": "NoneStartEvent"
+        },
+        "Task_1xwy18n": {
+            "tag": "AbstractTask"
+        },
+        "Process_1": {
+            "tag": "Process"
+        },
+        "ExclusiveGateway_01rg1yx": {
+            "tag": "OrGateway"
+        },
+        "EndEvent_0reyumw": {
+            "tag": "NoneEndEvent"
+        },
+        "Task_1b973ma": {
+            "tag": "AbstractTask"
+        },
+        "ExclusiveGateway_1d1alzz": {
+            "tag": "AndGateway"
+        },
+        "ExclusiveGateway_0wbb4kr": {
+            "tag": "OrGateway"
+        },
+        "ExclusiveGateway_1v72kao": {
+            "tag": "OrGateway"
+        },
+        "ExclusiveGateway_15k9ix7": {
+            "tag": "XorGateway"
+        },
+        "Task_1bno414": {
+            "tag": "AbstractTask"
+        },
+        "Task_1o166o0": {
+            "tag": "AbstractTask"
+        },
+        "Task_0h7uj4l": {
+            "tag": "AbstractTask"
+        },
+        "ExclusiveGateway_1dofiof": {
+            "tag": "OrGateway"
+        },
+        "ExclusiveGateway_1ovxz2d": {
+            "tag": "AndGateway"
+        }
     },
     "catE": {
         "SequenceFlow_0xd1ing": "NormalSequenceFlow",
@@ -86,6 +120,7 @@
         "SequenceFlow_0c3vv21": "Task_1xwy18n"
     },
     "name": "e013OrSize2x3",
+    "attached": {},
     "containE": {
         "Process_1": [
             "SequenceFlow_0n91hmc",

@@ -2,8 +2,8 @@
 module Fbpmn.IO.Tla where
 
 import qualified Data.Text         as T
-import           Fbpmn.Model
 import           Fbpmn.Helper
+import           Fbpmn.Model
 import           NeatInterpolation (text)
 -- import           Data.List                      ( intercalate )
 import           Data.Map.Strict   ((!?))
@@ -31,6 +31,7 @@ encodeBpmnGraphToTla g =
         , encodeBpmnGraphCatEToTla            -- edge categories
         , encodeBpmnGraphPreEToTla            -- preE relation
         , encodeBpmnGraphPreNToTla            -- preN relation
+        , encodeBpmnBoundaryEventsToTla       -- information about boundary events
         , encodeBpmnGraphFooterToTla          -- footer
         ]
     <*> [g]
@@ -61,7 +62,7 @@ encodeBpmnGraphFooterToTla _ =
   INSTANCE PWSConstraints
   
   INSTANCE PWSSemantics
-  
+
   ================================================================
   |]
 
@@ -116,7 +117,7 @@ encodeBpmnGraphMsgDeclToTla g =
   |]
   where
     msgs = T.intercalate ", " (show <$> messages g)
-    mts = if null (messages g) then "  [ i \\in {} |-> {}]" else "    " <> T.intercalate "@@ " (edgeToMsgDecl <$> (edgesT g MessageFlow))
+    mts = if null (messages g) then emptySetTla else "    " <> T.intercalate "@@ " (edgeToMsgDecl <$> (edgesT g MessageFlow))
     edgeToMsgDecl e = case messageE g !? e of
       Nothing -> ""
       Just m -> [text|$e' :> $m'|]
@@ -131,7 +132,7 @@ encodeBpmnGraphCatNToTla g =
     $ns
   |]
  where
-  ns = "   " <> T.intercalate "@@ " (nodeToNodeCatDecl <$> nodes g)
+  ns = relationTla nodeToNodeCatDecl (nodes g)
   nodeToNodeCatDecl n = case catN g !? n of
     Nothing -> ""
     Just c  -> [text|$n' :> $c'|]
@@ -146,7 +147,7 @@ encodeBpmnGraphCatEToTla g =
     $es
   |]
  where
-  es = "   " <> T.intercalate "@@ " (edgeToEdgeCatDecl <$> edges g)
+  es = relationTla edgeToEdgeCatDecl (edges g)
   edgeToEdgeCatDecl e = case catE g !? e of
     Nothing -> ""
     Just c  -> [text|$e' :> $c'|]
@@ -161,7 +162,7 @@ encodeBpmnGraphEdgeSourceDeclToTla g =
     $es
   |]
  where
-  es = "   " <> T.intercalate "@@ " (edgeToEdgeSourceDecl <$> edges g)
+  es = relationTla edgeToEdgeSourceDecl (edges g)
   edgeToEdgeSourceDecl e = case sourceE g !? e of
     Nothing -> ""
     Just c  -> [text|$e' :> $c'|]
@@ -176,7 +177,7 @@ encodeBpmnGraphEdgeTargetDeclToTla g =
     $es
   |]
  where
-  es = "   " <> T.intercalate "@@ " (edgeToEdgeTargetDecl <$> edges g)
+  es = relationTla edgeToEdgeTargetDecl (edges g)
   edgeToEdgeTargetDecl e = case targetE g !? e of
     Nothing -> ""
     Just c  -> [text|$e' :> $c'|]
@@ -193,8 +194,8 @@ encodeBpmnGraphPreEToTla g =
   |]
   where
     gws = nodesT g OrGateway
-    spres = if null pres then "  [ i \\in {} |-> {}]" else T.intercalate "@@ " $ preToTLA <$> pres
-    preToTLA (n, e, es) = [text|<<$sn, $se>> :> {$ses}|]
+    spres = relationTla preToTla pres
+    preToTla (n, e, es) = [text|<<$sn, $se>> :> {$ses}|]
       where
         sn = show n
         se = show e
@@ -208,13 +209,55 @@ encodeBpmnGraphPreNToTla _ =
   PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
             \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
   |]
-    
+
+encodeBpmnBoundaryEventsToTla :: BpmnGraph -> Text
+encodeBpmnBoundaryEventsToTla g =
+  [text|
+    cancelActivity ==
+    $scabes
+
+    attachedTo ==
+    $satbes
+  |]
+  where
+    scabes = relationTla cabeToTla bes
+    satbes = relationTla atbeToTla bes
+    cabeToTla e = case catN g !? e of
+      Just (MessageBoundaryEvent v) -> [text|$side :> $scae|]
+        where
+          side = show e
+          scae = if v then trueTla else falseTla
+      _ -> ""
+    atbeToTla e = case attached g !? e of
+      Just spid -> [text|$side :> $sspid|]
+        where
+          side = show e
+          sspid = show spid
+      _ -> ""
+    bes = nodesTs g $ [MessageBoundaryEvent] <*> [True, False]
+
+trueTla :: Text
+trueTla = "TRUE"
+
+falseTla :: Text
+falseTla = "FALSE"
+
+emptySetTla :: Text
+emptySetTla = "  [ i \\in {} |-> {}]"
+
+relationTla :: (a -> Text) -> [a] -> Text
+relationTla f xs =
+  if null xs
+  then emptySetTla
+  else "   " <> T.intercalate "@@ " (f <$> xs)
+
 nodeTypeToTLA :: NodeType -> Text
-nodeTypeToTLA AbstractTask   = "AbstractTask"
-nodeTypeToTLA SendTask       = "SendTask"
-nodeTypeToTLA ReceiveTask    = "ReceiveTask"
+nodeTypeToTLA AbstractTask                  = "AbstractTask"
+nodeTypeToTLA SendTask                      = "SendTask"
+nodeTypeToTLA ReceiveTask                   = "ReceiveTask"
 nodeTypeToTLA ThrowMessageIntermediateEvent = "ThrowMessageIntermediateEvent"
 nodeTypeToTLA CatchMessageIntermediateEvent = "CatchMessageIntermediateEvent"
+nodeTypeToTLA (MessageBoundaryEvent _)      = "MessageBoundaryEvent"
 nodeTypeToTLA SubProcess     = "SubProcess"
 nodeTypeToTLA XorGateway     = "ExclusiveOr"
 nodeTypeToTLA OrGateway      = "InclusiveOr"
@@ -228,7 +271,7 @@ nodeTypeToTLA MessageEndEvent   = "MessageEndEvent"
 nodeTypeToTLA Process           = "Process"
 
 edgeTypeToTLA :: EdgeType -> Text
-edgeTypeToTLA NormalSequenceFlow = "NormalSeqFlow"
+edgeTypeToTLA NormalSequenceFlow      = "NormalSeqFlow"
 edgeTypeToTLA ConditionalSequenceFlow = "ConditionalSeqFlow"
 edgeTypeToTLA DefaultSequenceFlow = "DefaultSeqFlow"
 edgeTypeToTLA MessageFlow = "MessageFlow"

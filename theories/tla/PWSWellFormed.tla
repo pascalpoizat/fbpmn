@@ -30,9 +30,9 @@ C6_NoLoopingEdge ==
     \A e \in Edge : source[e] # target[e]
 
 C7_NotIsolation ==
-    \A n \in Node : CatN[n] # Process => incoming(n) # {} \/ outgoing(n) # {}
+    \A n \in Node : (CatN[n] # Process /\ CatN[n] # MessageBoundaryEvent) => incoming(n) # {} \/ outgoing(n) # {}
 
-(* Formula in the paper, which is false.
+(* old
 C8_DefaultSeqFlow ==
     \A n \in Node : CatN[n] # Parallel => Cardinality(outtype({ConditionalSeqFlow},n)) >= 1 /\ Cardinality(outtype({DefaultSeqFlow},n)) = 1
 *)
@@ -63,6 +63,13 @@ C14_EXOR_NextElements ==
 (*
 Cx_MessageFlowEdge ==
     \A e \in Edge : CatE[e] \in MessageFlowType <=> (CatN[source[e]] \in {SendTask,MessageEndEvent,ThrowMessageIntermediateEvent} /\ CatN[target[e]] = {ReceiveTask,MessageStartEvent,CatchMessageIntermediateEvent})
+*)
+
+(* TODO WellFormedness for MBE 
+- at least 1 input MF (can have more than 1?)
+- can have 0 output SF (must have at least 1?)
+- attachedTo is defined
+- cancelActivity is defined
 *)
 
 LOCAL AllConditions == /\ C1_StartNoIncomingEdge

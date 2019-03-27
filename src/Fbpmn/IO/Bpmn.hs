@@ -64,6 +64,9 @@ aOrElseB' def an1 an2 e = do
 oneOf :: Element -> [Element -> Bool] -> Bool
 oneOf e ps = getAny . foldMap Any $ ps <*> [e]
 
+oneMaybeOf :: Element -> [Element -> Maybe a] -> Bool
+oneMaybeOf e ps = any isJust $ ps <*> [e]
+
 --
 -- helpers for ids
 --
@@ -83,13 +86,12 @@ isIdOf' :: String -> Element -> Bool
 isIdOf' s e = fromMaybe False $ isIdOf s e
 
 findById :: [Element] -> String -> Maybe Element
-findById es eid =
-    do
-    ess <- nonEmpty [e | e <- es, isIdOf' eid e]
-    Just $ head ess
+findById es eid = do
+  ess <- nonEmpty [ e | e <- es, isIdOf' eid e ]
+  Just $ head ess
 
 findByIds :: [Element] -> [String] -> [Element]
-findByIds es ids = [e | e <- es, eid <- ids, isIdOf' eid e]
+findByIds es ids = [ e | e <- es, eid <- ids, isIdOf' eid e ]
 
 --
 -- helpers for names vs ids
@@ -108,72 +110,90 @@ pTx :: Element -> Bool
 pTx = hasChildren (nE "terminateEventDefinition")
 pCx :: Element -> Bool
 pCx = hasChildren (nE "conditionExpression")
+pIx :: Element -> Bool
+pIx e = case findAttr (nA "cancelActivity") e of
+  Just "false" -> False
+  _            -> True -- cancelActivity by default
 
 -- start events
 -- NSE or MSE
 -- other start events are assimilated to NSE
 pSE :: [Element] -> Element -> Bool
 pSE _ = (?=) "startEvent"
-pMSE :: [Element] -> Element -> Bool
-pMSE es e = pSE es e && pMx e
-pNSE :: [Element] -> Element -> Bool
-pNSE es e = pSE es e && (not . (pMSE es) $ e)
+pMSE :: [Element] -> Element -> Maybe NodeType
+pMSE es e = if pSE es e && pMx e then Just MessageStartEvent else Nothing
+pNSE :: [Element] -> Element -> Maybe NodeType
+pNSE es e =
+  if pSE es e && (isNothing . pMSE es $ e) then Just NoneStartEvent else Nothing
 
 -- intermediary events
 -- CMIE or TMIE
 -- other intermediary events are discarded
 pITE :: [Element] -> Element -> Bool
 pITE _ = (?=) "intermediateThrowEvent"
-pTMIE :: [Element] -> Element -> Bool
-pTMIE es e = pITE es e && pMx e
+pTMIE :: [Element] -> Element -> Maybe NodeType
+pTMIE es e = if pITE es e && pMx e then Just ThrowMessageIntermediateEvent else Nothing
 pICE :: [Element] -> Element -> Bool
 pICE _ = (?=) "intermediateCatchEvent"
-pCMIE :: [Element] -> Element -> Bool
-pCMIE es e = pICE es e && pMx e
+pCMIE :: [Element] -> Element -> Maybe NodeType
+pCMIE es e = if pICE es e && pMx e then Just CatchMessageIntermediateEvent else Nothing
 pIE :: [Element] -> Element -> Bool
-pIE es e = e `oneOf` [pTMIE es, pCMIE es]
+pIE es e = e `oneMaybeOf` [pTMIE es, pCMIE es]
 
 -- end events
 -- NEE, MEE, or TEE
 -- other end events are assimilated to NEE
 pEE :: [Element] -> Element -> Bool
 pEE _ = (?=) "endEvent"
-pMEE :: [Element] -> Element -> Bool
-pMEE es e = pEE es e && pMx e
-pTEE :: [Element] -> Element -> Bool
-pTEE es e = pEE es e && pTx e
-pNEE :: [Element] -> Element -> Bool
-pNEE es e = pEE es e && (not $ e `oneOf` [pMEE es, pTEE es])
+pMEE :: [Element] -> Element -> Maybe NodeType
+pMEE es e = if pEE es e && pMx e then Just MessageEndEvent else Nothing
+pTEE :: [Element] -> Element -> Maybe NodeType
+pTEE es e = if pEE es e && pTx e then Just TerminateEndEvent else Nothing
+pNEE :: [Element] -> Element -> Maybe NodeType
+pNEE es e = if pEE es e && not (e `oneMaybeOf` [pMEE es, pTEE es])
+  then Just NoneEndEvent
+  else Nothing
+
+-- boundary events
+-- MBE (default is interrupting, i.e., cancelActivity=true if not given)
+-- other boundary events are discarded
+pBE :: [Element] -> Element -> Bool
+pBE _ = (?=) "boundaryEvent"
+pMBE :: [Element] -> Element -> Maybe NodeType
+pMBE es e =
+  if pBE es e && pMx e then Just $ MessageBoundaryEvent (pIx e) else Nothing
 
 -- events
 pE :: [Element] -> Element -> Bool
-pE es e = e `oneOf` [pSE es, pIE es, pEE es]
+pE es e = e `oneOf` [pSE es, pIE es, pEE es, pBE es]
 
 -- gateways
-pAndGateway :: [Element] -> Element -> Bool
-pAndGateway _ = (?=) "parallelGateway"
-pOrGateway :: [Element] -> Element -> Bool
-pOrGateway _ = (?=) "inclusiveGateway"
-pXorGateway :: [Element] -> Element -> Bool
-pEventBasedGateway _ = (?=) "eventBasedGateway"
-pEventBasedGateway :: [Element] -> Element -> Bool
-pXorGateway _ = (?=) "exclusiveGateway"
+pAndGateway :: [Element] -> Element -> Maybe NodeType
+pAndGateway _ e = if (?=) "parallelGateway" e then Just AndGateway else Nothing
+pOrGateway :: [Element] -> Element -> Maybe NodeType
+pOrGateway _ e = if (?=) "inclusiveGateway" e then Just OrGateway else Nothing
+pEventBasedGateway :: [Element] -> Element -> Maybe NodeType
+pEventBasedGateway _ e =
+  if (?=) "eventBasedGateway" e then Just EventBasedGateway else Nothing
+pXorGateway :: [Element] -> Element -> Maybe NodeType
+pXorGateway _ e =
+  if (?=) "exclusiveGateway" e then Just XorGateway else Nothing
 pGateway :: [Element] -> Element -> Bool
 pGateway es e =
   e
-    `oneOf` [ pAndGateway es
-            , pOrGateway es
-            , pXorGateway es
-            , pEventBasedGateway es
-            ]
+    `oneMaybeOf` [ pAndGateway es
+                 , pOrGateway es
+                 , pXorGateway es
+                 , pEventBasedGateway es
+                 ]
 
 -- tasks
 -- AT, ST, or RT
 -- {user,service,script,manual,business rule} tasks are treated as AT
-pST :: [Element] -> Element -> Bool
-pST _ = (?=) "sendTask"
-pRT :: [Element] -> Element -> Bool
-pRT _ = (?=) "receiveTask"
+pST :: [Element] -> Element -> Maybe NodeType
+pST _ e = if (?=) "sendTask" e then Just SendTask else Nothing
+pRT :: [Element] -> Element -> Maybe NodeType
+pRT _ e = if (?=) "receiveTask" e then Just ReceiveTask else Nothing
 pAT :: [Element] -> Element -> Bool
 pAT _ = (?=) "task"
 pUT :: [Element] -> Element -> Bool
@@ -186,16 +206,20 @@ pMT :: [Element] -> Element -> Bool
 pMT _ = (?=) "manualTask"
 pBT :: [Element] -> Element -> Bool
 pBT _ = (?=) "businessRuleTask"
-pAsAT :: [Element] -> Element -> Bool
-pAsAT es e = e `oneOf` [pAT es, pUT es, pWT es, pXT es, pBT es, pMT es]
+pAsAT :: [Element] -> Element -> Maybe NodeType
+pAsAT es e = if e `oneOf` ([pAT, pUT, pWT, pXT, pBT, pMT] <*> [es])
+  then Just AbstractTask
+  else Nothing
 pT :: [Element] -> Element -> Bool
-pT es e = e `oneOf` [pAsAT es, pST es, pRT es]
+pT es e = e `oneMaybeOf` [pAsAT es, pST es, pRT es]
 
 -- activities
-pSP :: [Element] -> Element -> Bool
-pSP _ = (?=) "subProcess"
+pSPx :: [Element] -> Element -> Bool
+pSPx _ = (?=) "subProcess"
+pSP :: [Element] -> Element -> Maybe NodeType
+pSP es e = if pSPx es e then Just SubProcess else Nothing
 pA :: [Element] -> Element -> Bool
-pA es e = e `oneOf` [pT es, pSP es]
+pA es e = e `oneOf` ([pT, pSPx] <*> [es])
 
 -- processes
 pP :: [Element] -> Element -> Bool
@@ -203,7 +227,7 @@ pP _ = (?=) "process"
 
 -- nodes
 pNode :: [Element] -> Element -> Bool
-pNode es e = e `oneOf` [pE es, pGateway es, pA es, pP es]
+pNode es e = e `oneOf` ([pE, pGateway, pA, pP] <*> [es])
 
 -- edges
 -- sequence flows are NSF, CSF or DSF
@@ -240,7 +264,7 @@ Enhancements:
 -}
 decode :: [Content] -> Maybe BpmnGraph
 decode cs = do
-    -- top-level elements
+  -- top-level elements
   topElements      <- pure $ onlyElems cs
   -- collaboration (1st one to be found)
   c <- listToMaybe $ concatMap (findChildren (nE "collaboration")) topElements
@@ -268,6 +292,7 @@ decode cs = do
     M.empty -- (M.fromList $ catMaybes $ tlift2 . bname <$> cParticipants)
     M.empty
     M.empty
+    M.empty
     cMessageTypes
     (M.fromList $ catMaybes $ tlift2 . bname <$> cMessageFlows)
   -- compute for participant processes
@@ -282,26 +307,32 @@ decode cs = do
 compute :: Element -> Maybe BpmnGraph
 compute e = do
   allElements <- pure $ elChildren e
-  pid  <- getId e
-  ns   <- pure $ filterChildren (pNode allElements) e
-  nids <- sequence $ getId <$> ns
-  es   <- pure $ filterChildren (pEdge allElements) e
-  eids <- sequence $ getId <$> es
-  sps  <- pure $ findChildren (nE "subProcess") e
-  g    <- pure $ BpmnGraph ""
-                           nids
-                           eids
-                           (M.fromList $ catMaybes $ tlift2 . bcatN allElements <$> ns)
-                           (M.fromList $ catMaybes $ tlift2 . bcatE allElements <$> es)
-                           (M.fromList $ catMaybes $ tlift2 . bsource <$> es)
-                           (M.fromList $ catMaybes $ tlift2 . btarget <$> es)
-                           (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
-                           (M.singleton pid nids)
-                           (M.singleton pid eids)
-                           []
-                           M.empty
+  pid         <- getId e
+  ns          <- pure $ filterChildren (pNode allElements) e
+  nbes        <- pure $ filterChildren (pBE allElements) e
+  nids        <- sequence $ getId <$> ns
+  es          <- pure $ filterChildren (pEdge allElements) e
+  eids        <- sequence $ getId <$> es
+  sps         <- pure $ findChildren (nE "subProcess") e
+  g           <- pure $ BpmnGraph
+    ""
+    nids
+    eids
+    (M.fromList $ catMaybes $ tlift2 . bcatN allElements <$> ns)
+    (M.fromList $ catMaybes $ tlift2 . bcatE allElements <$> es)
+    (M.fromList $ catMaybes $ tlift2 . bsource <$> es)
+    (M.fromList $ catMaybes $ tlift2 . btarget <$> es)
+    (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
+    (M.singleton pid nids)
+    (M.singleton pid eids)
+    (M.fromList $ catMaybes $ tlift2 . battached <$> nbes)
+    []
+    M.empty
   spgs <- sequence $ compute <$> sps
   pure $ g <> mconcat spgs
+
+battached :: Element -> (Maybe Node, Maybe Node)
+battached n = (getId n, findAttr (nA "attachedToRef") n)
 
 bsource :: Element -> (Maybe Edge, Maybe Node)
 bsource mf = (getId mf, findAttr (nA "sourceRef") mf)
@@ -314,38 +345,33 @@ bname mf = (getId mf, getName mf)
 
 bcatN :: [Element] -> Element -> (Maybe Node, Maybe NodeType)
 bcatN xs e = f e preds
-  where
-    f :: Element -> [(Element -> Bool, NodeType)] -> (Maybe Node, Maybe NodeType)
-    f e' ((p, t):r) = if p e' then (getId e', Just t) else f e' r
-    f e' [] = (getId e', Nothing)
-    preds = [(pNSE xs, NoneStartEvent)
-            ,(pMSE xs, MessageStartEvent)
-            ,(pCMIE xs, CatchMessageIntermediateEvent)
-            ,(pTMIE xs, ThrowMessageIntermediateEvent)
-            ,(pNEE xs, NoneEndEvent)
-            ,(pMEE xs, MessageEndEvent)
-            ,(pTEE xs, TerminateEndEvent)
-            ,(pAndGateway xs, AndGateway)
-            ,(pXorGateway xs, XorGateway)
-            ,(pOrGateway xs, OrGateway)
-            ,(pEventBasedGateway xs, EventBasedGateway)
-            ,(pST xs, SendTask)
-            ,(pRT xs, ReceiveTask)
-            ,(pAsAT xs, AbstractTask)
-            ,(pSP xs, SubProcess)
-            ]
+ where
+  preds = [pNSE, pMSE
+          ,pCMIE, pTMIE
+          ,pMBE
+          ,pNEE, pMEE, pTEE
+          ,pAndGateway, pXorGateway, pOrGateway, pEventBasedGateway
+          ,pST, pRT, pAsAT
+          ,pSP] <*> [xs]
+  f :: Element -> [Element -> Maybe NodeType] -> (Maybe Node, Maybe NodeType)
+  f e' []      = (getId e', Nothing)
+  f e' (p : r) = if isJust res then (getId e', res) else f e' r
+    where
+      res = p e'
 
 bcatE :: [Element] -> Element -> (Maybe Edge, Maybe EdgeType)
 bcatE xs e = f e preds
-  where
-    f :: Element -> [(Element -> Bool, EdgeType)] -> (Maybe Edge, Maybe EdgeType)
-    f e' ((p, t):r) = if p e' then (getId e', Just t) else f e' r
-    f e' [] = (getId e', Nothing)
-    -- in preds, the order is important since a DSF validates pNSF
-    preds = [(pDSF xs, DefaultSequenceFlow)
-            ,(pCSF xs, ConditionalSequenceFlow)
-            ,(pNSF xs, NormalSequenceFlow)
-            ,(pMF xs, MessageFlow)]
+ where
+  f :: Element -> [(Element -> Bool, EdgeType)] -> (Maybe Edge, Maybe EdgeType)
+  f e' ((p, t) : r) = if p e' then (getId e', Just t) else f e' r
+  f e' []           = (getId e', Nothing)
+  -- in preds, the order is important since a DSF validates pNSF
+  preds =
+    [ (pDSF xs, DefaultSequenceFlow)
+    , (pCSF xs, ConditionalSequenceFlow)
+    , (pNSF xs, NormalSequenceFlow)
+    , (pMF xs , MessageFlow)
+    ]
 
 {-|
 Read a BPMN Graph from a BPMN file.
@@ -353,7 +379,6 @@ Read a BPMN Graph from a BPMN file.
 readFromBPMN :: FilePath -> IO (Maybe BpmnGraph)
 readFromBPMN p = (decode . parseXML <$> BS.readFile p) `catchIOError` handler
  where
-
   handler :: IOError -> IO (Maybe BpmnGraph)
   handler e
     | isDoesNotExistError e = do
