@@ -120,7 +120,7 @@ cmie_start(n) ==
 
 mbe_start(n) ==
   /\ CatN[n] = MessageBoundaryEvent
-  /\ LET sp == attachedTo[n] IN
+  /\ LET sp == BoundaryEvent[n].attachedTo IN
       /\ nodemarks[sp] >= 1
       /\ \E e2 \in intype(MsgFlowType, n) :
         /\ edgemarks[e2] >= 1
@@ -129,7 +129,7 @@ mbe_start(n) ==
                             IF e \in {e2} THEN edgemarks[e] - 1
                             ELSE IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                             ELSE edgemarks[e] ]
-        /\ IF cancelActivity[n]
+        /\ IF BoundaryEvent[n].cancelActivity
            THEN LET includedNodes == ContainRelPlus(sp) IN
                   nodemarks' = [ nn \in DOMAIN nodemarks |->
                                 IF nn = sp THEN 0
