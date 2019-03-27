@@ -7,7 +7,7 @@ if [ ! -d $FBPMN_HOME/theories/tla ]; then
         echo "wrong FBPMN_HOME (theories/tla not found)"; exit 1
 fi
 if [ -z $TLA2TOOLS_HOME ]; then
-        echo TLATOOLS_HOME is no set; exit 1
+        echo TLA2TOOLS_HOME is no set; exit 1
 fi
 if [ ! -f $TLA2TOOLS_HOME/tla2tools.jar ]; then
         echo "wrong TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
