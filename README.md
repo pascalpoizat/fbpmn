@@ -93,7 +93,9 @@ The subset of BPMN that we support is presented in Figure 1.
 
 ## 4. Verification using TLA+
 
-`fbpmn` supports the verification of (see Figure 3):
+### Principles
+
+`fbpmn` supports the verification of:
 
 - option to complete
 - proper completion
@@ -107,14 +109,14 @@ for six different communication semantics:
 - unordered (bag of messages)
 - fifo between each couple of processes (array of queues)
 - fifo inbox (input queue at each process where messages are added)
-- fifo outbox (output queue at each process where messages at fetched)
+- fifo outbox (output queue at each process where messages are fetched)
 - global fifo (unique shared queue)
 - RSC (realizable with synchronous communication)
 
 ![Variations.](MBE.png)
 *Figure 2: variations and properties (network unordered semantics).*
 
-Verification is achieved in two steps (see Figure 2):
+Verification is achieved in two steps (see Figure 3):
 
 1. generate a TLA+ representation of the BPMN collaboration
 2. use this representation and the TLA+ implementation of our FOL semantics for BPMN collaborations to perform verification (using the `tlc` model checker from the TLA+ tool box).
@@ -122,38 +124,54 @@ Verification is achieved in two steps (see Figure 2):
 ![Transformation overview.](overview.png)
 *Figure 3: `fbpmn` approach to the verification of BPMN collaborations.*
 
+### Requirements
+
 Verification requires that:
 
-- `FBPMN_HOME` is set to the place where `fbpmn` is installed.
+- `FBPMN_HOME` is set to the place where the `fbpmn` sources have been installed in step *2. Getting source files*.
 - `TLA2TOOLS_HOME` is set to the place where `tla2tools.jar` is installed.
-- `fbpmn` is found on the command `PATH`.
+- `fbpmn` and `fbpmn-check` (see below) are found on the command `PATH`.
 
+### Running the verification
 
-**For Linux and OSX users**, we provide you with a script (`scripts/fbpmn-check`) that performs the two steps for you:
+**For Linux and OSX users**, we provide you with a script (in `$FBPMN_HOME/scripts/fbpmn-check`) that does the two steps described in Figure 3 for you and performs verification for each possible communication model.
 
 ```sh
 fbpmn-check myModel.bpmn
 ```
 
-**For Windows users**, you will have to run the commands by hand:
-
-1. generate the TLA+ representation of your model:
-
-	```sh
-	fbpmn bpmn2tla myModel myModel # no suffixes
-	```
-	
-2. copy the files from `$FBPMN_HOME/theories/tla` to your working directory
-
-3. copy `configuration.cfg` to `myModel.cfg`
-
-3. run TLC:
-
-	```sh
-	java -classpath $TLA2TOOLS_HOME/tla2tools.jar tlc2.TLC -deadlock myModel.tla
-	```
+**For Windows users**
 
 *We are working on providing a script for Windows users too.*
+
+Meanwhile, you will have to perform the tasks that are done in `fbpmn-check` by hand.
+
+### Extending the verification
+
+To add a **new communication model**:
+
+1. define your new communication model semantics, say `MyNet`, in a `NetworkMyNet.tla` file in `$FBPMN_HOME/theories/tla/`
+2. copy one of the files in `$FBPMN_HOME/theories/tla/Configs/` to a new file `NetworkNNMyNet.tla` in the same directory, with `NN` being a number different from the existing communication models there
+3. in the contents of `NetworkNNMyNet.tla` change the line of the network implementation definition to refer to your new communication model as defined in step 1.
+
+```tla
+LOCAL NetworkImpl == INSTANCE NetworkMyNet
+```
+
+To add a **new property to verify**:
+
+1. define your new property, say `MyProperty`,  at the end of the `PWSSemantics.tla` file in `$FBPMN_HOME/theories/tla`
+2. create a new file `PropNNMyProperty.cfg` in `$FBPMN_HOME/theories/tla/Configs`, with `NN` being a number different from the existing properties there
+3. in the contents of `PropNNMyProperty.cfg` refer to your property name as defined in step 1.
+
+```tla
+\* run with -deadlock
+SPECIFICATION Spec
+INVARIANT TypeInvariant
+
+PROPERTY
+  MyProperty
+```
 
 ## 5. Help with `fbpmn`
 

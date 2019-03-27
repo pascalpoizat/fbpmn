@@ -32,11 +32,6 @@ C6_NoLoopingEdge ==
 C7_NotIsolation ==
     \A n \in Node : (CatN[n] # Process /\ CatN[n] # MessageBoundaryEvent) => incoming(n) # {} \/ outgoing(n) # {}
 
-(* old
-C8_DefaultSeqFlow ==
-    \A n \in Node : CatN[n] # Parallel => Cardinality(outtype({ConditionalSeqFlow},n)) >= 1 /\ Cardinality(outtype({DefaultSeqFlow},n)) = 1
-*)
-
 C8_DefaultSeqFlow == \* A gateway that has a conditional edge must have a default edge.
     \A n \in Node : CatN[n] \in GatewayType /\ outtype({ConditionalSeqFlow},n) # {} => Cardinality(outtype({DefaultSeqFlow},n)) = 1
 

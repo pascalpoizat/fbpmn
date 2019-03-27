@@ -192,7 +192,7 @@ or_complete(n) ==
   /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : or_complete_outs(n, eouts)
      \/ \E eout \in outtype({ DefaultSeqFlow }, n) : or_complete_outs(n, {eout})
 
-LOCAL or_fairness(n) == \* do we need fairness on DefaultSeqFlow?
+LOCAL or_fairness(n) == \* fairness applied or not on DefaultSeqFlow?
      \A eout \in  outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, {eout}))
 
 (* ---- Event Based / EXOR ---- *)
@@ -305,22 +305,6 @@ subprocess_complete(n) ==
 (* ---- Top level Process ---- *)
 
 process_complete(n) == FALSE
-
-(*
-process_complete(n) ==
-  /\ CatN[n] = Process
-  /\ nodemarks[n] = 1
-  /\ \A e \in Edge : source[e] \in ContainRel[n] /\ target[e] \in ContainRel[n] => edgemarks[e] = 0
-  /\ \A nn \in ContainRel[n] :
-            \/ nodemarks[nn] = 0
-            \/ nodemarks[nn] = 1 /\ CatN[nn] \in EndEventType
-  /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
-                    IF nn = n THEN 0
-                    ELSE IF nn \in ContainRel[n] THEN 0
-                    ELSE nodemarks[nn] ]
-  /\ UNCHANGED edgemarks
-  /\ Network!unchanged
-*)
 
 ----------------------------------------------------------------
 

@@ -23,7 +23,6 @@ WellTyped == /\ source \in [ Edge -> Node ]
              /\ CatE \in [ Edge -> EdgeType ]
              /\ msgtype \in [ { e \in Edge : CatE[e] = MessageFlow } -> Message ]
              /\ ContainRel \in [ { n \in Node : CatN[n] \in {Process,SubProcess} } -> SUBSET Node ]
-              \* PreEdges and PreNodes are tricky to type
 
 incoming(n) == { e \in Edge : target[e] = n }
 outgoing(n) == { e \in Edge : source[e] = n }

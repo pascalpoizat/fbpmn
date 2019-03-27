@@ -9,7 +9,7 @@ SubProcess == "SubProcess"
 ExclusiveOr == "ExclusiveOr" \* a.k.a. XOR
 InclusiveOr == "InclusiveOr" \* a.k.a. OR
 Parallel == "Parallel"       \* a.k.a AND
-EventBased == "EventBased"   \* a.k.a. EXOR
+EventBased == "EventBased"   \* a.k.a. EB
 NoneStartEvent == "NoneStartEvent"
 MessageStartEvent == "MessageStartEvent"
 NoneEndEvent == "NoneEndEvent"
