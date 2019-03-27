@@ -213,27 +213,20 @@ encodeBpmnGraphPreNToTla _ =
 encodeBpmnBoundaryEventsToTla :: BpmnGraph -> Text
 encodeBpmnBoundaryEventsToTla g =
   [text|
-    cancelActivity ==
-    $scabes
-
-    attachedTo ==
-    $satbes
+    BoundaryEvent ==
+    $sbes
   |]
   where
-    scabes = relationTla cabeToTla bes
-    satbes = relationTla atbeToTla bes
-    cabeToTla e = case catN g !? e of
-      Just (MessageBoundaryEvent v) -> [text|$side :> $scae|]
-        where
-          side = show e
-          scae = if v then trueTla else falseTla
-      _ -> ""
-    atbeToTla e = case attached g !? e of
-      Just spid -> [text|$side :> $sspid|]
-        where
-          side = show e
-          sspid = show spid
-      _ -> ""
+    sbes = relationTla beToTla bes
+    beToTla e =
+      case (catN g !? e, attached g !? e) of
+        (Just (MessageBoundaryEvent v), Just spid) ->
+          [text|$side :> [ attachedTo |-> $sspid, cancelActivity |-> $scae ]|]
+          where
+            side = show e
+            sspid = show spid
+            scae = if v then trueTla else falseTla
+        _ -> ""
     bes = nodesTs g $ [MessageBoundaryEvent] <*> [True, False]
 
 trueTla :: Text

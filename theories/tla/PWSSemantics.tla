@@ -117,7 +117,7 @@ cmie_start(n) ==
                         ELSE edgemarks[e] ]
      /\ UNCHANGED nodemarks
 
-(* ---- message boundary event (interrupting) ---- *)
+(* ---- message boundary event (on sub processes) ---- *)
 
 mbe_start(n) ==
   /\ CatN[n] = MessageBoundaryEvent
