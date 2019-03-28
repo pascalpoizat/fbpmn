@@ -121,13 +121,9 @@ PreEdges(n,e) == preEdges[n,e]
 PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
           \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
 
-cancelActivity ==
-   "BoundaryEvent_1fak9ar" :> FALSE
-@@ "BoundaryEvent_1q0fgiw" :> FALSE
-
-attachedTo ==
-   "BoundaryEvent_1fak9ar" :> "SubProcess_07e2e99"
-@@ "BoundaryEvent_1q0fgiw" :> "SubProcess_07e2e99"
+BoundaryEvent ==
+   "BoundaryEvent_1fak9ar" :> [ attachedTo |-> "SubProcess_07e2e99", cancelActivity |-> FALSE ]
+@@ "BoundaryEvent_1q0fgiw" :> [ attachedTo |-> "SubProcess_07e2e99", cancelActivity |-> FALSE ]
 
 WF == INSTANCE PWSWellFormed
 ASSUME WF!WellTyped
