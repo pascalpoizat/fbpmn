@@ -17,6 +17,17 @@ TypeInvariant ==
   /\ nodemarks \in [ Node -> Nat ]
   /\ Network!TypeInvariant
 
+(* ---- conditions ---- *)
+
+subprocess_may_complete(n) ==
+  /\ CatN[n] = SubProcess
+  /\ nodemarks[n] >= 1
+  /\ \A e \in Edge : source[e] \in ContainRel[n] /\ target[e] \in ContainRel[n] => edgemarks[e] = 0
+  /\ \E ee \in ContainRel[n] :
+      /\ CatN[ee] \in EndEventType
+      /\ nodemarks[ee] >= 1
+      /\ \A x \in ContainRel[n] : x # ee => nodemarks[x] = 0
+
 (* ---- none start event ---- *)
 
 nonestart_complete(n) ==
@@ -123,6 +134,7 @@ mbe_start(n) ==
   /\ CatN[n] = MessageBoundaryEvent
   /\ LET sp == BoundaryEvent[n].attachedTo IN
       /\ nodemarks[sp] >= 1
+      /\ ~ subprocess_may_complete(sp)
       /\ \E e2 \in intype(MessageFlowType, n) :
         /\ edgemarks[e2] >= 1
         /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
