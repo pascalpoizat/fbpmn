@@ -12,6 +12,8 @@ var == <<nodemarks, edgemarks, net>>
 
 LOCAL Network == INSTANCE Network
 
+NoReEnter == TRUE
+
 TypeInvariant ==
   /\ edgemarks \in [ Edge -> Nat ]
   /\ nodemarks \in [ Node -> Nat ]
@@ -236,6 +238,7 @@ LOCAL eventbased_fairness(n) ==
 
 abstract_start(n) ==
   /\ CatN[n] = AbstractTask
+  /\ (NoReEnter => nodemarks[n] = 0)
   /\ \E e \in intype(SeqFlowType, n) :
        /\ edgemarks[e] >= 1
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
@@ -255,6 +258,7 @@ abstract_complete(n) ==
 
 send_start(n) ==
   /\ CatN[n] = SendTask
+  /\ (NoReEnter => nodemarks[n] = 0)
   /\ \E e \in intype(SeqFlowType, n) :
        /\ edgemarks[e] >= 1
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
@@ -276,7 +280,7 @@ send_complete(n) ==
 
 receive_start(n) ==
   /\ CatN[n] = ReceiveTask
-  /\ nodemarks[n] = 0
+  /\ (NoReEnter => nodemarks[n] = 0)
   /\ \E e1 \in intype(SeqFlowType, n), e2 \in intype(MessageFlowType, n) :
      /\ edgemarks[e1] >= 1
      /\ edgemarks[e2] >= 1
@@ -297,6 +301,7 @@ receive_complete(n) ==
 
 subprocess_start(n) ==
   /\ CatN[n] = SubProcess
+  /\ (NoReEnter => nodemarks[n] = 0)
   /\ \E e \in intype(SeqFlowType, n) :
      /\ edgemarks[e] >= 1
      /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
