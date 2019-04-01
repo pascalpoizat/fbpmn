@@ -1,0 +1,217 @@
+{
+    "catN": {
+        "Task_0dvwezg": {
+            "tag": "SendTask"
+        },
+        "P_id": {
+            "tag": "Process"
+        },
+        "ExclusiveGateway_1uyyba4": {
+            "tag": "AndGateway"
+        },
+        "ExclusiveGateway_04stbki": {
+            "tag": "XorGateway"
+        },
+        "StartEvent_1": {
+            "tag": "NoneStartEvent"
+        },
+        "BoundaryEvent_1g6jly9": {
+            "tag": "MessageBoundaryEvent",
+            "cancelActivity": true
+        },
+        "EndEvent_07lweo2": {
+            "tag": "NoneEndEvent"
+        },
+        "EndEvent_03g8tis": {
+            "tag": "NoneEndEvent"
+        },
+        "StartEvent_0pevvbh": {
+            "tag": "NoneStartEvent"
+        },
+        "Task_05h2dnk": {
+            "tag": "AbstractTask"
+        },
+        "ExclusiveGateway_06yyw6a": {
+            "tag": "AndGateway"
+        },
+        "Task_1rw2ter": {
+            "tag": "SendTask"
+        },
+        "Task_1rjwiou": {
+            "tag": "AbstractTask"
+        },
+        "SubProcess_0ikactq": {
+            "tag": "SubProcess"
+        },
+        "Q_id": {
+            "tag": "Process"
+        },
+        "Task_1kf2bvv": {
+            "tag": "ReceiveTask"
+        },
+        "StartEvent_1em4yhi": {
+            "tag": "NoneStartEvent"
+        },
+        "EndEvent_1bmsqno": {
+            "tag": "NoneEndEvent"
+        }
+    },
+    "catE": {
+        "SequenceFlow_1uzescv": "NormalSequenceFlow",
+        "SequenceFlow_13u1qxz": "NormalSequenceFlow",
+        "SequenceFlow_1t3nh6y": "NormalSequenceFlow",
+        "MessageFlow_1arf9uv": "MessageFlow",
+        "SequenceFlow_0aq5v2x": "NormalSequenceFlow",
+        "SequenceFlow_0fh3j7y": "NormalSequenceFlow",
+        "SequenceFlow_1wro3pq": "NormalSequenceFlow",
+        "SequenceFlow_07f8qba": "NormalSequenceFlow",
+        "MessageFlow_0zlj6zo": "MessageFlow",
+        "SequenceFlow_0f6i1ig": "NormalSequenceFlow",
+        "SequenceFlow_1qymta9": "NormalSequenceFlow",
+        "SequenceFlow_0ylruuw": "NormalSequenceFlow",
+        "SequenceFlow_1gn3q83": "NormalSequenceFlow",
+        "SequenceFlow_0j6nnaa": "NormalSequenceFlow",
+        "SequenceFlow_0r3bens": "NormalSequenceFlow",
+        "SequenceFlow_1ofsg25": "NormalSequenceFlow"
+    },
+    "containN": {
+        "P_id": [
+            "StartEvent_1",
+            "ExclusiveGateway_1uyyba4",
+            "Task_1rjwiou",
+            "Task_05h2dnk",
+            "ExclusiveGateway_04stbki",
+            "SubProcess_0ikactq",
+            "ExclusiveGateway_06yyw6a",
+            "EndEvent_1bmsqno",
+            "BoundaryEvent_1g6jly9"
+        ],
+        "SubProcess_0ikactq": [
+            "StartEvent_1em4yhi",
+            "EndEvent_07lweo2",
+            "Task_1kf2bvv"
+        ],
+        "Q_id": [
+            "StartEvent_0pevvbh",
+            "EndEvent_03g8tis",
+            "Task_1rw2ter",
+            "Task_0dvwezg"
+        ]
+    },
+    "messageE": {
+        "MessageFlow_1arf9uv": "m1",
+        "MessageFlow_0zlj6zo": "m2"
+    },
+    "targetE": {
+        "SequenceFlow_1uzescv": "ExclusiveGateway_1uyyba4",
+        "SequenceFlow_13u1qxz": "EndEvent_1bmsqno",
+        "SequenceFlow_1t3nh6y": "Task_05h2dnk",
+        "MessageFlow_1arf9uv": "Task_1kf2bvv",
+        "SequenceFlow_0aq5v2x": "ExclusiveGateway_04stbki",
+        "SequenceFlow_0fh3j7y": "ExclusiveGateway_06yyw6a",
+        "SequenceFlow_1wro3pq": "ExclusiveGateway_06yyw6a",
+        "SequenceFlow_07f8qba": "ExclusiveGateway_04stbki",
+        "MessageFlow_0zlj6zo": "BoundaryEvent_1g6jly9",
+        "SequenceFlow_0f6i1ig": "Task_0dvwezg",
+        "SequenceFlow_1qymta9": "Task_1rjwiou",
+        "SequenceFlow_0ylruuw": "SubProcess_0ikactq",
+        "SequenceFlow_1gn3q83": "EndEvent_03g8tis",
+        "SequenceFlow_0j6nnaa": "EndEvent_07lweo2",
+        "SequenceFlow_0r3bens": "Task_1rw2ter",
+        "SequenceFlow_1ofsg25": "Task_1kf2bvv"
+    },
+    "name": "e032MBE",
+    "attached": {
+        "BoundaryEvent_1g6jly9": "SubProcess_0ikactq"
+    },
+    "containE": {
+        "P_id": [
+            "SequenceFlow_1uzescv",
+            "SequenceFlow_1qymta9",
+            "SequenceFlow_1t3nh6y",
+            "SequenceFlow_07f8qba",
+            "SequenceFlow_0aq5v2x",
+            "SequenceFlow_0ylruuw",
+            "SequenceFlow_13u1qxz",
+            "SequenceFlow_1wro3pq",
+            "SequenceFlow_0fh3j7y"
+        ],
+        "SubProcess_0ikactq": [
+            "SequenceFlow_1ofsg25",
+            "SequenceFlow_0j6nnaa"
+        ],
+        "Q_id": [
+            "SequenceFlow_0r3bens",
+            "SequenceFlow_1gn3q83",
+            "SequenceFlow_0f6i1ig"
+        ]
+    },
+    "edges": [
+        "MessageFlow_1arf9uv",
+        "MessageFlow_0zlj6zo",
+        "SequenceFlow_1uzescv",
+        "SequenceFlow_1qymta9",
+        "SequenceFlow_1t3nh6y",
+        "SequenceFlow_07f8qba",
+        "SequenceFlow_0aq5v2x",
+        "SequenceFlow_0ylruuw",
+        "SequenceFlow_13u1qxz",
+        "SequenceFlow_1wro3pq",
+        "SequenceFlow_0fh3j7y",
+        "SequenceFlow_1ofsg25",
+        "SequenceFlow_0j6nnaa",
+        "SequenceFlow_0r3bens",
+        "SequenceFlow_1gn3q83",
+        "SequenceFlow_0f6i1ig"
+    ],
+    "messages": [
+        "m1",
+        "m2"
+    ],
+    "sourceE": {
+        "SequenceFlow_1uzescv": "StartEvent_1",
+        "SequenceFlow_13u1qxz": "ExclusiveGateway_06yyw6a",
+        "SequenceFlow_1t3nh6y": "ExclusiveGateway_1uyyba4",
+        "MessageFlow_1arf9uv": "Task_0dvwezg",
+        "SequenceFlow_0aq5v2x": "Task_05h2dnk",
+        "SequenceFlow_0fh3j7y": "BoundaryEvent_1g6jly9",
+        "SequenceFlow_1wro3pq": "SubProcess_0ikactq",
+        "SequenceFlow_07f8qba": "Task_1rjwiou",
+        "MessageFlow_0zlj6zo": "Task_1rw2ter",
+        "SequenceFlow_0f6i1ig": "Task_1rw2ter",
+        "SequenceFlow_1qymta9": "ExclusiveGateway_1uyyba4",
+        "SequenceFlow_0ylruuw": "ExclusiveGateway_04stbki",
+        "SequenceFlow_1gn3q83": "Task_0dvwezg",
+        "SequenceFlow_0j6nnaa": "Task_1kf2bvv",
+        "SequenceFlow_0r3bens": "StartEvent_0pevvbh",
+        "SequenceFlow_1ofsg25": "StartEvent_1em4yhi"
+    },
+    "nodes": [
+        "P_id",
+        "Q_id",
+        "StartEvent_1",
+        "ExclusiveGateway_1uyyba4",
+        "Task_1rjwiou",
+        "Task_05h2dnk",
+        "ExclusiveGateway_04stbki",
+        "SubProcess_0ikactq",
+        "ExclusiveGateway_06yyw6a",
+        "EndEvent_1bmsqno",
+        "BoundaryEvent_1g6jly9",
+        "StartEvent_1em4yhi",
+        "EndEvent_07lweo2",
+        "Task_1kf2bvv",
+        "StartEvent_0pevvbh",
+        "EndEvent_03g8tis",
+        "Task_1rw2ter",
+        "Task_0dvwezg"
+    ],
+    "nameN": {
+        "Task_0dvwezg": "D",
+        "Task_05h2dnk": "B",
+        "Task_1rw2ter": "E",
+        "Task_1rjwiou": "A",
+        "SubProcess_0ikactq": "SP",
+        "Task_1kf2bvv": "C"
+    }
+}
