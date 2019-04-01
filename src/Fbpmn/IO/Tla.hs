@@ -56,10 +56,10 @@ encodeBpmnGraphFooterToTla _ =
   ASSUME WF!WellTyped
   ASSUME WF!WellFormedness
   
+  INSTANCE PWSConstraints
   ConstraintNode == TRUE \* none
   ConstraintEdge == TRUE \* none
   Constraint == TRUE     \* none
-  INSTANCE PWSConstraints
   
   INSTANCE PWSSemantics
 
