@@ -13,7 +13,7 @@ parse_stat()
   transitions=`expr "$1" : '\([0-9]*\) states generated'`
   states=`expr "$1" : '.*, \([0-9]*\) distinct states found'`
   depth=`expr "$2" : 'The depth of the complete state graph search is \([0-9]*\)'`
-  echo "states=$states trans=$transitions depth=$depth"
+  echo "     states=$states trans=$transitions depth=$depth"
 }
 
 ################
@@ -72,21 +72,21 @@ sed -e "s/INSTANCE.*$/INSTANCE $model/g" StatsBPMN.tla >$dir/StatsBPMN.tla
 for network in Configs/Network*.tla; do
     networkname=`basename $network .tla`
     cp $network $dir/Network.tla
+    echo "---------- $networkname ----------"
     for cfg in Configs/Prop*.cfg; do
         cfgname=`basename $cfg .cfg`
         log=$networkname.$cfgname.log
-        echo -n "  Checking $networkname.$cfgname... "
         cp $cfg $dir/$model.cfg
         if [ -f $fullpath.constraint ]; then cat $fullpath.constraint >> $dir/$model.cfg; fi
         (cd $dir; $runtlc $model > $log)
         (cd $dir; rm -rf states)
         if `grep -q "Error: Assumption.*is false" $dir/$log`; then
-            echo "PANIC: bad model (assume failed)"
+            echo "  ! PANIC: bad model (assume failed)"
         else
             if `grep -q "No error has been found" $dir/$log`; then
-                echo -n "OK: "
+               echo "[X] $cfgname"
             else
-               echo -n "FAILED: "
+               echo "[ ] $cfgname"
             fi
             stat1=`grep "^[0-9]* states generated.*0 states left on queue" $dir/$log`
             stat2=`grep "The depth of the complete state graph" $dir/$log`
