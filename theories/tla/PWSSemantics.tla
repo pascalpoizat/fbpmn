@@ -28,7 +28,7 @@ subprocess_may_complete(n) ==
   /\ \E ee \in ContainRel[n] :
       /\ CatN[ee] \in EndEventType
       /\ nodemarks[ee] >= 1
-      /\ \A x \in ContainRel[n] : x # ee => nodemarks[x] = 0
+  /\ \A x \in ContainRel[n] : nodemarks[x] >= 1 => CatN[x] \in EndEventType
 
 (* ---- none start event ---- *)
 
@@ -320,8 +320,11 @@ subprocess_complete(n) ==
   /\ \E ee \in ContainRel[n] :
       /\ CatN[ee] \in EndEventType
       /\ nodemarks[ee] >= 1
-      /\ \A x \in ContainRel[n] : x # ee => nodemarks[x] = 0
-      /\ nodemarks' = [ nodemarks EXCEPT ![n] = 0, ![ee] = 0 ]
+  /\ \A x \in ContainRel[n] : nodemarks[x] >= 1 => CatN[x] \in EndEventType
+  /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
+                      IF nn = n THEN 0 
+                      ELSE IF nn \in ContainRel[n] /\ CatN[nn] \in EndEventType THEN 0
+                      ELSE nodemarks[nn] ]
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
