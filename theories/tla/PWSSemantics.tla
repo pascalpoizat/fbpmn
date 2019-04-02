@@ -281,21 +281,23 @@ send_complete(n) ==
 receive_start(n) ==
   /\ CatN[n] = ReceiveTask
   /\ (NoReEnter => nodemarks[n] = 0)
-  /\ \E e1 \in intype(SeqFlowType, n), e2 \in intype(MessageFlowType, n) :
-     /\ edgemarks[e1] >= 1
-     /\ edgemarks[e2] >= 1
-     /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
-     /\ edgemarks' = [ edgemarks EXCEPT ![e1] = @ - 1, ![e2] = @ - 1 ]
+  /\ \E e \in intype(SeqFlowType, n) :
+     /\ edgemarks[e] >= 1
+     /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
+  /\ Network!unchanged
 
 receive_complete(n) ==
   /\ CatN[n] = ReceiveTask
   /\ nodemarks[n] >= 1
+  /\ \E e \in intype(MessageFlowType, n) :
+      /\ edgemarks[e] >= 1
+      /\ Network!receive(ProcessOf(source[e]), ProcessOf(n), msgtype[e])
+      /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
+                          IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
+                          ELSE IF ee = e THEN edgemarks[ee] - 1
+                          ELSE edgemarks[ee] ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
-  /\ edgemarks' = [ e \in DOMAIN edgemarks |->
-                      IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
-                      ELSE edgemarks[e] ]
-  /\ Network!unchanged
 
 (* ---- SubProcess ---- *)
 
