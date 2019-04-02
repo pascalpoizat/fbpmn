@@ -15,7 +15,10 @@ C2_EndNoOutgoingEdge ==
     \A n \in Node : CatN[n] \in EndEventType => outtype(SeqFlowType,n) = {}
 
 C3_SubProcessUniqueStart ==
-    \A n \in Node : CatN[n] = SubProcess => Cardinality(ContainRel[n] \intersect { nn \in Node : CatN[nn] \in StartEventType }) = 1
+    \A n \in Node : CatN[n] = SubProcess => 
+        /\ Cardinality(ContainRel[n] \intersect { nn \in Node : CatN[nn] \in StartEventType }) = 1
+        /\ \E se \in ContainRel[n] : CatN[se] = NoneStartEvent
+
 \* not used (for tests only)
 C3b_SubProcessUniqueEnd ==
     \A n \in Node : CatN[n] = SubProcess => Cardinality(ContainRel[n] \intersect { nn \in Node : CatN[nn] \in EndEventType }) = 1
