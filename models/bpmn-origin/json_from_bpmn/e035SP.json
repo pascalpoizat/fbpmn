@@ -1,0 +1,128 @@
+{
+    "catN": {
+        "EndEvent_0a59w28": {
+            "tag": "NoneEndEvent"
+        },
+        "EndEvent_1jzyo34": {
+            "tag": "NoneEndEvent"
+        },
+        "P_id": {
+            "tag": "Process"
+        },
+        "StartEvent_1": {
+            "tag": "NoneStartEvent"
+        },
+        "StartEvent_0943q6x": {
+            "tag": "NoneStartEvent"
+        },
+        "StartEvent_09ojxru": {
+            "tag": "MessageStartEvent"
+        },
+        "EndEvent_0atuxkh": {
+            "tag": "NoneEndEvent"
+        },
+        "SubProcess_1glz8ii": {
+            "tag": "SubProcess"
+        },
+        "Q_id": {
+            "tag": "Process"
+        },
+        "Task_1x5zvyz": {
+            "tag": "AbstractTask"
+        },
+        "Task_0mft1gb": {
+            "tag": "SendTask"
+        }
+    },
+    "catE": {
+        "SequenceFlow_0pgod6g": "NormalSequenceFlow",
+        "SequenceFlow_12utbfs": "NormalSequenceFlow",
+        "SequenceFlow_00j4ong": "NormalSequenceFlow",
+        "MessageFlow_183e2wp": "MessageFlow",
+        "SequenceFlow_0yhgli1": "NormalSequenceFlow",
+        "SequenceFlow_11rsxtg": "NormalSequenceFlow",
+        "SequenceFlow_1uo79pd": "NormalSequenceFlow"
+    },
+    "containN": {
+        "P_id": [
+            "StartEvent_1",
+            "SubProcess_1glz8ii",
+            "EndEvent_0a59w28"
+        ],
+        "SubProcess_1glz8ii": [
+            "Task_1x5zvyz",
+            "EndEvent_0atuxkh",
+            "StartEvent_09ojxru"
+        ],
+        "Q_id": [
+            "StartEvent_0943q6x",
+            "EndEvent_1jzyo34",
+            "Task_0mft1gb"
+        ]
+    },
+    "messageE": {
+        "MessageFlow_183e2wp": "m1"
+    },
+    "targetE": {
+        "SequenceFlow_0pgod6g": "EndEvent_1jzyo34",
+        "SequenceFlow_12utbfs": "SubProcess_1glz8ii",
+        "SequenceFlow_00j4ong": "EndEvent_0a59w28",
+        "MessageFlow_183e2wp": "StartEvent_09ojxru",
+        "SequenceFlow_0yhgli1": "Task_1x5zvyz",
+        "SequenceFlow_11rsxtg": "Task_0mft1gb",
+        "SequenceFlow_1uo79pd": "EndEvent_0atuxkh"
+    },
+    "name": "e035SP",
+    "attached": {},
+    "containE": {
+        "P_id": [
+            "SequenceFlow_12utbfs",
+            "SequenceFlow_00j4ong"
+        ],
+        "SubProcess_1glz8ii": [
+            "SequenceFlow_1uo79pd",
+            "SequenceFlow_0yhgli1"
+        ],
+        "Q_id": [
+            "SequenceFlow_11rsxtg",
+            "SequenceFlow_0pgod6g"
+        ]
+    },
+    "edges": [
+        "MessageFlow_183e2wp",
+        "SequenceFlow_12utbfs",
+        "SequenceFlow_00j4ong",
+        "SequenceFlow_1uo79pd",
+        "SequenceFlow_0yhgli1",
+        "SequenceFlow_11rsxtg",
+        "SequenceFlow_0pgod6g"
+    ],
+    "messages": [
+        "m1"
+    ],
+    "sourceE": {
+        "SequenceFlow_0pgod6g": "Task_0mft1gb",
+        "SequenceFlow_12utbfs": "StartEvent_1",
+        "SequenceFlow_00j4ong": "SubProcess_1glz8ii",
+        "MessageFlow_183e2wp": "Task_0mft1gb",
+        "SequenceFlow_0yhgli1": "StartEvent_09ojxru",
+        "SequenceFlow_11rsxtg": "StartEvent_0943q6x",
+        "SequenceFlow_1uo79pd": "Task_1x5zvyz"
+    },
+    "nodes": [
+        "P_id",
+        "Q_id",
+        "StartEvent_1",
+        "SubProcess_1glz8ii",
+        "EndEvent_0a59w28",
+        "Task_1x5zvyz",
+        "EndEvent_0atuxkh",
+        "StartEvent_09ojxru",
+        "StartEvent_0943q6x",
+        "EndEvent_1jzyo34",
+        "Task_0mft1gb"
+    ],
+    "nameN": {
+        "SubProcess_1glz8ii": "SP"
+    }
+}
