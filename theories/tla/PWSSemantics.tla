@@ -130,26 +130,36 @@ cmie_start(n) ==
                         ELSE edgemarks[e] ]
      /\ UNCHANGED nodemarks
 
-(* ---- message boundary event (on sub processes) ---- *)
+(* ---- message boundary event ---- *)
 
 mbe_start(n) ==
   /\ CatN[n] = MessageBoundaryEvent
-  /\ LET sp == BoundaryEvent[n].attachedTo IN
-      /\ nodemarks[sp] >= 1
-      /\ ~ subprocess_may_complete(sp)
+  /\ LET act == BoundaryEvent[n].attachedTo IN
+      /\ nodemarks[act] >= 1
+      /\ ( (CatN[act] = SubProcess) => ~ subprocess_may_complete(act) )
       /\ \E e2 \in intype(MessageFlowType, n) :
         /\ edgemarks[e2] >= 1
         /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
         /\ IF BoundaryEvent[n].cancelActivity (* interrupting *)
-           THEN LET includedNodes == ContainRelPlus(sp) IN
+           THEN 
+              IF CatN[act] = SubProcess
+              THEN LET includedNodes == ContainRelPlus(act) IN
                   /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
-                                    IF nn = sp THEN 0
+                                    IF nn = act THEN 0
                                     ELSE IF nn \in includedNodes THEN 0
                                     ELSE nodemarks[nn] ]
                   /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
                                     IF ee \in {e2} THEN edgemarks[ee] - 1
                                     ELSE IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                                     ELSE IF source[ee] \in includedNodes /\ target[ee] \in includedNodes THEN 0
+                                    ELSE edgemarks[ee] ]
+              ELSE
+                  /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
+                                    IF nn = act THEN 0
+                                    ELSE nodemarks[nn] ]
+                  /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
+                                    IF ee \in {e2} THEN edgemarks[ee] - 1
+                                    ELSE IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                                     ELSE edgemarks[ee] ]
             ELSE (* non interrupting *)
               /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
