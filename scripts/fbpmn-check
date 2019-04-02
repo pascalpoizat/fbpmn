@@ -23,6 +23,16 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
+if ! which fbpmn &> /dev/null; then
+  echo "fbpmn is not found in the PATH, please install it"
+  exit 1
+fi
+
+if ! which java &> /dev/null; then
+  echo "java is not found in the PATH, please install it"
+  exit 1
+fi
+
 if [ -z $FBPMN_HOME ]; then
         echo FBPMN_HOME is not set; exit 1
 fi

@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if ! which fbpmn &> /dev/null; then
+  echo "fbpmn is not found in the PATH, please install it"
+  exit 1
+fi
+
 for f in `ls src/*.bpmn`
 do
   ff=`basename $f`
