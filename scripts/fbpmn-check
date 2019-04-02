@@ -18,9 +18,15 @@ parse_stat()
 
 ################
 
-if [ $# -ne 1 ]; then
-  echo $0 '<model>'
+if [ $# -eq 0 ] || [ $# -gt 2 ]; then
+  echo `basename $0` '<model>' '[#workers]'
   exit 1
+fi
+
+if [ $# -eq 2 ]; then
+    workers=$2
+else
+    workers=1
 fi
 
 if ! which fbpmn &> /dev/null; then
@@ -55,7 +61,7 @@ if [ ! -f $fullpath.bpmn ]; then
     exit 1
 fi
 
-echo "Working in $dir..."
+echo "Working in $dir with $workers worker(s)"
 
 # Transform the BPMN model into TLA
 cp $fullpath.bpmn $dir
@@ -88,7 +94,11 @@ for network in Configs/Network*.tla; do
         log=$networkname.$cfgname.log
         cp $cfg $dir/$model.cfg
         if [ -f $fullpath.constraint ]; then cat $fullpath.constraint >> $dir/$model.cfg; fi
-        (cd $dir; $runtlc $model > $log)
+        if [ $# -eq 1 ]; then
+            (cd $dir; $runtlc $model > $log)
+        else
+            (cd $dir; $runtlc $model -workers $workers > $log)
+        fi
         (cd $dir; rm -rf states)
         if `grep -q "Error: Assumption.*is false" $dir/$log`; then
             echo "  ! PANIC: bad model (assume failed)"
