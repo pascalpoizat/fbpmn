@@ -16,6 +16,9 @@ C2_EndNoOutgoingEdge ==
 
 C3_SubProcessUniqueStart ==
     \A n \in Node : CatN[n] = SubProcess => Cardinality(ContainRel[n] \intersect { nn \in Node : CatN[nn] \in StartEventType }) = 1
+\* not used (for tests only)
+C3b_SubProcessUniqueEnd ==
+    \A n \in Node : CatN[n] = SubProcess => Cardinality(ContainRel[n] \intersect { nn \in Node : CatN[nn] \in EndEventType }) = 1
 
 C4_NoProcessInSubProcess ==
     \A n \in Node : CatN[n] = SubProcess => \A nn \in ContainRel[n] : CatN[nn] # Process
