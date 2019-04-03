@@ -1,0 +1,66 @@
+#!/bin/sh
+
+if [ $# -ne 1 ]; then
+  echo $0 '<timeout>'
+  echo using 10m as default timeout
+  timeout="10m"
+else
+  timeout=$1
+fi
+
+if ! which fbpmn &> /dev/null; then
+  echo "fbpmn is not found in the PATH, please install it"
+  exit 1
+fi
+
+if ! which fbpmn-check &> /dev/null; then
+  echo "fbpmn-check is not found in the PATH, please install it"
+  exit 1
+fi
+
+if ! which java &> /dev/null; then
+  echo "java is not found in the PATH, please install it"
+  exit 1
+fi
+
+if [ -z $FBPMN_HOME ]; then
+        echo FBPMN_HOME is not set; exit 1
+fi
+if [ ! -d $FBPMN_HOME/theories/tla ]; then
+        echo "wrong FBPMN_HOME (theories/tla not found)"; exit 1
+fi
+if [ -z $TLA2TOOLS_HOME ]; then
+        echo TLA2TOOLS_HOME is no set; exit 1
+fi
+if [ ! -f $TLA2TOOLS_HOME/tla2tools.jar ]; then
+        echo "wrong TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
+fi
+
+if which timeout &> /dev/null; then
+  command="timeout"
+elif which gtimeout &> /dev/null; then
+  command="gtimeout"
+else
+  echo "please install timeout or gtimeout"; exit 1
+fi
+
+SOURCE_PATH=$FBPMN_HOME/models/bpmn-origin/src/
+
+# dir=`mktemp -d /tmp/fbpmn-tests.XXXXX`
+# echo "Working in $dir..."
+dir=$FBPMN_HOME/models/bpmn-origin/results/
+
+# analysis
+for f in `ls $SOURCE_PATH/*.bpmn`
+do
+  ff=`basename $f`
+  model=${ff%.bpmn}
+  echo "analysing $model"
+  resfile=results.$model.txt
+  (cd $dir; $command $timeout fbpmn-check $f | tail -n +3 > $resfile)
+done
+
+# post-analysis
+(cd $dir; ls results.*.txt > all.list)
+(cd $dir; grep "done." results.*.txt | cut -d ":" -f 1 > ok.list)
+(cd $dir; echo "unfinished/failed analysis:"; diff all.list ok.list)
