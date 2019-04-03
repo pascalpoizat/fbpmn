@@ -1,0 +1,4 @@
+CONSTANT ConstraintNode <- TRUE
+         ConstraintEdge <- MaxEdgeMarking2
+         Constraint <- ConstraintNodeEdge
+

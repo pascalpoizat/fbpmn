@@ -11,7 +11,9 @@
     <bpmn:messageFlow id="MessageFlow_04an7oz" name="Ticket" sourceRef="Task_1ne4gpy" targetRef="IntermediateThrowEvent_12d113r" />
   </bpmn:collaboration>
   <bpmn:process id="Process_1" isExecutable="true">
-    <bpmn:sequenceFlow id="SequenceFlow_1uwq0b6" name="yes" sourceRef="ExclusiveGateway_192ovii" targetRef="Task_1v9s881" />
+    <bpmn:sequenceFlow id="SequenceFlow_1uwq0b6" name="yes" sourceRef="ExclusiveGateway_192ovii" targetRef="Task_1v9s881">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">cond</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0b6ku63" name="no" sourceRef="ExclusiveGateway_192ovii" targetRef="ExclusiveGateway_0wgdt1i" />
     <bpmn:sequenceFlow id="SequenceFlow_0sfyd5z" sourceRef="Task_07u875a" targetRef="ExclusiveGateway_192ovii" />
     <bpmn:sequenceFlow id="SequenceFlow_016h32p" sourceRef="ExclusiveGateway_0wgdt1i" targetRef="Task_07u875a" />
@@ -20,7 +22,7 @@
       <bpmn:incoming>SequenceFlow_1uwq0b6</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1dptcxp</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_192ovii" name="is the offer interesting?">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_192ovii" name="is the offer interesting?" default="SequenceFlow_0b6ku63">
       <bpmn:incoming>SequenceFlow_0sfyd5z</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0b6ku63</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1uwq0b6</bpmn:outgoing>
