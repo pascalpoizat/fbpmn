@@ -120,20 +120,12 @@ The subset of BPMN that we support is presented in Figure 2.
 Verification is achieved in two steps (see Figure 3):
 
 1. generate a TLA+ representation of the BPMN collaboration
-2. use this representation and the TLA+ implementation of our FOL semantics for BPMN collaborations to perform verification (using the `tlc` model checker from the TLA+ tool box).
+2. use this representation and the TLA+ implementation of our FOL semantics for BPMN collaborations to perform verification (using the `TLC` model checker from the TLA+ tool box).
 
-![Transformation overview.](overview.png)
+<center>
+<img alt="Transformation overview." src="overview.png" width=400><br/>
 *Figure 3: `fbpmn` approach to the verification of BPMN collaborations.*
-
-### Requirements
-
-Verification requires that:
-
-- `FBPMN_HOME` is set to the place where the `fbpmn` sources have been installed in step *2. Getting source files*.
-- `TLA2TOOLS_HOME` is set to the place where `tla2tools.jar` is installed.
-- `fbpmn` and `fbpmn-check` (see below) are found on the command `PATH`.
-
-### Running the verification
+</center>
 
 **For Linux and OSX users**, we provide you with a script (in `$FBPMN_HOME/scripts/fbpmn-check`) that does the two steps described in Figure 3 for you and performs verification for each possible communication model.
 
@@ -146,6 +138,14 @@ fbpmn-check myModel.bpmn
 *We are working on providing a script for Windows users too.*
 
 Meanwhile, you will have to perform the tasks that are done in `fbpmn-check` by hand.
+
+### Requirements
+
+Verification requires that:
+
+- `FBPMN_HOME` is set to the place where the `fbpmn` sources have been installed in step *2. Getting source files*.
+- `TLA2TOOLS_HOME` is set to the place where `tla2tools.jar` is installed.
+- `fbpmn` and `fbpmn-check` (see below) are found on the command `PATH`.
 
 ### Verification constraints
 
