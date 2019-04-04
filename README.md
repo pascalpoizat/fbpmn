@@ -18,19 +18,41 @@
 [![Stackage Nightly](http://stackage.org/package/fbpmn/badge/nightly)](http://stackage.org/nightly/package/fbpmn)
 -->
 
-formal tools for BPMN
+**formal tools for BPMN**
+
+`fbpmn` supports the verification of business processes (workflows and collaborations) properties:
+
+- option to complete
+- proper completion
+- no dead activity
+- safety
+- soundness
+- message-relaxed soundness
+
+for six different communication semantics:
+
+- unordered (bag of messages)
+- fifo between each couple of processes (array of queues)
+- fifo inbox (input queue at each process where messages are added)
+- fifo outbox (output queue at each process where messages are fetched)
+- global fifo (unique shared queue)
+- RSC (realizable with synchronous communication)
+
+New properties and communication semantics can be easily taken into account (see *4. Verification using TLA+*).
+
+![Variations.](MBE.png)
+*Figure 1: variations and properties (network unordered semantics).*
 
 ## 1. Requisites
 
 To verify your BPMN models, you will need:
 
-- 1.1. The TLA+ tools, get `tla2tools.jar` [here](https://github.com/tlaplus/tlaplus/releases).
-
-- 1.2. A Java SE Development Kit (JDK 8), get it [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+- 1.1. A Java SE Development Kit (JDK 8), get it [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 
 	There is an issue (wrt. `tla2tools.jar`) with version 11 so you will need to install version 8. 
+- 1.2. The TLA+ tools, get `tla2tools.jar` [here](https://github.com/tlaplus/tlaplus/releases).
 	
-If you build `fbpmn` from sources (required for **Windows**, optional for **Linux** and **OSX**), you will also need:
+If you build `fbpmn` from sources (required only for **Windows**), you will also need:
 
 - 1.3. The `stack` build system for Haskell, see [here](https://docs.haskellstack.org/en/stable/README/).
 
@@ -49,7 +71,7 @@ You can get the source files in either way:
 
 - 2a. as an archive from [the fbpmn repository](https://github.com/pascalpoizat/fbpmn) by clicking the "Clone or download" button.
 
-- 2b. by cloning the repository using the `git` command (see [here](https://git-scm.com/downloads) to get it).
+- 2b. by cloning the repository using the `git` command.
 
 	```shell
 	git clone https://github.com/pascalpoizat/fbpmn
@@ -84,37 +106,16 @@ Do not forget to put this directory in your command `PATH`.
 
 Please see [the BPMN 2.0 standard](https://www.omg.org/spec/BPMN/2.0/).
 
-The subset of BPMN that we support is presented in Figure 1.
+The subset of BPMN that we support is presented in Figure 2.
 
 ![BPMN support.](bpmn.png)
-*Figure 1: supported subset of the BPMN notation.*
+*Figure 2: supported subset of the BPMN notation.*
 
 `fbpmn` has been tested with models made with the Camunda Modeler, which you can get [here](https://camunda.com/products/modeler/).
 
 ## 4. Verification using TLA+
 
 ### Principles
-
-`fbpmn` supports the verification of:
-
-- option to complete
-- proper completion
-- no dead activity
-- safety
-- soundness
-- message-relaxed soundness
-
-for six different communication semantics:
-
-- unordered (bag of messages)
-- fifo between each couple of processes (array of queues)
-- fifo inbox (input queue at each process where messages are added)
-- fifo outbox (output queue at each process where messages are fetched)
-- global fifo (unique shared queue)
-- RSC (realizable with synchronous communication)
-
-![Variations.](MBE.png)
-*Figure 2: variations and properties (network unordered semantics).*
 
 Verification is achieved in two steps (see Figure 3):
 
@@ -145,6 +146,31 @@ fbpmn-check myModel.bpmn
 *We are working on providing a script for Windows users too.*
 
 Meanwhile, you will have to perform the tasks that are done in `fbpmn-check` by hand.
+
+### Verification constraints
+
+Some models are unbounded (see *e.g.*, models `e004` to `e006` [here](models/bpmn-origin/src)). To be able to check these models, you may add constraints to the verification process. For this, given your model is in file `myModel.bpmn`, create a file `myModel.constraint` of the form:
+
+```tla
+CONSTANT ConstraintNode <- <ConstraintOnNodes>
+         ConstraintEdge <- <ConstraintOnEdges>
+         Constraint <- <Overall constraint defined in termes of ConstraintNode and ConstraintEdge>
+```
+
+The available constraints that you can reuse are defined [here](theories/tla/PWSConstraints.tla) are can be extended.
+
+For example, for model `e006` we may use:
+
+```tla
+CONSTANT ConstraintNode <- TRUE
+         ConstraintEdge <- MaxEdgeMarking2
+         Constraint <- ConstraintNodeEdge
+```
+
+that states
+that node markings (the maximum number of tokens authorized on a node) is not constrained, 
+that edge markings (the maximum number of tokens authorized on an edge) is 2, and
+that the overall constraint is to have both the constraint on nodes and the constraint on edges.
 
 ### Extending the verification
 
@@ -179,7 +205,7 @@ To get help with `fbpmn`, run `fbpmn -h`.
 
 ```sh
 ❯ fbpmn -h
-0.1.0
+0.2.5
 
 Usage: fbpmn COMMAND
   formal transformations for BPMN models
