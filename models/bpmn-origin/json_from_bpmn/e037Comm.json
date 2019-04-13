@@ -1,0 +1,361 @@
+{
+    "catN": {
+        "Ticket_Ordered": {
+            "tag": "NoneEndEvent"
+        },
+        "Confirm_Payment": {
+            "tag": "SendTask"
+        },
+        "Pay_Travel": {
+            "tag": "SendTask"
+        },
+        "Handle_Payment": {
+            "tag": "AbstractTask"
+        },
+        "Is_the_Offer_Interesting": {
+            "tag": "XorGateway"
+        },
+        "Was_Payment_Made": {
+            "tag": "XorGateway"
+        },
+        "StartEvent_1": {
+            "tag": "MessageStartEvent"
+        },
+        "Order_Ticket": {
+            "tag": "SendTask"
+        },
+        "Booking_Confirmed": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "Reject_Offer": {
+            "tag": "SendTask"
+        },
+        "Offer_Rejection_Received": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "IntermediateThrowEvent_0kagqq2": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "Payment_Confirmed": {
+            "tag": "NoneEndEvent"
+        },
+        "Book_Travel": {
+            "tag": "SendTask"
+        },
+        "Customer_Id": {
+            "tag": "Process"
+        },
+        "Offer_Rejected": {
+            "tag": "NoneEndEvent"
+        },
+        "Confirm_Booking": {
+            "tag": "SendTask"
+        },
+        "Offer_Cancelled": {
+            "tag": "NoneEndEvent"
+        },
+        "Offer_Needed": {
+            "tag": "NoneStartEvent"
+        },
+        "Payment_Confirmation_Received": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "Make_Travel_Offer": {
+            "tag": "SendTask"
+        },
+        "TravelAgency_Id": {
+            "tag": "Process"
+        },
+        "Ticket_Order_Received": {
+            "tag": "MessageStartEvent"
+        },
+        "Status_Waiting": {
+            "tag": "EventBasedGateway"
+        },
+        "Travel_Paid": {
+            "tag": "NoneEndEvent"
+        },
+        "Payment_Refused": {
+            "tag": "NoneEndEvent"
+        },
+        "Airline_id": {
+            "tag": "Process"
+        },
+        "Check_Offer": {
+            "tag": "AbstractTask"
+        },
+        "Booking_Received": {
+            "tag": "CatchMessageIntermediateEvent"
+        }
+    },
+    "catE": {
+        "SequenceFlow_1bxiri7": "NormalSequenceFlow",
+        "Offer_is_Interesting": "NormalSequenceFlow",
+        "MessageFlow_0y2wjrm": "MessageFlow",
+        "Payment_Was_Made": "NormalSequenceFlow",
+        "MessageFlow_0jtu5yc": "MessageFlow",
+        "SequenceFlow_1y19v10": "NormalSequenceFlow",
+        "Payment_Was_Not_Made": "NormalSequenceFlow",
+        "MessageFlow_08bo5ej": "MessageFlow",
+        "SequenceFlow_06mgtsm": "NormalSequenceFlow",
+        "SequenceFlow_10id4f8": "NormalSequenceFlow",
+        "SequenceFlow_1qo309k": "NormalSequenceFlow",
+        "SequenceFlow_0rbkpuc": "NormalSequenceFlow",
+        "SequenceFlow_1di11xa": "NormalSequenceFlow",
+        "SequenceFlow_0wyug2s": "NormalSequenceFlow",
+        "SequenceFlow_037u61c": "NormalSequenceFlow",
+        "MessageFlow_1p97q31": "MessageFlow",
+        "MessageFlow_01l3u25": "MessageFlow",
+        "SequenceFlow_1l28um0": "NormalSequenceFlow",
+        "SequenceFlow_1ybfy8r": "NormalSequenceFlow",
+        "SequenceFlow_1p9f9nn": "NormalSequenceFlow",
+        "SequenceFlow_1bhdal8": "NormalSequenceFlow",
+        "MessageFlow_1j3ru8z": "MessageFlow",
+        "SequenceFlow_09iuwhk": "NormalSequenceFlow",
+        "SequenceFlow_1wbphor": "NormalSequenceFlow",
+        "SequenceFlow_02xdetn": "NormalSequenceFlow",
+        "MessageFlow_15n7wk4": "MessageFlow",
+        "SequenceFlow_1b9yiqz": "NormalSequenceFlow",
+        "Offer_is_not_Interesting": "NormalSequenceFlow",
+        "SequenceFlow_0dfevt9": "NormalSequenceFlow",
+        "SequenceFlow_1fm8n43": "NormalSequenceFlow"
+    },
+    "containN": {
+        "Customer_Id": [
+            "StartEvent_1",
+            "Check_Offer",
+            "Is_the_Offer_Interesting",
+            "Reject_Offer",
+            "Book_Travel",
+            "Offer_Rejected",
+            "Pay_Travel",
+            "Booking_Confirmed",
+            "Payment_Confirmation_Received",
+            "Travel_Paid"
+        ],
+        "TravelAgency_Id": [
+            "Offer_Cancelled",
+            "Offer_Rejection_Received",
+            "Status_Waiting",
+            "Make_Travel_Offer",
+            "Offer_Needed",
+            "Ticket_Ordered",
+            "Order_Ticket",
+            "IntermediateThrowEvent_0kagqq2",
+            "Confirm_Booking",
+            "Booking_Received"
+        ],
+        "Airline_id": [
+            "Ticket_Order_Received",
+            "Handle_Payment",
+            "Was_Payment_Made",
+            "Payment_Confirmed",
+            "Payment_Refused",
+            "Confirm_Payment"
+        ]
+    },
+    "messageE": {
+        "MessageFlow_0y2wjrm": "payment",
+        "MessageFlow_0jtu5yc": "travel",
+        "MessageFlow_08bo5ej": "confirmation",
+        "MessageFlow_1p97q31": "rejection",
+        "MessageFlow_01l3u25": "offer",
+        "MessageFlow_1j3ru8z": "order",
+        "MessageFlow_15n7wk4": "payment confirmation"
+    },
+    "targetE": {
+        "SequenceFlow_1bxiri7": "Make_Travel_Offer",
+        "Offer_is_Interesting": "Book_Travel",
+        "MessageFlow_0y2wjrm": "IntermediateThrowEvent_0kagqq2",
+        "Payment_Was_Made": "Confirm_Payment",
+        "MessageFlow_0jtu5yc": "Booking_Received",
+        "SequenceFlow_1y19v10": "Booking_Confirmed",
+        "Payment_Was_Not_Made": "Payment_Refused",
+        "MessageFlow_08bo5ej": "Booking_Confirmed",
+        "SequenceFlow_06mgtsm": "Offer_Rejection_Received",
+        "SequenceFlow_10id4f8": "Order_Ticket",
+        "SequenceFlow_1qo309k": "Offer_Rejected",
+        "SequenceFlow_0rbkpuc": "Payment_Confirmation_Received",
+        "SequenceFlow_1di11xa": "Payment_Confirmed",
+        "SequenceFlow_0wyug2s": "Booking_Received",
+        "SequenceFlow_037u61c": "Check_Offer",
+        "MessageFlow_1p97q31": "Offer_Rejection_Received",
+        "MessageFlow_01l3u25": "StartEvent_1",
+        "SequenceFlow_1l28um0": "Confirm_Booking",
+        "SequenceFlow_1ybfy8r": "Was_Payment_Made",
+        "SequenceFlow_1p9f9nn": "Pay_Travel",
+        "SequenceFlow_1bhdal8": "Status_Waiting",
+        "MessageFlow_1j3ru8z": "Ticket_Order_Received",
+        "SequenceFlow_09iuwhk": "Handle_Payment",
+        "SequenceFlow_1wbphor": "IntermediateThrowEvent_0kagqq2",
+        "SequenceFlow_02xdetn": "Offer_Cancelled",
+        "MessageFlow_15n7wk4": "Payment_Confirmation_Received",
+        "SequenceFlow_1b9yiqz": "Ticket_Ordered",
+        "Offer_is_not_Interesting": "Reject_Offer",
+        "SequenceFlow_0dfevt9": "Is_the_Offer_Interesting",
+        "SequenceFlow_1fm8n43": "Travel_Paid"
+    },
+    "name": "e037Comm",
+    "attached": {},
+    "containE": {
+        "Customer_Id": [
+            "SequenceFlow_037u61c",
+            "SequenceFlow_0dfevt9",
+            "Offer_is_not_Interesting",
+            "Offer_is_Interesting",
+            "SequenceFlow_1qo309k",
+            "SequenceFlow_1y19v10",
+            "SequenceFlow_1p9f9nn",
+            "SequenceFlow_0rbkpuc",
+            "SequenceFlow_1fm8n43"
+        ],
+        "TravelAgency_Id": [
+            "SequenceFlow_1b9yiqz",
+            "SequenceFlow_10id4f8",
+            "SequenceFlow_1wbphor",
+            "SequenceFlow_1l28um0",
+            "SequenceFlow_02xdetn",
+            "SequenceFlow_06mgtsm",
+            "SequenceFlow_0wyug2s",
+            "SequenceFlow_1bhdal8",
+            "SequenceFlow_1bxiri7"
+        ],
+        "Airline_id": [
+            "SequenceFlow_09iuwhk",
+            "SequenceFlow_1ybfy8r",
+            "Payment_Was_Made",
+            "Payment_Was_Not_Made",
+            "SequenceFlow_1di11xa"
+        ]
+    },
+    "edges": [
+        "MessageFlow_1j3ru8z",
+        "MessageFlow_01l3u25",
+        "MessageFlow_0jtu5yc",
+        "MessageFlow_1p97q31",
+        "MessageFlow_0y2wjrm",
+        "MessageFlow_08bo5ej",
+        "MessageFlow_15n7wk4",
+        "SequenceFlow_037u61c",
+        "SequenceFlow_0dfevt9",
+        "Offer_is_not_Interesting",
+        "Offer_is_Interesting",
+        "SequenceFlow_1qo309k",
+        "SequenceFlow_1y19v10",
+        "SequenceFlow_1p9f9nn",
+        "SequenceFlow_0rbkpuc",
+        "SequenceFlow_1fm8n43",
+        "SequenceFlow_1b9yiqz",
+        "SequenceFlow_10id4f8",
+        "SequenceFlow_1wbphor",
+        "SequenceFlow_1l28um0",
+        "SequenceFlow_02xdetn",
+        "SequenceFlow_06mgtsm",
+        "SequenceFlow_0wyug2s",
+        "SequenceFlow_1bhdal8",
+        "SequenceFlow_1bxiri7",
+        "SequenceFlow_09iuwhk",
+        "SequenceFlow_1ybfy8r",
+        "Payment_Was_Made",
+        "Payment_Was_Not_Made",
+        "SequenceFlow_1di11xa"
+    ],
+    "messages": [
+        "order",
+        "offer",
+        "travel",
+        "rejection",
+        "payment",
+        "confirmation",
+        "payment confirmation"
+    ],
+    "sourceE": {
+        "SequenceFlow_1bxiri7": "Offer_Needed",
+        "Offer_is_Interesting": "Is_the_Offer_Interesting",
+        "MessageFlow_0y2wjrm": "Pay_Travel",
+        "Payment_Was_Made": "Was_Payment_Made",
+        "MessageFlow_0jtu5yc": "Book_Travel",
+        "SequenceFlow_1y19v10": "Book_Travel",
+        "Payment_Was_Not_Made": "Was_Payment_Made",
+        "MessageFlow_08bo5ej": "Confirm_Booking",
+        "SequenceFlow_06mgtsm": "Status_Waiting",
+        "SequenceFlow_10id4f8": "IntermediateThrowEvent_0kagqq2",
+        "SequenceFlow_1qo309k": "Reject_Offer",
+        "SequenceFlow_0rbkpuc": "Pay_Travel",
+        "SequenceFlow_1di11xa": "Confirm_Payment",
+        "SequenceFlow_0wyug2s": "Status_Waiting",
+        "SequenceFlow_037u61c": "StartEvent_1",
+        "MessageFlow_1p97q31": "Reject_Offer",
+        "MessageFlow_01l3u25": "Make_Travel_Offer",
+        "SequenceFlow_1l28um0": "Booking_Received",
+        "SequenceFlow_1ybfy8r": "Handle_Payment",
+        "SequenceFlow_1p9f9nn": "Booking_Confirmed",
+        "SequenceFlow_1bhdal8": "Make_Travel_Offer",
+        "MessageFlow_1j3ru8z": "Order_Ticket",
+        "SequenceFlow_09iuwhk": "Ticket_Order_Received",
+        "SequenceFlow_1wbphor": "Confirm_Booking",
+        "SequenceFlow_02xdetn": "Offer_Rejection_Received",
+        "MessageFlow_15n7wk4": "Confirm_Payment",
+        "SequenceFlow_1b9yiqz": "Order_Ticket",
+        "Offer_is_not_Interesting": "Is_the_Offer_Interesting",
+        "SequenceFlow_0dfevt9": "Check_Offer",
+        "SequenceFlow_1fm8n43": "Payment_Confirmation_Received"
+    },
+    "nodes": [
+        "Customer_Id",
+        "TravelAgency_Id",
+        "Airline_id",
+        "StartEvent_1",
+        "Check_Offer",
+        "Is_the_Offer_Interesting",
+        "Reject_Offer",
+        "Book_Travel",
+        "Offer_Rejected",
+        "Pay_Travel",
+        "Booking_Confirmed",
+        "Payment_Confirmation_Received",
+        "Travel_Paid",
+        "Offer_Cancelled",
+        "Offer_Rejection_Received",
+        "Status_Waiting",
+        "Make_Travel_Offer",
+        "Offer_Needed",
+        "Ticket_Ordered",
+        "Order_Ticket",
+        "IntermediateThrowEvent_0kagqq2",
+        "Confirm_Booking",
+        "Booking_Received",
+        "Ticket_Order_Received",
+        "Handle_Payment",
+        "Was_Payment_Made",
+        "Payment_Confirmed",
+        "Payment_Refused",
+        "Confirm_Payment"
+    ],
+    "nameN": {
+        "Ticket_Ordered": "Ticket Ordered",
+        "Confirm_Payment": "Confirm Payment",
+        "Pay_Travel": "Pay Travel",
+        "Handle_Payment": "Handle Payment",
+        "Is_the_Offer_Interesting": "Is the Offer Interesting?",
+        "Was_Payment_Made": "Was Payment Made?",
+        "Order_Ticket": "Order Ticket",
+        "Booking_Confirmed": "Booking Confirmed",
+        "Reject_Offer": "Reject Offer",
+        "Offer_Rejection_Received": "Offer Rejection Received",
+        "IntermediateThrowEvent_0kagqq2": "Payment Received",
+        "Payment_Confirmed": "Payment Confirmed",
+        "Book_Travel": "Book Travel",
+        "Offer_Rejected": "Offer Rejected",
+        "Confirm_Booking": "Confirm Booking",
+        "Offer_Cancelled": "Offer Cancelled",
+        "Offer_Needed": "Offer Needed",
+        "Payment_Confirmation_Received": "Payment Confirmation Received",
+        "Make_Travel_Offer": "Make Travel Offer",
+        "Ticket_Order_Received": "Ticket Order Received",
+        "Travel_Paid": "Travel Paid",
+        "Payment_Refused": "Payment Refused",
+        "Check_Offer": "Check Offer",
+        "Booking_Received": "Booking Received"
+    }
+}

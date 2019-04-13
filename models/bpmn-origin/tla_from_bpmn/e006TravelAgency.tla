@@ -103,8 +103,8 @@ CatE ==
 @@ "MessageFlow_1m551dh" :> MessageFlow
 @@ "MessageFlow_1goz1mt" :> MessageFlow
 @@ "MessageFlow_04an7oz" :> MessageFlow
-@@ "SequenceFlow_1uwq0b6" :> NormalSeqFlow
-@@ "SequenceFlow_0b6ku63" :> NormalSeqFlow
+@@ "SequenceFlow_1uwq0b6" :> ConditionalSeqFlow
+@@ "SequenceFlow_0b6ku63" :> DefaultSeqFlow
 @@ "SequenceFlow_0sfyd5z" :> NormalSeqFlow
 @@ "SequenceFlow_016h32p" :> NormalSeqFlow
 @@ "SequenceFlow_1rma3l8" :> NormalSeqFlow
