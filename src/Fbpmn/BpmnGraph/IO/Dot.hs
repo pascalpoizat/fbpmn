@@ -1,7 +1,7 @@
 {-# LANGUAGE QuasiQuotes #-}
-module Fbpmn.IO.Dot where
+module Fbpmn.BpmnGraph.IO.Dot where
 
-import           Fbpmn.Model
+import           Fbpmn.BpmnGraph.Model
 import           NeatInterpolation (text)
 -- import           Data.List                      ( intercalate )
 import           Data.Map.Strict   ((!?))
