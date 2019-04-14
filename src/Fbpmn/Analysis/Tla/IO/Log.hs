@@ -23,9 +23,9 @@ parseStatus =
 parseVariable :: Parser Variable
 parseVariable = do
   _ <- many space
-  first <- (letter <|> char '_')
+  car1 <- (letter <|> char '_')
   rest <- many (letter <|> digit <|> char '_')
-  return $ [first] <> rest
+  return $ [car1] <> rest
 
 parseString :: Parser String
 parseString = many space *> "\"" *> manyTill anyChar "\""
