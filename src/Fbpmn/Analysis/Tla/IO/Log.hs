@@ -116,7 +116,9 @@ parseLog = do
   status <- parseStatus
   case status of
     Success -> return $ Log Success Nothing
-    Failure -> return $ Log Failure $ Just []
+    Failure -> do
+                states <- many1 parseState
+                return $ Log Failure $ Just states
 
 readLOG :: FilePath -> IO (Maybe Text)
 readLOG p = (Just <$> readFile p) `catchIOError` handler
