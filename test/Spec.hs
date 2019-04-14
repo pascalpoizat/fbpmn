@@ -1,9 +1,10 @@
+{-# LANGUAGE QuasiQuotes #-}
+import           NeatInterpolation (text)
 import           Test.Tasty
 import           Test.Tasty.HUnit
 -- import           Test.Tasty.QuickCheck as QC
 -- import           Test.Tasty.SmallCheck as SC
 import           Test.Tasty.Runners.Html
-
 import           Fbpmn.BpmnGraph.Model
 import           Examples                       ( g0
                                                 , g1
@@ -31,8 +32,12 @@ parseNEI :: Either String a
 parseNEI = Left "not enough input"
 
 -- parse error (not enough input, letter case)
-parseLNEI :: Either String a
-parseLNEI = Left "letter: not enough input"
+-- parseLNEI :: Either String a
+-- parseLNEI = Left "letter: not enough input"
+
+-- parse error (not enough input, _ case)
+parseUNEI :: Either String a
+parseUNEI = Left "'_': not enough input"
 
 -- parse error (correct string not found)
 parseWS :: Either String a
@@ -42,6 +47,27 @@ parseWS = Left "string"
 parseTW1 :: Either String a
 parseTW1 = Left "Failed reading: takeWhile1"
 
+state1 :: Text
+state1 = [text|
+State 12: <Action line 177, col 1 to line 177, col 21 of module e037Comm>
+/\ edgemarks = [MessageFlow_1j3ru8z |-> 0, MessageFlow_01l3u25 |-> 1]
+/\ net = (<<"Customer_Id", "TravelAgency_Id", "message1">> :> 2, <<"Customer_Id", "TravelAgency_Id", "message2">> :> 1)
+/\ nodemarks = [Airline_id |-> 0, Ticket_Order_Received |-> 1]
+|]
+
+state1assign :: Map Variable Value
+state1assign = fromList [("edgemarks", MapValue (fromList [("MessageFlow_01l3u25",IntegerValue 1),("MessageFlow_1j3ru8z",IntegerValue 0)]))
+                        ,("net", BagValue (fromList [(TupleValue [StringValue "Customer_Id",StringValue "TravelAgency_Id",StringValue "message1"],2),(TupleValue [StringValue "Customer_Id",StringValue "TravelAgency_Id",StringValue "message2"],1)]))
+                        ,("nodemarks",MapValue (fromList [("Airline_id",IntegerValue 0),("Ticket_Order_Received",IntegerValue 1)]))]
+
+stateN :: Text
+stateN = [text|
+State 29: Stuttering
+Finished checking temporal properties in 00s at 2019-04-11 15:37:25
+81 states generated, 60 distinct states found, 0 states left on queue.
+Finished in 01s at (2019-04-11 15:37:25)
+|]
+
 uLog :: TestTree
 uLog = testGroup
   "Unit tests for log parsing"
@@ -49,8 +75,12 @@ uLog = testGroup
   , testCase "parse status ok (failure)" $ parseOnly parseStatus errorLine @?= Right Failure
   , testCase "parse status ko" $ parseOnly parseStatus ("foo" <> errorLine) @?= parseNEI
   , testCase "parse status ok after skipping lines" $ parseOnly parseStatus ("foo\nbar\n" <> errorLine) @?= Right Failure
-  , testCase "parse variable ok" $ parseOnly parseVariable "  foo  " @?= Right "foo"
-  , testCase "parse variable ko" $ parseOnly parseVariable "       " @?= parseLNEI
+  , testCase "parse variable ok (alpha)" $ parseOnly parseVariable "  f  " @?= Right "f"
+  , testCase "parse variable ok (alpha)" $ parseOnly parseVariable "  foo  " @?= Right "foo"
+  , testCase "parse variable ok (non alpha)" $ parseOnly parseVariable "  _  " @?= Right "_"
+  , testCase "parse variable ok (non alpha)" $ parseOnly parseVariable "  f_123  " @?= Right "f_123"
+  , testCase "parse variable ok (non alpha)" $ parseOnly parseVariable "  _123  " @?= Right "_123"
+  , testCase "parse variable ko" $ parseOnly parseVariable "       " @?= parseUNEI
   , testCase "parse string ok" $ parseOnly parseString "  \" 1 2 3 \"  " @?= Right " 1 2 3 "
   , testCase "parse string ko" $ parseOnly parseString "     1 2 3     " @?= parseWS
   , testCase "parse string ko" $ parseOnly parseString "               " @?= parseNEI
@@ -66,6 +96,8 @@ uLog = testGroup
   , testCase "parse map item" $ parseOnly parseMapItem "  a  |->  <<123,\"foo\",bar>>  " @?= Right ("a", TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"])
   , testCase "parse bag item" $ parseOnly parseBagItem "<<123,\"foo\",bar>>:>1" @?= Right (TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"], 1)
   , testCase "parse bag item" $ parseOnly parseBagItem "  <<123,\"foo\",bar>>  :>  1  " @?= Right (TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"], 1)
+  , testCase "parse assignment" $ parseOnly parseAssignment "/\\ a=1" @?= Right ("a", IntegerValue 1)
+  , testCase "parse assignment" $ parseOnly parseAssignment "  /\\  a  =  <<123,\"foo\",bar>>  " @?= Right ("a", TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"])
   , testCase "parse map (empty)" $ parseOnly parseMap "[]" @?= Right []
   , testCase "parse map (empty)" $ parseOnly parseMap "  [  ]  " @?= Right []
   , testCase "parse map (non empty)" $ parseOnly parseMap "[foo|->123,bar|->456]" @?= Right [("foo", IntegerValue 123), ("bar", IntegerValue 456)]
@@ -80,6 +112,8 @@ uLog = testGroup
   , testCase "parse value (tuple)" $ parseOnly parseValue "  <<  123  ,  \"foo\"  ,  bar  >>  " @?= Right (TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"])
   , testCase "parse value (map)" $ parseOnly parseValue "  [  foo  |->  123  ,  bar  |->  456  ]  " @?= Right (MapValue . fromList $ [("foo", IntegerValue 123), ("bar", IntegerValue 456)])
   , testCase "parse value (bag)" $ parseOnly parseValue "  (  foo  :>  123  ,  bar  :>  456  )  " @?= Right (BagValue . fromList $ [(VariableValue "foo", 123), (VariableValue "bar", 456)])
+  , testCase "parse state (regular)" $ parseOnly parseState state1 @?= Right (CounterExampleState 12 "<Action line 177, col 1 to line 177, col 21 of module e037Comm>" state1assign)
+  , testCase "parse state (stuttering)" $ parseOnly parseState stateN @?= Right (CounterExampleState 29 "Stuttering" (fromList []))
   ]
 
 uIsValidGraph :: TestTree

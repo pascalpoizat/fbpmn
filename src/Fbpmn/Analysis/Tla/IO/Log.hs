@@ -21,7 +21,11 @@ parseStatus =
     <|> (manyTill anyChar endOfLine *> parseStatus)
 
 parseVariable :: Parser Variable
-parseVariable = many space *> many1 letter
+parseVariable = do
+  _ <- many space
+  car1 <- (letter <|> char '_')
+  rest <- many (letter <|> digit <|> char '_')
+  return $ [car1] <> rest
 
 parseString :: Parser String
 parseString = many space *> "\"" *> manyTill anyChar "\""
@@ -87,13 +91,34 @@ parseValue = (TupleValue <$> parseTuple)
   <|> (IntegerValue <$> parseInteger)
   <|> (VariableValue <$> parseVariable)
 
+parseAssignment :: Parser (Variable, Value)
+parseAssignment = do
+  _ <- many space
+  _ <- "/\\ "
+  var <- parseVariable
+  _ <- many space
+  _ <- "="
+  _ <- many space
+  val <- parseValue
+  return (var, val)
+
+parseState :: Parser CounterExampleState
+parseState = do
+  _ <- many space
+  sid <- "State " *> parseInteger <* ": "
+  info <- manyTill anyChar endOfLine
+  assignments <- many parseAssignment
+  return $ CounterExampleState sid info (fromList assignments) 
+
 -- TODO: read states in case of failure
 parseLog :: Parser Log
 parseLog = do
   status <- parseStatus
   case status of
     Success -> return $ Log Success Nothing
-    Failure -> return $ Log Failure $ Just []
+    Failure -> do
+                states <- many1 parseState
+                return $ Log Failure $ Just states
 
 readLOG :: FilePath -> IO (Maybe Text)
 readLOG p = (Just <$> readFile p) `catchIOError` handler

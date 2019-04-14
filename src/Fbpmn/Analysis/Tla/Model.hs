@@ -6,8 +6,7 @@ import           Data.Aeson                     ( FromJSON
                                                 , ToJSONKey
                                                 )
 import qualified Data.Map.Strict               as M
-                                                ( Map
-                                                , filterWithKey
+                                                ( filterWithKey
                                                 )
 
 data Status
@@ -40,7 +39,8 @@ instance FromJSONKey Value
 
 data CounterExampleState = CounterExampleState
   { sid :: Integer
-  , svalue :: M.Map Variable Value
+  , sinfo :: String
+  , svalue :: Map Variable Value
   } deriving (Eq, Show, Generic)
 
 instance ToJSON CounterExampleState
@@ -74,6 +74,6 @@ filterCounterExample f cs = filterStateValue f <$> cs
 filterStateValue :: (Variable -> Value -> Bool)
                  -> CounterExampleState
                  -> CounterExampleState
-filterStateValue f (CounterExampleState sid vs) =
-  CounterExampleState sid $ M.filterWithKey f vs
+filterStateValue f (CounterExampleState sid sinfo vs) =
+  CounterExampleState sid sinfo $ M.filterWithKey f vs
 
