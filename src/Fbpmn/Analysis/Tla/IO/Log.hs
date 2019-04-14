@@ -23,7 +23,7 @@ parseStatus =
 parseVariable :: Parser Variable
 parseVariable = do
   _ <- many space
-  car1 <- (letter <|> char '_')
+  car1 <- letter <|> char '_'
   rest <- many (letter <|> digit <|> char '_')
   return $ [car1] <> rest
 
@@ -115,10 +115,10 @@ parseLog :: Parser Log
 parseLog = do
   status <- parseStatus
   case status of
-    Success -> return $ Log Success Nothing
+    Success -> return $ Log "log" Success Nothing
     Failure -> do
                 states <- many1 parseState
-                return $ Log Failure $ Just states
+                return $ Log "log" Failure $ Just states
 
 readLOG :: FilePath -> IO (Maybe Text)
 readLOG p = (Just <$> readFile p) `catchIOError` handler

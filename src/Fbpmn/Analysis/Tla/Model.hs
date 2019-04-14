@@ -1,12 +1,10 @@
 module Fbpmn.Analysis.Tla.Model where
 
+import qualified Data.Map.Strict as M (filter, mapWithKey)
 import           Data.Aeson                     ( FromJSON
                                                 , ToJSON
                                                 , FromJSONKey
                                                 , ToJSONKey
-                                                )
-import qualified Data.Map.Strict               as M
-                                                ( filterWithKey
                                                 )
 
 data Status
@@ -49,31 +47,41 @@ instance FromJSON CounterExampleState
 
 type CounterExample = [CounterExampleState]
 
-data Log =
-  Log Status
-      (Maybe CounterExample)
-  deriving (Eq, Show, Generic)
+data Log = Log
+  { lname :: String
+  , lstatus :: Status
+  , lcex :: Maybe CounterExample
+  } deriving (Eq, Show, Generic)
 
 instance ToJSON Log
 
 instance FromJSON Log
 
 isValidLog :: Log -> Bool
-isValidLog (Log Success Nothing ) = True
-isValidLog (Log Failure (Just _)) = True
-isValidLog _                      = False
+isValidLog (Log _ Success Nothing ) = True
+isValidLog (Log _ Failure (Just _)) = True
+isValidLog _                        = False
 
-hasToken :: Variable -> Integer -> Bool
-hasToken _ v = v /= 0
+filterLog :: Log -> Log
+filterLog (Log n Failure (Just cx)) =
+  Log n Failure (Just $ filterCounterExample cx)
+filterLog m = m
 
-filterCounterExample :: (Variable -> Value -> Bool)
+filterCounterExample :: CounterExample
                      -> CounterExample
-                     -> CounterExample
-filterCounterExample f cs = filterStateValue f <$> cs
+filterCounterExample cs = filterState <$> cs
 
-filterStateValue :: (Variable -> Value -> Bool)
-                 -> CounterExampleState
-                 -> CounterExampleState
-filterStateValue f (CounterExampleState sid sinfo vs) =
-  CounterExampleState sid sinfo $ M.filterWithKey f vs
+filterState :: CounterExampleState
+            -> CounterExampleState
+filterState (CounterExampleState sid sinfo vs) =
+  CounterExampleState sid sinfo (M.mapWithKey f vs)
+  where  
+    f :: (Variable -> Value -> Value)
+    f "edgemarks" (MapValue ems) = MapValue $ M.filter keep ems
+    f "nodemarks" (MapValue nms) = MapValue $ M.filter keep nms
+    f _ x = x
+    keep :: Value -> Bool
+    keep (IntegerValue n) = n /= 0
+    keep _ = True
+
 

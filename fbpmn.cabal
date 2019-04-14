@@ -29,6 +29,7 @@ library
                        Fbpmn.Analysis.Tla.Model
                        Fbpmn.Analysis.Tla.IO.Tla
                        Fbpmn.Analysis.Tla.IO.Log
+                       Fbpmn.Analysis.Tla.IO.Dot
                        Fbpmn.Analysis.Tla.IO.Json
                        Fbpmn.Analysis.Smt.IO.Smt
                        Fbpmn.Helper
