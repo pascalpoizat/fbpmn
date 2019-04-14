@@ -31,8 +31,12 @@ parseNEI :: Either String a
 parseNEI = Left "not enough input"
 
 -- parse error (not enough input, letter case)
-parseLNEI :: Either String a
-parseLNEI = Left "letter: not enough input"
+-- parseLNEI :: Either String a
+-- parseLNEI = Left "letter: not enough input"
+
+-- parse error (not enough input, _ case)
+parseUNEI :: Either String a
+parseUNEI = Left "'_': not enough input"
 
 -- parse error (correct string not found)
 parseWS :: Either String a
@@ -49,8 +53,10 @@ uLog = testGroup
   , testCase "parse status ok (failure)" $ parseOnly parseStatus errorLine @?= Right Failure
   , testCase "parse status ko" $ parseOnly parseStatus ("foo" <> errorLine) @?= parseNEI
   , testCase "parse status ok after skipping lines" $ parseOnly parseStatus ("foo\nbar\n" <> errorLine) @?= Right Failure
-  , testCase "parse variable ok" $ parseOnly parseVariable "  foo  " @?= Right "foo"
-  , testCase "parse variable ko" $ parseOnly parseVariable "       " @?= parseLNEI
+  , testCase "parse variable ok (alpha)" $ parseOnly parseVariable "  foo  " @?= Right "foo"
+  , testCase "parse variable ok (non alpha)" $ parseOnly parseVariable "  f_123  " @?= Right "f_123"
+  , testCase "parse variable ok (non alpha)" $ parseOnly parseVariable "  _123  " @?= Right "_123"
+  , testCase "parse variable ko" $ parseOnly parseVariable "       " @?= parseUNEI
   , testCase "parse string ok" $ parseOnly parseString "  \" 1 2 3 \"  " @?= Right " 1 2 3 "
   , testCase "parse string ko" $ parseOnly parseString "     1 2 3     " @?= parseWS
   , testCase "parse string ko" $ parseOnly parseString "               " @?= parseNEI

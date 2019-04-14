@@ -21,7 +21,11 @@ parseStatus =
     <|> (manyTill anyChar endOfLine *> parseStatus)
 
 parseVariable :: Parser Variable
-parseVariable = many space *> many1 letter
+parseVariable = do
+  _ <- many space
+  first <- (letter <|> char '_')
+  rest <- many (letter <|> digit <|> char '_')
+  return $ [first] <> rest
 
 parseString :: Parser String
 parseString = many space *> "\"" *> manyTill anyChar "\""
