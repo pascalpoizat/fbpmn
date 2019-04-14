@@ -1,4 +1,4 @@
-module Fbpmn.Model where
+module Fbpmn.BpmnGraph.Model where
 
 import           Data.Aeson                     ( FromJSON
                                                 , ToJSON
@@ -320,14 +320,10 @@ isValidMessageFlow g mf =
            || cs
            == MessageEndEvent
            )
-          && (  ct
-             == ReceiveTask
-             || ct
-             == CatchMessageIntermediateEvent
-             || ct
-             == MessageStartEvent
-             )
-          && (isValidMessage g m)
+          && (  ct == ReceiveTask
+             || ct == CatchMessageIntermediateEvent
+             || ct == MessageStartEvent )
+          && isValidMessage g m
 
 allValidMessageFlow :: BpmnGraph -> Bool
 allValidMessageFlow g =

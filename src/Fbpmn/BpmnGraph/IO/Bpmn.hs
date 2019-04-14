@@ -1,7 +1,7 @@
-module Fbpmn.IO.Bpmn where
+module Fbpmn.BpmnGraph.IO.Bpmn where
 
 import           Fbpmn.Helper                   ( tlift2 )
-import           Fbpmn.Model
+import           Fbpmn.BpmnGraph.Model
 import           Text.XML.Light                 ( Element(..)
                                                 , Content(..)
                                                 , QName(..)

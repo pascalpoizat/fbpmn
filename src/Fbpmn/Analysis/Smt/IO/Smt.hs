@@ -1,6 +1,6 @@
-module Fbpmn.IO.Smt where
+module Fbpmn.Analysis.Smt.IO.Smt where
 
-import           Fbpmn.Model
+import           Fbpmn.BpmnGraph.Model
 
 {-|
 Write a BPMN Graph to an SMT file.

@@ -22,13 +22,16 @@ source-repository head
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Fbpmn.Model
+  exposed-modules:     Fbpmn.BpmnGraph.Model
+                       Fbpmn.BpmnGraph.IO.Bpmn
+                       Fbpmn.BpmnGraph.IO.Dot
+                       Fbpmn.BpmnGraph.IO.Json
+                       Fbpmn.Analysis.Tla.Model
+                       Fbpmn.Analysis.Tla.IO.Tla
+                       Fbpmn.Analysis.Tla.IO.Log
+                       Fbpmn.Analysis.Tla.IO.Json
+                       Fbpmn.Analysis.Smt.IO.Smt
                        Fbpmn.Helper
-                       Fbpmn.IO.Bpmn
-                       Fbpmn.IO.Dot
-                       Fbpmn.IO.Json
-                       Fbpmn.IO.Smt
-                       Fbpmn.IO.Tla
                        Examples
                        Prelude
   ghc-options:         -Wall
@@ -42,6 +45,7 @@ library
                      , relude
                      , aeson
                      , aeson-pretty
+                     , attoparsec
                      , bytestring
                      , containers
                      , neat-interpolation
@@ -75,6 +79,7 @@ executable fbpmn
                      , relude
                      , aeson
                      , aeson-pretty
+                     , attoparsec
                      , bytestring
                      , containers
                      , neat-interpolation
@@ -109,6 +114,7 @@ test-suite fbpmn-test
                      , relude
                      , aeson
                      , aeson-pretty
+                     , attoparsec
                      , bytestring
                      , containers
                      , neat-interpolation
@@ -149,6 +155,8 @@ benchmark fbpmn-benchmark
                      , base-noprelude
                      , relude
                      , aeson
+                     , aeson-pretty
+                     , attoparsec
                      , bytestring
                      , containers
                      , neat-interpolation

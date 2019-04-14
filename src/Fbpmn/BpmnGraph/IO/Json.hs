@@ -1,6 +1,6 @@
-module Fbpmn.IO.Json where
+module Fbpmn.BpmnGraph.IO.Json where
 
-import           Fbpmn.Model
+import           Fbpmn.BpmnGraph.Model
 import qualified Data.ByteString.Lazy          as BS
                                                 ( ByteString
                                                 , writeFile

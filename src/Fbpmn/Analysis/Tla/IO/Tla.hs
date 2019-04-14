@@ -1,9 +1,9 @@
 {-# LANGUAGE QuasiQuotes #-}
-module Fbpmn.IO.Tla where
+module Fbpmn.Analysis.Tla.IO.Tla where
 
 import qualified Data.Text         as T
 import           Fbpmn.Helper
-import           Fbpmn.Model
+import           Fbpmn.BpmnGraph.Model
 import           NeatInterpolation (text)
 -- import           Data.List                      ( intercalate )
 import           Data.Map.Strict   ((!?))

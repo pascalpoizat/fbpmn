@@ -1,6 +1,6 @@
 module Examples where
 
-import           Fbpmn.Model
+import           Fbpmn.BpmnGraph.Model
 
 models' :: [BpmnGraph]
 models' = [g0, g1]
