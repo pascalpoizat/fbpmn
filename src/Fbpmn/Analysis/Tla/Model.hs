@@ -39,6 +39,7 @@ instance FromJSONKey Value
 
 data CounterExampleState = CounterExampleState
   { sid :: Integer
+  , sinfo :: String
   , svalue :: Map Variable Value
   } deriving (Eq, Show, Generic)
 
@@ -73,6 +74,6 @@ filterCounterExample f cs = filterStateValue f <$> cs
 filterStateValue :: (Variable -> Value -> Bool)
                  -> CounterExampleState
                  -> CounterExampleState
-filterStateValue f (CounterExampleState sid vs) =
-  CounterExampleState sid $ M.filterWithKey f vs
+filterStateValue f (CounterExampleState sid sinfo vs) =
+  CounterExampleState sid sinfo $ M.filterWithKey f vs
 

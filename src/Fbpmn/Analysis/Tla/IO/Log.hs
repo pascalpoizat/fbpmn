@@ -91,6 +91,25 @@ parseValue = (TupleValue <$> parseTuple)
   <|> (IntegerValue <$> parseInteger)
   <|> (VariableValue <$> parseVariable)
 
+parseAssignment :: Parser (Variable, Value)
+parseAssignment = do
+  _ <- many space
+  _ <- "/\\ "
+  var <- parseVariable
+  _ <- many space
+  _ <- "="
+  _ <- many space
+  val <- parseValue
+  return (var, val)
+
+parseState :: Parser CounterExampleState
+parseState = do
+  _ <- many space
+  sid <- "State " *> parseInteger <* ": "
+  info <- manyTill anyChar endOfLine
+  assignments <- many parseAssignment
+  return $ CounterExampleState sid info (fromList assignments) 
+
 -- TODO: read states in case of failure
 parseLog :: Parser Log
 parseLog = do
