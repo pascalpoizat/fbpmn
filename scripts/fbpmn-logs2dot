@@ -1,0 +1,2 @@
+for f in `ls *.log`; do ff=${f%.log}; fbpmn log2dot $ff $ff; dot -Tpdf -o $ff.pdf $ff.dot; done
+
