@@ -268,7 +268,7 @@ transformation done
 
 An excerpt of a counter example for the model in Fig. 4 is given in Fig. 5. For each state (box) there is: the state id, the node markings, the edge markings, and the network status.
 
-[![Counter example image.](Network01Bag.Prop03Sound.excerpt.pdf)](Network01Bag.Prop03Sound.pdf)
+[![Counter example image.](Network01Bag.Prop03Sound.excerpt.png)](Network01Bag.Prop03Sound.pdf)
 
 *Figure 5: excerpt of the counter example for soundness of the model in Fig. 4 with network unordered semantics (click to see all of it).*
 
