@@ -43,22 +43,22 @@ parseMapItem = do
   val <- parseValue
   return (var, val)
 
-parseBagItem :: Parser (Value, Integer)
+parseBagItem :: Parser (Value, Value)
 parseBagItem = do
   _ <- many space
   var <- parseValue
   _ <- many space
   _ <- ":>"
   _ <- many space
-  val <- parseInteger
+  val <- parseValue
   return (var, val)
 
-parseBag :: Parser [(Value, Integer)]
+parseBag :: Parser [(Value, Value)]
 parseBag = do
   _ <- many space
   _ <- "("
   _ <- many space
-  items <- sepBy parseBagItem (many space *> "," *> many space)
+  items <- sepBy parseBagItem (many space *> "@@" *> many space)
   _ <- many space
   _ <- ")"
   return items

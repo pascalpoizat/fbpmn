@@ -51,13 +51,13 @@ state1 :: Text
 state1 = [text|
 State 12: <Action line 177, col 1 to line 177, col 21 of module e037Comm>
 /\ edgemarks = [MessageFlow_1j3ru8z |-> 0, MessageFlow_01l3u25 |-> 1]
-/\ net = (<<"Customer_Id", "TravelAgency_Id", "message1">> :> 2, <<"Customer_Id", "TravelAgency_Id", "message2">> :> 1)
+/\ net = (<<"Customer_Id", "TravelAgency_Id", "message1">> :> 2 @@ <<"Customer_Id", "TravelAgency_Id", "message2">> :> 1)
 /\ nodemarks = [Airline_id |-> 0, Ticket_Order_Received |-> 1]
 |]
 
 state1assign :: Map Variable Value
 state1assign = fromList [("edgemarks", MapValue (fromList [("MessageFlow_01l3u25",IntegerValue 1),("MessageFlow_1j3ru8z",IntegerValue 0)]))
-                        ,("net", BagValue (fromList [(TupleValue [StringValue "Customer_Id",StringValue "TravelAgency_Id",StringValue "message1"],2),(TupleValue [StringValue "Customer_Id",StringValue "TravelAgency_Id",StringValue "message2"],1)]))
+                        ,("net", BagValue (fromList [(TupleValue [StringValue "Customer_Id",StringValue "TravelAgency_Id",StringValue "message1"],IntegerValue 2),(TupleValue [StringValue "Customer_Id",StringValue "TravelAgency_Id",StringValue "message2"],IntegerValue 1)]))
                         ,("nodemarks",MapValue (fromList [("Airline_id",IntegerValue 0),("Ticket_Order_Received",IntegerValue 1)]))]
 
 stateN :: Text
@@ -94,8 +94,9 @@ uLog = testGroup
   , testCase "parse tuple (non empty)" $ parseOnly parseTuple "  <<  123  ,  \"foo\"  ,  bar  >>  " @?= Right [IntegerValue 123, StringValue "foo", VariableValue "bar"]
   , testCase "parse map item" $ parseOnly parseMapItem "a|->1" @?= Right ("a", IntegerValue 1)
   , testCase "parse map item" $ parseOnly parseMapItem "  a  |->  <<123,\"foo\",bar>>  " @?= Right ("a", TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"])
-  , testCase "parse bag item" $ parseOnly parseBagItem "<<123,\"foo\",bar>>:>1" @?= Right (TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"], 1)
-  , testCase "parse bag item" $ parseOnly parseBagItem "  <<123,\"foo\",bar>>  :>  1  " @?= Right (TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"], 1)
+  , testCase "parse bag item (integer value)" $ parseOnly parseBagItem "<<123,\"foo\",bar>>:>1" @?= Right (TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"], IntegerValue 1)
+  , testCase "parse bag item (integer value)" $ parseOnly parseBagItem "  <<123,\"foo\",bar>>  :>  1  " @?= Right (TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"], IntegerValue 1)
+  , testCase "parse bag item (general value)" $ parseOnly parseBagItem "  <<\"id1\", \"id2\">> :> <<\"message\">>  " @?= Right (TupleValue [StringValue "id1", StringValue "id2"], TupleValue [StringValue "message"])
   , testCase "parse assignment" $ parseOnly parseAssignment "/\\ a=1" @?= Right ("a", IntegerValue 1)
   , testCase "parse assignment" $ parseOnly parseAssignment "  /\\  a  =  <<123,\"foo\",bar>>  " @?= Right ("a", TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"])
   , testCase "parse map (empty)" $ parseOnly parseMap "[]" @?= Right []
@@ -104,14 +105,15 @@ uLog = testGroup
   , testCase "parse map (non empty)" $ parseOnly parseMap "  [  foo  |->  123  ,  bar  |->  456  ]  " @?= Right [("foo", IntegerValue 123), ("bar", IntegerValue 456)]
   , testCase "parse bag (empty)" $ parseOnly parseBag "()" @?= Right []
   , testCase "parse bag (empty)" $ parseOnly parseBag "  (  )  " @?= Right []
-  , testCase "parse bag (non empty)" $ parseOnly parseBag "(foo:>123,bar:>456)" @?= Right [(VariableValue "foo", 123), (VariableValue "bar", 456)]
-  , testCase "parse bag (non empty)" $ parseOnly parseBag "  (  foo  :>  123  ,  bar  :>  456  )  " @?= Right [(VariableValue "foo", 123), (VariableValue "bar", 456)]
+  , testCase "parse bag (non empty)" $ parseOnly parseBag "(foo:>123@@bar:>456)" @?= Right [(VariableValue "foo", IntegerValue 123), (VariableValue "bar", IntegerValue 456)]
+  , testCase "parse bag (non empty)" $ parseOnly parseBag "  (  foo  :>  123  @@  bar  :>  456  )  " @?= Right [(VariableValue "foo", IntegerValue 123), (VariableValue "bar", IntegerValue 456)]
+  , testCase "parse bag (general)" $ parseOnly parseBag "  ( <<\"id1\", \"id2\">> :> <<\"message1\">> @@\n<<\"id2\", \"id1\">> :> <<>> )  " @?= Right [(TupleValue [StringValue "id1", StringValue "id2"], TupleValue [StringValue "message1"]), (TupleValue [StringValue "id2", StringValue "id1"], TupleValue [])]
   , testCase "parse value (string)" $ parseOnly parseValue "  \" 1 2 3 \"  " @?= Right (StringValue " 1 2 3 ")
   , testCase "parse value (integer)" $ parseOnly parseValue " 123 " @?= Right (IntegerValue 123)
   , testCase "parse value (variable)" $ parseOnly parseValue " foo " @?= Right (VariableValue "foo")
   , testCase "parse value (tuple)" $ parseOnly parseValue "  <<  123  ,  \"foo\"  ,  bar  >>  " @?= Right (TupleValue [IntegerValue 123, StringValue "foo", VariableValue "bar"])
   , testCase "parse value (map)" $ parseOnly parseValue "  [  foo  |->  123  ,  bar  |->  456  ]  " @?= Right (MapValue . fromList $ [("foo", IntegerValue 123), ("bar", IntegerValue 456)])
-  , testCase "parse value (bag)" $ parseOnly parseValue "  (  foo  :>  123  ,  bar  :>  456  )  " @?= Right (BagValue . fromList $ [(VariableValue "foo", 123), (VariableValue "bar", 456)])
+  , testCase "parse value (bag)" $ parseOnly parseValue "  (  foo  :>  123  @@  bar  :>  456  )  " @?= Right (BagValue . fromList $ [(VariableValue "foo", IntegerValue 123), (VariableValue "bar", IntegerValue 456)])
   , testCase "parse state (regular)" $ parseOnly parseState state1 @?= Right (CounterExampleState 12 "<Action line 177, col 1 to line 177, col 21 of module e037Comm>" state1assign)
   , testCase "parse state (stuttering)" $ parseOnly parseState stateN @?= Right (CounterExampleState 29 "Stuttering" (fromList []))
   ]
