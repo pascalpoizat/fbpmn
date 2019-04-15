@@ -74,4 +74,4 @@ valueToDot (BagValue xs) = [text|($sxs)|]
       f (val, n) = [text|$sval:\>$sn|]
         where
           sval = valueToDot val
-          sn = show n
+          sn = valueToDot n
