@@ -133,8 +133,8 @@ readLOG p = (Just <$> readFile p) `catchIOError` handler
       putTextLn "unknown error"
       pure Nothing
 
-readFromLOG :: FilePath -> IO (Maybe Log)
-readFromLOG p = do
+readFromLOG :: FilePath -> Maybe String -> IO (Maybe Log)
+readFromLOG p _ = do
   contents <- readLOG p
   case contents of
     Nothing -> pure Nothing

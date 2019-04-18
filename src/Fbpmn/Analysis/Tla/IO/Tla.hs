@@ -11,8 +11,8 @@ import           Data.Map.Strict   ((!?))
 {-|
 Write a BPMN Graph to a TLA+ file.
 -}
-writeToTLA :: FilePath -> BpmnGraph -> IO ()
-writeToTLA p = writeFile p . encodeBpmnGraphToTla
+writeToTLA :: FilePath -> Maybe a -> BpmnGraph -> IO ()
+writeToTLA p _ = writeFile p . encodeBpmnGraphToTla
 
 {-|
 Transform a BPMN Graph to a TLA specification.

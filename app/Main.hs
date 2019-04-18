@@ -195,47 +195,48 @@ run (Options (CBpmn2Tla  pin pout)) = bpmn2tla False pin pout
 run (Options (CLog2Json  pin pout)) = log2json False pin pout
 run (Options (CLog2Dot   pin pout)) = log2dot False pin pout
 
-transform2 :: Text                      -- input file suffix
-           -> Text                      -- output file suffix
-           -> (String -> IO (Maybe a))  -- reader (from input file from model)
-           -> (String -> a -> IO ())    -- writer (from model to output file)
-           -> (a -> Bool)               -- model validator
-           -> (a -> a)                  -- model filtering
-           -> Bool                      -- should validation be done?
-           -> Text                      -- input file (without suffix)
-           -> Text                      -- output file (without suffix)
+transform2 :: Text                                       -- input file suffix
+           -> Text                                       -- output file suffix
+           -> (FilePath -> Maybe String -> IO (Maybe a)) -- reader (from input file to model)
+           -> (FilePath -> Maybe String -> a -> IO ())   -- writer (from model to output file)
+           -> (a -> Bool)                                -- model validator
+           -> (a -> a)                                   -- model filtering
+           -> Bool                                       -- should validation be done?
+           -> Text                                       -- input file (without suffix)
+           -> Text                                       -- output file (without suffix)
+           -> Maybe String                               -- additional information (can be used to related to a source model)
            -> IO ()
-transform2 sourceSuffix targetSuffix mreader mwriter modelValidator modelFilter withValidation inputPath outputPath
+transform2 sourceSuffix targetSuffix mreader mwriter modelValidator modelFilter withValidation inputPath outputPath minfo
   = do
-    loadres <- mreader (toString $ inputPath <> sourceSuffix)
+    loadres <- mreader (toString $ inputPath <> sourceSuffix) minfo
     case loadres of
       Nothing    -> putLTextLn "wrong file"
       Just model -> if not withValidation || modelValidator model
         then do
-          mwriter (toString $ outputPath <> targetSuffix) (modelFilter model)
+          mwriter (toString $ outputPath <> targetSuffix) minfo (modelFilter model)
           putTextLn "transformation done"
         else putTextLn "model is incorrect"
 
-json2dot :: Bool -> Text -> Text -> IO ()
+json2dot :: Bool -> Text -> Text -> Maybe String -> IO ()
 json2dot =
   transform2 jsonSuffix dotSuffix BG.readFromJSON BGD.writeToDOT isValidGraph id
 
-json2tla :: Bool -> Text -> Text -> IO ()
+json2tla :: Bool -> Text -> Text -> Maybe String -> IO ()
 json2tla =
   transform2 jsonSuffix tlaSuffix BG.readFromJSON writeToTLA isValidGraph id
 
-bpmn2json :: Bool -> Text -> Text -> IO ()
+bpmn2json :: Bool -> Text -> Text -> Maybe String -> IO ()
 bpmn2json =
   transform2 bpmnSuffix jsonSuffix readFromBPMN BG.writeToJSON isValidGraph id
 
-bpmn2tla :: Bool -> Text -> Text -> IO ()
+bpmn2tla :: Bool -> Text -> Text -> Maybe String -> IO ()
 bpmn2tla = transform2 bpmnSuffix tlaSuffix readFromBPMN writeToTLA isValidGraph id
 
-log2json :: Bool -> Text -> Text -> IO ()
+log2json :: Bool -> Text -> Text -> Maybe String -> IO ()
 log2json =
   transform2 logSuffix jsonSuffix readFromLOG TL.writeToJSON isValidLog filterLog
 
-log2dot :: Bool -> Text -> Text -> IO ()
+log2dot :: Bool -> Text -> Text -> Maybe String -> IO ()
 log2dot =
   transform2 logSuffix dotSuffix readFromLOG TLD.writeToDOT isValidLog filterLog
 
@@ -299,17 +300,17 @@ repl (p, g) = do
         putTextLn "no graph loaded"
         repl (p, g)
       Just g' -> do
-        BGD.writeToDOT (toString path) g'
+        BGD.writeToDOT (toString path) Nothing g'
         repl (p, g)
     Just (RJson path) -> case g of
       Nothing -> do
         putTextLn "no graph loaded"
         repl (p, g)
       Just g' -> do
-        BG.writeToJSON (toString path) g'
+        BG.writeToJSON (toString path) Nothing g'
         repl (p, g)
     Just (RBpmn path) -> do
-      loadres <- readFromBPMN (toString path)
+      loadres <- readFromBPMN (toString path) Nothing
       case loadres of
         Nothing -> do
           putTextLn "wrong file"
@@ -333,10 +334,10 @@ repl (p, g) = do
         putTextLn "no graph loaded"
         repl (p, g)
       Just g' -> do
-        writeToTLA (toString path) g'
+        writeToTLA (toString path) Nothing g'
         repl (p, g)
     Just (RLoad path) -> do
-      loadres <- BG.readFromJSON (toString path)
+      loadres <- BG.readFromJSON (toString path) Nothing
       case loadres of
         Nothing -> do
           putTextLn "wrong file"

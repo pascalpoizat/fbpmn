@@ -376,8 +376,8 @@ bcatE xs e = f e preds
 {-|
 Read a BPMN Graph from a BPMN file.
 -}
-readFromBPMN :: FilePath -> IO (Maybe BpmnGraph)
-readFromBPMN p = (decode . parseXML <$> BS.readFile p) `catchIOError` handler
+readFromBPMN :: FilePath -> Maybe a -> IO (Maybe BpmnGraph)
+readFromBPMN p _ = (decode . parseXML <$> BS.readFile p) `catchIOError` handler
  where
   handler :: IOError -> IO (Maybe BpmnGraph)
   handler e

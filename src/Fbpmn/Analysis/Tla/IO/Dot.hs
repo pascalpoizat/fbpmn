@@ -2,13 +2,14 @@
 module Fbpmn.Analysis.Tla.IO.Dot where
 
 import           Fbpmn.Analysis.Tla.Model
-import           NeatInterpolation (text)
-import Data.Map.Strict   ((!?))
-import qualified Data.Map.Strict   as M (toList)
-import qualified Data.Text         as T
+import           NeatInterpolation              ( text )
+import           Data.Map.Strict                ( (!?) )
+import qualified Data.Map.Strict               as M
+                                                ( toList )
+import qualified Data.Text                     as T
 
-writeToDOT :: FilePath -> Log -> IO ()
-writeToDOT p = writeFile p . encodeLogToDot
+writeToDOT :: FilePath -> Maybe String -> Log -> IO ()
+writeToDOT p _ = writeFile p . encodeLogToDot
 
 encodeLogToDot :: Log -> Text
 encodeLogToDot l =
