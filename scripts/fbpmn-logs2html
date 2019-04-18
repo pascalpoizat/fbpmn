@@ -1,0 +1,5 @@
+for f in `ls *.log`
+do
+  ff=${f%.log}
+  fbpmn log2html $ff $ff
+done
