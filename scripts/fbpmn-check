@@ -91,7 +91,7 @@ for network in Configs/Network*.tla; do
     echo "---------- $networkname ----------"
     for cfg in Configs/Prop*.cfg; do
         cfgname=`basename $cfg .cfg`
-        log=$networkname.$cfgname.log
+        log=$model.$networkname.$cfgname.log
         cp $cfg $dir/$model.cfg
         if [ -f $fullpath.constraint ]; then cat $fullpath.constraint >> $dir/$model.cfg; fi
         if [ $# -eq 1 ]; then
