@@ -48,9 +48,10 @@ instance FromJSON CounterExampleState
 type CounterExample = [CounterExampleState]
 
 data Log = Log
-  { lname :: String
-  , lstatus :: Status
-  , lcex :: Maybe CounterExample
+  { lname :: String               -- name of the log
+  , lmodel :: Maybe String        -- path of the model
+  , lstatus :: Status             -- status (success/failure)
+  , lcex :: Maybe CounterExample  -- counter example (if failure)
   } deriving (Eq, Show, Generic)
 
 instance ToJSON Log
@@ -58,13 +59,13 @@ instance ToJSON Log
 instance FromJSON Log
 
 isValidLog :: Log -> Bool
-isValidLog (Log _ Success Nothing ) = True
-isValidLog (Log _ Failure (Just _)) = True
+isValidLog (Log _ _ Success Nothing ) = True
+isValidLog (Log _ _ Failure (Just _)) = True
 isValidLog _                        = False
 
 filterLog :: Log -> Log
-filterLog (Log n Failure (Just cx)) =
-  Log n Failure (Just $ filterCounterExample cx)
+filterLog (Log n m Failure (Just cx)) =
+  Log n m Failure (Just $ filterCounterExample cx)
 filterLog m = m
 
 filterCounterExample :: CounterExample

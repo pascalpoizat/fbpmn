@@ -22,13 +22,13 @@ encodeLogToDot l =
     <*> [l]
 
 encodeLogHeaderToDot :: Log -> Text
-encodeLogHeaderToDot l =
+encodeLogHeaderToDot (Log _ m _ _) =
   [text|digraph $n {
     graph [rankdir = "LR"]; 
     node [fontsize = "18";shape = "record"];   
   |]
   where
-    n = show $ lname l
+    n = show m
 
 encodeLogFooterToDot :: Log -> Text
 encodeLogFooterToDot _ =
@@ -36,9 +36,9 @@ encodeLogFooterToDot _ =
   |]
 
 encodeLogNodeDeclToDot :: Log -> Text
-encodeLogNodeDeclToDot (Log _ Success Nothing) =
+encodeLogNodeDeclToDot (Log _ _ Success Nothing) =
   [text|SUCCESS [label="SUCCESS"]|]
-encodeLogNodeDeclToDot (Log _ Failure (Just cex)) =
+encodeLogNodeDeclToDot (Log _ _ Failure (Just cex)) =
   [text|
   $nes
   |]

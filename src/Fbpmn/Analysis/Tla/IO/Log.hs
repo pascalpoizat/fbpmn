@@ -2,7 +2,7 @@
 module Fbpmn.Analysis.Tla.IO.Log where
 
 import           Fbpmn.Analysis.Tla.Model
-import           Data.Attoparsec.Text
+import           Data.Attoparsec.Text           (Parser, anyChar, manyTill, space, sepBy, parse, many1, eitherResult, endOfLine, decimal, char, digit, letter, string)
 import           System.IO.Error                ( IOError
                                                 , catchIOError
                                                 , isDoesNotExistError
@@ -110,15 +110,14 @@ parseState = do
   assignments <- many parseAssignment
   return $ CounterExampleState sid info (fromList assignments) 
 
--- TODO: read states in case of failure
 parseLog :: Parser Log
 parseLog = do
   status <- parseStatus
   case status of
-    Success -> return $ Log "log" Success Nothing
+    Success -> return $ Log "log" Nothing Success Nothing
     Failure -> do
                 states <- many1 parseState
-                return $ Log "log" Failure $ Just states
+                return $ Log "log" Nothing Failure $ Just states
 
 readLOG :: FilePath -> IO (Maybe Text)
 readLOG p = (Just <$> readFile p) `catchIOError` handler
@@ -144,4 +143,7 @@ readFromLOG p _ = do
         Left issue -> do
           putStrLn $ "parsing error: " <> issue
           return Nothing
-        Right log -> pure $ Just log
+        Right (Log lid _ ls lcex) ->
+          pure $ Just (Log lid (Just model) ls lcex)
+          where
+            model = takeWhile (not . (== '.')) p <> ".bpmn"
