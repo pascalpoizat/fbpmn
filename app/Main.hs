@@ -33,9 +33,6 @@ fversion = "0.2.6"
 toolversion :: Text
 toolversion = fversion
 
-data Suffix = JsonSuffix | BpmnSuffix | TlaSuffix
-  deriving (Eq)
-
 dotSuffix :: Text
 dotSuffix = ".dot"
 
