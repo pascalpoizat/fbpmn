@@ -31,6 +31,7 @@ library
                        Fbpmn.Analysis.Tla.IO.Log
                        Fbpmn.Analysis.Tla.IO.Dot
                        Fbpmn.Analysis.Tla.IO.Json
+                       Fbpmn.Analysis.Tla.IO.Html
                        Fbpmn.Analysis.Smt.IO.Smt
                        Fbpmn.Helper
                        Examples

@@ -7,6 +7,7 @@ import           Fbpmn.Analysis.Tla.Model
 import           Fbpmn.Analysis.Tla.IO.Tla
 import qualified Fbpmn.Analysis.Tla.IO.Json    as TL
 import qualified Fbpmn.Analysis.Tla.IO.Dot     as TLD
+import           Fbpmn.Analysis.Tla.IO.Html
 import           Fbpmn.Analysis.Tla.IO.Log
 -- import           Fbpmn.IO.Smt
 -- import           Examples                       ( models )
@@ -48,6 +49,9 @@ tlaSuffix = ".tla"
 logSuffix :: Text
 logSuffix = ".log"
 
+htmlSuffix :: Text
+htmlSuffix = ".html"
+
 newtype Options = Options Command
 
 data Command
@@ -59,6 +63,7 @@ data Command
   | CBpmn2Tla Text Text
   | CLog2Json Text Text
   | CLog2Dot Text Text
+  | CLog2Html Text Text
 
 parserOptions :: Parser Options
 parserOptions = Options <$> subparser
@@ -93,6 +98,11 @@ parserOptions = Options <$> subparser
        "log2dot"
        (info parserLog2Dot
              (progDesc "transforms a TLA+ log from LOG to DOT")
+       )
+  <> command
+      "log2html"
+       (info parserLog2Html
+             (progDesc "transforms a TLA+ log from LOG to HTML")
        )
   )
 
@@ -184,16 +194,33 @@ parserLog2Dot =
                "path to the output file in DOT format (without .dot suffix)"
           )
 
+parserLog2Html :: Parser Command
+parserLog2Html =
+  CLog2Html
+    <$> argument
+          str
+          (  metavar "INPUT-PATH"
+          <> help
+              "path to the input TLA+ log in textual format (without .log suffix)"
+          )
+    <*> argument
+          str
+          (  metavar "OUTPUT-PATH"
+          <> help
+               "path to the output file in HTML format (without .html suffix)"
+          )
+
 -- no validation needed from BPMN since we build the graph ourselves
 run :: Options -> IO ()
-run (Options CVersion             ) = putStrLn toolversion
-run (Options CRepl                ) = repl ("()", Nothing)
-run (Options (CJson2Dot  pin pout)) = json2dot True pin pout
-run (Options (CJson2Tla  pin pout)) = json2tla True pin pout
-run (Options (CBpmn2Json pin pout)) = bpmn2json False pin pout
-run (Options (CBpmn2Tla  pin pout)) = bpmn2tla False pin pout
-run (Options (CLog2Json  pin pout)) = log2json False pin pout
-run (Options (CLog2Dot   pin pout)) = log2dot False pin pout
+run (Options CVersion               ) = putStrLn toolversion
+run (Options CRepl                  ) = repl ("()", Nothing)
+run (Options (CJson2Dot    pin pout)) = json2dot True pin pout Nothing
+run (Options (CJson2Tla    pin pout)) = json2tla True pin pout Nothing
+run (Options (CBpmn2Json   pin pout)) = bpmn2json False pin pout Nothing
+run (Options (CBpmn2Tla    pin pout)) = bpmn2tla False pin pout Nothing
+run (Options (CLog2Json    pin pout)) = log2json False pin pout Nothing
+run (Options (CLog2Dot     pin pout)) = log2dot False pin pout Nothing
+run (Options (CLog2Html    pin pout)) = log2html False pin pout Nothing
 
 transform2 :: Text                                       -- input file suffix
            -> Text                                       -- output file suffix
@@ -239,6 +266,10 @@ log2json =
 log2dot :: Bool -> Text -> Text -> Maybe String -> IO ()
 log2dot =
   transform2 logSuffix dotSuffix readFromLOG TLD.writeToDOT isValidLog filterLog
+
+log2html :: Bool -> Text -> Text -> Maybe String -> IO ()
+log2html =
+  transform2 logSuffix htmlSuffix readFromLOG writeToHTML isValidLog filterLog
 
 main :: IO ()
 main = run =<< execParser opts
