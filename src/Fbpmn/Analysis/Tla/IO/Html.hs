@@ -116,7 +116,8 @@ encodeLogToHtml l =
           height: 10%;
           padding: 4;
           margin: 4;
-          background: rgba(0,0,0,0.8);
+          background: green;
+          opacity: 0.8;
           color: White;
         }
   
@@ -133,20 +134,22 @@ encodeLogToHtml l =
         }
   
         .highlight-node:not(.djs-connection) .djs-visual > :nth-child(1) {
-          fill: rgba(255, 0, 0, 0.8) !important;
+          fill: green !important;
+          opacity: 0.4;
         }
   
         .highlight-edge:not(.djs-connection) .djs-visual > :nth-child(1) {
         }
   
         .highlight-overlay {
-          background-color: rgba(255, 0, 0, 0.8); /* color elements as green */
-          opacity: 0.4;
+          background-color: green !important;
+          opacity: 0.8;
           pointer-events: none; /* no pointer events, allows clicking through onto the element */
         }
   
         .diagram-note {
-          background-color: rgba(255, 0, 0, 0.8);
+          background-color: green !important;
+          opacity: 0.8;
           color: White;
           border-color: Black;
           border-radius: 16px;
@@ -159,7 +162,8 @@ encodeLogToHtml l =
         }
   
         .needs-discussion:not(.djs-connection) .djs-visual > :nth-child(1) {
-          stroke: rgba(255, 0, 0, 0.8) !important; /* color elements as red */
+          stroke: green !important;
+          opacity: 0.8;
         }
       </style>
     </head>
