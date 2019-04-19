@@ -27,12 +27,15 @@ genSetup (Log _ _ Failure mcex) =
 
 genForState :: CounterExampleState -> Text
 genForState s =
-  [text|
-    // step $ssid
-    nodes = $sns;
-    edges = $ses;
-    steps.push([nodes, edges]);
-  |]
+  if (sinfo s /= "Stuttering")
+    then
+      [text|
+        // step $ssid
+        nodes = $sns;
+        edges = $ses;
+        steps.push([nodes, edges]);
+      |]
+    else [text||]      
   where
     ssid = show $ sid s
     sns = maybe "new Map([])" valueToJavascript (svalue s !? "nodemarks")
