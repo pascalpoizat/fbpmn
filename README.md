@@ -79,10 +79,10 @@ for six different communication semantics:
 	```
 	
 4. open one of the generated files with a browser and play with the counter example using &leftarrow;/&rightarrow;/`Shift`&leftarrow;/`Shift`&rightarrow; on your keyboard
-
+	
 	| 01 |...| 12 | 13 | 14 |...| 24 |
-	|:----------:|---|:----------:|:----------:|:----------:|---|:----------:|
-	| ![step 01](animation_01.png) |.  | ![step 12](animation_12.png) | ![step 13](animation_13.png) | ![step 14](animation_14.png) |   | ![step 24](animation_24.png) |
+	|:----------:|:-:|:----------:|:----------:|:----------:|:-:|:----------:|
+	| ![step 01](animation_01.png) | ![](animation_00.png)| ![step 12](animation_12.png) | ![step 13](animation_13.png) | ![step 14](animation_14.png) | ![](animation_00.png) | ![step 24](animation_24.png) |
 
 	**note:** for security issues, and since the interactive counter example exploration pages load local files (your BPMN models), you will have either to:
 	
