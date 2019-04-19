@@ -8,15 +8,19 @@ import           System.IO.Error                ( IOError
                                                 , isDoesNotExistError
                                                 )
 
-errorLine :: Text
-errorLine = "Error: The following behavior constitutes a counter-example:"
+errorLine1 :: Text
+errorLine1 = "Error: The following behavior constitutes a counter-example:"
+
+errorLine2 :: Text
+errorLine2 = "Error: The behavior up to this point is:"
 
 okLine :: Text
 okLine = "Model checking completed. No error has been found."
 
 parseStatus :: Parser Status
 parseStatus =
-  (string errorLine >> return Failure)
+  (string errorLine1 >> return Failure)
+    <|> (string errorLine2 >> return Failure)
     <|> (string okLine >> return Success)
     <|> (manyTill anyChar endOfLine *> parseStatus)
 

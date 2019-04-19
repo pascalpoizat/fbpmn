@@ -72,9 +72,9 @@ uLog :: TestTree
 uLog = testGroup
   "Unit tests for log parsing"
   [ testCase "parse status ok (success)" $ parseOnly parseStatus okLine @?= Right Success
-  , testCase "parse status ok (failure)" $ parseOnly parseStatus errorLine @?= Right Failure
-  , testCase "parse status ko" $ parseOnly parseStatus ("foo" <> errorLine) @?= parseNEI
-  , testCase "parse status ok after skipping lines" $ parseOnly parseStatus ("foo\nbar\n" <> errorLine) @?= Right Failure
+  , testCase "parse status ok (failure)" $ parseOnly parseStatus errorLine1 @?= Right Failure
+  , testCase "parse status ko" $ parseOnly parseStatus ("foo" <> errorLine1) @?= parseNEI
+  , testCase "parse status ok after skipping lines" $ parseOnly parseStatus ("foo\nbar\n" <> errorLine1) @?= Right Failure
   , testCase "parse variable ok (alpha)" $ parseOnly parseVariable "  f  " @?= Right "f"
   , testCase "parse variable ok (alpha)" $ parseOnly parseVariable "  foo  " @?= Right "foo"
   , testCase "parse variable ok (non alpha)" $ parseOnly parseVariable "  _  " @?= Right "_"
