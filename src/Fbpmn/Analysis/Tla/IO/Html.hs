@@ -264,7 +264,7 @@ encodeLogToHtml l =
             markings = animate(canvas,overlays,markings,prestep,step,nbsteps);
   
             document.body.onkeyup = function(e){
-              if(step < nbsteps && e.keyCode == 39 && e.shiftKey == false){
+              if(step < nbsteps-1 && e.keyCode == 39 && e.shiftKey == false){
                 prestep = step;
                 step = step+1;
                 markings = animate(canvas,overlays,markings,prestep,step,nbsteps);
