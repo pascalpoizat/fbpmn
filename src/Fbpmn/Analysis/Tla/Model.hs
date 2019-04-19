@@ -22,6 +22,7 @@ data Value =
     MapValue (Map Variable Value) -- [ k1 |-> v1, k2 |-> v2, ... ]
   | BagValue (Map Value Value)    -- ( v1 :> 1 @@ v2 :> 3 @@ ... )
   | TupleValue [Value]            -- << v1, v2, ... >>
+  | SetValue [Value]              -- { v1, v2, ... }
   | IntegerValue Integer          -- 1
   | StringValue String            -- "foo"
   | VariableValue Variable        -- foo

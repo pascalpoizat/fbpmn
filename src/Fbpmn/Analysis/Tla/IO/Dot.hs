@@ -62,6 +62,9 @@ valueToDot (StringValue s) = toText s
 valueToDot (TupleValue xs) = [text|\<\<$sxs\>\>|]
     where
       sxs = T.intercalate ", " $ valueToDot <$> xs
+valueToDot (SetValue xs) = [text|\{$sxs\}|]
+    where
+      sxs = T.intercalate ", " $ valueToDot <$> xs
 valueToDot (MapValue xs) = [text|\[$sxs\]|]
     where
       sxs = T.intercalate ", " $ f <$> M.toList xs

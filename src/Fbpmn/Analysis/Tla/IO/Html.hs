@@ -45,6 +45,9 @@ valueToJavascript (StringValue s) = [text|"$sv"|] where sv = toText s
 valueToJavascript (TupleValue xs) = [text|[$sxs]|]
     where
       sxs = T.intercalate ", " $ valueToJavascript <$> xs
+valueToJavascript (SetValue xs) = [text|[$sxs]|]
+    where
+      sxs = T.intercalate ", " $ valueToJavascript <$> xs
 valueToJavascript (MapValue xs) = [text|new Map([$sxs])|]
     where
       sxs = T.intercalate ", " $ f <$> M.toList xs

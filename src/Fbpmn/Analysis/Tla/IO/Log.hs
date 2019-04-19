@@ -83,8 +83,19 @@ parseTuple = do
   _ <- ">>"
   return items
 
+parseSet :: Parser [Value]
+parseSet = do
+  _ <- many space
+  _ <- "{"
+  _ <- many space
+  items <- sepBy parseValue (many space *> "," *> many space)
+  _ <- many space
+  _ <- "}"
+  return items
+
 parseValue :: Parser Value
-parseValue = (TupleValue <$> parseTuple)
+parseValue = (SetValue <$> parseSet) 
+  <|> (TupleValue <$> parseTuple)
   <|> (MapValue . fromList <$> parseMap)
   <|> (BagValue . fromList <$> parseBag)
   <|> (StringValue <$> parseString)
