@@ -338,7 +338,7 @@ To generate versions of the counter-examples that are **easier to analyse** you 
 
 	[![Counter example animation (step 24).](animation_24.png)](e033MBE.Network01Bag.Prop03Sound.html)
 
-	*Figure 5: last state of the animation of the counter example for soundness of the model in Fig. 4 with network unordered semantics (click to run it).*
+	*Figure 5: last state of the animation of the counter example for soundness of the model in Fig. 4 with network unordered semantics.*
 	
 The first parameter of the three commands is the source `.log` file and the second one is the target `.json`/`.dot`/`.html` file (no sufixes in both cases, `fbpmn` adds them given the type of the read/generated file).
 
