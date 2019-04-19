@@ -79,6 +79,8 @@ for six different communication semantics:
 	```
 	
 4. open one of the generated files with a browser and play with the counter example using &leftarrow;/&rightarrow;/`Shift`&leftarrow;/`Shift`&rightarrow; on your keyboard
+
+	![step 24](animation_24.png)
 	
 	| 01 |...| 12 | 13 | 14 |...| 24 |
 	|:----------:|:-:|:----------:|:----------:|:----------:|:-:|:----------:|
