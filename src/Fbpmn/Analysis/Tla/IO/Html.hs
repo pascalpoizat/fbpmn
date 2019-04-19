@@ -181,16 +181,28 @@ encodeLogToHtml l =
         });
   
         function markNode(canvas, node) {
-          canvas.addMarker(node, 'highlight-node');
+          try {
+            canvas.addMarker(node, 'highlight-node');
+          }
+          catch {}
         }
         function markEdge(canvas, edge) {
-          canvas.addMarker(edge, 'highlight-edge');
+          try {
+            canvas.addMarker(edge, 'highlight-edge');
+          }
+          catch {}
         }
         function unmarkNode(canvas, node) {
-          canvas.removeMarker(node, 'highlight-node');
+          try {
+            canvas.removeMarker(node, 'highlight-node');
+          }
+          catch {}
         }
         function unmarkEdge(canvas, edge) {
-          canvas.removeMarker(edge, 'highlight-edge');
+          try {
+            canvas.removeMarker(edge, 'highlight-edge');
+          }
+          catch {}
         }
         function showTokensNode(overlays, node, qty) {
           return overlays.add(node, 'note', {
@@ -204,10 +216,13 @@ encodeLogToHtml l =
               html: '<div class="diagram-note">'+qty+'</div>'
             });
         }
-        function animate(canvas,overlays,markings,prestep,step,nbsteps) {
+        // should be called with
+        // 0 <= prestep <= nbstep-1
+        // 0 <= step <= nbstep-1
+        function animate(canvas,overlays,csteps,markings,prestep,step,nbsteps) {
           // reset markings
-          var ns = steps[prestep][0];
-          var es = steps[prestep][1];
+          var ns = csteps[prestep][0];
+          var es = csteps[prestep][1];
           if (prestep != step) {
             for(const k of ns.keys()) unmarkNode(canvas,k);
             for(const k of es.keys()) unmarkEdge(canvas,k);
@@ -215,20 +230,26 @@ encodeLogToHtml l =
           }
           markings = [];
           // do new marking
-          ns = steps[step][0];
-          es = steps[step][1];
+          ns = csteps[step][0];
+          es = csteps[step][1];
           // set
           for(const k of ns.keys()) {
             markNode(canvas,k);
           }
           for(const k of es.keys()) markNode(canvas,k);
           for (const [k,v] of ns) {
-            var id = showTokensNode(overlays,k,v);
-            markings.push(id);
+            try {
+              var id = showTokensNode(overlays,k,v);
+              markings.push(id);
+            }
+            catch {}
           }
           for (const [k,v] of es) {
-            var id = showTokensEdge(overlays,k,v);
-            markings.push(id);
+            try {
+              var id = showTokensEdge(overlays,k,v);
+              markings.push(id);
+            }
+            catch {}
           }
           return markings;
         }
@@ -260,24 +281,30 @@ encodeLogToHtml l =
             var markings = [];
             var prestep = 0;
             var step = 0;
-            var nbsteps = steps.length;
-            markings = animate(canvas,overlays,markings,prestep,step,nbsteps);
+            nbsteps = steps.length;
+            // first drawing
+            markings = animate(canvas,overlays,steps,markings,prestep,step,nbsteps);
   
             document.body.onkeyup = function(e){
               if(step < nbsteps-1 && e.keyCode == 39 && e.shiftKey == false){
                 prestep = step;
                 step = step+1;
-                markings = animate(canvas,overlays,markings,prestep,step,nbsteps);
+                markings = animate(canvas,overlays,steps,markings,prestep,step,nbsteps);
               }
               else if(step > 0 && e.keyCode == 37 && e.shiftKey == false) {
                 prestep = step;
                 step = step-1;
-                markings = animate(canvas,overlays,markings,prestep,step,nbsteps);
+                markings = animate(canvas,overlays,steps,markings,prestep,step,nbsteps);
               }
               else if(e.keyCode == 37 && e.shiftKey == true) {
                 prestep = step;
                 step = 0;
-                markings = animate(canvas,overlays,markings,prestep,step,nbsteps);
+                markings = animate(canvas,overlays,steps,markings,prestep,step,nbsteps);
+              }
+              else if(e.keyCode == 39 && e.shiftKey == true) {
+                prestep = step;
+                step = nbsteps-1;
+                markings = animate(canvas,overlays,steps,markings,prestep,step,nbsteps);
               }
               var title = "&nbsp;step " + (step+1) + "/" + nbsteps;
               $("#step").html(title); 
