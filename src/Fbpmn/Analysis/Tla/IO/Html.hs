@@ -100,7 +100,7 @@ encodeLogToHtml l =
       <!-- <script src="bpmn-viewer.development.js"></script> -->
   
       <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
-      <!-- <script src="jquery-3.4.0.js"></script> -->
+      <!-- <script src="jquery-3.4.0.min.js"></script> -->
   
       <!-- example styles -->
       <style>

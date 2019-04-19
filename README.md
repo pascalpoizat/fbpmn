@@ -38,11 +38,68 @@ for six different communication semantics:
 - global fifo (unique shared queue)
 - RSC (realizable with synchronous communication)
 
-**New properties and communication semantics can be easily taken into account** (see Sect. 5).
+**New properties and communication semantics can be easily taken into account** (see Sect. 5, *Extending the verification*).
 
 ![Variations.](MBE.png)
 *Figure 1: variations and properties (network unordered semantics).*
 
+### TL;DR for the impatient
+
+1. use the modeler of your choice to model a process or a collaboration
+	![BPMN example.](e033MBE.png)
+	
+2. verify your model for all combinations of property and communication semantics
+
+	```sh
+	❯ fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+	Working in /tmp/e033MBE.T07y4 with 2 worker(s)
+	transformation done
+	<<"Processes=", 2, "Nodes=", 22, "Gateway=", 4, "SF=", 20, "MF=", 6>>
+	---------- Network01Bag ----------
+	[X] Prop01Type
+	     states=102 trans=170 depth=24
+	[X] Prop02Safe
+	     states=102 trans=170 depth=24
+	[ ] Prop03Sound
+	     states=102 trans=170 depth=
+	[X] Prop04MsgSound
+	     states=102 trans=170 depth=24
+	[... other communication semantics ...]
+	done.
+	```
+
+3. generate interactive counter example exploration pages for all `fbpmn-check` analysis log files
+
+	```sh
+	❯ (cd /tmp/e033MBE.T07y4; fbpmn-logs2html)
+	transformation done
+	transformation done
+	transformation done
+	[...]
+	```
+	
+4. open one of the generated files with a browser and play with the counter example using &leftarrow;/&rightarrow;/`Shift`&leftarrow;/`Shift`&rightarrow; on your keyboard
+
+	| 01 |...| 12 | 13 | 14 |...| 24 |
+	|:----------:|---|:----------:|:----------:|:----------:|---|:----------:|
+	| ![step 01](animation_01.png) |.  | ![step 12](animation_12.png) | ![step 13](animation_13.png) | ![step 14](animation_14.png) |   | ![step 24](animation_24.png) |
+
+	**note:** for security issues, and since the interactive counter example exploration pages load local files (your BPMN models), you will have either to:
+	
+	- (preferred) serve the pages using a server such as [http-server](https://www.npmjs.com/package/http-server) or [SimpleHTTPServer](https://docs.python.org/2/library/simplehttpserver.html).
+
+		```sh
+		❯ npm install -g http-server # run only once to install http-server
+		❯ (cd /tmp/e033MBE.T07y4; http-server .) 
+		```
+		
+		```sh
+		❯ (cd /tmp/e033MBE.T07y4; python2 -m SimpleHTTPServer 8080) # for Python 2
+		❯ (cd /tmp/e033MBE.T07y4; python3 -m http.server 8080) # for Python 3
+		```
+				
+	- (not recommended) de-activate local file restrictions, see [here](https://github.com/mrdoob/three.js/wiki/How-to-run-things-locally).
+		
 ## 1. Requisites
 
 To verify your BPMN models, you will need:
@@ -147,136 +204,161 @@ Verification is achieved in two steps (see Fig. 3):
 
 In the sequel, we will use the model in Fig. 4.
 
-![BPMN example.](models/bpmn-origin/png/e037Comm.png)
-*Figure 4: example collaboration model (from [https://doi.org/10.1016/j.scico.2018.05.008](https://doi.org/10.1016/j.scico.2018.05.008)).*
+![BPMN example.](e033MBE.png)
+*Figure 4: example collaboration model (`e033MBE.bpmn`).*
 
 **For Linux and OSX users**, we provide you with a `fbpmn-check` script (in the `scripts` directory of the source distribution) that does the two steps described in Fig. 3 for you and performs verification for each possible communication model.
 
 ```sh
-❯ fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e037Comm.bpmn
-Working in /tmp/e037Comm.PLrCh with 1 worker(s)
+❯ fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+Working in /tmp/e033MBE.T07y4 with 2 worker(s)
 transformation done
-<<"Processes=", 3, "Nodes=", 29, "Gateway=", 3, "SF=", 23, "MF=", 7>>
+<<"Processes=", 2, "Nodes=", 22, "Gateway=", 4, "SF=", 20, "MF=", 6>>
 ---------- Network01Bag ----------
 [X] Prop01Type
-     states=60 trans=81 depth=32
+     states=102 trans=170 depth=24
 [X] Prop02Safe
-     states=60 trans=81 depth=32
+     states=102 trans=170 depth=24
 [ ] Prop03Sound
-     states=60 trans=81 depth=
-[ ] Prop04MsgSound
-     states=60 trans=81 depth=
+     states=102 trans=170 depth=
+[X] Prop04MsgSound
+     states=102 trans=170 depth=24
 ---------- Network02FifoPair ----------
 [X] Prop01Type
-     states=60 trans=81 depth=32
+     states=102 trans=170 depth=24
 [X] Prop02Safe
-     states=60 trans=81 depth=32
+     states=102 trans=170 depth=24
 [ ] Prop03Sound
-     states=60 trans=81 depth=
-[ ] Prop04MsgSound
-     states=60 trans=81 depth=
+     states=102 trans=170 depth=
+[X] Prop04MsgSound
+     states=102 trans=170 depth=24
 ---------- Network04Inbox ----------
 [X] Prop01Type
-     states=60 trans=81 depth=32
+     states=102 trans=170 depth=24
 [X] Prop02Safe
-     states=60 trans=81 depth=32
+     states=102 trans=170 depth=24
 [ ] Prop03Sound
-     states=60 trans=81 depth=
-[ ] Prop04MsgSound
-     states=60 trans=81 depth=
+     states=102 trans=170 depth=
+[X] Prop04MsgSound
+     states=102 trans=170 depth=24
 ---------- Network05Outbox ----------
 [X] Prop01Type
-     states=60 trans=81 depth=32
+     states=102 trans=170 depth=24
 [X] Prop02Safe
-     states=60 trans=81 depth=32
+     states=102 trans=170 depth=24
 [ ] Prop03Sound
-     states=60 trans=81 depth=
-[ ] Prop04MsgSound
-     states=60 trans=81 depth=
+     states=102 trans=170 depth=
+[X] Prop04MsgSound
+     states=102 trans=170 depth=24
 ---------- Network06Fifo ----------
 [X] Prop01Type
-     states=60 trans=81 depth=32
+     states=121 trans=195 depth=24
 [X] Prop02Safe
-     states=60 trans=81 depth=32
+     states=121 trans=195 depth=24
 [ ] Prop03Sound
-     states=60 trans=81 depth=
+     states=121 trans=195 depth=
 [ ] Prop04MsgSound
-     states=60 trans=81 depth=
+     states=121 trans=195 depth=
 ---------- Network07RSC ----------
 [X] Prop01Type
-     states=60 trans=81 depth=32
+     states=61 trans=93 depth=21
 [X] Prop02Safe
-     states=60 trans=81 depth=32
+     states=61 trans=93 depth=21
 [ ] Prop03Sound
-     states=60 trans=81 depth=
+     states=61 trans=93 depth=
 [ ] Prop04MsgSound
-     states=60 trans=81 depth=
+     states=61 trans=93 depth=
 done.
 ```
 
 **For Windows users**
 
-*We are working on providing a script for Windows users too.*
-
-Meanwhile, you will have to perform the tasks that are done in `fbpmn-check` by hand.
+*We are working on providing support for Windows users too.*
 
 ### Analysing counter-examples
 
 When a model is analysed, counter-examples are generated for each property that does not yield.
 
-**For Linux and OSX users**, using `fbpmn-check`, the counter examples are in `.log` files that are generated in the directory of analysis, e.g., in `/tmp/e037Comm.PLrCh` in the example above.
+**For Linux and OSX users**, using `fbpmn-check`, the counter examples are in `.log` files that are generated in the directory of analysis, e.g., in `/tmp/e033MBE.T07y4` in the example above.
 
 ```sh
-❯ ls /tmp/e037Comm.PLrCh/*.log
-Network01Bag.Prop01Type.log          Network02FifoPair.Prop01Type.log     Network04Inbox.Prop01Type.log        Network05Outbox.Prop01Type.log       Network06Fifo.Prop01Type.log         Network07RSC.Prop01Type.log
-Network01Bag.Prop02Safe.log          Network02FifoPair.Prop02Safe.log     Network04Inbox.Prop02Safe.log        Network05Outbox.Prop02Safe.log       Network06Fifo.Prop02Safe.log         Network07RSC.Prop02Safe.log
-Network01Bag.Prop03Sound.log         Network02FifoPair.Prop03Sound.log    Network04Inbox.Prop03Sound.log       Network05Outbox.Prop03Sound.log      Network06Fifo.Prop03Sound.log        Network07RSC.Prop03Sound.log
-Network01Bag.Prop04MsgSound.log      Network02FifoPair.Prop04MsgSound.log Network04Inbox.Prop04MsgSound.log    Network05Outbox.Prop04MsgSound.log   Network06Fifo.Prop04MsgSound.log     Network07RSC.Prop04MsgSound.log
+❯ (cd /tmp/e033MBE.T07y4; ls *.log)
+e033MBE.Network01Bag.Prop01Type.log          e033MBE.Network05Outbox.Prop01Type.log
+e033MBE.Network01Bag.Prop02Safe.log          e033MBE.Network05Outbox.Prop02Safe.log
+e033MBE.Network01Bag.Prop03Sound.log         e033MBE.Network05Outbox.Prop03Sound.log
+e033MBE.Network01Bag.Prop04MsgSound.log      e033MBE.Network05Outbox.Prop04MsgSound.log
+e033MBE.Network02FifoPair.Prop01Type.log     e033MBE.Network06Fifo.Prop01Type.log
+e033MBE.Network02FifoPair.Prop02Safe.log     e033MBE.Network06Fifo.Prop02Safe.log
+e033MBE.Network02FifoPair.Prop03Sound.log    e033MBE.Network06Fifo.Prop03Sound.log
+e033MBE.Network02FifoPair.Prop04MsgSound.log e033MBE.Network06Fifo.Prop04MsgSound.log
+e033MBE.Network04Inbox.Prop01Type.log        e033MBE.Network07RSC.Prop01Type.log
+e033MBE.Network04Inbox.Prop02Safe.log        e033MBE.Network07RSC.Prop02Safe.log
+e033MBE.Network04Inbox.Prop03Sound.log       e033MBE.Network07RSC.Prop03Sound.log
+e033MBE.Network04Inbox.Prop04MsgSound.log    e033MBE.Network07RSC.Prop04MsgSound.log
 ``` 
 
-These files include information about the computation time and the counter-examples themselves in a verbose mode, e.g., with all markings given (even if null).
+These files include information about the computation time and the counter-examples themselves in a verbose mode.
 
 ```sh
 [...]
-State 11: <Action line 177, col 1 to line 177, col 21 of module e037Comm>
-/\ edgemarks = [MessageFlow_1j3ru8z |-> 0, MessageFlow_01l3u25 |-> 0, MessageFlow_0jtu5yc |-> 1, MessageFlow_1p97q31 |-> 0, MessageFlow_0y2wjrm |-> 0, MessageFlow_08bo5ej |-> 0, MessageFlow_15n7wk4 |-> 0, SequenceFlow_037u61c |-> 0, SequenceFlow_0dfevt9 |-> 0, Offer_is_not_Interesting |-> 0, Offer_is_Interesting |-> 0, SequenceFlow_1qo309k |-> 0, SequenceFlow_1y19v10 |-> 1, SequenceFlow_1p9f9nn |-> 0, SequenceFlow_0rbkpuc |-> 0, SequenceFlow_1fm8n43 |-> 0, SequenceFlow_1b9yiqz |-> 0, SequenceFlow_10id4f8 |-> 0, SequenceFlow_1wbphor |-> 0, SequenceFlow_1l28um0 |-> 0, SequenceFlow_02xdetn |-> 0, SequenceFlow_06mgtsm |-> 0, SequenceFlow_0wyug2s |-> 0, SequenceFlow_1bhdal8 |-> 1, SequenceFlow_1bxiri7 |-> 0, SequenceFlow_09iuwhk |-> 0, SequenceFlow_1ybfy8r |-> 0, Payment_Was_Made |-> 0, Payment_Was_Not_Made |-> 0, SequenceFlow_1di11xa |-> 0]
-/\ net = (<<"Customer_Id", "TravelAgency_Id", "travel">> :> 1)
-/\ nodemarks = [Airline_id |-> 0, Ticket_Order_Received |-> 0, Handle_Payment |-> 0, Was_Payment_Made |-> 0, Payment_Confirmed |-> 0, Payment_Refused |-> 0, Confirm_Payment |-> 0, Customer_Id |-> 1, StartEvent_1 |-> 0, Check_Offer |-> 0, Is_the_Offer_Interesting |-> 0, Reject_Offer |-> 0, Book_Travel |-> 0, Offer_Rejected |-> 0, Pay_Travel |-> 0, Booking_Confirmed |-> 0, Payment_Confirmation_Received |-> 0, Travel_Paid |-> 0, TravelAgency_Id |-> 1, Offer_Cancelled |-> 0, Offer_Rejection_Received |-> 0, Status_Waiting |-> 0, Make_Travel_Offer |-> 0, Offer_Needed |-> 0, Ticket_Ordered |-> 0, Order_Ticket |-> 0, IntermediateThrowEvent_0kagqq2 |-> 0, Confirm_Booking |-> 0, Booking_Received |-> 0]
+State 13: <Action line 156, col 1 to line 156, col 21 of module e033MBE>
+/\ edgemarks = [MessageFlow_0qo10kt |-> 0, MessageFlow_1a8bsa8 |-> 0, MessageFlow_1r7fyxg |-> 0, MessageFlow_091cszi |-> 0, MessageFlow_1tq79cn |-> 1, MessageFlow_1okf1vd |-> 0, SequenceFlow_0nps006 |-> 0, SequenceFlow_1wtnl4z |-> 0, SequenceFlow_0o5vg8x |-> 0, SequenceFlow_0fplzau |-> 1, SequenceFlow_1dte0vc |-> 0, SequenceFlow_0k086s0 |-> 0, SequenceFlow_0698suh |-> 0, SequenceFlow_1wgoun9 |-> 0, SequenceFlow_16ovyt7 |-> 0, SequenceFlow_0mgjt9y |-> 0, SequenceFlow_1xvdo11 |-> 1, SequenceFlow_1y1oo45 |-> 0, SequenceFlow_0rjtib7 |-> 0, SequenceFlow_0k02j79 |-> 0, SequenceFlow_0f0ojke |-> 0, SequenceFlow_1oxapbj |-> 0, SequenceFlow_096ubuj |-> 0, SequenceFlow_0eej3d6 |-> 0, SequenceFlow_0jq12xx |-> 0, SequenceFlow_0v4m6o8 |-> 0]
+/\ net = (<<"P_id", "Q_id", "results">> :> 1)
+/\ nodemarks = [P_id |-> 1, StartEvent_1 |-> 0, Task_05seu1l |-> 0, Task_0yk02ke |-> 0, BoundaryEvent_1fgc3dg |-> 0, EndEvent_1yasgxk |-> 0, ExclusiveGateway_06st2fh |-> 0, IntermediateThrowEvent_16df5b4 |-> 0, Task_1lnz72e |-> 0, Task_1ypg0u2 |-> 0, Q_id |-> 1, StartEvent_1axpofs |-> 0, Task_0k7ip70 |-> 0, IntermediateThrowEvent_0yo36nb |-> 0, ExclusiveGateway_0phbzc0 |-> 0, IntermediateThrowEvent_1ewiw3i |-> 0, ExclusiveGateway_14e5fg8 |-> 0, IntermediateThrowEvent_0nfi6to |-> 0, EndEvent_0l9fmhf |-> 0, ExclusiveGateway_06aycf0 |-> 0, IntermediateThrowEvent_1s2ehzf |-> 0, IntermediateThrowEvent_1q2mw0e |-> 0]
 [...]
 ```
 
-To generate versions of the counter-examples that are **easier to analyse** you can use `fbpmn log2json` (to generate a JSON version of the counter-example) and `fbpmn log2dot` (to generate a graph version of the counter example in the format of the `dot` command). In both cases, the counter-examples are filtered of the markings that are null. You can then use the `dot` command ([see here](https://graphviz.org)) to generate a PNG or a PDF version of the counter example. 
+To generate versions of the counter-examples that are **easier to analyse** you can use:
+
+- `fbpmn log2json` to get a JSON version of the counter-example
+
+	```sh
+	❯ fbpmn log2json /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
+	transformation done
+	```
+
+- `fbpmn log2dot` to get a graph version of the counter example in the format of the `dot` command ([see here](https://graphviz.org)) and then use this command to generate PDF or PNG images.
+
+	```sh
+	❯ fbpmn log2dot /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
+	transformation done
+	❯ dot -Tpdf -o /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound.pdf /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound.dot
+	```
+	
+- `fbpmn log2html` to generate an interactive counter example exploration page (use the &leftarrow;/&rightarrow; keys to navigate between states of the counter example, in combination with the `Shift`key to go the the start/end of the counter example).
+
+	```sh
+	❯ fbpmn log2html /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
+	transformation done
+	```
+
+	An excerpt of a counter example for the model in Fig. 4 is given in Fig. 5.
+
+	[![Counter example animation (step 24).](animation_24.png)](e033MBE.Network01Bag.Prop03Sound.html)
+
+	*Figure 5: last state of the animation of the counter example for soundness of the model in Fig. 4 with network unordered semantics (click to run it).*
+	
+The first parameter of the three commands is the source `.log` file and the second one is the target `.json`/`.dot`/`.html` file (no sufixes in both cases, `fbpmn` adds them given the type of the read/generated file).
+
+In all three cases, the counter-examples are filtered of the markings that are null.
+
+To perform these transformations **for all `.log` files contained in the current directory**,
+we provide you with three scripts (in the `scripts` directory of the source distribution):
+`fbpmn-logs2json`,
+`fbpmn-logs2dot`, and 
+`fbpmn-logs2html`.
 
 ```sh
-❯ fbpmn log2dot /tmp/e037Comm.PLrCh/Network01Bag.Prop03Sound /tmp/e037Comm.PLrCh/Network01Bag.Prop03Sound
-transformation done
-❯ dot -Tpdf -o /tmp/e037Comm.PLrCh/Network01Bag.Prop03Sound.pdf /tmp/e037Comm.PLrCh/Network01Bag.Prop03Sound.dot
-❯
-```
-
-The first parameter of `fbpmn log2dot` is the source `.log` file and the second one is the target `.dot` file (no sufixes in both cases, `fbpmn` adds them given the type of the read/generated file).
-
-We provide you with a `fbpmn-logs2dot` script (in the `scripts` directory of the source distribution) to generate all `.dot` and `.pdf` files for all `.log` files found in the current directory.
-
-```sh
-❯ (cd /tmp/e037Comm.PLrCh; fbpmn-logs2dot)
+❯ (cd /tmp/e033MBE.T07y4; fbpmn-logs2html)
 transformation done
 transformation done
 transformation done
 [...]
 ```
-
-An excerpt of a counter example for the model in Fig. 4 is given in Fig. 5. For each state (box) there is: the state id, the node markings, the edge markings, and the network status.
-
-[![Counter example image.](Network01Bag.Prop03Sound.excerpt.png)](Network01Bag.Prop03Sound.pdf)
-
-*Figure 5: excerpt of the counter example for soundness of the model in Fig. 4 with network unordered semantics (click to see all of it).*
 
 **For Windows users**
 
-When you run TLC to check a model, you can re-direct the output to a `.log` file. Then the `fbpmn log2json` and `fbpmn log2dot` commands presented above can be used.
-
-*We are working on providing a `fbpmn-logs2dot` script for Windows users too.*
+*We are working on providing support for Windows users too.*
 
 ### Verification constraints
 
@@ -336,7 +418,7 @@ To get help with `fbpmn`, run `fbpmn -h`.
 
 ```sh
 ❯ fbpmn -h
-0.2.6
+0.2.7
 
 Usage: fbpmn COMMAND
   formal transformations for BPMN models
@@ -353,25 +435,12 @@ Available commands:
   bpmn2tla                 transforms a collaboration from BPMN to TLA+
   log2json                 transforms a TLA+ log from LOG to JSON
   log2dot                  transforms a TLA+ log from LOG to DOT
+  log2html                 transforms a TLA+ log from LOG to HTML
 ```
 
 But for the `version`and `repl` commands, you must provide two arguments: the source file and the target file for the transformation.
 
 **No suffixes are to be given for source/target files when running `fbpmn`.**
-
-`fbpmn` also has a REPL mode (run it using `fbpmn repl`) including the following commands:
-
-```
-quit (quit REPL)
-help (list commands)
-load (load current graph from JSON and verify file)
-bpmn (load current graph from BPMN)
-json (save current graph to JSON)
-dot  (save current graph to DOT)
-tla  (save current graph to TLA+)
-```
-
-**Suffixes are to be given when using the REPL.**
 
 ## 7. JSON format
 
@@ -380,7 +449,7 @@ In general, there should therefore be no need to write out models in the JSON fo
 
 Examples of models are given [here](models/bpmn-origin/json_from_bpmn) for files generated from BPMN, and [here](models/json-origin) for files created manually.
 
-To help in writing the JSON format, `fbpmn` has a very basic output to the format of the `dot` command ([graphviz format](https://graphviz.org)).
+To help in writing the JSON format, `fbpmn` has a very basic output to the format of the `dot` command ([see here](https://graphviz.org)).
 To transform a JSON file into DOT, run:
 
 ```shell
