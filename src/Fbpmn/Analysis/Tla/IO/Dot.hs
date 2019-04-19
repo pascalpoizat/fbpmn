@@ -28,7 +28,7 @@ encodeLogHeaderToDot (Log _ m _ _) =
     node [fontsize = "18";shape = "record"];   
   |]
   where
-    n = show m
+    n = maybe "noName" show m
 
 encodeLogFooterToDot :: Log -> Text
 encodeLogFooterToDot _ =
