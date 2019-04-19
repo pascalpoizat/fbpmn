@@ -90,9 +90,11 @@ encodeLogToHtml l =
       <script src="https://unpkg.com/bpmn-js@3.3.1/dist/bpmn-viewer.development.js"></script>
       -->
       
-      <!-- viewer distro (with pan and zoom) -->
-      <script src="https://unpkg.com/bpmn-js@3.3.1/dist/bpmn-navigated-viewer.development.js"></script>
-      <!-- <script src="bpmn-navigated-viewer.development.js"></script> -->
+      <!-- <script src="https://unpkg.com/bpmn-js@3.3.1/dist/bpmn-navigated-viewer.development.js"></script> -->
+      <!-- <script src="bpmn-navigated-viewer.development.js"></script>-->
+  
+      <script src="https://unpkg.com/bpmn-js@3.3.1/dist/bpmn-viewer.development.js"></script>
+      <!-- <script src="bpmn-viewer.development.js"></script> -->
   
       <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
       <!-- <script src="jquery-3.4.0.js"></script> -->
