@@ -18,7 +18,7 @@ writeToHTML p _ = writeFile p . encodeLogToHtml
 genSetup :: Log -> Text
 genSetup (Log _ _ Success _) =
   [text|
-    <-! success log, nothing to generate -->
+  <!-- success log, nothing to generate -->
   |]
 genSetup (Log _ _ Failure mcex) =
   case mcex of
@@ -82,7 +82,6 @@ encodeLogToHtml l =
         var steps = [];
         var nodes;
         var edges;
-        //
         $setup
       </script>
   
@@ -219,7 +218,9 @@ encodeLogToHtml l =
           ns = steps[step][0];
           es = steps[step][1];
           // set
-          for(const k of ns.keys()) markNode(canvas,k);
+          for(const k of ns.keys()) {
+            markNode(canvas,k);
+          }
           for(const k of es.keys()) markNode(canvas,k);
           for (const [k,v] of ns) {
             var id = showTokensNode(overlays,k,v);
@@ -249,10 +250,13 @@ encodeLogToHtml l =
             // access viewer components
             var canvas = bpmnViewer.get('canvas');
             var overlays = bpmnViewer.get('overlays');
+            // var moddle = bpmnViewer.get('moddle');
+            // var model = bpmnViewer.getDefinitions();
   
             // zoom to fit full viewport
             canvas.zoom('fit-viewport');
   
+            // animation variables
             var markings = [];
             var prestep = 0;
             var step = 0;
@@ -304,8 +308,8 @@ encodeLogToHtml l =
         * https://raw.githubusercontent.com/bpmn-io/bpmn-js-examples/starter/modeler.html
       -->
     </body>
-  </html>  
-  |]
+  </html>
+    |]
 
 
 
