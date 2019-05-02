@@ -1,6 +1,6 @@
 cabal-version:       1.24
 name:                fbpmn
-version:             0.2.7
+version:             0.2.8
 description:         formal tools for BPMN
 synopsis:            formal tools for BPMN
 homepage:            https://github.com/pascalpoizat/fbpmn
