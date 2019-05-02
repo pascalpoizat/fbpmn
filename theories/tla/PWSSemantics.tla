@@ -1,5 +1,5 @@
 ---------------- MODULE PWSSemantics ----------------
-EXTENDS Naturals, PWSTypes, PWSDefs
+EXTENDS Naturals, PWSTypes, PWSDefs, FiniteSets
 
 CONSTANT Constraint
 
@@ -185,6 +185,7 @@ xor_complete(n) ==
          xor_complete_out(n, eout)
 
 LOCAL xor_fairness(n) ==
+   Cardinality(outtype(SeqFlowType, n)) > 1 =>
    \A eout \in outtype(SeqFlowType, n) : SF_var(xor_complete_out(n,eout))
 
 (* ---- Parallel / AND ---- *)
@@ -223,6 +224,7 @@ or_complete(n) ==
      \/ \E eout \in outtype({ DefaultSeqFlow }, n) : or_complete_outs(n, {eout})
 
 LOCAL or_fairness(n) == \* fairness applied or not on DefaultSeqFlow?
+   Cardinality(outtype({ NormalSeqFlow, ConditionalSeqFlow }, n)) > 1 =>
      \A eout \in  outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, {eout}))
 
 (* ---- Event Based / EXOR ---- *)
@@ -240,6 +242,7 @@ eventbased_complete(n) ==
   /\ \E eout \in outtype(SeqFlowType, n) : eventbased_complete_out(n, eout)
 
 LOCAL eventbased_fairness(n) ==
+   Cardinality(outtype(SeqFlowType, n)) > 1 =>
    \A eout \in outtype(SeqFlowType, n) : SF_var(eventbased_complete_out(n,eout))
 
 ----------------------------------------------------------------
