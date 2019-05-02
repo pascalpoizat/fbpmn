@@ -27,7 +27,7 @@ genSetup (Log _ _ Failure mcex) =
 
 genForState :: CounterExampleState -> Text
 genForState s =
-  if (sinfo s /= "Stuttering")
+  if sinfo s /= "Stuttering"
     then
       [text|
         // step $ssid
@@ -87,22 +87,9 @@ encodeLogToHtml l =
         var edges;
         $setup
       </script>
-  
-      <!-- viewer distro (without pan and zoom) -->
-      <!--
       <script src="https://unpkg.com/bpmn-js@3.3.1/dist/bpmn-viewer.development.js"></script>
-      -->
-      
-      <!-- <script src="https://unpkg.com/bpmn-js@3.3.1/dist/bpmn-navigated-viewer.development.js"></script> -->
-      <!-- <script src="bpmn-navigated-viewer.development.js"></script>-->
-  
-      <script src="https://unpkg.com/bpmn-js@3.3.1/dist/bpmn-viewer.development.js"></script>
-      <!-- <script src="bpmn-viewer.development.js"></script> -->
-  
       <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
-      <!-- <script src="jquery-3.4.0.min.js"></script> -->
   
-      <!-- example styles -->
       <style>
         html, body {
           height: 100%;
@@ -120,8 +107,7 @@ encodeLogToHtml l =
           height: 10%;
           padding: 4;
           margin: 4;
-          background: green;
-          opacity: 0.8;
+          background: rgba(0,128,0,0.8);
           color: White;
         }
   
@@ -138,22 +124,20 @@ encodeLogToHtml l =
         }
   
         .highlight-node:not(.djs-connection) .djs-visual > :nth-child(1) {
-          fill: green !important;
-          opacity: 0.4;
+          fill: rgba(0,128,0,0.4) !important;
         }
   
         .highlight-edge:not(.djs-connection) .djs-visual > :nth-child(1) {
+          stroke: rgba(0,128,0,0.8) !important;
         }
   
         .highlight-overlay {
-          background-color: green !important;
-          opacity: 0.8;
+          background-color: rgba(0,128,0,0.8) !important;
           pointer-events: none; /* no pointer events, allows clicking through onto the element */
         }
   
         .diagram-note {
-          background-color: green !important;
-          opacity: 0.8;
+          background-color:rgba(0,128,0,1) !important;
           color: White;
           border-color: Black;
           border-radius: 16px;
@@ -166,8 +150,7 @@ encodeLogToHtml l =
         }
   
         .needs-discussion:not(.djs-connection) .djs-visual > :nth-child(1) {
-          stroke: green !important;
-          opacity: 0.8;
+          stroke: rgba(0,128,0,0.4) !important;
         }
       </style>
     </head>
@@ -184,6 +167,21 @@ encodeLogToHtml l =
         var bpmnViewer = new BpmnJS({
           container: '#canvas'
         });
+  
+        function edgeBoundingBox(edge) {
+          var minx,miny,maxx,maxy;
+          if(edge.waypoints) {
+            edge.waypoints.forEach(element => {
+              var x = element.x;
+              var y = element.y;
+              if (x<minx || minx == undefined) { minx = x; }
+              if (y<miny || miny == undefined) { miny = y; }
+              if (x>maxx || maxx == undefined) { maxx = x; }
+              if (y>maxy || maxy == undefined) { maxy = y; }
+            });
+          }
+          return {minx: minx, miny: miny, maxx: maxx, maxy: maxy};
+        }
   
         function markNode(canvas, node) {
           try {
@@ -215,16 +213,25 @@ encodeLogToHtml l =
               html: '<div class="diagram-note">'+qty+'</div>'
             });
         }
-        function showTokensEdge(overlays, edge, qty) {
+        function showTokensEdge(registry, overlays, edge, qty) {
+          var ee = registry.get(edge);
+          var bb;
+          var wp0;
+          if (ee != undefined) {
+            bb = edgeBoundingBox(ee);
+            wp0 = ee.waypoints[0];
+            dx = wp0.x - bb.minx;
+            dy = wp0.y - bb.miny;
+          }
           return overlays.add(edge, 'note', {
-              position: {top: -10, left: 0},
+              position: {top: dy-10, left: dx-10},
               html: '<div class="diagram-note">'+qty+'</div>'
             });
         }
         // should be called with
         // 0 <= prestep <= nbstep-1
         // 0 <= step <= nbstep-1
-        function animate(canvas,overlays,csteps,markings,prestep,step,nbsteps) {
+        function animate(registry,canvas,overlays,csteps,markings,prestep,step,nbsteps) {
           // reset markings
           var ns = csteps[prestep][0];
           var es = csteps[prestep][1];
@@ -251,7 +258,7 @@ encodeLogToHtml l =
           }
           for (const [k,v] of es) {
             try {
-              var id = showTokensEdge(overlays,k,v);
+              var id = showTokensEdge(registry,overlays,k,v);
               markings.push(id);
             }
             catch {}
@@ -260,10 +267,10 @@ encodeLogToHtml l =
         }
   
         /**
-         * Open diagram in our viewer instance.
-         *
-         * @param {String} bpmnXML diagram to display
-         */
+          * Open diagram in our viewer instance.
+          *
+          * @param {String} bpmnXML diagram to display
+          */
         function openDiagram(bpmnXML) {
   
           // import diagram
@@ -276,6 +283,7 @@ encodeLogToHtml l =
             // access viewer components
             var canvas = bpmnViewer.get('canvas');
             var overlays = bpmnViewer.get('overlays');
+            var registry = bpmnViewer.get('elementRegistry');
             // var moddle = bpmnViewer.get('moddle');
             // var model = bpmnViewer.getDefinitions();
   
@@ -288,28 +296,28 @@ encodeLogToHtml l =
             var step = 0;
             nbsteps = steps.length;
             // first drawing
-            markings = animate(canvas,overlays,steps,markings,prestep,step,nbsteps);
+            markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps);
   
             document.body.onkeyup = function(e){
               if(step < nbsteps-1 && e.keyCode == 39 && e.shiftKey == false){
                 prestep = step;
                 step = step+1;
-                markings = animate(canvas,overlays,steps,markings,prestep,step,nbsteps);
+                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps);
               }
               else if(step > 0 && e.keyCode == 37 && e.shiftKey == false) {
                 prestep = step;
                 step = step-1;
-                markings = animate(canvas,overlays,steps,markings,prestep,step,nbsteps);
+                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps);
               }
               else if(e.keyCode == 37 && e.shiftKey == true) {
                 prestep = step;
                 step = 0;
-                markings = animate(canvas,overlays,steps,markings,prestep,step,nbsteps);
+                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps);
               }
               else if(e.keyCode == 39 && e.shiftKey == true) {
                 prestep = step;
                 step = nbsteps-1;
-                markings = animate(canvas,overlays,steps,markings,prestep,step,nbsteps);
+                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps);
               }
               var title = "&nbsp;step " + (step+1) + "/" + nbsteps;
               $("#step").html(title); 
