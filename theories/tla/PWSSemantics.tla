@@ -223,9 +223,9 @@ or_complete(n) ==
   /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : or_complete_outs(n, eouts)
      \/ \E eout \in outtype({ DefaultSeqFlow }, n) : or_complete_outs(n, {eout})
 
-LOCAL or_fairness(n) == \* fairness applied or not on DefaultSeqFlow?
-   Cardinality(outtype({ NormalSeqFlow, ConditionalSeqFlow }, n)) > 1 =>
-     \A eout \in  outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : SF_var(or_complete_outs(n, {eout}))
+LOCAL or_fairness(n) == \* fairness is also applied on DefaultSeqFlow
+   Cardinality(outtype(SeqFlowType, n)) > 1 =>
+     \A eout \in  outtype(SeqFlowType, n) : SF_var(or_complete_outs(n, {eout}))
 
 (* ---- Event Based / EXOR ---- *)
 
