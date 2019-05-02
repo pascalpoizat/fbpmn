@@ -420,7 +420,7 @@ To get help with `fbpmn`, run `fbpmn -h`.
 
 ```sh
 ❯ fbpmn -h
-0.2.7
+0.2.8
 
 Usage: fbpmn COMMAND
   formal transformations for BPMN models
@@ -449,7 +449,7 @@ But for the `version`and `repl` commands, you must provide two arguments: the so
 The JSON format for a model can be generated from the BPMN format of it, using `fbpmn bpmn2json`.
 In general, there should therefore be no need to write out models in the JSON format manually.
 
-Examples of models are given [here](models/bpmn-origin/json_from_bpmn) for files generated from BPMN, and [here](models/json-origin) for files created manually.
+Examples of models are given [here](models/bpmn-origin/json_from_bpmn) for files generated from BPMN.
 
 To help in writing the JSON format, `fbpmn` has a very basic output to the format of the `dot` command ([see here](https://graphviz.org)).
 To transform a JSON file into DOT, run:
