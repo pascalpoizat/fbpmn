@@ -167,10 +167,46 @@ encodeLogToHtml l =
       <script>
   
         // viewer instance
-        var bpmnViewer = new BpmnJS({
-          container: '#canvas'
-        });
-  
+        var bpmnViewer = new BpmnJS({container: '#canvas'});
+
+        // possible token positions on edges
+        var token_position = {START: 1, MIDDLE: 2};
+
+        function markNode(canvas, node) {
+          try {
+            canvas.addMarker(node, 'highlight-node');
+          }
+          catch {}
+        }
+
+        function markEdge(canvas, edge) {
+          try {
+            canvas.addMarker(edge, 'highlight-edge');
+          }
+          catch {}
+        }
+
+        function unmarkNode(canvas, node) {
+          try {
+            canvas.removeMarker(node, 'highlight-node');
+          }
+          catch {}
+        }
+
+        function unmarkEdge(canvas, edge) {
+          try {
+            canvas.removeMarker(edge, 'highlight-edge');
+          }
+          catch {}
+        }
+
+        function showTokensNode(overlays, node, qty) {
+          return overlays.add(node, 'note', {
+              position: {top: -8,right: 8},
+              html: '<div class="diagram-note">'+qty+'</div>'
+            });
+        }
+
         function edgeBoundingBox(edge) {
           var minx,miny,maxx,maxy;
           if(edge.waypoints) {
@@ -185,56 +221,65 @@ encodeLogToHtml l =
           }
           return {minx: minx, miny: miny, maxx: maxx, maxy: maxy};
         }
-  
-        function markNode(canvas, node) {
-          try {
-            canvas.addMarker(node, 'highlight-node');
+
+        function positionTokenMiddle(edge) {
+          var x,y;
+          var rank;
+          var bb;
+          if(edge != undefined && edge.waypoints != undefined && edge.waypoints.length>=2) {
+            var wps = edge.waypoints;
+            if((wps.length%2)==0) { // even #wp, take middle of middle segment
+              rank = Math.floor((wps.length-2)/2);
+              var point1 = wps[rank];
+              var point2 = wps[rank+1];
+              x = Math.floor((point1.x + point2.x)/2);
+              y = Math.floor((point1.y + point2.y)/2);
+            } else { // odd #wp, take middle wp
+              rank = Math.floor((wps.length-1)/2);
+              x = wps[rank].x;
+              y = wps[rank].y;
+            }
+            bb = edgeBoundingBox(edge);
+            x -= bb.minx;
+            y -= bb.miny;
           }
-          catch {}
+          return {x: x, y: y};
         }
-        function markEdge(canvas, edge) {
-          try {
-            canvas.addMarker(edge, 'highlight-edge');
-          }
-          catch {}
-        }
-        function unmarkNode(canvas, node) {
-          try {
-            canvas.removeMarker(node, 'highlight-node');
-          }
-          catch {}
-        }
-        function unmarkEdge(canvas, edge) {
-          try {
-            canvas.removeMarker(edge, 'highlight-edge');
-          }
-          catch {}
-        }
-        function showTokensNode(overlays, node, qty) {
-          return overlays.add(node, 'note', {
-              position: {top: -8,right: 8},
-              html: '<div class="diagram-note">'+qty+'</div>'
-            });
-        }
-        function showTokensEdge(registry, overlays, edge, qty) {
-          var ee = registry.get(edge);
+
+        function positionTokenStart(ee) {
+          var x,y;
           var bb;
           var wp0;
           if (ee != undefined) {
             bb = edgeBoundingBox(ee);
             wp0 = ee.waypoints[0];
-            dx = wp0.x - bb.minx;
-            dy = wp0.y - bb.miny;
+            x = wp0.x - bb.minx;
+            y = wp0.y - bb.miny;
+          }
+          return {x: x, y: y};
+        }
+
+        function showTokensEdge(registry, overlays, edge, qty, pos) {
+          var ee = registry.get(edge);
+          var pos;
+          switch(pos) {
+            case token_position.START:
+                pos = positionTokenStart(ee);
+                break;
+            case token_position.MIDDLE:
+            default:
+                pos = positionTokenMiddle(ee);
           }
           return overlays.add(edge, 'note', {
-              position: {top: dy-10, left: dx-10},
+              position: {top: pos.y-10, left: pos.x-10},
               html: '<div class="diagram-note">'+qty+'</div>'
             });
         }
+
         // should be called with
         // 0 <= prestep <= nbstep-1
         // 0 <= step <= nbstep-1
-        function animate(registry,canvas,overlays,csteps,markings,prestep,step,nbsteps) {
+        function animate(registry,canvas,overlays,csteps,markings,prestep,step,nbsteps,pos) {
           // reset markings
           var ns = csteps[prestep][0];
           var es = csteps[prestep][1];
@@ -261,7 +306,7 @@ encodeLogToHtml l =
           }
           for (const [k,v] of es) {
             try {
-              var id = showTokensEdge(registry,overlays,k,v);
+              var id = showTokensEdge(registry,overlays,k,v,pos);
               markings.push(id);
             }
             catch {}
@@ -297,30 +342,31 @@ encodeLogToHtml l =
             var markings = [];
             var prestep = 0;
             var step = 0;
+            var position = token_position.MIDDLE;
             nbsteps = steps.length;
             // first drawing
-            markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps);
+            markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps,position);
   
             document.body.onkeyup = function(e){
               if(step < nbsteps-1 && e.keyCode == 39 && e.shiftKey == false){
                 prestep = step;
                 step = step+1;
-                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps);
+                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps,position);
               }
               else if(step > 0 && e.keyCode == 37 && e.shiftKey == false) {
                 prestep = step;
                 step = step-1;
-                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps);
+                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps,position);
               }
               else if(e.keyCode == 37 && e.shiftKey == true) {
                 prestep = step;
                 step = 0;
-                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps);
+                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps,position);
               }
               else if(e.keyCode == 39 && e.shiftKey == true) {
                 prestep = step;
                 step = nbsteps-1;
-                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps);
+                markings = animate(registry,canvas,overlays,steps,markings,prestep,step,nbsteps,position);
               }
               var title = "&nbsp;step " + (step+1) + "/" + nbsteps;
               $("#step").html(title); 
