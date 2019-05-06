@@ -33,13 +33,15 @@ genForState s =
         // step $ssid
         nodes = $sns;
         edges = $ses;
-        steps.push([nodes, edges]);
+        net = $snet;
+        steps.push([nodes, edges, net]);
       |]
     else [text||]      
   where
     ssid = show $ sid s
     sns = maybe "new Map([])" valueToJavascript (svalue s !? "nodemarks")
     ses = maybe "new Map([])" valueToJavascript (svalue s !? "edgemarks")
+    snet = maybe "undefined" valueToJavascript (svalue s !? "net")
 
 valueToJavascript :: Value -> Text
 valueToJavascript (VariableValue v) = [text|"$sv"|] where sv = show v
@@ -85,6 +87,7 @@ encodeLogToHtml l =
         var steps = [];
         var nodes;
         var edges;
+        var net;
         $setup
       </script>
       <script src="https://unpkg.com/bpmn-js@3.3.1/dist/bpmn-viewer.development.js"></script>
