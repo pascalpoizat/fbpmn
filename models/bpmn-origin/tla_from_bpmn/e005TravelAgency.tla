@@ -5,11 +5,11 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "Process_1" :> { "IntermediateThrowEvent_12d113r", "Task_1q91vog", "EndEvent_0u6deep", "Task_1v9s881", "ExclusiveGateway_192ovii", "ExclusiveGateway_0wgdt1i", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k" }
-  @@ "Process_14x2mcf" :> { "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "ExclusiveGateway_0i09ijx", "IntermediateThrowEvent_0xjpikb", "Task_1ne4gpy", "EndEvent_10gqkzy", "IntermediateThrowEvent_0neineb", "Task_002ndsu" }
+  "Customer_" :> { "IntermediateThrowEvent_12d113r", "Task_1q91vog", "EndEvent_0u6deep", "Task_1v9s881", "ExclusiveGateway_192ovii", "ExclusiveGateway_0wgdt1i", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k" }
+  @@ "TravelAgency_" :> { "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "ExclusiveGateway_0i09ijx", "IntermediateThrowEvent_0xjpikb", "Task_1ne4gpy", "EndEvent_10gqkzy", "IntermediateThrowEvent_0neineb", "Task_002ndsu" }
 
 Node == {
-  "Process_1","Process_14x2mcf","IntermediateThrowEvent_12d113r","Task_1q91vog","EndEvent_0u6deep","Task_1v9s881","ExclusiveGateway_192ovii","ExclusiveGateway_0wgdt1i","StartEvent_1","Task_07u875a","EndEvent_055yt9k","StartEvent_1f3jj6d","ExclusiveGateway_1dc5v3z","Task_1bn6n5q","ExclusiveGateway_0i09ijx","IntermediateThrowEvent_0xjpikb","Task_1ne4gpy","EndEvent_10gqkzy","IntermediateThrowEvent_0neineb","Task_002ndsu"
+  "Customer_","TravelAgency_","IntermediateThrowEvent_12d113r","Task_1q91vog","EndEvent_0u6deep","Task_1v9s881","ExclusiveGateway_192ovii","ExclusiveGateway_0wgdt1i","StartEvent_1","Task_07u875a","EndEvent_055yt9k","StartEvent_1f3jj6d","ExclusiveGateway_1dc5v3z","Task_1bn6n5q","ExclusiveGateway_0i09ijx","IntermediateThrowEvent_0xjpikb","Task_1ne4gpy","EndEvent_10gqkzy","IntermediateThrowEvent_0neineb","Task_002ndsu"
 }
 
 Edge == {
@@ -76,8 +76,8 @@ target ==
 @@ "SequenceFlow_05p1rba" :> "Task_1ne4gpy"
 
 CatN ==
-   "Process_1" :> Process
-@@ "Process_14x2mcf" :> Process
+   "Customer_" :> Process
+@@ "TravelAgency_" :> Process
 @@ "IntermediateThrowEvent_12d113r" :> CatchMessageIntermediateEvent
 @@ "Task_1q91vog" :> SendTask
 @@ "EndEvent_0u6deep" :> CatchMessageIntermediateEvent

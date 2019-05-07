@@ -5,12 +5,12 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "Airline_id" :> { "Ticket_Order_Received", "Handle_Payment", "Was_Payment_Made", "Payment_Confirmed", "Payment_Refused", "Confirm_Payment" }
-  @@ "Customer_Id" :> { "StartEvent_1", "Check_Offer", "Is_the_Offer_Interesting", "Reject_Offer", "Book_Travel", "Offer_Rejected", "Pay_Travel", "Booking_Confirmed", "Payment_Confirmation_Received", "Travel_Paid" }
-  @@ "TravelAgency_Id" :> { "Offer_Cancelled", "Offer_Rejection_Received", "Status_Waiting", "Make_Travel_Offer", "Offer_Needed", "Ticket_Ordered", "Order_Ticket", "IntermediateThrowEvent_0kagqq2", "Confirm_Booking", "Booking_Received" }
+  "Airline_" :> { "Ticket_Order_Received", "Handle_Payment", "Was_Payment_Made", "Payment_Confirmed", "Payment_Refused", "Confirm_Payment" }
+  @@ "Customer_" :> { "StartEvent_1", "Check_Offer", "Is_the_Offer_Interesting", "Reject_Offer", "Book_Travel", "Offer_Rejected", "Pay_Travel", "Booking_Confirmed", "Payment_Confirmation_Received", "Travel_Paid" }
+  @@ "TravelAgency_" :> { "Offer_Cancelled", "Offer_Rejection_Received", "Status_Waiting", "Make_Travel_Offer", "Offer_Needed", "Ticket_Ordered", "Order_Ticket", "IntermediateThrowEvent_0kagqq2", "Confirm_Booking", "Booking_Received" }
 
 Node == {
-  "Customer_Id","TravelAgency_Id","Airline_id","StartEvent_1","Check_Offer","Is_the_Offer_Interesting","Reject_Offer","Book_Travel","Offer_Rejected","Pay_Travel","Booking_Confirmed","Payment_Confirmation_Received","Travel_Paid","Offer_Cancelled","Offer_Rejection_Received","Status_Waiting","Make_Travel_Offer","Offer_Needed","Ticket_Ordered","Order_Ticket","IntermediateThrowEvent_0kagqq2","Confirm_Booking","Booking_Received","Ticket_Order_Received","Handle_Payment","Was_Payment_Made","Payment_Confirmed","Payment_Refused","Confirm_Payment"
+  "Customer_","TravelAgency_","Airline_","StartEvent_1","Check_Offer","Is_the_Offer_Interesting","Reject_Offer","Book_Travel","Offer_Rejected","Pay_Travel","Booking_Confirmed","Payment_Confirmation_Received","Travel_Paid","Offer_Cancelled","Offer_Rejection_Received","Status_Waiting","Make_Travel_Offer","Offer_Needed","Ticket_Ordered","Order_Ticket","IntermediateThrowEvent_0kagqq2","Confirm_Booking","Booking_Received","Ticket_Order_Received","Handle_Payment","Was_Payment_Made","Payment_Confirmed","Payment_Refused","Confirm_Payment"
 }
 
 Edge == {
@@ -93,9 +93,9 @@ target ==
 @@ "SequenceFlow_1di11xa" :> "Payment_Confirmed"
 
 CatN ==
-   "Customer_Id" :> Process
-@@ "TravelAgency_Id" :> Process
-@@ "Airline_id" :> Process
+   "Customer_" :> Process
+@@ "TravelAgency_" :> Process
+@@ "Airline_" :> Process
 @@ "StartEvent_1" :> MessageStartEvent
 @@ "Check_Offer" :> AbstractTask
 @@ "Is_the_Offer_Interesting" :> ExclusiveOr

@@ -6,17 +6,11 @@
         "Task_0z00tzq": {
             "tag": "SendTask"
         },
-        "Process_0i8jx5m": {
-            "tag": "Process"
-        },
         "Task_05rcgao": {
             "tag": "AbstractTask"
         },
         "EventBasedGateway_1d92ix7": {
             "tag": "EventBasedGateway"
-        },
-        "Process_0xgexxt": {
-            "tag": "Process"
         },
         "ExclusiveGateway_1pvytgl": {
             "tag": "XorGateway"
@@ -30,6 +24,9 @@
         "SendTask_1sfy3aq": {
             "tag": "AbstractTask"
         },
+        "InternshipDelegate_": {
+            "tag": "Process"
+        },
         "IntermediateCatchEvent_0oxyhte": {
             "tag": "CatchMessageIntermediateEvent"
         },
@@ -38,6 +35,9 @@
         },
         "Task_06e9es5": {
             "tag": "AbstractTask"
+        },
+        "Student_": {
+            "tag": "Process"
         },
         "Task_0k3desy": {
             "tag": "SendTask"
@@ -50,6 +50,9 @@
         },
         "Task_1awa0vf": {
             "tag": "AbstractTask"
+        },
+        "InternshipOffice_": {
+            "tag": "Process"
         },
         "EndEvent_131pwct": {
             "tag": "NoneEndEvent"
@@ -66,9 +69,6 @@
         "EndEvent_0g8hfyq": {
             "tag": "NoneEndEvent"
         },
-        "Process_158k3ep": {
-            "tag": "Process"
-        },
         "StartEvent_0sg8ueb": {
             "tag": "MessageStartEvent"
         },
@@ -84,7 +84,7 @@
         "Task_0kueqty": {
             "tag": "SendTask"
         },
-        "Process_0bvuk0f": {
+        "Company_": {
             "tag": "Process"
         },
         "IntermediateCatchEvent_180guhd": {
@@ -163,14 +163,14 @@
         "SequenceFlow_036yd4w": "NormalSequenceFlow"
     },
     "containN": {
-        "Process_0i8jx5m": [
+        "InternshipDelegate_": [
             "StartEvent_0sg8ueb",
             "SendTask_0bu2egl",
             "ReceiveTask_1eiaojy",
             "EndEvent_0r34c4w",
             "SendTask_1sfy3aq"
         ],
-        "Process_0xgexxt": [
+        "Student_": [
             "StartEvent_0efqept",
             "ExclusiveGateway_1pvytgl",
             "ExclusiveGateway_10r796g",
@@ -181,7 +181,16 @@
             "Task_0y40xht",
             "EndEvent_131pwct"
         ],
-        "Process_158k3ep": [
+        "InternshipOffice_": [
+            "IntermediateCatchEvent_180guhd",
+            "IntermediateCatchEvent_0oxyhte",
+            "ExclusiveGateway_025el3u",
+            "ReceiveTask_146lfh4",
+            "EndEvent_0zeqiic",
+            "StartEvent_0y07koo",
+            "EventBasedGateway_1d92ix7"
+        ],
+        "Company_": [
             "Task_1ukgtgd",
             "Task_0k3desy",
             "EndEvent_0g8hfyq",
@@ -196,15 +205,6 @@
             "Task_0ieueaf",
             "StartEvent_1wgj96l",
             "ExclusiveGateway_1wor220"
-        ],
-        "Process_0bvuk0f": [
-            "IntermediateCatchEvent_180guhd",
-            "IntermediateCatchEvent_0oxyhte",
-            "ExclusiveGateway_025el3u",
-            "ReceiveTask_146lfh4",
-            "EndEvent_0zeqiic",
-            "StartEvent_0y07koo",
-            "EventBasedGateway_1d92ix7"
         ]
     },
     "messageE": {
@@ -264,47 +264,47 @@
     "name": "e020InternshipProcedure",
     "attached": {},
     "containE": {
-        "Process_0i8jx5m": [
-            "SequenceFlow_0ol0c8s",
-            "SequenceFlow_1ifwhto",
+        "InternshipDelegate_": [
+            "SequenceFlow_07c1y6g",
             "SequenceFlow_0woxsim",
-            "SequenceFlow_07c1y6g"
+            "SequenceFlow_1ifwhto",
+            "SequenceFlow_0ol0c8s"
         ],
-        "Process_0xgexxt": [
-            "SequenceFlow_1e21rh4",
-            "SequenceFlow_1716tm6",
-            "SequenceFlow_0epxxie",
-            "SequenceFlow_04fa4c4",
-            "SequenceFlow_1hv2qod",
-            "SequenceFlow_1a0w8i4",
-            "SequenceFlow_1nsmz5l",
+        "Student_": [
+            "SequenceFlow_19jde9o",
             "SequenceFlow_07e105b",
-            "SequenceFlow_19jde9o"
+            "SequenceFlow_1nsmz5l",
+            "SequenceFlow_1a0w8i4",
+            "SequenceFlow_1hv2qod",
+            "SequenceFlow_04fa4c4",
+            "SequenceFlow_0epxxie",
+            "SequenceFlow_1716tm6",
+            "SequenceFlow_1e21rh4"
         ],
-        "Process_158k3ep": [
-            "SequenceFlow_12e7qby",
-            "SequenceFlow_1hrqezf",
-            "SequenceFlow_1wxr7td",
-            "SequenceFlow_036yd4w",
-            "SequenceFlow_007i0gb",
-            "SequenceFlow_0ye9pwd",
-            "SequenceFlow_0tbrrh9",
-            "SequenceFlow_0upqxnz",
-            "SequenceFlow_19fg7gc",
-            "SequenceFlow_0rqes4b",
-            "SequenceFlow_0bferc8",
-            "SequenceFlow_1v26cki",
-            "SequenceFlow_0oaajbr",
-            "SequenceFlow_0nlul5d"
-        ],
-        "Process_0bvuk0f": [
-            "SequenceFlow_1ssp09f",
-            "SequenceFlow_0f1t7q4",
-            "SequenceFlow_1nxvmw1",
-            "SequenceFlow_1h50tfu",
-            "SequenceFlow_0lkr4ww",
+        "InternshipOffice_": [
+            "SequenceFlow_09fa10u",
             "SequenceFlow_0cxrm8j",
-            "SequenceFlow_09fa10u"
+            "SequenceFlow_0lkr4ww",
+            "SequenceFlow_1h50tfu",
+            "SequenceFlow_1nxvmw1",
+            "SequenceFlow_0f1t7q4",
+            "SequenceFlow_1ssp09f"
+        ],
+        "Company_": [
+            "SequenceFlow_0nlul5d",
+            "SequenceFlow_0oaajbr",
+            "SequenceFlow_1v26cki",
+            "SequenceFlow_0bferc8",
+            "SequenceFlow_0rqes4b",
+            "SequenceFlow_19fg7gc",
+            "SequenceFlow_0upqxnz",
+            "SequenceFlow_0tbrrh9",
+            "SequenceFlow_0ye9pwd",
+            "SequenceFlow_007i0gb",
+            "SequenceFlow_036yd4w",
+            "SequenceFlow_1wxr7td",
+            "SequenceFlow_1hrqezf",
+            "SequenceFlow_12e7qby"
         ]
     },
     "edges": [
@@ -316,40 +316,40 @@
         "MessageFlow_0qzpag3",
         "MessageFlow_0n79ikw",
         "MessageFlow_0n7crx1",
-        "SequenceFlow_1e21rh4",
-        "SequenceFlow_1716tm6",
-        "SequenceFlow_0epxxie",
-        "SequenceFlow_04fa4c4",
-        "SequenceFlow_1hv2qod",
-        "SequenceFlow_1a0w8i4",
-        "SequenceFlow_1nsmz5l",
-        "SequenceFlow_07e105b",
         "SequenceFlow_19jde9o",
-        "SequenceFlow_12e7qby",
-        "SequenceFlow_1hrqezf",
-        "SequenceFlow_1wxr7td",
-        "SequenceFlow_036yd4w",
-        "SequenceFlow_007i0gb",
-        "SequenceFlow_0ye9pwd",
-        "SequenceFlow_0tbrrh9",
-        "SequenceFlow_0upqxnz",
-        "SequenceFlow_19fg7gc",
-        "SequenceFlow_0rqes4b",
-        "SequenceFlow_0bferc8",
-        "SequenceFlow_1v26cki",
-        "SequenceFlow_0oaajbr",
+        "SequenceFlow_07e105b",
+        "SequenceFlow_1nsmz5l",
+        "SequenceFlow_1a0w8i4",
+        "SequenceFlow_1hv2qod",
+        "SequenceFlow_04fa4c4",
+        "SequenceFlow_0epxxie",
+        "SequenceFlow_1716tm6",
+        "SequenceFlow_1e21rh4",
         "SequenceFlow_0nlul5d",
-        "SequenceFlow_1ssp09f",
-        "SequenceFlow_0f1t7q4",
-        "SequenceFlow_1nxvmw1",
-        "SequenceFlow_1h50tfu",
-        "SequenceFlow_0lkr4ww",
-        "SequenceFlow_0cxrm8j",
+        "SequenceFlow_0oaajbr",
+        "SequenceFlow_1v26cki",
+        "SequenceFlow_0bferc8",
+        "SequenceFlow_0rqes4b",
+        "SequenceFlow_19fg7gc",
+        "SequenceFlow_0upqxnz",
+        "SequenceFlow_0tbrrh9",
+        "SequenceFlow_0ye9pwd",
+        "SequenceFlow_007i0gb",
+        "SequenceFlow_036yd4w",
+        "SequenceFlow_1wxr7td",
+        "SequenceFlow_1hrqezf",
+        "SequenceFlow_12e7qby",
         "SequenceFlow_09fa10u",
-        "SequenceFlow_0ol0c8s",
-        "SequenceFlow_1ifwhto",
+        "SequenceFlow_0cxrm8j",
+        "SequenceFlow_0lkr4ww",
+        "SequenceFlow_1h50tfu",
+        "SequenceFlow_1nxvmw1",
+        "SequenceFlow_0f1t7q4",
+        "SequenceFlow_1ssp09f",
+        "SequenceFlow_07c1y6g",
         "SequenceFlow_0woxsim",
-        "SequenceFlow_07c1y6g"
+        "SequenceFlow_1ifwhto",
+        "SequenceFlow_0ol0c8s"
     ],
     "messages": [
         "agreement",
@@ -406,10 +406,10 @@
         "SequenceFlow_036yd4w": "Task_13r7bmt"
     },
     "nodes": [
-        "Process_0xgexxt",
-        "Process_158k3ep",
-        "Process_0bvuk0f",
-        "Process_0i8jx5m",
+        "Student_",
+        "Company_",
+        "InternshipOffice_",
+        "InternshipDelegate_",
         "StartEvent_0efqept",
         "ExclusiveGateway_1pvytgl",
         "ExclusiveGateway_10r796g",

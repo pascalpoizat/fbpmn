@@ -18,14 +18,14 @@
         "StartEvent_1": {
             "tag": "NoneStartEvent"
         },
-        "Process_1": {
-            "tag": "Process"
-        },
         "StartEvent_1f3jj6d": {
             "tag": "NoneStartEvent"
         },
         "ExclusiveGateway_1dc5v3z": {
             "tag": "XorGateway"
+        },
+        "TravelAgency_": {
+            "tag": "Process"
         },
         "EndEvent_0u6deep": {
             "tag": "CatchMessageIntermediateEvent"
@@ -42,14 +42,14 @@
         "EndEvent_10gqkzy": {
             "tag": "TerminateEndEvent"
         },
+        "Customer_": {
+            "tag": "Process"
+        },
         "Task_002ndsu": {
             "tag": "SendTask"
         },
         "Task_1ne4gpy": {
             "tag": "SendTask"
-        },
-        "Process_14x2mcf": {
-            "tag": "Process"
         },
         "IntermediateThrowEvent_0xjpikb": {
             "tag": "CatchMessageIntermediateEvent"
@@ -87,18 +87,7 @@
         "SequenceFlow_00r0rkx": "NormalSequenceFlow"
     },
     "containN": {
-        "Process_1": [
-            "IntermediateThrowEvent_12d113r",
-            "Task_1q91vog",
-            "EndEvent_0u6deep",
-            "Task_1v9s881",
-            "ExclusiveGateway_192ovii",
-            "ExclusiveGateway_0wgdt1i",
-            "StartEvent_1",
-            "Task_07u875a",
-            "EndEvent_055yt9k"
-        ],
-        "Process_14x2mcf": [
+        "TravelAgency_": [
             "StartEvent_1f3jj6d",
             "ExclusiveGateway_1dc5v3z",
             "Task_1bn6n5q",
@@ -108,6 +97,17 @@
             "IntermediateThrowEvent_0neineb",
             "Task_1ne4gpy",
             "EndEvent_10gqkzy"
+        ],
+        "Customer_": [
+            "IntermediateThrowEvent_12d113r",
+            "Task_1q91vog",
+            "EndEvent_0u6deep",
+            "Task_1v9s881",
+            "ExclusiveGateway_192ovii",
+            "ExclusiveGateway_0wgdt1i",
+            "StartEvent_1",
+            "Task_07u875a",
+            "EndEvent_055yt9k"
         ]
     },
     "messageE": {
@@ -145,18 +145,7 @@
     "name": "e004TravelAgency",
     "attached": {},
     "containE": {
-        "Process_1": [
-            "SequenceFlow_1h086yg",
-            "SequenceFlow_00r0rkx",
-            "SequenceFlow_03104wi",
-            "SequenceFlow_0bgaa0c",
-            "SequenceFlow_1uwq0b6",
-            "SequenceFlow_0b6ku63",
-            "SequenceFlow_0sfyd5z",
-            "SequenceFlow_016h32p",
-            "SequenceFlow_1rma3l8"
-        ],
-        "Process_14x2mcf": [
+        "TravelAgency_": [
             "SequenceFlow_1fn4lqy",
             "SequenceFlow_0b34324",
             "SequenceFlow_0mdvaai",
@@ -166,6 +155,17 @@
             "SequenceFlow_0k1iene",
             "SequenceFlow_0u8b1w3",
             "SequenceFlow_0bztvlk"
+        ],
+        "Customer_": [
+            "SequenceFlow_1h086yg",
+            "SequenceFlow_00r0rkx",
+            "SequenceFlow_03104wi",
+            "SequenceFlow_0bgaa0c",
+            "SequenceFlow_1uwq0b6",
+            "SequenceFlow_0b6ku63",
+            "SequenceFlow_0sfyd5z",
+            "SequenceFlow_016h32p",
+            "SequenceFlow_1rma3l8"
         ]
     },
     "edges": [
@@ -226,8 +226,8 @@
         "SequenceFlow_00r0rkx": "Task_1q91vog"
     },
     "nodes": [
-        "Process_1",
-        "Process_14x2mcf",
+        "Customer_",
+        "TravelAgency_",
         "IntermediateThrowEvent_12d113r",
         "Task_1q91vog",
         "EndEvent_0u6deep",

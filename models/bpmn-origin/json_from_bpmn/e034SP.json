@@ -6,14 +6,14 @@
         "EndEvent_0a59w28": {
             "tag": "NoneEndEvent"
         },
-        "P_id": {
-            "tag": "Process"
-        },
         "StartEvent_1": {
             "tag": "NoneStartEvent"
         },
         "StartEvent_09ojxru": {
             "tag": "NoneStartEvent"
+        },
+        "P_": {
+            "tag": "Process"
         },
         "EndEvent_0atuxkh": {
             "tag": "NoneEndEvent"
@@ -37,7 +37,7 @@
         "SequenceFlow_1uo79pd": "NormalSequenceFlow"
     },
     "containN": {
-        "P_id": [
+        "P_": [
             "StartEvent_1",
             "SubProcess_1glz8ii",
             "EndEvent_0a59w28"
@@ -62,7 +62,7 @@
     "name": "e034SP",
     "attached": {},
     "containE": {
-        "P_id": [
+        "P_": [
             "SequenceFlow_12utbfs",
             "SequenceFlow_00j4ong"
         ],
@@ -91,7 +91,7 @@
         "SequenceFlow_1uo79pd": "Task_1x5zvyz"
     },
     "nodes": [
-        "P_id",
+        "P_",
         "StartEvent_1",
         "SubProcess_1glz8ii",
         "EndEvent_0a59w28",

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_00sp5ic" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_00sp5ic" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.1">
   <bpmn:collaboration id="e006TravelAgency">
     <bpmn:documentation>modified from "A Classification of BPMN Collaborations based on Safeness and Soundness Notions", EXPRESS/SOS 2018.</bpmn:documentation>
-    <bpmn:participant id="Customer" name="Customer" processRef="Process_1" />
-    <bpmn:participant id="TravelAgency" name="Travel Agency" processRef="Process_14x2mcf" />
+    <bpmn:participant id="Customer" name="Customer" processRef="Customer_" />
+    <bpmn:participant id="TravelAgency" name="Travel Agency" processRef="TravelAgency_" />
     <bpmn:messageFlow id="MessageFlow_0knd10s" name="Offer" sourceRef="Task_1bn6n5q" targetRef="Task_07u875a" />
     <bpmn:messageFlow id="MessageFlow_1yfhhru" name="Travel" sourceRef="Task_1v9s881" targetRef="IntermediateThrowEvent_0xjpikb" />
     <bpmn:messageFlow id="MessageFlow_1m551dh" name="Confirmation" sourceRef="Task_002ndsu" targetRef="EndEvent_0u6deep" />
     <bpmn:messageFlow id="MessageFlow_1goz1mt" name="Payment" sourceRef="Task_1q91vog" targetRef="IntermediateThrowEvent_0neineb" />
     <bpmn:messageFlow id="MessageFlow_04an7oz" name="Ticket" sourceRef="Task_1ne4gpy" targetRef="IntermediateThrowEvent_12d113r" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_1" isExecutable="true">
+  <bpmn:process id="Customer_" name="Customer" isExecutable="true">
     <bpmn:sequenceFlow id="SequenceFlow_1uwq0b6" name="yes" sourceRef="ExclusiveGateway_192ovii" targetRef="Task_1v9s881">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">cond</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -61,7 +61,7 @@
       <bpmn:outgoing>SequenceFlow_1h5h7h5</bpmn:outgoing>
     </bpmn:sendTask>
   </bpmn:process>
-  <bpmn:process id="Process_14x2mcf" isExecutable="false">
+  <bpmn:process id="TravelAgency_" name="TravelAgency" isExecutable="false">
     <bpmn:startEvent id="StartEvent_1f3jj6d" name="Offer Needed">
       <bpmn:outgoing>SequenceFlow_1fn4lqy</bpmn:outgoing>
     </bpmn:startEvent>

@@ -3,9 +3,6 @@
         "Task_0dvwezg": {
             "tag": "SendTask"
         },
-        "P_id": {
-            "tag": "Process"
-        },
         "ExclusiveGateway_1uyyba4": {
             "tag": "AndGateway"
         },
@@ -37,20 +34,23 @@
         "Task_1rw2ter": {
             "tag": "SendTask"
         },
+        "P_": {
+            "tag": "Process"
+        },
         "Task_1rjwiou": {
             "tag": "AbstractTask"
         },
         "SubProcess_0ikactq": {
             "tag": "SubProcess"
         },
-        "Q_id": {
-            "tag": "Process"
-        },
         "Task_1kf2bvv": {
             "tag": "ReceiveTask"
         },
         "StartEvent_1em4yhi": {
             "tag": "NoneStartEvent"
+        },
+        "Q_": {
+            "tag": "Process"
         },
         "EndEvent_1bmsqno": {
             "tag": "NoneEndEvent"
@@ -75,7 +75,7 @@
         "SequenceFlow_1ofsg25": "NormalSequenceFlow"
     },
     "containN": {
-        "P_id": [
+        "P_": [
             "StartEvent_1",
             "ExclusiveGateway_1uyyba4",
             "Task_1rjwiou",
@@ -91,7 +91,7 @@
             "EndEvent_07lweo2",
             "Task_1kf2bvv"
         ],
-        "Q_id": [
+        "Q_": [
             "StartEvent_0pevvbh",
             "EndEvent_03g8tis",
             "Task_1rw2ter",
@@ -125,7 +125,7 @@
         "BoundaryEvent_1g6jly9": "SubProcess_0ikactq"
     },
     "containE": {
-        "P_id": [
+        "P_": [
             "SequenceFlow_1uzescv",
             "SequenceFlow_1qymta9",
             "SequenceFlow_1t3nh6y",
@@ -140,7 +140,7 @@
             "SequenceFlow_1ofsg25",
             "SequenceFlow_0j6nnaa"
         ],
-        "Q_id": [
+        "Q_": [
             "SequenceFlow_0r3bens",
             "SequenceFlow_1gn3q83",
             "SequenceFlow_0f6i1ig"
@@ -187,8 +187,8 @@
         "SequenceFlow_1ofsg25": "StartEvent_1em4yhi"
     },
     "nodes": [
-        "P_id",
-        "Q_id",
+        "P_",
+        "Q_",
         "StartEvent_1",
         "ExclusiveGateway_1uyyba4",
         "Task_1rjwiou",

@@ -9,9 +9,6 @@
         "StartEvent_1": {
             "tag": "NoneStartEvent"
         },
-        "Process_1": {
-            "tag": "Process"
-        },
         "EndEvent_0v9lt5i": {
             "tag": "NoneEndEvent"
         },
@@ -23,6 +20,9 @@
         },
         "ExclusiveGateway_1j1chqb": {
             "tag": "AndGateway"
+        },
+        "A_": {
+            "tag": "Process"
         }
     },
     "catE": {
@@ -35,7 +35,7 @@
         "SequenceFlow_01wc4ks": "NormalSequenceFlow"
     },
     "containN": {
-        "Process_1": [
+        "A_": [
             "Task_097548f",
             "Task_1eirt50",
             "ExclusiveGateway_0079typ",
@@ -58,24 +58,24 @@
     "name": "e007CheckTest",
     "attached": {},
     "containE": {
-        "Process_1": [
-            "SequenceFlow_0uplc1a",
-            "SequenceFlow_01wc4ks",
-            "SequenceFlow_0wto9d1",
-            "SequenceFlow_0b7efwa",
-            "SequenceFlow_1fuwd1z",
+        "A_": [
+            "SequenceFlow_0z2xwql",
             "SequenceFlow_0uzla8o",
-            "SequenceFlow_0z2xwql"
+            "SequenceFlow_1fuwd1z",
+            "SequenceFlow_0b7efwa",
+            "SequenceFlow_0wto9d1",
+            "SequenceFlow_01wc4ks",
+            "SequenceFlow_0uplc1a"
         ]
     },
     "edges": [
-        "SequenceFlow_0uplc1a",
-        "SequenceFlow_01wc4ks",
-        "SequenceFlow_0wto9d1",
-        "SequenceFlow_0b7efwa",
-        "SequenceFlow_1fuwd1z",
+        "SequenceFlow_0z2xwql",
         "SequenceFlow_0uzla8o",
-        "SequenceFlow_0z2xwql"
+        "SequenceFlow_1fuwd1z",
+        "SequenceFlow_0b7efwa",
+        "SequenceFlow_0wto9d1",
+        "SequenceFlow_01wc4ks",
+        "SequenceFlow_0uplc1a"
     ],
     "messages": [],
     "sourceE": {
@@ -88,7 +88,7 @@
         "SequenceFlow_01wc4ks": "Task_097548f"
     },
     "nodes": [
-        "Process_1",
+        "A_",
         "Task_097548f",
         "Task_1eirt50",
         "ExclusiveGateway_0079typ",

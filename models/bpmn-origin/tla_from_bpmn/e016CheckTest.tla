@@ -5,11 +5,11 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "Receiver_Id" :> { "StartEvent_0x0o2ml", "EndEvent_1d6yy2u", "EndEvent_19gcpb9", "Task_1d78ih0", "Task_19wi6kk", "ExclusiveGateway_1aidani" }
-  @@ "Sender_Id" :> { "StartEvent_1", "ExclusiveGateway_1gus05a", "EndEvent_198u4gq", "EndEvent_1e5c16l", "Task_1c559zv", "Task_1cbrss1" }
+  "Receiver_" :> { "StartEvent_0x0o2ml", "EndEvent_1d6yy2u", "EndEvent_19gcpb9", "Task_1d78ih0", "Task_19wi6kk", "ExclusiveGateway_1aidani" }
+  @@ "Sender_" :> { "StartEvent_1", "ExclusiveGateway_1gus05a", "EndEvent_198u4gq", "EndEvent_1e5c16l", "Task_1c559zv", "Task_1cbrss1" }
 
 Node == {
-  "Sender_Id","Receiver_Id","StartEvent_1","ExclusiveGateway_1gus05a","EndEvent_198u4gq","EndEvent_1e5c16l","Task_1c559zv","Task_1cbrss1","StartEvent_0x0o2ml","EndEvent_1d6yy2u","EndEvent_19gcpb9","Task_1d78ih0","Task_19wi6kk","ExclusiveGateway_1aidani"
+  "Sender_","Receiver_","StartEvent_1","ExclusiveGateway_1gus05a","EndEvent_198u4gq","EndEvent_1e5c16l","Task_1c559zv","Task_1cbrss1","StartEvent_0x0o2ml","EndEvent_1d6yy2u","EndEvent_19gcpb9","Task_1d78ih0","Task_19wi6kk","ExclusiveGateway_1aidani"
 }
 
 Edge == {
@@ -51,8 +51,8 @@ target ==
 @@ "SequenceFlow_0tmjk0x" :> "EndEvent_19gcpb9"
 
 CatN ==
-   "Sender_Id" :> Process
-@@ "Receiver_Id" :> Process
+   "Sender_" :> Process
+@@ "Receiver_" :> Process
 @@ "StartEvent_1" :> NoneStartEvent
 @@ "ExclusiveGateway_1gus05a" :> ExclusiveOr
 @@ "EndEvent_198u4gq" :> NoneEndEvent

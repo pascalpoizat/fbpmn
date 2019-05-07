@@ -9,11 +9,17 @@
         "cStoreRequest": {
             "tag": "AbstractTask"
         },
+        "Supplier_": {
+            "tag": "Process"
+        },
         "sStart": {
             "tag": "NoneStartEvent"
         },
         "cStart": {
             "tag": "NoneStartEvent"
+        },
+        "Client_": {
+            "tag": "Process"
         },
         "sSendInvoice": {
             "tag": "SendTask"
@@ -39,14 +45,8 @@
         "sPar2": {
             "tag": "AndGateway"
         },
-        "Process_Client": {
-            "tag": "Process"
-        },
         "cReceiveGoods": {
             "tag": "ReceiveTask"
-        },
-        "Process_Supplier": {
-            "tag": "Process"
         },
         "cSendCommand": {
             "tag": "SendTask"
@@ -72,15 +72,7 @@
         "sE7": "NormalSequenceFlow"
     },
     "containN": {
-        "Process_Client": [
-            "cStart",
-            "cSendCommand",
-            "cEnd",
-            "cReceiveInvoice",
-            "cReceiveGoods",
-            "cStoreRequest"
-        ],
-        "Process_Supplier": [
+        "Supplier_": [
             "sStart",
             "sShipCommand",
             "sSendInvoice",
@@ -90,6 +82,14 @@
             "sEnd",
             "sPar1",
             "sPar2"
+        ],
+        "Client_": [
+            "cStart",
+            "cSendCommand",
+            "cEnd",
+            "cReceiveInvoice",
+            "cReceiveGoods",
+            "cStoreRequest"
         ]
     },
     "messageE": {
@@ -119,14 +119,7 @@
     "name": "e001ClientSupplier",
     "attached": {},
     "containE": {
-        "Process_Client": [
-            "cE1",
-            "cE2",
-            "cE3",
-            "cE4",
-            "cE5"
-        ],
-        "Process_Supplier": [
+        "Supplier_": [
             "sE1",
             "sE2",
             "sE3",
@@ -136,6 +129,13 @@
             "sE7",
             "sE8",
             "sE9"
+        ],
+        "Client_": [
+            "cE1",
+            "cE2",
+            "cE3",
+            "cE4",
+            "cE5"
         ]
     },
     "edges": [
@@ -182,8 +182,8 @@
         "sE7": "sPar2"
     },
     "nodes": [
-        "Process_Supplier",
-        "Process_Client",
+        "Supplier_",
+        "Client_",
         "sStart",
         "sShipCommand",
         "sSendInvoice",

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_0i8iry0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_0i8iry0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.1">
   <bpmn:collaboration id="e035SP">
-    <bpmn:participant id="P" name="P" processRef="P_id" />
-    <bpmn:participant id="Q" name="Q" processRef="Q_id" />
+    <bpmn:participant id="P" name="P" processRef="P_" />
+    <bpmn:participant id="Q" name="Q" processRef="Q_" />
     <bpmn:messageFlow id="MessageFlow_183e2wp" name="m1" sourceRef="Task_0mft1gb" targetRef="StartEvent_09ojxru" />
   </bpmn:collaboration>
-  <bpmn:process id="P_id" name="P" isExecutable="true">
+  <bpmn:process id="P_" name="P" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>SequenceFlow_12utbfs</bpmn:outgoing>
     </bpmn:startEvent>
@@ -32,7 +32,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_12utbfs" sourceRef="StartEvent_1" targetRef="SubProcess_1glz8ii" />
     <bpmn:sequenceFlow id="SequenceFlow_00j4ong" sourceRef="SubProcess_1glz8ii" targetRef="EndEvent_0a59w28" />
   </bpmn:process>
-  <bpmn:process id="Q_id" name="Q" isExecutable="false">
+  <bpmn:process id="Q_" name="Q" isExecutable="false">
     <bpmn:startEvent id="StartEvent_0943q6x">
       <bpmn:outgoing>SequenceFlow_11rsxtg</bpmn:outgoing>
     </bpmn:startEvent>

@@ -5,11 +5,11 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "Process_1" :> { "Task_1v9s881", "ExclusiveGateway_192ovii", "ExclusiveGateway_0wgdt1i", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k", "EndEvent_0u6deep", "IntermediateThrowEvent_12d113r", "Task_1q91vog" }
-  @@ "Process_14x2mcf" :> { "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "ExclusiveGateway_0i09ijx", "IntermediateThrowEvent_0xjpikb", "EndEvent_10gqkzy", "Task_1ne4gpy", "Task_002ndsu", "IntermediateThrowEvent_0neineb" }
+  "Customer_" :> { "Task_1v9s881", "ExclusiveGateway_192ovii", "ExclusiveGateway_0wgdt1i", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k", "EndEvent_0u6deep", "IntermediateThrowEvent_12d113r", "Task_1q91vog" }
+  @@ "TravelAgency_" :> { "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "ExclusiveGateway_0i09ijx", "IntermediateThrowEvent_0xjpikb", "EndEvent_10gqkzy", "Task_1ne4gpy", "Task_002ndsu", "IntermediateThrowEvent_0neineb" }
 
 Node == {
-  "Process_1","Process_14x2mcf","Task_1v9s881","ExclusiveGateway_192ovii","ExclusiveGateway_0wgdt1i","StartEvent_1","Task_07u875a","EndEvent_055yt9k","EndEvent_0u6deep","IntermediateThrowEvent_12d113r","Task_1q91vog","StartEvent_1f3jj6d","ExclusiveGateway_1dc5v3z","Task_1bn6n5q","ExclusiveGateway_0i09ijx","IntermediateThrowEvent_0xjpikb","EndEvent_10gqkzy","Task_1ne4gpy","Task_002ndsu","IntermediateThrowEvent_0neineb"
+  "Customer_","TravelAgency_","Task_1v9s881","ExclusiveGateway_192ovii","ExclusiveGateway_0wgdt1i","StartEvent_1","Task_07u875a","EndEvent_055yt9k","EndEvent_0u6deep","IntermediateThrowEvent_12d113r","Task_1q91vog","StartEvent_1f3jj6d","ExclusiveGateway_1dc5v3z","Task_1bn6n5q","ExclusiveGateway_0i09ijx","IntermediateThrowEvent_0xjpikb","EndEvent_10gqkzy","Task_1ne4gpy","Task_002ndsu","IntermediateThrowEvent_0neineb"
 }
 
 Edge == {
@@ -76,8 +76,8 @@ target ==
 @@ "SequenceFlow_1fn4lqy" :> "ExclusiveGateway_1dc5v3z"
 
 CatN ==
-   "Process_1" :> Process
-@@ "Process_14x2mcf" :> Process
+   "Customer_" :> Process
+@@ "TravelAgency_" :> Process
 @@ "Task_1v9s881" :> SendTask
 @@ "ExclusiveGateway_192ovii" :> ExclusiveOr
 @@ "ExclusiveGateway_0wgdt1i" :> ExclusiveOr

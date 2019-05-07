@@ -5,12 +5,12 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "P_id" :> { "StartEvent_1", "SubProcess_1glz8ii", "EndEvent_0a59w28" }
-  @@ "Q_id" :> { "StartEvent_0943q6x", "EndEvent_1jzyo34", "Task_0mft1gb" }
+  "P_" :> { "StartEvent_1", "SubProcess_1glz8ii", "EndEvent_0a59w28" }
+  @@ "Q_" :> { "StartEvent_0943q6x", "EndEvent_1jzyo34", "Task_0mft1gb" }
   @@ "SubProcess_1glz8ii" :> { "Task_1x5zvyz", "EndEvent_0atuxkh", "StartEvent_09ojxru" }
 
 Node == {
-  "P_id","Q_id","StartEvent_1","SubProcess_1glz8ii","EndEvent_0a59w28","Task_1x5zvyz","EndEvent_0atuxkh","StartEvent_09ojxru","StartEvent_0943q6x","EndEvent_1jzyo34","Task_0mft1gb"
+  "P_","Q_","StartEvent_1","SubProcess_1glz8ii","EndEvent_0a59w28","Task_1x5zvyz","EndEvent_0atuxkh","StartEvent_09ojxru","StartEvent_0943q6x","EndEvent_1jzyo34","Task_0mft1gb"
 }
 
 Edge == {
@@ -41,8 +41,8 @@ target ==
 @@ "SequenceFlow_0pgod6g" :> "EndEvent_1jzyo34"
 
 CatN ==
-   "P_id" :> Process
-@@ "Q_id" :> Process
+   "P_" :> Process
+@@ "Q_" :> Process
 @@ "StartEvent_1" :> NoneStartEvent
 @@ "SubProcess_1glz8ii" :> SubProcess
 @@ "EndEvent_0a59w28" :> NoneEndEvent

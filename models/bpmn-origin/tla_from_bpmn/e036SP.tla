@@ -5,11 +5,11 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "P_id" :> { "StartEvent_1", "SubProcess_1glz8ii", "EndEvent_0a59w28" }
+  "P_" :> { "StartEvent_1", "SubProcess_1glz8ii", "EndEvent_0a59w28" }
   @@ "SubProcess_1glz8ii" :> { "StartEvent_09ojxru", "EndEvent_0atuxkh", "EndEvent_1bu7x75", "ExclusiveGateway_1449jmr" }
 
 Node == {
-  "P_id","StartEvent_1","SubProcess_1glz8ii","EndEvent_0a59w28","StartEvent_09ojxru","EndEvent_0atuxkh","EndEvent_1bu7x75","ExclusiveGateway_1449jmr"
+  "P_","StartEvent_1","SubProcess_1glz8ii","EndEvent_0a59w28","StartEvent_09ojxru","EndEvent_0atuxkh","EndEvent_1bu7x75","ExclusiveGateway_1449jmr"
 }
 
 Edge == {
@@ -36,7 +36,7 @@ target ==
 @@ "SequenceFlow_1ue74ws" :> "EndEvent_1bu7x75"
 
 CatN ==
-   "P_id" :> Process
+   "P_" :> Process
 @@ "StartEvent_1" :> NoneStartEvent
 @@ "SubProcess_1glz8ii" :> SubProcess
 @@ "EndEvent_0a59w28" :> NoneEndEvent

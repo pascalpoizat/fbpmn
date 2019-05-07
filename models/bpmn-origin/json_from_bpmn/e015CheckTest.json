@@ -1,5 +1,8 @@
 {
     "catN": {
+        "Sender_": {
+            "tag": "Process"
+        },
         "Task_19wi6kk": {
             "tag": "ReceiveTask"
         },
@@ -33,10 +36,7 @@
         "EndEvent_198u4gq": {
             "tag": "NoneEndEvent"
         },
-        "Receiver_Id": {
-            "tag": "Process"
-        },
-        "Sender_Id": {
+        "Receiver_": {
             "tag": "Process"
         },
         "Task_1d78ih0": {
@@ -58,21 +58,21 @@
         "MessageFlow_095vt4e": "MessageFlow"
     },
     "containN": {
-        "Receiver_Id": [
-            "StartEvent_0x0o2ml",
-            "ExclusiveGateway_1aidani",
-            "EndEvent_1d6yy2u",
-            "EndEvent_19gcpb9",
-            "Task_1d78ih0",
-            "Task_19wi6kk"
-        ],
-        "Sender_Id": [
+        "Sender_": [
             "StartEvent_1",
             "ExclusiveGateway_1gus05a",
             "EndEvent_198u4gq",
             "EndEvent_1e5c16l",
             "Task_1c559zv",
             "Task_1cbrss1"
+        ],
+        "Receiver_": [
+            "StartEvent_0x0o2ml",
+            "ExclusiveGateway_1aidani",
+            "EndEvent_1d6yy2u",
+            "EndEvent_19gcpb9",
+            "Task_1d78ih0",
+            "Task_19wi6kk"
         ]
     },
     "messageE": {
@@ -96,19 +96,19 @@
     "name": "e015CheckTest",
     "attached": {},
     "containE": {
-        "Receiver_Id": [
-            "SequenceFlow_0fxw5l8",
-            "SequenceFlow_01czfja",
-            "SequenceFlow_0qoid9s",
-            "SequenceFlow_0ob8kjq",
-            "SequenceFlow_0tmjk0x"
-        ],
-        "Sender_Id": [
+        "Sender_": [
             "SequenceFlow_1bot7ik",
             "SequenceFlow_1t3w3h5",
             "SequenceFlow_13vrdzd",
             "SequenceFlow_08o2r31",
             "SequenceFlow_0cvzouu"
+        ],
+        "Receiver_": [
+            "SequenceFlow_0fxw5l8",
+            "SequenceFlow_01czfja",
+            "SequenceFlow_0qoid9s",
+            "SequenceFlow_0ob8kjq",
+            "SequenceFlow_0tmjk0x"
         ]
     },
     "edges": [
@@ -144,8 +144,8 @@
         "MessageFlow_095vt4e": "Task_1c559zv"
     },
     "nodes": [
-        "Sender_Id",
-        "Receiver_Id",
+        "Sender_",
+        "Receiver_",
         "StartEvent_1",
         "ExclusiveGateway_1gus05a",
         "EndEvent_198u4gq",

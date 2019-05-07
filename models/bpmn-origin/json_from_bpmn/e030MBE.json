@@ -13,9 +13,6 @@
         "Task_06osngf": {
             "tag": "AbstractTask"
         },
-        "P_id": {
-            "tag": "Process"
-        },
         "EndEvent_112jhwq": {
             "tag": "NoneEndEvent"
         },
@@ -48,6 +45,9 @@
             "tag": "MessageBoundaryEvent",
             "cancelActivity": true
         },
+        "P_": {
+            "tag": "Process"
+        },
         "ExclusiveGateway_0pvsvob": {
             "tag": "XorGateway"
         },
@@ -66,9 +66,6 @@
         "StartEvent_1jxrjjb": {
             "tag": "NoneStartEvent"
         },
-        "Q_id": {
-            "tag": "Process"
-        },
         "EndEvent_0ovxd43": {
             "tag": "NoneEndEvent"
         },
@@ -77,6 +74,9 @@
         },
         "StartEvent_03bqw0j": {
             "tag": "NoneStartEvent"
+        },
+        "Q_": {
+            "tag": "Process"
         },
         "Task_0ouyduq": {
             "tag": "SendTask"
@@ -117,15 +117,15 @@
             "StartEvent_0ef0xw9",
             "EndEvent_1whel54"
         ],
-        "P_id": [
+        "P_": [
             "SubProcess_07e2e99",
             "StartEvent_1",
-            "BoundaryEvent_1q0fgiw",
             "EndEvent_1hytbgh",
             "Task_1haqr79",
             "Task_06osngf",
             "EndEvent_112jhwq",
-            "BoundaryEvent_1fak9ar"
+            "BoundaryEvent_1fak9ar",
+            "BoundaryEvent_1q0fgiw"
         ],
         "SubProcess_07e2e99": [
             "StartEvent_03bqw0j",
@@ -135,7 +135,7 @@
             "ExclusiveGateway_1hukmk5",
             "EndEvent_0ovxd43"
         ],
-        "Q_id": [
+        "Q_": [
             "SubProcess_0joqwjm",
             "StartEvent_1jxrjjb",
             "EndEvent_1gf9mha",
@@ -188,13 +188,13 @@
             "SequenceFlow_1i24zsv",
             "SequenceFlow_1hr9yu6"
         ],
-        "P_id": [
-            "SequenceFlow_109652j",
-            "SequenceFlow_0y8q6ot",
-            "SequenceFlow_1sp2uu5",
-            "SequenceFlow_1ag4q25",
+        "P_": [
+            "SequenceFlow_1tc2qre",
             "SequenceFlow_1rnwbjb",
-            "SequenceFlow_1tc2qre"
+            "SequenceFlow_1ag4q25",
+            "SequenceFlow_1sp2uu5",
+            "SequenceFlow_0y8q6ot",
+            "SequenceFlow_109652j"
         ],
         "SubProcess_07e2e99": [
             "SequenceFlow_16cdiue",
@@ -204,31 +204,31 @@
             "SequenceFlow_0fcn4he",
             "SequenceFlow_0e70fm8"
         ],
-        "Q_id": [
-            "SequenceFlow_1xvizyy",
+        "Q_": [
+            "SequenceFlow_1hqd2qa",
             "SequenceFlow_1es2p0l",
-            "SequenceFlow_1hqd2qa"
+            "SequenceFlow_1xvizyy"
         ]
     },
     "edges": [
         "MessageFlow_01dn8b3",
         "MessageFlow_1fv5g0n",
         "MessageFlow_01rg2pg",
-        "SequenceFlow_109652j",
-        "SequenceFlow_0y8q6ot",
-        "SequenceFlow_1sp2uu5",
-        "SequenceFlow_1ag4q25",
-        "SequenceFlow_1rnwbjb",
         "SequenceFlow_1tc2qre",
+        "SequenceFlow_1rnwbjb",
+        "SequenceFlow_1ag4q25",
+        "SequenceFlow_1sp2uu5",
+        "SequenceFlow_0y8q6ot",
+        "SequenceFlow_109652j",
         "SequenceFlow_16cdiue",
         "SequenceFlow_18dl2c1",
         "SequenceFlow_00h8rbi",
         "SequenceFlow_03zwnxj",
         "SequenceFlow_0fcn4he",
         "SequenceFlow_0e70fm8",
-        "SequenceFlow_1xvizyy",
-        "SequenceFlow_1es2p0l",
         "SequenceFlow_1hqd2qa",
+        "SequenceFlow_1es2p0l",
+        "SequenceFlow_1xvizyy",
         "SequenceFlow_06cnlpk",
         "SequenceFlow_0axwuh9",
         "SequenceFlow_17254s0",
@@ -268,16 +268,16 @@
         "SequenceFlow_1i24zsv": "StartEvent_0ef0xw9"
     },
     "nodes": [
-        "P_id",
-        "Q_id",
+        "P_",
+        "Q_",
         "SubProcess_07e2e99",
         "StartEvent_1",
-        "BoundaryEvent_1q0fgiw",
         "EndEvent_1hytbgh",
         "Task_1haqr79",
         "Task_06osngf",
         "EndEvent_112jhwq",
         "BoundaryEvent_1fak9ar",
+        "BoundaryEvent_1q0fgiw",
         "StartEvent_03bqw0j",
         "Task_1i35ppr",
         "Task_1kso3jk",

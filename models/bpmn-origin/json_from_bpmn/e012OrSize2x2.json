@@ -12,9 +12,6 @@
         "Task_1xwy18n": {
             "tag": "AbstractTask"
         },
-        "Process_1": {
-            "tag": "Process"
-        },
         "ExclusiveGateway_01rg1yx": {
             "tag": "OrGateway"
         },
@@ -44,6 +41,9 @@
         },
         "ExclusiveGateway_1ovxz2d": {
             "tag": "AndGateway"
+        },
+        "A_": {
+            "tag": "Process"
         }
     },
     "catE": {
@@ -66,7 +66,7 @@
         "SequenceFlow_0c3vv21": "DefaultSequenceFlow"
     },
     "containN": {
-        "Process_1": [
+        "A_": [
             "StartEvent_1",
             "ExclusiveGateway_15k9ix7",
             "ExclusiveGateway_1ovxz2d",
@@ -106,44 +106,44 @@
     "name": "e012OrSize2x2",
     "attached": {},
     "containE": {
-        "Process_1": [
-            "SequenceFlow_0n91hmc",
-            "SequenceFlow_00e481v",
-            "SequenceFlow_0h7fy2d",
-            "SequenceFlow_0xd1ing",
-            "SequenceFlow_1djolfc",
-            "SequenceFlow_0c3vv21",
-            "SequenceFlow_01dq60h",
-            "SequenceFlow_0rj7tua",
-            "SequenceFlow_14bv8dd",
-            "SequenceFlow_17yc9hp",
-            "SequenceFlow_1bofvkk",
-            "SequenceFlow_1wcsu5r",
-            "SequenceFlow_0mxxo9x",
-            "SequenceFlow_0n88gkx",
-            "SequenceFlow_1c7k30y",
+        "A_": [
+            "SequenceFlow_1kepz08",
             "SequenceFlow_1fvzdhj",
-            "SequenceFlow_1kepz08"
+            "SequenceFlow_1c7k30y",
+            "SequenceFlow_0n88gkx",
+            "SequenceFlow_0mxxo9x",
+            "SequenceFlow_1wcsu5r",
+            "SequenceFlow_1bofvkk",
+            "SequenceFlow_17yc9hp",
+            "SequenceFlow_14bv8dd",
+            "SequenceFlow_0rj7tua",
+            "SequenceFlow_01dq60h",
+            "SequenceFlow_0c3vv21",
+            "SequenceFlow_1djolfc",
+            "SequenceFlow_0xd1ing",
+            "SequenceFlow_0h7fy2d",
+            "SequenceFlow_00e481v",
+            "SequenceFlow_0n91hmc"
         ]
     },
     "edges": [
-        "SequenceFlow_0n91hmc",
-        "SequenceFlow_00e481v",
-        "SequenceFlow_0h7fy2d",
-        "SequenceFlow_0xd1ing",
-        "SequenceFlow_1djolfc",
-        "SequenceFlow_0c3vv21",
-        "SequenceFlow_01dq60h",
-        "SequenceFlow_0rj7tua",
-        "SequenceFlow_14bv8dd",
-        "SequenceFlow_17yc9hp",
-        "SequenceFlow_1bofvkk",
-        "SequenceFlow_1wcsu5r",
-        "SequenceFlow_0mxxo9x",
-        "SequenceFlow_0n88gkx",
-        "SequenceFlow_1c7k30y",
+        "SequenceFlow_1kepz08",
         "SequenceFlow_1fvzdhj",
-        "SequenceFlow_1kepz08"
+        "SequenceFlow_1c7k30y",
+        "SequenceFlow_0n88gkx",
+        "SequenceFlow_0mxxo9x",
+        "SequenceFlow_1wcsu5r",
+        "SequenceFlow_1bofvkk",
+        "SequenceFlow_17yc9hp",
+        "SequenceFlow_14bv8dd",
+        "SequenceFlow_0rj7tua",
+        "SequenceFlow_01dq60h",
+        "SequenceFlow_0c3vv21",
+        "SequenceFlow_1djolfc",
+        "SequenceFlow_0xd1ing",
+        "SequenceFlow_0h7fy2d",
+        "SequenceFlow_00e481v",
+        "SequenceFlow_0n91hmc"
     ],
     "messages": [],
     "sourceE": {
@@ -166,7 +166,7 @@
         "SequenceFlow_0c3vv21": "ExclusiveGateway_1v72kao"
     },
     "nodes": [
-        "Process_1",
+        "A_",
         "StartEvent_1",
         "ExclusiveGateway_15k9ix7",
         "ExclusiveGateway_1ovxz2d",

@@ -9,9 +9,6 @@
         "StartEvent_1": {
             "tag": "NoneStartEvent"
         },
-        "Process_1": {
-            "tag": "Process"
-        },
         "SubProcess_0mgtdae": {
             "tag": "SubProcess"
         },
@@ -30,6 +27,9 @@
         "EndEvent_0ns8te3": {
             "tag": "NoneEndEvent"
         },
+        "A_": {
+            "tag": "Process"
+        },
         "StartEvent_0ayuyd2": {
             "tag": "NoneStartEvent"
         }
@@ -46,11 +46,6 @@
         "SequenceFlow_01wc4ks": "NormalSequenceFlow"
     },
     "containN": {
-        "Process_1": [
-            "SubProcess_0mgtdae",
-            "StartEvent_0ayuyd2",
-            "EndEvent_0ns8te3"
-        ],
         "SubProcess_0mgtdae": [
             "EndEvent_0v9lt5i",
             "Task_1rt44mz",
@@ -59,6 +54,11 @@
             "ExclusiveGateway_1j1chqb",
             "StartEvent_1",
             "ExclusiveGateway_0079typ"
+        ],
+        "A_": [
+            "SubProcess_0mgtdae",
+            "StartEvent_0ayuyd2",
+            "EndEvent_0ns8te3"
         ]
     },
     "messageE": {},
@@ -76,10 +76,6 @@
     "name": "e008CheckTest",
     "attached": {},
     "containE": {
-        "Process_1": [
-            "SequenceFlow_1vue23p",
-            "SequenceFlow_00aes3w"
-        ],
         "SubProcess_0mgtdae": [
             "SequenceFlow_0z2xwql",
             "SequenceFlow_0wto9d1",
@@ -88,11 +84,15 @@
             "SequenceFlow_0b7efwa",
             "SequenceFlow_1fuwd1z",
             "SequenceFlow_0uzla8o"
+        ],
+        "A_": [
+            "SequenceFlow_00aes3w",
+            "SequenceFlow_1vue23p"
         ]
     },
     "edges": [
-        "SequenceFlow_1vue23p",
         "SequenceFlow_00aes3w",
+        "SequenceFlow_1vue23p",
         "SequenceFlow_0z2xwql",
         "SequenceFlow_0wto9d1",
         "SequenceFlow_0uplc1a",
@@ -114,7 +114,7 @@
         "SequenceFlow_01wc4ks": "Task_097548f"
     },
     "nodes": [
-        "Process_1",
+        "A_",
         "SubProcess_0mgtdae",
         "StartEvent_0ayuyd2",
         "EndEvent_0ns8te3",

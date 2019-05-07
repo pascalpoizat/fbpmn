@@ -12,9 +12,6 @@
         "ExclusiveGateway_0phbzc0": {
             "tag": "XorGateway"
         },
-        "P_id": {
-            "tag": "Process"
-        },
         "IntermediateThrowEvent_16df5b4": {
             "tag": "ThrowMessageIntermediateEvent"
         },
@@ -43,6 +40,9 @@
         "StartEvent_1axpofs": {
             "tag": "NoneStartEvent"
         },
+        "P_": {
+            "tag": "Process"
+        },
         "ExclusiveGateway_06aycf0": {
             "tag": "XorGateway"
         },
@@ -61,11 +61,11 @@
         "IntermediateThrowEvent_0yo36nb": {
             "tag": "CatchMessageIntermediateEvent"
         },
-        "Q_id": {
-            "tag": "Process"
-        },
         "IntermediateThrowEvent_1ewiw3i": {
             "tag": "ThrowMessageIntermediateEvent"
+        },
+        "Q_": {
+            "tag": "Process"
         }
     },
     "catE": {
@@ -97,18 +97,18 @@
         "MessageFlow_1tq79cn": "MessageFlow"
     },
     "containN": {
-        "P_id": [
+        "P_": [
             "StartEvent_1",
             "Task_05seu1l",
             "Task_0yk02ke",
-            "BoundaryEvent_1fgc3dg",
             "EndEvent_1yasgxk",
             "ExclusiveGateway_06st2fh",
             "IntermediateThrowEvent_16df5b4",
             "Task_1lnz72e",
-            "Task_1ypg0u2"
+            "Task_1ypg0u2",
+            "BoundaryEvent_1fgc3dg"
         ],
-        "Q_id": [
+        "Q_": [
             "StartEvent_1axpofs",
             "Task_0k7ip70",
             "IntermediateThrowEvent_0yo36nb",
@@ -163,29 +163,29 @@
         "BoundaryEvent_1fgc3dg": "Task_0yk02ke"
     },
     "containE": {
-        "P_id": [
-            "SequenceFlow_0nps006",
-            "SequenceFlow_1wtnl4z",
-            "SequenceFlow_0o5vg8x",
-            "SequenceFlow_0fplzau",
-            "SequenceFlow_1dte0vc",
-            "SequenceFlow_0k086s0",
+        "P_": [
+            "SequenceFlow_1wgoun9",
             "SequenceFlow_0698suh",
-            "SequenceFlow_1wgoun9"
+            "SequenceFlow_0k086s0",
+            "SequenceFlow_1dte0vc",
+            "SequenceFlow_0fplzau",
+            "SequenceFlow_0o5vg8x",
+            "SequenceFlow_1wtnl4z",
+            "SequenceFlow_0nps006"
         ],
-        "Q_id": [
-            "SequenceFlow_16ovyt7",
-            "SequenceFlow_0mgjt9y",
-            "SequenceFlow_1xvdo11",
-            "SequenceFlow_1y1oo45",
-            "SequenceFlow_0rjtib7",
-            "SequenceFlow_0k02j79",
-            "SequenceFlow_0f0ojke",
-            "SequenceFlow_1oxapbj",
-            "SequenceFlow_096ubuj",
-            "SequenceFlow_0eej3d6",
+        "Q_": [
+            "SequenceFlow_0v4m6o8",
             "SequenceFlow_0jq12xx",
-            "SequenceFlow_0v4m6o8"
+            "SequenceFlow_0eej3d6",
+            "SequenceFlow_096ubuj",
+            "SequenceFlow_1oxapbj",
+            "SequenceFlow_0f0ojke",
+            "SequenceFlow_0k02j79",
+            "SequenceFlow_0rjtib7",
+            "SequenceFlow_1y1oo45",
+            "SequenceFlow_1xvdo11",
+            "SequenceFlow_0mgjt9y",
+            "SequenceFlow_16ovyt7"
         ]
     },
     "edges": [
@@ -195,26 +195,26 @@
         "MessageFlow_091cszi",
         "MessageFlow_1tq79cn",
         "MessageFlow_1okf1vd",
-        "SequenceFlow_0nps006",
-        "SequenceFlow_1wtnl4z",
-        "SequenceFlow_0o5vg8x",
-        "SequenceFlow_0fplzau",
-        "SequenceFlow_1dte0vc",
-        "SequenceFlow_0k086s0",
-        "SequenceFlow_0698suh",
         "SequenceFlow_1wgoun9",
-        "SequenceFlow_16ovyt7",
-        "SequenceFlow_0mgjt9y",
-        "SequenceFlow_1xvdo11",
-        "SequenceFlow_1y1oo45",
-        "SequenceFlow_0rjtib7",
-        "SequenceFlow_0k02j79",
-        "SequenceFlow_0f0ojke",
-        "SequenceFlow_1oxapbj",
-        "SequenceFlow_096ubuj",
-        "SequenceFlow_0eej3d6",
+        "SequenceFlow_0698suh",
+        "SequenceFlow_0k086s0",
+        "SequenceFlow_1dte0vc",
+        "SequenceFlow_0fplzau",
+        "SequenceFlow_0o5vg8x",
+        "SequenceFlow_1wtnl4z",
+        "SequenceFlow_0nps006",
+        "SequenceFlow_0v4m6o8",
         "SequenceFlow_0jq12xx",
-        "SequenceFlow_0v4m6o8"
+        "SequenceFlow_0eej3d6",
+        "SequenceFlow_096ubuj",
+        "SequenceFlow_1oxapbj",
+        "SequenceFlow_0f0ojke",
+        "SequenceFlow_0k02j79",
+        "SequenceFlow_0rjtib7",
+        "SequenceFlow_1y1oo45",
+        "SequenceFlow_1xvdo11",
+        "SequenceFlow_0mgjt9y",
+        "SequenceFlow_16ovyt7"
     ],
     "messages": [
         "query",
@@ -253,17 +253,17 @@
         "MessageFlow_1tq79cn": "Task_1ypg0u2"
     },
     "nodes": [
-        "P_id",
-        "Q_id",
+        "P_",
+        "Q_",
         "StartEvent_1",
         "Task_05seu1l",
         "Task_0yk02ke",
-        "BoundaryEvent_1fgc3dg",
         "EndEvent_1yasgxk",
         "ExclusiveGateway_06st2fh",
         "IntermediateThrowEvent_16df5b4",
         "Task_1lnz72e",
         "Task_1ypg0u2",
+        "BoundaryEvent_1fgc3dg",
         "StartEvent_1axpofs",
         "Task_0k7ip70",
         "IntermediateThrowEvent_0yo36nb",

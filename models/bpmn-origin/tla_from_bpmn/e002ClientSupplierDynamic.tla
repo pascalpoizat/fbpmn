@@ -5,11 +5,11 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "Process_Client" :> { "cStart", "cSendCommand", "cEnd", "cReceiveInvoice", "cReceiveGoods", "cStoreRequest" }
-  @@ "Process_Supplier" :> { "sShipCommand", "sSendInvoice", "sInvoiceManagement", "sPrepareCommand", "sEnd", "sStart", "sPar1", "sPar2" }
+  "Client_" :> { "cStart", "cSendCommand", "cEnd", "cReceiveInvoice", "cReceiveGoods", "cStoreRequest" }
+  @@ "Supplier_" :> { "sShipCommand", "sSendInvoice", "sInvoiceManagement", "sPrepareCommand", "sEnd", "sStart", "sPar1", "sPar2" }
 
 Node == {
-  "Process_Supplier","Process_Client","sShipCommand","sSendInvoice","sInvoiceManagement","sPrepareCommand","sEnd","sStart","sPar1","sPar2","cStart","cSendCommand","cEnd","cReceiveInvoice","cReceiveGoods","cStoreRequest"
+  "Supplier_","Client_","sShipCommand","sSendInvoice","sInvoiceManagement","sPrepareCommand","sEnd","sStart","sPar1","sPar2","cStart","cSendCommand","cEnd","cReceiveInvoice","cReceiveGoods","cStoreRequest"
 }
 
 Edge == {
@@ -60,8 +60,8 @@ target ==
 @@ "cE5" :> "cEnd"
 
 CatN ==
-   "Process_Supplier" :> Process
-@@ "Process_Client" :> Process
+   "Supplier_" :> Process
+@@ "Client_" :> Process
 @@ "sShipCommand" :> SendTask
 @@ "sSendInvoice" :> SendTask
 @@ "sInvoiceManagement" :> AbstractTask

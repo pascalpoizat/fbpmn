@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1790ic3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.1">
   <bpmn:collaboration id="e037Comm">
-    <bpmn:documentation>from  https://doi.org/10.1016/j.scico.2018.05.008
-
-			
-
-		
-
-	
-</bpmn:documentation>
-    <bpmn:participant id="Customer" name="Customer" processRef="Customer_Id" />
-    <bpmn:participant id="TravelAgency" name="Travel Agency" processRef="TravelAgency_Id" />
-    <bpmn:participant id="Airline" name="Airline" processRef="Airline_id" />
+    <bpmn:documentation>from  https://doi.org/10.1016/j.scico.2018.05.008</bpmn:documentation>
+    <bpmn:participant id="Customer" name="Customer" processRef="Customer_" />
+    <bpmn:participant id="TravelAgency" name="Travel Agency" processRef="TravelAgency_" />
+    <bpmn:participant id="Airline" name="Airline" processRef="Airline_" />
     <bpmn:messageFlow id="MessageFlow_1j3ru8z" name="order" sourceRef="Order_Ticket" targetRef="Ticket_Order_Received" />
     <bpmn:messageFlow id="MessageFlow_01l3u25" name="offer" sourceRef="Make_Travel_Offer" targetRef="StartEvent_1" />
     <bpmn:messageFlow id="MessageFlow_0jtu5yc" name="travel" sourceRef="Book_Travel" targetRef="Booking_Received" />
@@ -20,7 +13,7 @@
     <bpmn:messageFlow id="MessageFlow_08bo5ej" name="confirmation" sourceRef="Confirm_Booking" targetRef="Booking_Confirmed" />
     <bpmn:messageFlow id="MessageFlow_15n7wk4" name="payment confirmation" sourceRef="Confirm_Payment" targetRef="Payment_Confirmation_Received" />
   </bpmn:collaboration>
-  <bpmn:process id="Customer_Id" name="Customer" isExecutable="true">
+  <bpmn:process id="Customer_" name="Customer" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>SequenceFlow_037u61c</bpmn:outgoing>
       <bpmn:messageEventDefinition />
@@ -72,7 +65,7 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1fm8n43" sourceRef="Payment_Confirmation_Received" targetRef="Travel_Paid" />
   </bpmn:process>
-  <bpmn:process id="TravelAgency_Id" name="Travel Agency" isExecutable="false">
+  <bpmn:process id="TravelAgency_" name="Travel Agency" isExecutable="false">
     <bpmn:sequenceFlow id="SequenceFlow_1b9yiqz" sourceRef="Order_Ticket" targetRef="Ticket_Ordered" />
     <bpmn:sequenceFlow id="SequenceFlow_10id4f8" sourceRef="IntermediateThrowEvent_0kagqq2" targetRef="Order_Ticket" />
     <bpmn:sequenceFlow id="SequenceFlow_1wbphor" sourceRef="Confirm_Booking" targetRef="IntermediateThrowEvent_0kagqq2" />
@@ -124,7 +117,7 @@
       <bpmn:messageEventDefinition />
     </bpmn:intermediateCatchEvent>
   </bpmn:process>
-  <bpmn:process id="Airline_id" name="Airline" isExecutable="false">
+  <bpmn:process id="Airline_" name="Airline" isExecutable="false">
     <bpmn:startEvent id="Ticket_Order_Received" name="Ticket Order Received">
       <bpmn:outgoing>SequenceFlow_09iuwhk</bpmn:outgoing>
       <bpmn:messageEventDefinition />

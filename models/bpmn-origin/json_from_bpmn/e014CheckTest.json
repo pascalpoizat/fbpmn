@@ -1,5 +1,8 @@
 {
     "catN": {
+        "Process_": {
+            "tag": "Process"
+        },
         "StartEvent_1": {
             "tag": "NoneStartEvent"
         },
@@ -17,9 +20,6 @@
         },
         "EndEvent_198u4gq": {
             "tag": "NoneEndEvent"
-        },
-        "Process_Id": {
-            "tag": "Process"
         }
     },
     "catE": {
@@ -30,7 +30,7 @@
         "SequenceFlow_13vrdzd": "DefaultSequenceFlow"
     },
     "containN": {
-        "Process_Id": [
+        "Process_": [
             "StartEvent_1",
             "ExclusiveGateway_1gus05a",
             "Task_1c559zv",
@@ -50,7 +50,7 @@
     "name": "e014CheckTest",
     "attached": {},
     "containE": {
-        "Process_Id": [
+        "Process_": [
             "SequenceFlow_1bot7ik",
             "SequenceFlow_1t3w3h5",
             "SequenceFlow_13vrdzd",
@@ -74,7 +74,7 @@
         "SequenceFlow_13vrdzd": "ExclusiveGateway_1gus05a"
     },
     "nodes": [
-        "Process_Id",
+        "Process_",
         "StartEvent_1",
         "ExclusiveGateway_1gus05a",
         "Task_1c559zv",

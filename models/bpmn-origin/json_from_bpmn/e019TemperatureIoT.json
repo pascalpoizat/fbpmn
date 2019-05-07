@@ -9,7 +9,7 @@
         "IntermediateThrowEvent_0moj9p9": {
             "tag": "ThrowMessageIntermediateEvent"
         },
-        "Process_17upgh4": {
+        "Thermostat_": {
             "tag": "Process"
         },
         "StartEvent_12o3x3s": {
@@ -60,6 +60,9 @@
         "ExclusiveGateway_0d9bxab": {
             "tag": "XorGateway"
         },
+        "WSNGateway_": {
+            "tag": "Process"
+        },
         "Task_18tknzx": {
             "tag": "SendTask"
         },
@@ -96,20 +99,14 @@
         "Task_1e6rsiy": {
             "tag": "AbstractTask"
         },
+        "Boiller_": {
+            "tag": "Process"
+        },
         "ExclusiveGateway_0a5libn": {
             "tag": "AndGateway"
         },
         "StartEvent_0mw9dyi": {
             "tag": "NoneStartEvent"
-        },
-        "Process_0bvyh41": {
-            "tag": "Process"
-        },
-        "Process_0de8xa0": {
-            "tag": "Process"
-        },
-        "Process_0vx28va": {
-            "tag": "Process"
         },
         "StartEvent_0tw9hoi": {
             "tag": "MessageStartEvent"
@@ -162,7 +159,7 @@
         "ExclusiveGateway_19mjt5y": {
             "tag": "XorGateway"
         },
-        "Process_1pqwd18": {
+        "User_": {
             "tag": "Process"
         },
         "Task_1e85hli": {
@@ -176,6 +173,9 @@
         },
         "ExclusiveGateway_1u3y4si": {
             "tag": "XorGateway"
+        },
+        "Sensor_": {
+            "tag": "Process"
         },
         "ExclusiveGateway_1alxwt7": {
             "tag": "AndGateway"
@@ -257,16 +257,18 @@
         "SequenceFlow_05ihnu4": "NormalSequenceFlow"
     },
     "containN": {
-        "Process_17upgh4": [
-            "ExclusiveGateway_1alxwt7",
-            "IntermediateThrowEvent_1ajpgtk",
-            "EndEvent_0joc303",
-            "ExclusiveGateway_0d9bxab",
-            "StartEvent_12o3x3s",
-            "Task_0aihuup",
-            "Task_1p5k4vg"
+        "Thermostat_": [
+            "ExclusiveGateway_0uhrdet",
+            "StartEvent_19zezl9",
+            "ExclusiveGateway_0a5libn",
+            "Task_01tkb3r",
+            "IntermediateThrowEvent_0moj9p9",
+            "ExclusiveGateway_1u3y4si",
+            "EndEvent_14513uv",
+            "IntermediateThrowEvent_1dkrxqj",
+            "Task_0ca58zk"
         ],
-        "Process_0bvyh41": [
+        "WSNGateway_": [
             "ReceiveTask_1cc6gb0",
             "ExclusiveGateway_186ksgk",
             "StartEvent_0tw9hoi",
@@ -290,18 +292,7 @@
             "Task_03ohewl",
             "IntermediateThrowEvent_1cd7dmz"
         ],
-        "Process_0de8xa0": [
-            "ExclusiveGateway_0uhrdet",
-            "StartEvent_19zezl9",
-            "ExclusiveGateway_0a5libn",
-            "Task_01tkb3r",
-            "IntermediateThrowEvent_0moj9p9",
-            "ExclusiveGateway_1u3y4si",
-            "EndEvent_14513uv",
-            "IntermediateThrowEvent_1dkrxqj",
-            "Task_0ca58zk"
-        ],
-        "Process_0vx28va": [
+        "Boiller_": [
             "ExclusiveGateway_1feo3um",
             "ExclusiveGateway_0wtbkow",
             "ExclusiveGateway_0cpdpri",
@@ -316,11 +307,20 @@
             "ExclusiveGateway_1izjr9z",
             "IntermediateThrowEvent_12cgsc9"
         ],
-        "Process_1pqwd18": [
+        "User_": [
             "StartEvent_0mw9dyi",
             "Task_09igb82",
             "EndEvent_19aoxjz",
             "Task_1x71tep"
+        ],
+        "Sensor_": [
+            "ExclusiveGateway_1alxwt7",
+            "IntermediateThrowEvent_1ajpgtk",
+            "EndEvent_0joc303",
+            "ExclusiveGateway_0d9bxab",
+            "StartEvent_12o3x3s",
+            "Task_0aihuup",
+            "Task_1p5k4vg"
         ]
     },
     "messageE": {
@@ -414,77 +414,77 @@
     "name": "e019TemperatureIoT",
     "attached": {},
     "containE": {
-        "Process_17upgh4": [
-            "SequenceFlow_0j98n24",
-            "SequenceFlow_0v1itpk",
-            "SequenceFlow_1dhqk99",
-            "SequenceFlow_127z28e",
-            "SequenceFlow_0jioz8d",
-            "SequenceFlow_07gw8yk",
-            "SequenceFlow_0rdqb09"
-        ],
-        "Process_0bvyh41": [
-            "SequenceFlow_0477vxz",
-            "SequenceFlow_112gnsc",
-            "SequenceFlow_1vmz2u9",
-            "SequenceFlow_1pvcw5e",
-            "SequenceFlow_1715hka",
-            "SequenceFlow_1t7zsjn",
-            "SequenceFlow_0vmtagi",
-            "SequenceFlow_17eb2ri",
-            "SequenceFlow_04p0en0",
-            "SequenceFlow_0ha4jhs",
-            "SequenceFlow_0n8zfgy",
-            "SequenceFlow_1nnne6n",
-            "SequenceFlow_07ahv22",
-            "SequenceFlow_17faiz5",
-            "SequenceFlow_1o0bwvr",
-            "SequenceFlow_1w9mr57",
-            "SequenceFlow_1nacukm",
-            "SequenceFlow_0ipzp9y",
-            "SequenceFlow_0yclgws",
-            "SequenceFlow_1pvrfjg",
-            "SequenceFlow_15ortkr",
-            "SequenceFlow_1017nuh",
-            "SequenceFlow_1lr4cps",
-            "SequenceFlow_1n4vv49",
-            "SequenceFlow_0tbx7nt",
-            "SequenceFlow_14zismf",
-            "SequenceFlow_1quu0wg"
-        ],
-        "Process_0de8xa0": [
-            "SequenceFlow_0j7d6k8",
-            "SequenceFlow_1rpwomj",
-            "SequenceFlow_0wqy81u",
-            "SequenceFlow_0vwirsp",
-            "SequenceFlow_1kk1jne",
-            "SequenceFlow_07vsnao",
-            "SequenceFlow_1fvktk8",
+        "Thermostat_": [
+            "SequenceFlow_0mr13bl",
             "SequenceFlow_0ilol45",
-            "SequenceFlow_0mr13bl"
+            "SequenceFlow_1fvktk8",
+            "SequenceFlow_07vsnao",
+            "SequenceFlow_1kk1jne",
+            "SequenceFlow_0vwirsp",
+            "SequenceFlow_0wqy81u",
+            "SequenceFlow_1rpwomj",
+            "SequenceFlow_0j7d6k8"
         ],
-        "Process_0vx28va": [
-            "SequenceFlow_0so9y7c",
-            "SequenceFlow_1tu3a1o",
-            "SequenceFlow_0yf7004",
-            "SequenceFlow_151xud0",
-            "SequenceFlow_00sw0ns",
-            "SequenceFlow_04ctmhl",
-            "SequenceFlow_1j073vl",
-            "SequenceFlow_18i2li3",
-            "SequenceFlow_0ik719b",
-            "SequenceFlow_1plf2me",
-            "SequenceFlow_0u67u7k",
-            "SequenceFlow_0jy3w8q",
-            "SequenceFlow_0eoboyu",
-            "SequenceFlow_1dtybq7",
+        "WSNGateway_": [
+            "SequenceFlow_1quu0wg",
+            "SequenceFlow_14zismf",
+            "SequenceFlow_0tbx7nt",
+            "SequenceFlow_1n4vv49",
+            "SequenceFlow_1lr4cps",
+            "SequenceFlow_1017nuh",
+            "SequenceFlow_15ortkr",
+            "SequenceFlow_1pvrfjg",
+            "SequenceFlow_0yclgws",
+            "SequenceFlow_0ipzp9y",
+            "SequenceFlow_1nacukm",
+            "SequenceFlow_1w9mr57",
+            "SequenceFlow_1o0bwvr",
+            "SequenceFlow_17faiz5",
+            "SequenceFlow_07ahv22",
+            "SequenceFlow_1nnne6n",
+            "SequenceFlow_0n8zfgy",
+            "SequenceFlow_0ha4jhs",
+            "SequenceFlow_04p0en0",
+            "SequenceFlow_17eb2ri",
+            "SequenceFlow_0vmtagi",
+            "SequenceFlow_1t7zsjn",
+            "SequenceFlow_1715hka",
+            "SequenceFlow_1pvcw5e",
+            "SequenceFlow_1vmz2u9",
+            "SequenceFlow_112gnsc",
+            "SequenceFlow_0477vxz"
+        ],
+        "Boiller_": [
+            "SequenceFlow_15jyzqg",
             "SequenceFlow_05ihnu4",
-            "SequenceFlow_15jyzqg"
+            "SequenceFlow_1dtybq7",
+            "SequenceFlow_0eoboyu",
+            "SequenceFlow_0jy3w8q",
+            "SequenceFlow_0u67u7k",
+            "SequenceFlow_1plf2me",
+            "SequenceFlow_0ik719b",
+            "SequenceFlow_18i2li3",
+            "SequenceFlow_1j073vl",
+            "SequenceFlow_04ctmhl",
+            "SequenceFlow_00sw0ns",
+            "SequenceFlow_151xud0",
+            "SequenceFlow_0yf7004",
+            "SequenceFlow_1tu3a1o",
+            "SequenceFlow_0so9y7c"
         ],
-        "Process_1pqwd18": [
-            "SequenceFlow_1uup9ft",
+        "User_": [
+            "SequenceFlow_1ngsqgy",
             "SequenceFlow_02i1zog",
-            "SequenceFlow_1ngsqgy"
+            "SequenceFlow_1uup9ft"
+        ],
+        "Sensor_": [
+            "SequenceFlow_0rdqb09",
+            "SequenceFlow_07gw8yk",
+            "SequenceFlow_0jioz8d",
+            "SequenceFlow_127z28e",
+            "SequenceFlow_1dhqk99",
+            "SequenceFlow_0v1itpk",
+            "SequenceFlow_0j98n24"
         ]
     },
     "edges": [
@@ -499,68 +499,68 @@
         "MessageFlow_0nqzifu",
         "MessageFlow_0dguqk7",
         "MessageFlow_00ca6vp",
-        "SequenceFlow_1uup9ft",
-        "SequenceFlow_02i1zog",
         "SequenceFlow_1ngsqgy",
-        "SequenceFlow_0j7d6k8",
-        "SequenceFlow_1rpwomj",
-        "SequenceFlow_0wqy81u",
-        "SequenceFlow_0vwirsp",
-        "SequenceFlow_1kk1jne",
-        "SequenceFlow_07vsnao",
-        "SequenceFlow_1fvktk8",
-        "SequenceFlow_0ilol45",
+        "SequenceFlow_02i1zog",
+        "SequenceFlow_1uup9ft",
         "SequenceFlow_0mr13bl",
-        "SequenceFlow_0477vxz",
-        "SequenceFlow_112gnsc",
-        "SequenceFlow_1vmz2u9",
-        "SequenceFlow_1pvcw5e",
-        "SequenceFlow_1715hka",
-        "SequenceFlow_1t7zsjn",
-        "SequenceFlow_0vmtagi",
-        "SequenceFlow_17eb2ri",
-        "SequenceFlow_04p0en0",
-        "SequenceFlow_0ha4jhs",
-        "SequenceFlow_0n8zfgy",
-        "SequenceFlow_1nnne6n",
-        "SequenceFlow_07ahv22",
-        "SequenceFlow_17faiz5",
-        "SequenceFlow_1o0bwvr",
-        "SequenceFlow_1w9mr57",
-        "SequenceFlow_1nacukm",
-        "SequenceFlow_0ipzp9y",
-        "SequenceFlow_0yclgws",
-        "SequenceFlow_1pvrfjg",
-        "SequenceFlow_15ortkr",
-        "SequenceFlow_1017nuh",
-        "SequenceFlow_1lr4cps",
-        "SequenceFlow_1n4vv49",
-        "SequenceFlow_0tbx7nt",
-        "SequenceFlow_14zismf",
+        "SequenceFlow_0ilol45",
+        "SequenceFlow_1fvktk8",
+        "SequenceFlow_07vsnao",
+        "SequenceFlow_1kk1jne",
+        "SequenceFlow_0vwirsp",
+        "SequenceFlow_0wqy81u",
+        "SequenceFlow_1rpwomj",
+        "SequenceFlow_0j7d6k8",
         "SequenceFlow_1quu0wg",
-        "SequenceFlow_0j98n24",
-        "SequenceFlow_0v1itpk",
-        "SequenceFlow_1dhqk99",
-        "SequenceFlow_127z28e",
-        "SequenceFlow_0jioz8d",
-        "SequenceFlow_07gw8yk",
+        "SequenceFlow_14zismf",
+        "SequenceFlow_0tbx7nt",
+        "SequenceFlow_1n4vv49",
+        "SequenceFlow_1lr4cps",
+        "SequenceFlow_1017nuh",
+        "SequenceFlow_15ortkr",
+        "SequenceFlow_1pvrfjg",
+        "SequenceFlow_0yclgws",
+        "SequenceFlow_0ipzp9y",
+        "SequenceFlow_1nacukm",
+        "SequenceFlow_1w9mr57",
+        "SequenceFlow_1o0bwvr",
+        "SequenceFlow_17faiz5",
+        "SequenceFlow_07ahv22",
+        "SequenceFlow_1nnne6n",
+        "SequenceFlow_0n8zfgy",
+        "SequenceFlow_0ha4jhs",
+        "SequenceFlow_04p0en0",
+        "SequenceFlow_17eb2ri",
+        "SequenceFlow_0vmtagi",
+        "SequenceFlow_1t7zsjn",
+        "SequenceFlow_1715hka",
+        "SequenceFlow_1pvcw5e",
+        "SequenceFlow_1vmz2u9",
+        "SequenceFlow_112gnsc",
+        "SequenceFlow_0477vxz",
         "SequenceFlow_0rdqb09",
-        "SequenceFlow_0so9y7c",
-        "SequenceFlow_1tu3a1o",
-        "SequenceFlow_0yf7004",
-        "SequenceFlow_151xud0",
-        "SequenceFlow_00sw0ns",
-        "SequenceFlow_04ctmhl",
-        "SequenceFlow_1j073vl",
-        "SequenceFlow_18i2li3",
-        "SequenceFlow_0ik719b",
-        "SequenceFlow_1plf2me",
-        "SequenceFlow_0u67u7k",
-        "SequenceFlow_0jy3w8q",
-        "SequenceFlow_0eoboyu",
-        "SequenceFlow_1dtybq7",
+        "SequenceFlow_07gw8yk",
+        "SequenceFlow_0jioz8d",
+        "SequenceFlow_127z28e",
+        "SequenceFlow_1dhqk99",
+        "SequenceFlow_0v1itpk",
+        "SequenceFlow_0j98n24",
+        "SequenceFlow_15jyzqg",
         "SequenceFlow_05ihnu4",
-        "SequenceFlow_15jyzqg"
+        "SequenceFlow_1dtybq7",
+        "SequenceFlow_0eoboyu",
+        "SequenceFlow_0jy3w8q",
+        "SequenceFlow_0u67u7k",
+        "SequenceFlow_1plf2me",
+        "SequenceFlow_0ik719b",
+        "SequenceFlow_18i2li3",
+        "SequenceFlow_1j073vl",
+        "SequenceFlow_04ctmhl",
+        "SequenceFlow_00sw0ns",
+        "SequenceFlow_151xud0",
+        "SequenceFlow_0yf7004",
+        "SequenceFlow_1tu3a1o",
+        "SequenceFlow_0so9y7c"
     ],
     "messages": [
         "mf1",
@@ -651,11 +651,11 @@
         "SequenceFlow_05ihnu4": "ExclusiveGateway_1izjr9z"
     },
     "nodes": [
-        "Process_1pqwd18",
-        "Process_0de8xa0",
-        "Process_0bvyh41",
-        "Process_17upgh4",
-        "Process_0vx28va",
+        "User_",
+        "Thermostat_",
+        "WSNGateway_",
+        "Sensor_",
+        "Boiller_",
         "StartEvent_0mw9dyi",
         "Task_09igb82",
         "EndEvent_19aoxjz",

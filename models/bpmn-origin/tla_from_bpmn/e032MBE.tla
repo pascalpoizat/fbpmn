@@ -5,12 +5,12 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "P_id" :> { "StartEvent_1", "ExclusiveGateway_1uyyba4", "Task_1rjwiou", "Task_05h2dnk", "ExclusiveGateway_04stbki", "SubProcess_0ikactq", "ExclusiveGateway_06yyw6a", "EndEvent_1bmsqno", "BoundaryEvent_1g6jly9" }
-  @@ "Q_id" :> { "StartEvent_0pevvbh", "EndEvent_03g8tis", "Task_1rw2ter", "Task_0dvwezg" }
+  "P_" :> { "StartEvent_1", "ExclusiveGateway_1uyyba4", "Task_1rjwiou", "Task_05h2dnk", "ExclusiveGateway_04stbki", "SubProcess_0ikactq", "ExclusiveGateway_06yyw6a", "EndEvent_1bmsqno", "BoundaryEvent_1g6jly9" }
+  @@ "Q_" :> { "StartEvent_0pevvbh", "EndEvent_03g8tis", "Task_1rw2ter", "Task_0dvwezg" }
   @@ "SubProcess_0ikactq" :> { "StartEvent_1em4yhi", "EndEvent_07lweo2", "Task_1kf2bvv" }
 
 Node == {
-  "P_id","Q_id","StartEvent_1","ExclusiveGateway_1uyyba4","Task_1rjwiou","Task_05h2dnk","ExclusiveGateway_04stbki","SubProcess_0ikactq","ExclusiveGateway_06yyw6a","EndEvent_1bmsqno","BoundaryEvent_1g6jly9","StartEvent_1em4yhi","EndEvent_07lweo2","Task_1kf2bvv","StartEvent_0pevvbh","EndEvent_03g8tis","Task_1rw2ter","Task_0dvwezg"
+  "P_","Q_","StartEvent_1","ExclusiveGateway_1uyyba4","Task_1rjwiou","Task_05h2dnk","ExclusiveGateway_04stbki","SubProcess_0ikactq","ExclusiveGateway_06yyw6a","EndEvent_1bmsqno","BoundaryEvent_1g6jly9","StartEvent_1em4yhi","EndEvent_07lweo2","Task_1kf2bvv","StartEvent_0pevvbh","EndEvent_03g8tis","Task_1rw2ter","Task_0dvwezg"
 }
 
 Edge == {
@@ -60,8 +60,8 @@ target ==
 @@ "SequenceFlow_0f6i1ig" :> "Task_0dvwezg"
 
 CatN ==
-   "P_id" :> Process
-@@ "Q_id" :> Process
+   "P_" :> Process
+@@ "Q_" :> Process
 @@ "StartEvent_1" :> NoneStartEvent
 @@ "ExclusiveGateway_1uyyba4" :> Parallel
 @@ "Task_1rjwiou" :> AbstractTask

@@ -1,5 +1,8 @@
 {
     "catN": {
+        "Process_": {
+            "tag": "Process"
+        },
         "Or1": {
             "tag": "OrGateway"
         },
@@ -8,9 +11,6 @@
         },
         "Xor2": {
             "tag": "XorGateway"
-        },
-        "Process_1": {
-            "tag": "Process"
         },
         "AT5": {
             "tag": "AbstractTask"
@@ -62,7 +62,7 @@
         "e15": "DefaultSequenceFlow"
     },
     "containN": {
-        "Process_1": [
+        "Process_": [
             "AT1",
             "Or1",
             "Xor1",
@@ -100,42 +100,42 @@
     "name": "e003OrTest",
     "attached": {},
     "containE": {
-        "Process_1": [
-            "e0",
-            "e2",
-            "e3",
-            "e4",
-            "e6",
-            "e7",
-            "e8",
-            "e9",
-            "e5",
-            "e10",
-            "e11",
-            "e12",
-            "e13",
-            "e14",
+        "Process_": [
+            "e15",
             "e1",
-            "e15"
+            "e14",
+            "e13",
+            "e12",
+            "e11",
+            "e10",
+            "e5",
+            "e9",
+            "e8",
+            "e7",
+            "e6",
+            "e4",
+            "e3",
+            "e2",
+            "e0"
         ]
     },
     "edges": [
-        "e0",
-        "e2",
-        "e3",
-        "e4",
-        "e6",
-        "e7",
-        "e8",
-        "e9",
-        "e5",
-        "e10",
-        "e11",
-        "e12",
-        "e13",
-        "e14",
+        "e15",
         "e1",
-        "e15"
+        "e14",
+        "e13",
+        "e12",
+        "e11",
+        "e10",
+        "e5",
+        "e9",
+        "e8",
+        "e7",
+        "e6",
+        "e4",
+        "e3",
+        "e2",
+        "e0"
     ],
     "messages": [],
     "sourceE": {
@@ -157,7 +157,7 @@
         "e15": "Or1"
     },
     "nodes": [
-        "Process_1",
+        "Process_",
         "AT1",
         "Or1",
         "Xor1",

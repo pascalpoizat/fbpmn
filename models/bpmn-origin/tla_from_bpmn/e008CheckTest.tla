@@ -5,15 +5,15 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "Process_1" :> { "SubProcess_0mgtdae", "StartEvent_0ayuyd2", "EndEvent_0ns8te3" }
+  "A_" :> { "SubProcess_0mgtdae", "StartEvent_0ayuyd2", "EndEvent_0ns8te3" }
   @@ "SubProcess_0mgtdae" :> { "EndEvent_0v9lt5i", "Task_1rt44mz", "Task_1eirt50", "Task_097548f", "ExclusiveGateway_1j1chqb", "StartEvent_1", "ExclusiveGateway_0079typ" }
 
 Node == {
-  "Process_1","SubProcess_0mgtdae","StartEvent_0ayuyd2","EndEvent_0ns8te3","EndEvent_0v9lt5i","Task_1rt44mz","Task_1eirt50","Task_097548f","ExclusiveGateway_1j1chqb","StartEvent_1","ExclusiveGateway_0079typ"
+  "A_","SubProcess_0mgtdae","StartEvent_0ayuyd2","EndEvent_0ns8te3","EndEvent_0v9lt5i","Task_1rt44mz","Task_1eirt50","Task_097548f","ExclusiveGateway_1j1chqb","StartEvent_1","ExclusiveGateway_0079typ"
 }
 
 Edge == {
-  "SequenceFlow_1vue23p","SequenceFlow_00aes3w","SequenceFlow_0z2xwql","SequenceFlow_0wto9d1","SequenceFlow_0uplc1a","SequenceFlow_01wc4ks","SequenceFlow_0b7efwa","SequenceFlow_1fuwd1z","SequenceFlow_0uzla8o"
+  "SequenceFlow_00aes3w","SequenceFlow_1vue23p","SequenceFlow_0z2xwql","SequenceFlow_0wto9d1","SequenceFlow_0uplc1a","SequenceFlow_01wc4ks","SequenceFlow_0b7efwa","SequenceFlow_1fuwd1z","SequenceFlow_0uzla8o"
 }
 
 Message == {  }
@@ -22,8 +22,8 @@ msgtype ==
     [ i \in {} |-> {}]
 
 source ==
-   "SequenceFlow_1vue23p" :> "StartEvent_0ayuyd2"
-@@ "SequenceFlow_00aes3w" :> "SubProcess_0mgtdae"
+   "SequenceFlow_00aes3w" :> "SubProcess_0mgtdae"
+@@ "SequenceFlow_1vue23p" :> "StartEvent_0ayuyd2"
 @@ "SequenceFlow_0z2xwql" :> "StartEvent_1"
 @@ "SequenceFlow_0wto9d1" :> "ExclusiveGateway_1j1chqb"
 @@ "SequenceFlow_0uplc1a" :> "ExclusiveGateway_1j1chqb"
@@ -33,8 +33,8 @@ source ==
 @@ "SequenceFlow_0uzla8o" :> "Task_1rt44mz"
 
 target ==
-   "SequenceFlow_1vue23p" :> "SubProcess_0mgtdae"
-@@ "SequenceFlow_00aes3w" :> "EndEvent_0ns8te3"
+   "SequenceFlow_00aes3w" :> "EndEvent_0ns8te3"
+@@ "SequenceFlow_1vue23p" :> "SubProcess_0mgtdae"
 @@ "SequenceFlow_0z2xwql" :> "ExclusiveGateway_1j1chqb"
 @@ "SequenceFlow_0wto9d1" :> "Task_1eirt50"
 @@ "SequenceFlow_0uplc1a" :> "Task_097548f"
@@ -44,7 +44,7 @@ target ==
 @@ "SequenceFlow_0uzla8o" :> "EndEvent_0v9lt5i"
 
 CatN ==
-   "Process_1" :> Process
+   "A_" :> Process
 @@ "SubProcess_0mgtdae" :> SubProcess
 @@ "StartEvent_0ayuyd2" :> NoneStartEvent
 @@ "EndEvent_0ns8te3" :> NoneEndEvent
@@ -57,8 +57,8 @@ CatN ==
 @@ "ExclusiveGateway_0079typ" :> ExclusiveOr
 
 CatE ==
-   "SequenceFlow_1vue23p" :> NormalSeqFlow
-@@ "SequenceFlow_00aes3w" :> NormalSeqFlow
+   "SequenceFlow_00aes3w" :> NormalSeqFlow
+@@ "SequenceFlow_1vue23p" :> NormalSeqFlow
 @@ "SequenceFlow_0z2xwql" :> NormalSeqFlow
 @@ "SequenceFlow_0wto9d1" :> NormalSeqFlow
 @@ "SequenceFlow_0uplc1a" :> NormalSeqFlow

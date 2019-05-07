@@ -18,14 +18,14 @@
         "StartEvent_1": {
             "tag": "NoneStartEvent"
         },
-        "Process_1": {
-            "tag": "Process"
-        },
         "StartEvent_1f3jj6d": {
             "tag": "NoneStartEvent"
         },
         "ExclusiveGateway_1dc5v3z": {
             "tag": "XorGateway"
+        },
+        "TravelAgency_": {
+            "tag": "Process"
         },
         "EndEvent_0u6deep": {
             "tag": "CatchMessageIntermediateEvent"
@@ -42,14 +42,14 @@
         "EndEvent_10gqkzy": {
             "tag": "TerminateEndEvent"
         },
+        "Customer_": {
+            "tag": "Process"
+        },
         "Task_002ndsu": {
             "tag": "SendTask"
         },
         "Task_1ne4gpy": {
             "tag": "SendTask"
-        },
-        "Process_14x2mcf": {
-            "tag": "Process"
         },
         "IntermediateThrowEvent_0xjpikb": {
             "tag": "CatchMessageIntermediateEvent"
@@ -87,18 +87,7 @@
         "SequenceFlow_00s838q": "NormalSequenceFlow"
     },
     "containN": {
-        "Process_1": [
-            "Task_1v9s881",
-            "ExclusiveGateway_192ovii",
-            "ExclusiveGateway_0wgdt1i",
-            "StartEvent_1",
-            "Task_07u875a",
-            "EndEvent_055yt9k",
-            "EndEvent_0u6deep",
-            "IntermediateThrowEvent_12d113r",
-            "Task_1q91vog"
-        ],
-        "Process_14x2mcf": [
+        "TravelAgency_": [
             "StartEvent_1f3jj6d",
             "ExclusiveGateway_1dc5v3z",
             "Task_1bn6n5q",
@@ -108,6 +97,17 @@
             "Task_1ne4gpy",
             "Task_002ndsu",
             "IntermediateThrowEvent_0neineb"
+        ],
+        "Customer_": [
+            "Task_1v9s881",
+            "ExclusiveGateway_192ovii",
+            "ExclusiveGateway_0wgdt1i",
+            "StartEvent_1",
+            "Task_07u875a",
+            "EndEvent_055yt9k",
+            "EndEvent_0u6deep",
+            "IntermediateThrowEvent_12d113r",
+            "Task_1q91vog"
         ]
     },
     "messageE": {
@@ -145,18 +145,7 @@
     "name": "e006TravelAgency",
     "attached": {},
     "containE": {
-        "Process_1": [
-            "SequenceFlow_1uwq0b6",
-            "SequenceFlow_0b6ku63",
-            "SequenceFlow_0sfyd5z",
-            "SequenceFlow_016h32p",
-            "SequenceFlow_1rma3l8",
-            "SequenceFlow_1dptcxp",
-            "SequenceFlow_1h5h7h5",
-            "SequenceFlow_0ljbxox",
-            "SequenceFlow_1qku5do"
-        ],
-        "Process_14x2mcf": [
+        "TravelAgency_": [
             "SequenceFlow_11rxzkm",
             "SequenceFlow_00s838q",
             "SequenceFlow_0n80biv",
@@ -166,6 +155,17 @@
             "SequenceFlow_0mdvaai",
             "SequenceFlow_0b34324",
             "SequenceFlow_1fn4lqy"
+        ],
+        "Customer_": [
+            "SequenceFlow_1uwq0b6",
+            "SequenceFlow_0b6ku63",
+            "SequenceFlow_0sfyd5z",
+            "SequenceFlow_016h32p",
+            "SequenceFlow_1rma3l8",
+            "SequenceFlow_1dptcxp",
+            "SequenceFlow_1h5h7h5",
+            "SequenceFlow_0ljbxox",
+            "SequenceFlow_1qku5do"
         ]
     },
     "edges": [
@@ -226,8 +226,8 @@
         "SequenceFlow_00s838q": "Task_002ndsu"
     },
     "nodes": [
-        "Process_1",
-        "Process_14x2mcf",
+        "Customer_",
+        "TravelAgency_",
         "Task_1v9s881",
         "ExclusiveGateway_192ovii",
         "ExclusiveGateway_0wgdt1i",

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0sxjdos" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0sxjdos" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.1">
   <bpmn:collaboration id="e015CheckTest">
-    <bpmn:participant id="Sender" name="Sender" processRef="Sender_Id" />
-    <bpmn:participant id="Receiver" name="Receiver" processRef="Receiver_Id" />
+    <bpmn:participant id="Sender" name="Sender" processRef="Sender_" />
+    <bpmn:participant id="Receiver" name="Receiver" processRef="Receiver_" />
     <bpmn:messageFlow id="MessageFlow_095vt4e" name="m1" sourceRef="Task_1c559zv" targetRef="Task_1d78ih0" />
     <bpmn:messageFlow id="MessageFlow_1n4m463" name="m2" sourceRef="Task_1cbrss1" targetRef="Task_19wi6kk" />
   </bpmn:collaboration>
-  <bpmn:process id="Sender_Id" name="Sender" isExecutable="true">
+  <bpmn:process id="Sender_" name="Sender" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>SequenceFlow_1bot7ik</bpmn:outgoing>
     </bpmn:startEvent>
@@ -37,7 +37,7 @@
       <bpmn:outgoing>SequenceFlow_08o2r31</bpmn:outgoing>
     </bpmn:sendTask>
   </bpmn:process>
-  <bpmn:process id="Receiver_Id" name="Receiver" isExecutable="false">
+  <bpmn:process id="Receiver_" name="Receiver" isExecutable="false">
     <bpmn:startEvent id="StartEvent_0x0o2ml">
       <bpmn:outgoing>SequenceFlow_0fxw5l8</bpmn:outgoing>
     </bpmn:startEvent>

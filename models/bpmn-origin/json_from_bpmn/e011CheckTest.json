@@ -9,17 +9,14 @@
         "StartEvent_1": {
             "tag": "NoneStartEvent"
         },
+        "B_": {
+            "tag": "Process"
+        },
         "EndEvent_1s2d234": {
             "tag": "NoneEndEvent"
         },
-        "Process_A": {
-            "tag": "Process"
-        },
         "SP": {
             "tag": "SubProcess"
-        },
-        "Process_B": {
-            "tag": "Process"
         },
         "EndEvent_0v9lt5i": {
             "tag": "NoneEndEvent"
@@ -38,6 +35,9 @@
         },
         "EndEvent_0ns8te3": {
             "tag": "NoneEndEvent"
+        },
+        "A_": {
+            "tag": "Process"
         },
         "SendTask_0vp135q": {
             "tag": "SendTask"
@@ -61,11 +61,10 @@
         "SequenceFlow_01wc4ks": "NormalSequenceFlow"
     },
     "containN": {
-        "Process_A": [
-            "SP",
-            "StartEvent_0ayuyd2",
-            "SendTask_0vp135q",
-            "EndEvent_0ns8te3"
+        "B_": [
+            "EndEvent_1s2d234",
+            "StartEvent_13qwxem",
+            "ReceiveTask_0tuz5r7"
         ],
         "SP": [
             "EndEvent_0v9lt5i",
@@ -75,10 +74,11 @@
             "StartEvent_1",
             "ExclusiveGateway_0079typ"
         ],
-        "Process_B": [
-            "EndEvent_1s2d234",
-            "StartEvent_13qwxem",
-            "ReceiveTask_0tuz5r7"
+        "A_": [
+            "SP",
+            "StartEvent_0ayuyd2",
+            "SendTask_0vp135q",
+            "EndEvent_0ns8te3"
         ]
     },
     "messageE": {
@@ -101,10 +101,9 @@
     "name": "e011CheckTest",
     "attached": {},
     "containE": {
-        "Process_A": [
-            "SequenceFlow_00aes3w",
-            "SequenceFlow_1vue23p",
-            "SequenceFlow_10xxs5u"
+        "B_": [
+            "SequenceFlow_0ehu3gz",
+            "SequenceFlow_1rma85g"
         ],
         "SP": [
             "SequenceFlow_0z2xwql",
@@ -114,24 +113,25 @@
             "SequenceFlow_0b7efwa",
             "SequenceFlow_1fuwd1z"
         ],
-        "Process_B": [
-            "SequenceFlow_1rma85g",
-            "SequenceFlow_0ehu3gz"
+        "A_": [
+            "SequenceFlow_10xxs5u",
+            "SequenceFlow_1vue23p",
+            "SequenceFlow_00aes3w"
         ]
     },
     "edges": [
         "mf1",
-        "SequenceFlow_00aes3w",
-        "SequenceFlow_1vue23p",
         "SequenceFlow_10xxs5u",
+        "SequenceFlow_1vue23p",
+        "SequenceFlow_00aes3w",
         "SequenceFlow_0z2xwql",
         "SequenceFlow_0wto9d1",
         "SequenceFlow_0uplc1a",
         "SequenceFlow_01wc4ks",
         "SequenceFlow_0b7efwa",
         "SequenceFlow_1fuwd1z",
-        "SequenceFlow_1rma85g",
-        "SequenceFlow_0ehu3gz"
+        "SequenceFlow_0ehu3gz",
+        "SequenceFlow_1rma85g"
     ],
     "messages": [
         "m1"
@@ -151,8 +151,8 @@
         "SequenceFlow_01wc4ks": "Task_097548f"
     },
     "nodes": [
-        "Process_A",
-        "Process_B",
+        "A_",
+        "B_",
         "SP",
         "StartEvent_0ayuyd2",
         "SendTask_0vp135q",

@@ -12,10 +12,7 @@
         "StartEvent_1": {
             "tag": "NoneStartEvent"
         },
-        "Process_1": {
-            "tag": "Process"
-        },
-        "Process_1exocbo": {
+        "B_": {
             "tag": "Process"
         },
         "EndEvent_0v9lt5i": {
@@ -35,6 +32,9 @@
         },
         "EndEvent_1wbcvef": {
             "tag": "NoneEndEvent"
+        },
+        "A_": {
+            "tag": "Process"
         }
     },
     "catE": {
@@ -50,7 +50,12 @@
         "SequenceFlow_03gudbc": "NormalSequenceFlow"
     },
     "containN": {
-        "Process_1": [
+        "B_": [
+            "StartEvent_1wwcoxd",
+            "EndEvent_1wbcvef",
+            "Task_18t09mk"
+        ],
+        "A_": [
             "Task_097548f",
             "Task_1eirt50",
             "ExclusiveGateway_0079typ",
@@ -58,11 +63,6 @@
             "ExclusiveGateway_1j1chqb",
             "StartEvent_1",
             "Task_1rt44mz"
-        ],
-        "Process_1exocbo": [
-            "StartEvent_1wwcoxd",
-            "EndEvent_1wbcvef",
-            "Task_18t09mk"
         ]
     },
     "messageE": {
@@ -83,31 +83,31 @@
     "name": "e009CheckTest",
     "attached": {},
     "containE": {
-        "Process_1": [
-            "SequenceFlow_0uplc1a",
-            "SequenceFlow_01wc4ks",
-            "SequenceFlow_0wto9d1",
-            "SequenceFlow_0b7efwa",
-            "SequenceFlow_1fuwd1z",
-            "SequenceFlow_0uzla8o",
-            "SequenceFlow_0z2xwql"
+        "B_": [
+            "SequenceFlow_03gudbc",
+            "SequenceFlow_14kzfo3"
         ],
-        "Process_1exocbo": [
-            "SequenceFlow_14kzfo3",
-            "SequenceFlow_03gudbc"
+        "A_": [
+            "SequenceFlow_0z2xwql",
+            "SequenceFlow_0uzla8o",
+            "SequenceFlow_1fuwd1z",
+            "SequenceFlow_0b7efwa",
+            "SequenceFlow_0wto9d1",
+            "SequenceFlow_01wc4ks",
+            "SequenceFlow_0uplc1a"
         ]
     },
     "edges": [
         "MessageFlow_03ylhkh",
-        "SequenceFlow_0uplc1a",
-        "SequenceFlow_01wc4ks",
-        "SequenceFlow_0wto9d1",
-        "SequenceFlow_0b7efwa",
-        "SequenceFlow_1fuwd1z",
-        "SequenceFlow_0uzla8o",
         "SequenceFlow_0z2xwql",
-        "SequenceFlow_14kzfo3",
-        "SequenceFlow_03gudbc"
+        "SequenceFlow_0uzla8o",
+        "SequenceFlow_1fuwd1z",
+        "SequenceFlow_0b7efwa",
+        "SequenceFlow_0wto9d1",
+        "SequenceFlow_01wc4ks",
+        "SequenceFlow_0uplc1a",
+        "SequenceFlow_03gudbc",
+        "SequenceFlow_14kzfo3"
     ],
     "messages": [
         "m1"
@@ -125,8 +125,8 @@
         "SequenceFlow_03gudbc": "Task_18t09mk"
     },
     "nodes": [
-        "Process_1",
-        "Process_1exocbo",
+        "A_",
+        "B_",
         "Task_097548f",
         "Task_1eirt50",
         "ExclusiveGateway_0079typ",

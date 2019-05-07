@@ -5,14 +5,14 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 ContainRel ==
-  "Process_Id" :> { "exclusivegateway4", "exclusivegateway3", "validatePayment", "inclusivegateway2", "payOnDelivery", "card", "giftVoucher", "inclusivegateway1", "Payment", "selectItems", "exclusivegateway2", "signUp", "signIn", "exclusivegateway1", "startevent1", "initiateShipping", "parallelgateway1", "packageItems", "parallelgateway2", "initiateDelivery", "email", "notifyUser", "sms", "transport", "parallelgateway5", "parallelgateway6", "parallelgateway3", "parallelgateway4", "endevent1", "generateTrackingInfo", "errorendevent1" }
+  "Process_" :> { "exclusivegateway4", "exclusivegateway3", "validatePayment", "inclusivegateway2", "payOnDelivery", "card", "giftVoucher", "inclusivegateway1", "Payment", "selectItems", "exclusivegateway2", "signUp", "signIn", "exclusivegateway1", "startevent1", "initiateShipping", "parallelgateway1", "packageItems", "parallelgateway2", "initiateDelivery", "email", "notifyUser", "sms", "transport", "parallelgateway5", "parallelgateway6", "parallelgateway3", "parallelgateway4", "endevent1", "generateTrackingInfo", "errorendevent1" }
 
 Node == {
-  "Process_Id","exclusivegateway4","exclusivegateway3","validatePayment","inclusivegateway2","payOnDelivery","card","giftVoucher","inclusivegateway1","Payment","selectItems","exclusivegateway2","signUp","signIn","exclusivegateway1","startevent1","initiateShipping","parallelgateway1","packageItems","parallelgateway2","initiateDelivery","email","notifyUser","sms","transport","parallelgateway5","parallelgateway6","parallelgateway3","parallelgateway4","endevent1","generateTrackingInfo","errorendevent1"
+  "Process_","exclusivegateway4","exclusivegateway3","validatePayment","inclusivegateway2","payOnDelivery","card","giftVoucher","inclusivegateway1","Payment","selectItems","exclusivegateway2","signUp","signIn","exclusivegateway1","startevent1","initiateShipping","parallelgateway1","packageItems","parallelgateway2","initiateDelivery","email","notifyUser","sms","transport","parallelgateway5","parallelgateway6","parallelgateway3","parallelgateway4","endevent1","generateTrackingInfo","errorendevent1"
 }
 
 Edge == {
-  "flow3","flow4","flow5","flow6","flow7","flow8","flow9","flow10","flow11","flow12","flow13","flow14","flow15","flow16","flow17","flow19","flow20","flow21","flow30","flow35","flow39","flow62","flow31","flow32","flow33","flow34","flow57","flow59","flow41","flow43","flow56","flow58","flow60","flow47","flow61","flow63"
+  "flow63","flow61","flow47","flow60","flow58","flow56","flow43","flow41","flow59","flow57","flow34","flow33","flow32","flow31","flow62","flow39","flow35","flow30","flow21","flow20","flow19","flow17","flow16","flow15","flow14","flow13","flow12","flow11","flow10","flow9","flow8","flow7","flow6","flow5","flow4","flow3"
 }
 
 Message == {  }
@@ -21,83 +21,83 @@ msgtype ==
     [ i \in {} |-> {}]
 
 source ==
-   "flow3" :> "exclusivegateway1"
-@@ "flow4" :> "exclusivegateway1"
-@@ "flow5" :> "signUp"
-@@ "flow6" :> "signIn"
-@@ "flow7" :> "startevent1"
-@@ "flow8" :> "selectItems"
-@@ "flow9" :> "exclusivegateway2"
-@@ "flow10" :> "Payment"
-@@ "flow11" :> "inclusivegateway1"
-@@ "flow12" :> "inclusivegateway1"
-@@ "flow13" :> "inclusivegateway1"
-@@ "flow14" :> "giftVoucher"
-@@ "flow15" :> "card"
-@@ "flow16" :> "inclusivegateway2"
-@@ "flow17" :> "validatePayment"
-@@ "flow19" :> "exclusivegateway3"
-@@ "flow20" :> "exclusivegateway3"
-@@ "flow21" :> "payOnDelivery"
-@@ "flow30" :> "initiateShipping"
-@@ "flow35" :> "parallelgateway2"
-@@ "flow39" :> "initiateDelivery"
-@@ "flow62" :> "exclusivegateway4"
-@@ "flow31" :> "parallelgateway1"
-@@ "flow32" :> "parallelgateway1"
-@@ "flow33" :> "generateTrackingInfo"
-@@ "flow34" :> "packageItems"
-@@ "flow57" :> "parallelgateway5"
-@@ "flow59" :> "email"
-@@ "flow41" :> "parallelgateway3"
-@@ "flow43" :> "parallelgateway3"
-@@ "flow56" :> "notifyUser"
-@@ "flow58" :> "parallelgateway5"
-@@ "flow60" :> "sms"
-@@ "flow47" :> "transport"
+   "flow63" :> "parallelgateway4"
 @@ "flow61" :> "parallelgateway6"
-@@ "flow63" :> "parallelgateway4"
+@@ "flow47" :> "transport"
+@@ "flow60" :> "sms"
+@@ "flow58" :> "parallelgateway5"
+@@ "flow56" :> "notifyUser"
+@@ "flow43" :> "parallelgateway3"
+@@ "flow41" :> "parallelgateway3"
+@@ "flow59" :> "email"
+@@ "flow57" :> "parallelgateway5"
+@@ "flow34" :> "packageItems"
+@@ "flow33" :> "generateTrackingInfo"
+@@ "flow32" :> "parallelgateway1"
+@@ "flow31" :> "parallelgateway1"
+@@ "flow62" :> "exclusivegateway4"
+@@ "flow39" :> "initiateDelivery"
+@@ "flow35" :> "parallelgateway2"
+@@ "flow30" :> "initiateShipping"
+@@ "flow21" :> "payOnDelivery"
+@@ "flow20" :> "exclusivegateway3"
+@@ "flow19" :> "exclusivegateway3"
+@@ "flow17" :> "validatePayment"
+@@ "flow16" :> "inclusivegateway2"
+@@ "flow15" :> "card"
+@@ "flow14" :> "giftVoucher"
+@@ "flow13" :> "inclusivegateway1"
+@@ "flow12" :> "inclusivegateway1"
+@@ "flow11" :> "inclusivegateway1"
+@@ "flow10" :> "Payment"
+@@ "flow9" :> "exclusivegateway2"
+@@ "flow8" :> "selectItems"
+@@ "flow7" :> "startevent1"
+@@ "flow6" :> "signIn"
+@@ "flow5" :> "signUp"
+@@ "flow4" :> "exclusivegateway1"
+@@ "flow3" :> "exclusivegateway1"
 
 target ==
-   "flow3" :> "signIn"
-@@ "flow4" :> "signUp"
-@@ "flow5" :> "exclusivegateway2"
-@@ "flow6" :> "exclusivegateway2"
-@@ "flow7" :> "selectItems"
-@@ "flow8" :> "exclusivegateway1"
-@@ "flow9" :> "Payment"
-@@ "flow10" :> "inclusivegateway1"
-@@ "flow11" :> "giftVoucher"
-@@ "flow12" :> "card"
-@@ "flow13" :> "payOnDelivery"
-@@ "flow14" :> "inclusivegateway2"
-@@ "flow15" :> "inclusivegateway2"
-@@ "flow16" :> "validatePayment"
-@@ "flow17" :> "exclusivegateway3"
-@@ "flow19" :> "exclusivegateway4"
-@@ "flow20" :> "errorendevent1"
-@@ "flow21" :> "exclusivegateway4"
-@@ "flow30" :> "parallelgateway1"
-@@ "flow35" :> "initiateDelivery"
-@@ "flow39" :> "parallelgateway3"
-@@ "flow62" :> "initiateShipping"
-@@ "flow31" :> "packageItems"
-@@ "flow32" :> "generateTrackingInfo"
-@@ "flow33" :> "parallelgateway2"
-@@ "flow34" :> "parallelgateway2"
-@@ "flow57" :> "email"
-@@ "flow59" :> "parallelgateway6"
-@@ "flow41" :> "notifyUser"
-@@ "flow43" :> "transport"
-@@ "flow56" :> "parallelgateway5"
-@@ "flow58" :> "sms"
-@@ "flow60" :> "parallelgateway6"
-@@ "flow47" :> "parallelgateway4"
+   "flow63" :> "endevent1"
 @@ "flow61" :> "parallelgateway4"
-@@ "flow63" :> "endevent1"
+@@ "flow47" :> "parallelgateway4"
+@@ "flow60" :> "parallelgateway6"
+@@ "flow58" :> "sms"
+@@ "flow56" :> "parallelgateway5"
+@@ "flow43" :> "transport"
+@@ "flow41" :> "notifyUser"
+@@ "flow59" :> "parallelgateway6"
+@@ "flow57" :> "email"
+@@ "flow34" :> "parallelgateway2"
+@@ "flow33" :> "parallelgateway2"
+@@ "flow32" :> "generateTrackingInfo"
+@@ "flow31" :> "packageItems"
+@@ "flow62" :> "initiateShipping"
+@@ "flow39" :> "parallelgateway3"
+@@ "flow35" :> "initiateDelivery"
+@@ "flow30" :> "parallelgateway1"
+@@ "flow21" :> "exclusivegateway4"
+@@ "flow20" :> "errorendevent1"
+@@ "flow19" :> "exclusivegateway4"
+@@ "flow17" :> "exclusivegateway3"
+@@ "flow16" :> "validatePayment"
+@@ "flow15" :> "inclusivegateway2"
+@@ "flow14" :> "inclusivegateway2"
+@@ "flow13" :> "payOnDelivery"
+@@ "flow12" :> "card"
+@@ "flow11" :> "giftVoucher"
+@@ "flow10" :> "inclusivegateway1"
+@@ "flow9" :> "Payment"
+@@ "flow8" :> "exclusivegateway1"
+@@ "flow7" :> "selectItems"
+@@ "flow6" :> "exclusivegateway2"
+@@ "flow5" :> "exclusivegateway2"
+@@ "flow4" :> "signUp"
+@@ "flow3" :> "signIn"
 
 CatN ==
-   "Process_Id" :> Process
+   "Process_" :> Process
 @@ "exclusivegateway4" :> ExclusiveOr
 @@ "exclusivegateway3" :> ExclusiveOr
 @@ "validatePayment" :> AbstractTask
@@ -131,46 +131,46 @@ CatN ==
 @@ "errorendevent1" :> NoneEndEvent
 
 CatE ==
-   "flow3" :> ConditionalSeqFlow
-@@ "flow4" :> DefaultSeqFlow
-@@ "flow5" :> NormalSeqFlow
-@@ "flow6" :> NormalSeqFlow
-@@ "flow7" :> NormalSeqFlow
-@@ "flow8" :> NormalSeqFlow
-@@ "flow9" :> NormalSeqFlow
-@@ "flow10" :> NormalSeqFlow
-@@ "flow11" :> ConditionalSeqFlow
-@@ "flow12" :> ConditionalSeqFlow
-@@ "flow13" :> DefaultSeqFlow
-@@ "flow14" :> NormalSeqFlow
-@@ "flow15" :> NormalSeqFlow
-@@ "flow16" :> NormalSeqFlow
-@@ "flow17" :> NormalSeqFlow
-@@ "flow19" :> DefaultSeqFlow
-@@ "flow20" :> ConditionalSeqFlow
-@@ "flow21" :> NormalSeqFlow
-@@ "flow30" :> NormalSeqFlow
-@@ "flow35" :> NormalSeqFlow
-@@ "flow39" :> NormalSeqFlow
-@@ "flow62" :> NormalSeqFlow
-@@ "flow31" :> NormalSeqFlow
-@@ "flow32" :> NormalSeqFlow
-@@ "flow33" :> NormalSeqFlow
-@@ "flow34" :> NormalSeqFlow
-@@ "flow57" :> NormalSeqFlow
-@@ "flow59" :> NormalSeqFlow
-@@ "flow41" :> NormalSeqFlow
-@@ "flow43" :> NormalSeqFlow
-@@ "flow56" :> NormalSeqFlow
-@@ "flow58" :> NormalSeqFlow
-@@ "flow60" :> NormalSeqFlow
-@@ "flow47" :> NormalSeqFlow
+   "flow63" :> NormalSeqFlow
 @@ "flow61" :> NormalSeqFlow
-@@ "flow63" :> NormalSeqFlow
+@@ "flow47" :> NormalSeqFlow
+@@ "flow60" :> NormalSeqFlow
+@@ "flow58" :> NormalSeqFlow
+@@ "flow56" :> NormalSeqFlow
+@@ "flow43" :> NormalSeqFlow
+@@ "flow41" :> NormalSeqFlow
+@@ "flow59" :> NormalSeqFlow
+@@ "flow57" :> NormalSeqFlow
+@@ "flow34" :> NormalSeqFlow
+@@ "flow33" :> NormalSeqFlow
+@@ "flow32" :> NormalSeqFlow
+@@ "flow31" :> NormalSeqFlow
+@@ "flow62" :> NormalSeqFlow
+@@ "flow39" :> NormalSeqFlow
+@@ "flow35" :> NormalSeqFlow
+@@ "flow30" :> NormalSeqFlow
+@@ "flow21" :> NormalSeqFlow
+@@ "flow20" :> ConditionalSeqFlow
+@@ "flow19" :> DefaultSeqFlow
+@@ "flow17" :> NormalSeqFlow
+@@ "flow16" :> NormalSeqFlow
+@@ "flow15" :> NormalSeqFlow
+@@ "flow14" :> NormalSeqFlow
+@@ "flow13" :> DefaultSeqFlow
+@@ "flow12" :> ConditionalSeqFlow
+@@ "flow11" :> ConditionalSeqFlow
+@@ "flow10" :> NormalSeqFlow
+@@ "flow9" :> NormalSeqFlow
+@@ "flow8" :> NormalSeqFlow
+@@ "flow7" :> NormalSeqFlow
+@@ "flow6" :> NormalSeqFlow
+@@ "flow5" :> NormalSeqFlow
+@@ "flow4" :> DefaultSeqFlow
+@@ "flow3" :> ConditionalSeqFlow
 
 LOCAL preEdges ==
-   <<"inclusivegateway2", "flow14">> :> {"flow10", "flow11", "flow3", "flow4", "flow5", "flow6", "flow7", "flow8", "flow9"}
-@@ <<"inclusivegateway2", "flow15">> :> {"flow10", "flow12", "flow3", "flow4", "flow5", "flow6", "flow7", "flow8", "flow9"}
+   <<"inclusivegateway2", "flow15">> :> {"flow10", "flow12", "flow3", "flow4", "flow5", "flow6", "flow7", "flow8", "flow9"}
+@@ <<"inclusivegateway2", "flow14">> :> {"flow10", "flow11", "flow3", "flow4", "flow5", "flow6", "flow7", "flow8", "flow9"}
 @@ <<"inclusivegateway1", "flow10">> :> {"flow3", "flow4", "flow5", "flow6", "flow7", "flow8", "flow9"}
 PreEdges(n,e) == preEdges[n,e]
 
