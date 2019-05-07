@@ -420,7 +420,7 @@ To get help with `fbpmn`, run `fbpmn -h`.
 
 ```sh
 ❯ fbpmn -h
-0.2.8
+0.2.9
 
 Usage: fbpmn COMMAND
   formal transformations for BPMN models
