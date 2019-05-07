@@ -99,9 +99,9 @@ encodeLogToHtml l =
           padding: 0;
           margin: 0;
         }
-  
+
         #canvas {
-          height: 90%;
+          height: 80%;
           padding: 0;
           margin: 0;
         }
@@ -112,6 +112,22 @@ encodeLogToHtml l =
           margin: 4;
           background: rgba(0,128,0,0.8);
           color: White;
+        }
+  
+        #network {
+          font-family: Arial, Helvetica, sans-serif;
+          height: 10%;
+          font-size: 18px;
+          background: rgba(0,128,0,0.1);
+          border: 0 solid rgba(0,128,0,0.8);
+          border-left-width: 4px;
+          color: #333;
+        }
+  
+        #network #title {
+          text-align: left;
+          font-weight: bold;
+          font-size: 2vh;
         }
   
         #header #title {
@@ -164,6 +180,10 @@ encodeLogToHtml l =
         <div id="step">step ../..</div>
       </div>
       <div id="canvas"></div>
+      <div id="network">
+        <div id="title">Network status</div>
+        <div id="status"></div>
+      </div>
       <script>
   
         // viewer instance
@@ -207,6 +227,10 @@ encodeLogToHtml l =
             });
         }
 
+        function netToJSON(net) {
+          return JSON.stringify([...net]);
+        }
+  
         function edgeBoundingBox(edge) {
           var minx,miny,maxx,maxy;
           if(edge.waypoints) {
@@ -292,6 +316,7 @@ encodeLogToHtml l =
           // do new marking
           ns = csteps[step][0];
           es = csteps[step][1];
+          net = csteps[step][2];
           // set
           for(const k of ns.keys()) {
             markNode(canvas,k);
@@ -311,6 +336,7 @@ encodeLogToHtml l =
             }
             catch {}
           }
+          $("#network #status").html(netToJSON(net)); 
           return markings;
         }
   
@@ -379,23 +405,6 @@ encodeLogToHtml l =
         // load external diagram file via AJAX and open it
         $.get(diagramUrl, openDiagram, 'text');
       </script>
-      <!--
-        Thanks for trying out our BPMN toolkit!
-  
-        If you'd like to learn more about what our library,
-        continue with some more basic examples:
-        * https://github.com/bpmn-io/bpmn-js-examples/overlays
-        * https://github.com/bpmn-io/bpmn-js-examples/interaction
-        * https://github.com/bpmn-io/bpmn-js-examples/colors
-        * https://github.com/bpmn-io/bpmn-js-examples/commenting
-  
-        To get a bit broader overview over how bpmn-js works,
-        follow our walkthrough:
-        * https://bpmn.io/toolkit/bpmn-js/walkthrough/
-  
-        Related starters:
-        * https://raw.githubusercontent.com/bpmn-io/bpmn-js-examples/starter/modeler.html
-      -->
     </body>
   </html>
     |]
