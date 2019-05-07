@@ -37,65 +37,44 @@ parseString = many space *> "\"" *> manyTill anyChar "\""
 parseInteger :: Parser Integer
 parseInteger = many space *> decimal
 
+parseTerminal :: Text -> Parser ()
+parseTerminal sep = do
+  _ <- many space
+  _ <- string sep
+  return ()
+
 parseMapItem :: Parser (Variable, Value)
 parseMapItem = do
-  _ <- many space
   var <- parseVariable
-  _ <- many space
-  _ <- "|->"
-  _ <- many space
+  _ <- parseTerminal "|->"
   val <- parseValue
   return (var, val)
 
 parseBagItem :: Parser (Value, Value)
 parseBagItem = do
-  _ <- many space
   var <- parseValue
-  _ <- many space
-  _ <- ":>"
-  _ <- many space
+  _ <- parseTerminal ":>"
   val <- parseValue
   return (var, val)
 
-parseBag :: Parser [(Value, Value)]
-parseBag = do
-  _ <- many space
-  _ <- "("
-  _ <- many space
-  items <- sepBy parseBagItem (many space *> "@@" *> many space)
-  _ <- many space
-  _ <- ")"
+parseContainer :: Text -> Text -> Text -> Parser a -> Parser [a]
+parseContainer beg end sep item = do
+  _ <- parseTerminal beg
+  items <- sepBy item $ parseTerminal sep
+  _ <- parseTerminal end
   return items
+
+parseBag :: Parser [(Value, Value)]
+parseBag = parseContainer "(" ")" "@@" parseBagItem
 
 parseMap :: Parser [(Variable, Value)]
-parseMap = do
-  _ <- many space
-  _ <- "["
-  _ <- many space
-  items <- sepBy parseMapItem (many space *> "," *> many space)
-  _ <- many space
-  _ <- "]"
-  return items
-  
+parseMap = parseContainer "[" "]" "," parseMapItem
+
 parseTuple :: Parser [Value]
-parseTuple = do
-  _ <- many space
-  _ <- "<<"
-  _ <- many space
-  items <- sepBy parseValue (many space *> "," *> many space)
-  _ <- many space
-  _ <- ">>"
-  return items
+parseTuple = parseContainer "<<" ">>" "," parseValue
 
 parseSet :: Parser [Value]
-parseSet = do
-  _ <- many space
-  _ <- "{"
-  _ <- many space
-  items <- sepBy parseValue (many space *> "," *> many space)
-  _ <- many space
-  _ <- "}"
-  return items
+parseSet = parseContainer "{" "}" "," parseValue
 
 parseValue :: Parser Value
 parseValue = (SetValue <$> parseSet) 
@@ -108,12 +87,9 @@ parseValue = (SetValue <$> parseSet)
 
 parseAssignment :: Parser (Variable, Value)
 parseAssignment = do
-  _ <- many space
-  _ <- "/\\ "
+  _ <- parseTerminal "/\\ "
   var <- parseVariable
-  _ <- many space
-  _ <- "="
-  _ <- many space
+  _ <- parseTerminal "="
   val <- parseValue
   return (var, val)
 
