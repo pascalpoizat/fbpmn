@@ -40,8 +40,9 @@ for six different communication semantics:
 
 **New properties and communication semantics can be easily taken into account** (see Sect. 5, *Extending the verification*).
 
-![Variations.](MBE.png)
-*Figure 1: variations and properties (network unordered semantics).*
+### References
+
+Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Order Logic Semantics for Communication-Parametric BPMN Collaborations**. In: *17th International Conference on Business Process Management (BPM)*, Springer, 2019.
 
 ### TL;DR for the impatient
 
@@ -176,10 +177,10 @@ Please then put this directory in your `PATH` environment variable.
 
 Please see [the BPMN 2.0 standard](https://www.omg.org/spec/BPMN/2.0/).
 
-The subset of BPMN that we support is presented in Fig. 2.
+The subset of BPMN that we support is presented in Fig. 1.
 
 ![BPMN support.](bpmn.png)
-*Figure 2: supported subset of the BPMN notation.*
+*Figure 1: supported subset of the BPMN notation.*
 
 `fbpmn` has been tested with models made with the Camunda Modeler, which you can get [here](https://camunda.com/products/modeler/).
 
@@ -196,20 +197,20 @@ Verification requires that:
 
 ### Principles
 
-Verification is achieved in two steps (see Fig. 3):
+Verification is achieved in two steps (see Fig. 2):
 
 1. generate a TLA+ representation of the BPMN collaboration
 2. use this representation and the TLA+ implementation of our FOL semantics for BPMN collaborations to perform verification (using the `TLC` model checker from the TLA+ tool box).
 
 <img alt="Transformation overview." src="overview.png" width=400><br/>
-*Figure 3: `fbpmn` approach to the verification of BPMN collaborations.*
+*Figure 2: `fbpmn` approach to the verification of BPMN collaborations.*
 
-In the sequel, we will use the model in Fig. 4.
+In the sequel, we will use the model in Fig. 3.
 
 ![BPMN example.](e033MBE.png)
-*Figure 4: example collaboration model (`e033MBE.bpmn`).*
+*Figure 3: example collaboration model (`e033MBE.bpmn`).*
 
-**For Linux and OSX users**, we provide you with a `fbpmn-check` script (in the `scripts` directory of the source distribution) that does the two steps described in Fig. 3 for you and performs verification for each possible communication model.
+**For Linux and OSX users**, we provide you with a `fbpmn-check` script (in the `scripts` directory of the source distribution) that does the two steps described in Fig. 2 for you and performs verification for each possible communication model.
 
 ```sh
 ❯ fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
@@ -334,11 +335,11 @@ To generate versions of the counter-examples that are **easier to analyse** you 
 	transformation done
 	```
 
-	An excerpt of a counter example for the model in Fig. 4 is given in Fig. 5.
+	An excerpt of a counter example for the model in Fig. 3 is given in Fig. 4.
 
 	[![Counter example animation (step 24).](animation_24.png)](e033MBE.Network01Bag.Prop03Sound.html)
 
-	*Figure 5: last state of the animation of the counter example for soundness of the model in Fig. 4 with network unordered semantics.*
+	*Figure 4: last state of the animation of the counter example for soundness of the model in Fig. 4 with network unordered semantics.*
 	
 The first parameter of the three commands is the source `.log` file and the second one is the target `.json`/`.dot`/`.html` file (no sufixes in both cases, `fbpmn` adds them given the type of the read/generated file).
 
@@ -420,7 +421,7 @@ To get help with `fbpmn`, run `fbpmn -h`.
 
 ```sh
 ❯ fbpmn -h
-0.2.9
+0.3.0
 
 Usage: fbpmn COMMAND
   formal transformations for BPMN models
