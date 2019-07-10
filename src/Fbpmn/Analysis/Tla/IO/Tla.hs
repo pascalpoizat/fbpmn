@@ -77,17 +77,29 @@ encodeBpmnInterestToTla g =
     interests = T.intercalate "@@ " $ mapMap showRel (containN g)
     showRel :: Node -> Maybe [Node] -> Maybe Text
     showRel _ Nothing = Nothing
-    showRel n (Just ns) =
-      Just [text|
-        $sn :> { $sns }
-      |]
-      where
-        sn = show n
-        sns = T.intercalate ", " $ show <$> interestedIn 
-        interestedIn = foldrWithKey (\e m l -> if (targetInNode e) then m:l else l ) [] (messageE g)
-        targetInNode e = case targetE g !? e of
-          Nothing -> False
-          Just t -> elem t ns
+    showRel n (Just _) =
+      case catN g !? n of 
+        Nothing -> Nothing
+        Just Process ->
+          Just [text|
+            $sn :> { $sns }
+          |]
+          where
+            sn = show n
+            sns = T.intercalate ", " $ show <$> interestedIn 
+            interestedIn =
+                foldrWithKey (\e m l -> if (targetInContainer (targetE g !? e) n) then m:l else l ) [] (messageE g)
+                where
+                targetInContainer :: Maybe Node -> Node -> Bool
+                targetInContainer Nothing _ = False
+                targetInContainer (Just target) container = 
+                  case containN g !? container of
+                    Nothing -> False
+                    Just nodes ->
+                      let subprocesses = foldr (\node l -> if (catN g !? node) == (Just SubProcess) then node:l else l) [] nodes in
+                      elem target nodes || or (map (targetInContainer (Just target)) subprocesses)
+        Just _ -> Nothing
+
 
 
 encodeBpmnGraphContainRelToTla :: BpmnGraph -> Text
