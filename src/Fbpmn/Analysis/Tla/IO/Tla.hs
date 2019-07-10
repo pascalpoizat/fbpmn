@@ -83,12 +83,12 @@ encodeBpmnInterestToTla g =
       |]
       where
         sn = show n
-        sns = T.intercalate ", " $ show <$> (interestedIn n)
-        interestedIn :: Node -> [Message]
-        interestedIn n = foldrWithKey (\e m l -> if (targetInNode e) then m:b else l ) [] (messageE g)
+        sns = T.intercalate ", " $ show <$> interestedIn 
+        interestedIn = foldrWithKey (\e m l -> if (targetInNode e) then m:l else l ) [] (messageE g)
         targetInNode e = case targetE g !? e of
           Nothing -> False
           Just t -> elem t ns
+
 
 encodeBpmnGraphContainRelToTla :: BpmnGraph -> Text
 encodeBpmnGraphContainRelToTla g =
