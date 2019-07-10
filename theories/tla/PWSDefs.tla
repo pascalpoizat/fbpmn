@@ -1,7 +1,7 @@
 ---------------- MODULE PWSDefs ----------------
 EXTENDS PWSTypes
 
-CONSTANT Node, Edge, source, target, Message, CatN, CatE, msgtype, ContainRel (* = R *), PreEdges(_,_), PreNodes(_,_), BoundaryEvent
+CONSTANT Node, Edge, source, target, Message, CatN, CatE, msgtype, ContainRel (* = R *), PreEdges(_,_), PreNodes(_,_), BoundaryEvent, Interest
 
 (* R^{-1}(n). *)
 ContainRelInv(n) == CHOOSE p \in { nn \in Node : CatN[nn] \in {Process, SubProcess} } : n \in ContainRel[p]

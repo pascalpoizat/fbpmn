@@ -6,7 +6,7 @@ import           Fbpmn.Helper
 import           Fbpmn.BpmnGraph.Model
 import           NeatInterpolation (text)
 -- import           Data.List                      ( intercalate )
-import           Data.Map.Strict   ((!?))
+import           Data.Map.Strict   ((!?), foldrWithKey)
 
 {-|
 Write a BPMN Graph to a TLA+ file.
@@ -21,6 +21,7 @@ encodeBpmnGraphToTla :: BpmnGraph -> Text
 encodeBpmnGraphToTla g =
   unlines
     $   [ encodeBpmnGraphHeaderToTla          -- header
+        , encodeBpmnInterestToTla             -- interest
         , encodeBpmnGraphContainRelToTla      -- containment relation
         , encodeBpmnGraphNodeDeclToTla        -- nodes
         , encodeBpmnGraphEdgeDeclToTla        -- edges
@@ -65,6 +66,29 @@ encodeBpmnGraphFooterToTla _ =
 
   ================================================================
   |]
+
+encodeBpmnInterestToTla :: BpmnGraph -> Text
+encodeBpmnInterestToTla g =
+  [text|
+  Interest ==
+    $interests
+  |]
+  where
+    interests = T.intercalate "@@ " $ mapMap showRel (containN g)
+    showRel :: Node -> Maybe [Node] -> Maybe Text
+    showRel _ Nothing = Nothing
+    showRel n (Just ns) =
+      Just [text|
+        $sn :> { $sns }
+      |]
+      where
+        sn = show n
+        sns = T.intercalate ", " $ show <$> (interestedIn n)
+        interestedIn :: Node -> [Message]
+        interestedIn n = foldrWithKey (\e m l -> if (targetInNode e) then m:b else l ) [] (messageE g)
+        targetInNode e = case targetE g !? e of
+          Nothing -> False
+          Just t -> elem t ns
 
 encodeBpmnGraphContainRelToTla :: BpmnGraph -> Text
 encodeBpmnGraphContainRelToTla g =
