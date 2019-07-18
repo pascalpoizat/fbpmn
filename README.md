@@ -107,11 +107,15 @@ Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Or
 
 To verify your BPMN models, you will need:
 
-- 1.1. A Java SE Development Kit (JDK 8), get it [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+- 1.1. A Java SE Development Kit, get it [here](https://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
-	There is an issue (wrt. `tla2tools.jar`) with version 11 so you will need to install version 8. 
 - 1.2. The TLA+ tools, get `tla2tools.jar` [here](https://github.com/tlaplus/tlaplus/releases).
 	
+:warning: `fbpmn` is known to be working with:
+
+- Java 12 and TLA+ tools version 1.6.0 (not 1.5.7)
+- Java 8 and TLA+ tools version 1.5.7 or 1.6.0	
+
 If you build `fbpmn` from sources (which is required only for **Windows**), you will also need:
 
 - 2.1. The `stack` build system for Haskell, see [here](https://docs.haskellstack.org/en/stable/README/).
