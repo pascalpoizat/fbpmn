@@ -32,8 +32,7 @@ subprocess_may_complete(n) ==
 
 (* ---- none start event ---- *)
 
-nonestart_complete(n) ==
-  /\ CatN[n] = NoneStartEvent
+LOCAL noneortimerstart_complete(n) ==
   /\ nodemarks[n] >= 1
   /\ LET p == ContainRelInv(n) IN
       \/ /\ CatN[p] = Process
@@ -45,6 +44,16 @@ nonestart_complete(n) ==
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
   /\ Network!unchanged
+  
+nonestart_complete(n) ==
+  /\ CatN[n] = NoneStartEvent
+  /\ noneortimerstart_complete(n)
+
+(* ---- timer start event ---- *)
+
+timerstart_complete(n) ==
+  /\ CatN[n] = TimerStartEvent
+  /\ noneortimerstart_complete(n)
 
 (* ---- message start event ---- *)
 
@@ -130,10 +139,21 @@ cmie_start(n) ==
                         ELSE edgemarks[e] ]
      /\ UNCHANGED nodemarks
 
+(* ---- timer intermediate event ---- *)
+
+tie_start(n) ==
+  /\ CatN[n] = TimerIntermediateEvent
+  /\ \E e \in intype(SeqFlowType, n) : edgemarks[e] >= 1
+  /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                      IF e \in intype(SeqFlowType, n) THEN edgemarks[e] - 1
+                      ELSE IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
+                      ELSE edgemarks[e] ]
+  /\ UNCHANGED nodemarks
+  /\ Network!unchanged
+
 (* ---- message boundary event ---- *)
 
 LOCAL mbe_start_subprocess_interrupting(n) ==
-  /\ CatN[n] = MessageBoundaryEvent
   /\ BoundaryEvent[n].cancelActivity (* interrupting *)
   /\ LET act == BoundaryEvent[n].attachedTo IN
      /\ CatN[act] = SubProcess
@@ -154,7 +174,6 @@ LOCAL mbe_start_subprocess_interrupting(n) ==
                                     ELSE edgemarks[ee] ]
      
 LOCAL mbe_start_subprocess_noninterrupting(n) ==
-  /\ CatN[n] = MessageBoundaryEvent
   /\ ~ BoundaryEvent[n].cancelActivity (* non-interrupting *)
   /\ LET act == BoundaryEvent[n].attachedTo IN
      /\ CatN[act] = SubProcess
@@ -170,7 +189,6 @@ LOCAL mbe_start_subprocess_noninterrupting(n) ==
         /\ UNCHANGED nodemarks
 
 LOCAL mbe_start_other(n) ==
-  /\ CatN[n] = MessageBoundaryEvent
   /\ LET act == BoundaryEvent[n].attachedTo IN
       /\ CatN[act] # SubProcess
       /\ nodemarks[act] >= 1
@@ -191,6 +209,56 @@ mbe_start(n) ==
   /\ \/ mbe_start_subprocess_interrupting(n)
      \/ mbe_start_subprocess_noninterrupting(n)
      \/ mbe_start_other(n)
+
+(* ---- timer boundary event ---- *)
+
+(* close to MBE, without the message edge. *)
+
+LOCAL tbe_start_subprocess_interrupting(n) ==
+  /\ BoundaryEvent[n].cancelActivity (* interrupting *)
+  /\ LET act == BoundaryEvent[n].attachedTo IN
+     /\ CatN[act] = SubProcess
+      /\ nodemarks[act] >= 1
+      /\ ~ subprocess_may_complete(act)
+      /\ LET includedNodes == ContainRelPlus(act) IN
+                  /\ nodemarks' = [ nn \in DOMAIN nodemarks |->
+                                    IF nn = act THEN 0
+                                    ELSE IF nn \in includedNodes THEN 0
+                                    ELSE nodemarks[nn] ]
+                  /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
+                                    IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
+                                    ELSE IF source[ee] \in includedNodes /\ target[ee] \in includedNodes THEN 0
+                                    ELSE edgemarks[ee] ]
+
+LOCAL tbe_start_subprocess_noninterrupting(n) ==
+  /\ ~ BoundaryEvent[n].cancelActivity (* non-interrupting *)
+  /\ LET act == BoundaryEvent[n].attachedTo IN
+     /\ CatN[act] = SubProcess
+      /\ nodemarks[act] >= 1
+      /\ ~ subprocess_may_complete(act)
+        /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
+                                IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
+                                ELSE edgemarks[ee] ]
+        /\ UNCHANGED nodemarks
+
+LOCAL tbe_start_other(n) ==
+  /\ LET act == BoundaryEvent[n].attachedTo IN
+      /\ CatN[act] # SubProcess
+      /\ nodemarks[act] >= 1
+      /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
+                                IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
+                                ELSE edgemarks[ee] ]
+      /\ IF BoundaryEvent[n].cancelActivity THEN (* interrupting *)
+             nodemarks' = [ nodemarks EXCEPT ![act] = 0 ]
+         ELSE (* non interrupting *)
+              UNCHANGED nodemarks
+
+tbe_start(n) ==
+  /\ CatN[n] = TimerBoundaryEvent
+  /\ \/ tbe_start_subprocess_interrupting(n)
+     \/ tbe_start_subprocess_noninterrupting(n)
+     \/ tbe_start_other(n)
+  /\ Network!unchanged
 
 ----------------------------------------------------------------
 
@@ -375,6 +443,7 @@ process_complete(n) == FALSE
 
 step(n) ==
   CASE CatN[n] = NoneStartEvent -> nonestart_complete(n)
+    [] CatN[n] = TimerStartEvent -> timerstart_complete(n)
     [] CatN[n] = MessageStartEvent -> messagestart_start(n) \/ messagestart_complete(n)
     [] CatN[n] = NoneEndEvent -> noneend_start(n)
     [] CatN[n] = TerminateEndEvent -> terminateend_start(n)
@@ -384,7 +453,9 @@ step(n) ==
     [] CatN[n] = ReceiveTask -> receive_start(n) \/ receive_complete(n)
     [] CatN[n] = ThrowMessageIntermediateEvent -> tmie_start(n)
     [] CatN[n] = CatchMessageIntermediateEvent -> cmie_start(n)
+    [] CatN[n] = TimerIntermediateEvent -> tie_start(n)
     [] CatN[n] = MessageBoundaryEvent -> mbe_start(n)
+    [] CatN[n] = TimerBoundaryEvent -> tbe_start(n)
     [] CatN[n] = SubProcess -> subprocess_start(n) \/ subprocess_complete(n)
     [] CatN[n] = ExclusiveOr -> xor_complete(n)
     [] CatN[n] = InclusiveOr -> or_complete(n)
@@ -396,7 +467,7 @@ Next == \E n \in Node : step(n)
 
 Init ==
   /\ nodemarks = [ n \in Node |->
-                     IF CatN[n] = NoneStartEvent /\ (\E p \in Processes : n \in ContainRel[p]) THEN 1
+                     IF CatN[n] \in {NoneStartEvent,TimerStartEvent} /\ (\E p \in Processes : n \in ContainRel[p]) THEN 1
                      ELSE 0 ]
   /\ edgemarks = [ e \in Edge |-> 0 ]
   /\ Network!init

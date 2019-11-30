@@ -18,6 +18,9 @@ MessageEndEvent == "MessageEndEvent"
 ThrowMessageIntermediateEvent == "ThrowMessageIntermediateEvent"
 CatchMessageIntermediateEvent == "CatchMessageIntermediateEvent"
 MessageBoundaryEvent == "MessageBoundaryEvent"
+TimerStartEvent == "TimerStartEvent"
+TimerIntermediateEvent == "TimerIntermediateEvent"
+TimerBoundaryEvent == "TimerBoundaryEvent"
 (* edges *)
 NormalSeqFlow == "NormalSeqFlow"
 ConditionalSeqFlow == "ConditionalSeqFlow"
@@ -27,10 +30,10 @@ MessageFlow == "MessageFlow"
 TaskType == { AbstractTask, SendTask, ReceiveTask }
 ActivityType == TaskType \union { SubProcess }
 GatewayType == { ExclusiveOr, InclusiveOr, Parallel, EventBased }
-StartEventType == { NoneStartEvent, MessageStartEvent }
+StartEventType == { NoneStartEvent, MessageStartEvent, TimerStartEvent }
 EndEventType == { NoneEndEvent, TerminateEndEvent, MessageEndEvent }
-IntermediateEventType == { ThrowMessageIntermediateEvent, CatchMessageIntermediateEvent }
-BoundaryEventType == { MessageBoundaryEvent }
+IntermediateEventType == { ThrowMessageIntermediateEvent, CatchMessageIntermediateEvent, TimerIntermediateEvent }
+BoundaryEventType == { MessageBoundaryEvent, TimerBoundaryEvent }
 EventType == StartEventType \union EndEventType \union IntermediateEventType \union BoundaryEventType
 NodeType == { Process } \union ActivityType \union GatewayType \union EventType
 

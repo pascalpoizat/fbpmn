@@ -262,8 +262,14 @@ encodeBpmnBoundaryEventsToTla g =
             side = show e
             sspid = show spid
             scae = if v then trueTla else falseTla
+        (Just (TimerBoundaryEvent v), Just spid) ->
+          [text|$side :> [ attachedTo |-> $sspid, cancelActivity |-> $scae ]|]
+          where
+            side = show e
+            sspid = show spid
+            scae = if v then trueTla else falseTla
         _ -> ""
-    bes = nodesTs g $ [MessageBoundaryEvent] <*> [True, False]
+    bes = nodesTs g $ [MessageBoundaryEvent,TimerBoundaryEvent] <*> [True, False]
 
 trueTla :: Text
 trueTla = "TRUE"
@@ -286,7 +292,9 @@ nodeTypeToTLA SendTask                      = "SendTask"
 nodeTypeToTLA ReceiveTask                   = "ReceiveTask"
 nodeTypeToTLA ThrowMessageIntermediateEvent = "ThrowMessageIntermediateEvent"
 nodeTypeToTLA CatchMessageIntermediateEvent = "CatchMessageIntermediateEvent"
+nodeTypeToTLA TimerIntermediateEvent        = "TimerIntermediateEvent"
 nodeTypeToTLA (MessageBoundaryEvent _)      = "MessageBoundaryEvent"
+nodeTypeToTLA (TimerBoundaryEvent _)        = "TimerBoundaryEvent"
 nodeTypeToTLA SubProcess     = "SubProcess"
 nodeTypeToTLA XorGateway     = "ExclusiveOr"
 nodeTypeToTLA OrGateway      = "InclusiveOr"
@@ -294,6 +302,7 @@ nodeTypeToTLA AndGateway     = "Parallel"
 nodeTypeToTLA EventBasedGateway = "EventBased"
 nodeTypeToTLA NoneStartEvent = "NoneStartEvent"
 nodeTypeToTLA MessageStartEvent = "MessageStartEvent"
+nodeTypeToTLA TimerStartEvent = "TimerStartEvent"
 nodeTypeToTLA NoneEndEvent      = "NoneEndEvent"
 nodeTypeToTLA TerminateEndEvent = "TerminateEndEvent"
 nodeTypeToTLA MessageEndEvent   = "MessageEndEvent"

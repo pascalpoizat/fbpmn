@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_07u4spw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
-  <bpmn:collaboration id="Collaboration_0jicc2g">
+  <bpmn:collaboration id="e052TSE">
     <bpmn:participant id="Participant_0912f2h" processRef="Process_1" />
   </bpmn:collaboration>
   <bpmn:process id="Process_1" isExecutable="true">
@@ -19,7 +19,7 @@
     </bpmn:startEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0jicc2g">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="e052TSE">
       <bpmndi:BPMNShape id="Participant_0912f2h_di" bpmnElement="Participant_0912f2h">
         <dc:Bounds x="123" y="15" width="357" height="176" />
       </bpmndi:BPMNShape>
