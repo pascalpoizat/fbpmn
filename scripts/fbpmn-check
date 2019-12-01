@@ -65,6 +65,7 @@ echo "Working in $dir with $workers worker(s)"
 
 # Transform the BPMN model into TLA
 cp $fullpath.bpmn $dir
+if [ -f $fullpath.constraint ]; then cp $fullpath.constraint $dir; fi
 cd $dir
 fbpmn bpmn2tla $model $model
 
