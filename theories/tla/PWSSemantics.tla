@@ -324,7 +324,8 @@ LOCAL or_fairness(n) == \* fairness is also applied on DefaultSeqFlow
 LOCAL eventbased_complete_out(n, eout) ==
   /\ \E ein \in intype(SeqFlowType, n) :
       /\ edgemarks[ein] >= 1
-      /\ \E emsg \in intype(MessageFlowType, target[eout]) : edgemarks[emsg] # 0
+      /\ \/ CatN[target[eout]] \in {ReceiveTask,CatchMessageIntermediateEvent} /\ \E emsg \in intype(MessageFlowType, target[eout]) : edgemarks[emsg] # 0
+         \/ CatN[target[eout]] \in {TimerIntermediateEvent}
       /\ edgemarks' = [ edgemarks EXCEPT ![ein] = @ - 1, ![eout] = @ + 1 ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
