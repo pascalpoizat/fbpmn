@@ -6,7 +6,7 @@ import           Fbpmn.Helper
 import           Fbpmn.BpmnGraph.Model
 import           NeatInterpolation (text)
 -- import           Data.List                      ( intercalate )
-import           Data.Map.Strict   ((!?))
+import           Data.Map.Strict   ((!?), foldrWithKey)
 
 {-|
 Write a BPMN Graph to a TLA+ file.
@@ -21,6 +21,7 @@ encodeBpmnGraphToTla :: BpmnGraph -> Text
 encodeBpmnGraphToTla g =
   unlines
     $   [ encodeBpmnGraphHeaderToTla          -- header
+        , encodeBpmnInterestToTla             -- interest
         , encodeBpmnGraphContainRelToTla      -- containment relation
         , encodeBpmnGraphNodeDeclToTla        -- nodes
         , encodeBpmnGraphEdgeDeclToTla        -- edges
@@ -65,6 +66,41 @@ encodeBpmnGraphFooterToTla _ =
 
   ================================================================
   |]
+
+encodeBpmnInterestToTla :: BpmnGraph -> Text
+encodeBpmnInterestToTla g =
+  [text|
+  Interest ==
+    $interests
+  |]
+  where
+    interests = T.intercalate "@@ " $ mapMap showRel (containN g)
+    showRel :: Node -> Maybe [Node] -> Maybe Text
+    showRel _ Nothing = Nothing
+    showRel n (Just _) =
+      case catN g !? n of 
+        Nothing -> Nothing
+        Just Process ->
+          Just [text|
+            $sn :> { $sns }
+          |]
+          where
+            sn = show n
+            sns = T.intercalate ", " $ show <$> interestedIn 
+            interestedIn =
+                foldrWithKey (\e m l -> if (targetInContainer (targetE g !? e) n) then m:l else l ) [] (messageE g)
+                where
+                targetInContainer :: Maybe Node -> Node -> Bool
+                targetInContainer Nothing _ = False
+                targetInContainer (Just target) container = 
+                  case containN g !? container of
+                    Nothing -> False
+                    Just nodes ->
+                      let subprocesses = foldr (\node l -> if (catN g !? node) == (Just SubProcess) then node:l else l) [] nodes in
+                      elem target nodes || or (map (targetInContainer (Just target)) subprocesses)
+        Just _ -> Nothing
+
+
 
 encodeBpmnGraphContainRelToTla :: BpmnGraph -> Text
 encodeBpmnGraphContainRelToTla g =
