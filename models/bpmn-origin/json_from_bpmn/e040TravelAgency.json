@@ -1,0 +1,363 @@
+{
+    "catN": {
+        "Task_1q91vog": {
+            "tag": "SendTask"
+        },
+        "EndEvent_17rlcaz": {
+            "tag": "NoneEndEvent"
+        },
+        "IntermediateThrowEvent_0neineb": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "IntermediateThrowEvent_12d113r": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "ExclusiveGateway_192ovii": {
+            "tag": "XorGateway"
+        },
+        "StartEvent_1": {
+            "tag": "NoneStartEvent"
+        },
+        "BoundaryEvent_0qlhw6m": {
+            "tag": "MessageBoundaryEvent",
+            "cancelActivity": true
+        },
+        "StartEvent_1f3jj6d": {
+            "tag": "NoneStartEvent"
+        },
+        "ExclusiveGateway_1dc5v3z": {
+            "tag": "XorGateway"
+        },
+        "SubProcess_1agd6n3": {
+            "tag": "SubProcess"
+        },
+        "TravelAgency_": {
+            "tag": "Process"
+        },
+        "EndEvent_0u6deep": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "Task_07u875a": {
+            "tag": "ReceiveTask"
+        },
+        "Task_1bn6n5q": {
+            "tag": "SendTask"
+        },
+        "EndEvent_055yt9k": {
+            "tag": "NoneEndEvent"
+        },
+        "EndEvent_10gqkzy": {
+            "tag": "NoneEndEvent"
+        },
+        "IntermediateThrowEvent_0b4rm53": {
+            "tag": "ThrowMessageIntermediateEvent"
+        },
+        "Customer_": {
+            "tag": "Process"
+        },
+        "BoundaryEvent_0j1yvnw": {
+            "tag": "TimerBoundaryEvent",
+            "cancelActivity": true
+        },
+        "BoundaryEvent_19y0yk9": {
+            "tag": "MessageBoundaryEvent",
+            "cancelActivity": true
+        },
+        "Task_002ndsu": {
+            "tag": "SendTask"
+        },
+        "StartEvent_0qomvov": {
+            "tag": "NoneStartEvent"
+        },
+        "Task_1ne4gpy": {
+            "tag": "SendTask"
+        },
+        "EndEvent_0syu44v": {
+            "tag": "NoneEndEvent"
+        },
+        "IntermediateThrowEvent_02q48nh": {
+            "tag": "ThrowMessageIntermediateEvent"
+        },
+        "EndEvent_1vkzo14": {
+            "tag": "NoneEndEvent"
+        },
+        "IntermediateThrowEvent_0xjpikb": {
+            "tag": "CatchMessageIntermediateEvent"
+        },
+        "Task_1v9s881": {
+            "tag": "SendTask"
+        },
+        "ExclusiveGateway_0wgdt1i": {
+            "tag": "XorGateway"
+        }
+    },
+    "catE": {
+        "SequenceFlow_1h5h7h5": "NormalSequenceFlow",
+        "SequenceFlow_0ybs6n8": "NormalSequenceFlow",
+        "SequenceFlow_0sfyd5z": "NormalSequenceFlow",
+        "SequenceFlow_0p2zcuo": "NormalSequenceFlow",
+        "SequenceFlow_17r8ru7": "NormalSequenceFlow",
+        "SequenceFlow_0ot5p93": "NormalSequenceFlow",
+        "SequenceFlow_0ljbxox": "NormalSequenceFlow",
+        "SequenceFlow_1pk6qce": "NormalSequenceFlow",
+        "SequenceFlow_0yhi6sc": "NormalSequenceFlow",
+        "SequenceFlow_016h32p": "NormalSequenceFlow",
+        "SequenceFlow_1uwq0b6": "ConditionalSequenceFlow",
+        "MessageFlow_1m551dh": "MessageFlow",
+        "MessageFlow_1yfhhru": "MessageFlow",
+        "MessageFlow_04an7oz": "MessageFlow",
+        "SequenceFlow_0b34324": "NormalSequenceFlow",
+        "SequenceFlow_023db5j": "NormalSequenceFlow",
+        "SequenceFlow_1yvkisw": "NormalSequenceFlow",
+        "SequenceFlow_1qku5do": "NormalSequenceFlow",
+        "SequenceFlow_1rma3l8": "NormalSequenceFlow",
+        "SequenceFlow_0b6ku63": "DefaultSequenceFlow",
+        "MessageFlow_1goz1mt": "MessageFlow",
+        "MessageFlow_18qwt5e": "MessageFlow",
+        "MessageFlow_0knd10s": "MessageFlow",
+        "SequenceFlow_1oyuvjd": "NormalSequenceFlow",
+        "SequenceFlow_1dptcxp": "NormalSequenceFlow",
+        "SequenceFlow_1fn4lqy": "NormalSequenceFlow",
+        "MessageFlow_0joml9p": "MessageFlow",
+        "SequenceFlow_0bejayl": "NormalSequenceFlow",
+        "SequenceFlow_1j6r6o5": "NormalSequenceFlow",
+        "SequenceFlow_1ey63mn": "NormalSequenceFlow"
+    },
+    "containN": {
+        "SubProcess_1agd6n3": [
+            "StartEvent_0qomvov",
+            "IntermediateThrowEvent_0xjpikb",
+            "IntermediateThrowEvent_0neineb",
+            "Task_002ndsu",
+            "Task_1ne4gpy",
+            "EndEvent_1vkzo14"
+        ],
+        "TravelAgency_": [
+            "BoundaryEvent_19y0yk9",
+            "EndEvent_17rlcaz",
+            "EndEvent_10gqkzy",
+            "SubProcess_1agd6n3",
+            "Task_1bn6n5q",
+            "ExclusiveGateway_1dc5v3z",
+            "StartEvent_1f3jj6d",
+            "BoundaryEvent_0j1yvnw",
+            "IntermediateThrowEvent_0b4rm53"
+        ],
+        "Customer_": [
+            "Task_1v9s881",
+            "ExclusiveGateway_192ovii",
+            "ExclusiveGateway_0wgdt1i",
+            "StartEvent_1",
+            "Task_07u875a",
+            "EndEvent_055yt9k",
+            "EndEvent_0u6deep",
+            "IntermediateThrowEvent_12d113r",
+            "Task_1q91vog",
+            "BoundaryEvent_0qlhw6m",
+            "EndEvent_0syu44v",
+            "IntermediateThrowEvent_02q48nh"
+        ]
+    },
+    "messageE": {
+        "MessageFlow_1m551dh": "Confirmation",
+        "MessageFlow_1yfhhru": "Travel",
+        "MessageFlow_04an7oz": "Ticket",
+        "MessageFlow_1goz1mt": "Payment",
+        "MessageFlow_18qwt5e": "Abort",
+        "MessageFlow_0knd10s": "Offer",
+        "MessageFlow_0joml9p": "NoMore"
+    },
+    "targetE": {
+        "SequenceFlow_1h5h7h5": "IntermediateThrowEvent_12d113r",
+        "SequenceFlow_0ybs6n8": "EndEvent_0syu44v",
+        "SequenceFlow_0sfyd5z": "ExclusiveGateway_192ovii",
+        "SequenceFlow_0p2zcuo": "ExclusiveGateway_1dc5v3z",
+        "SequenceFlow_17r8ru7": "IntermediateThrowEvent_0xjpikb",
+        "SequenceFlow_0ot5p93": "Task_1ne4gpy",
+        "SequenceFlow_0ljbxox": "EndEvent_0u6deep",
+        "SequenceFlow_1pk6qce": "IntermediateThrowEvent_02q48nh",
+        "SequenceFlow_0yhi6sc": "SubProcess_1agd6n3",
+        "SequenceFlow_016h32p": "Task_07u875a",
+        "SequenceFlow_1uwq0b6": "Task_1v9s881",
+        "MessageFlow_1m551dh": "EndEvent_0u6deep",
+        "MessageFlow_1yfhhru": "IntermediateThrowEvent_0xjpikb",
+        "MessageFlow_04an7oz": "IntermediateThrowEvent_12d113r",
+        "SequenceFlow_0b34324": "Task_1bn6n5q",
+        "SequenceFlow_023db5j": "EndEvent_1vkzo14",
+        "SequenceFlow_1yvkisw": "EndEvent_10gqkzy",
+        "SequenceFlow_1qku5do": "EndEvent_055yt9k",
+        "SequenceFlow_1rma3l8": "ExclusiveGateway_0wgdt1i",
+        "SequenceFlow_0b6ku63": "ExclusiveGateway_0wgdt1i",
+        "MessageFlow_1goz1mt": "IntermediateThrowEvent_0neineb",
+        "MessageFlow_18qwt5e": "BoundaryEvent_19y0yk9",
+        "MessageFlow_0knd10s": "Task_07u875a",
+        "SequenceFlow_1oyuvjd": "EndEvent_17rlcaz",
+        "SequenceFlow_1dptcxp": "Task_1q91vog",
+        "SequenceFlow_1fn4lqy": "ExclusiveGateway_1dc5v3z",
+        "MessageFlow_0joml9p": "BoundaryEvent_0qlhw6m",
+        "SequenceFlow_0bejayl": "Task_002ndsu",
+        "SequenceFlow_1j6r6o5": "IntermediateThrowEvent_0neineb",
+        "SequenceFlow_1ey63mn": "IntermediateThrowEvent_0b4rm53"
+    },
+    "name": "e038TravelAgency",
+    "attached": {
+        "BoundaryEvent_0qlhw6m": "Task_07u875a",
+        "BoundaryEvent_0j1yvnw": "Task_1bn6n5q",
+        "BoundaryEvent_19y0yk9": "SubProcess_1agd6n3"
+    },
+    "containE": {
+        "SubProcess_1agd6n3": [
+            "SequenceFlow_17r8ru7",
+            "SequenceFlow_1j6r6o5",
+            "SequenceFlow_0bejayl",
+            "SequenceFlow_0ot5p93",
+            "SequenceFlow_023db5j"
+        ],
+        "TravelAgency_": [
+            "SequenceFlow_0p2zcuo",
+            "SequenceFlow_1fn4lqy",
+            "SequenceFlow_0b34324",
+            "SequenceFlow_0yhi6sc",
+            "SequenceFlow_1yvkisw",
+            "SequenceFlow_1oyuvjd",
+            "SequenceFlow_1ey63mn"
+        ],
+        "Customer_": [
+            "SequenceFlow_1uwq0b6",
+            "SequenceFlow_0b6ku63",
+            "SequenceFlow_0sfyd5z",
+            "SequenceFlow_016h32p",
+            "SequenceFlow_1rma3l8",
+            "SequenceFlow_1dptcxp",
+            "SequenceFlow_1h5h7h5",
+            "SequenceFlow_0ljbxox",
+            "SequenceFlow_1qku5do",
+            "SequenceFlow_1pk6qce",
+            "SequenceFlow_0ybs6n8"
+        ]
+    },
+    "edges": [
+        "MessageFlow_0knd10s",
+        "MessageFlow_1yfhhru",
+        "MessageFlow_1m551dh",
+        "MessageFlow_1goz1mt",
+        "MessageFlow_04an7oz",
+        "MessageFlow_0joml9p",
+        "MessageFlow_18qwt5e",
+        "SequenceFlow_1uwq0b6",
+        "SequenceFlow_0b6ku63",
+        "SequenceFlow_0sfyd5z",
+        "SequenceFlow_016h32p",
+        "SequenceFlow_1rma3l8",
+        "SequenceFlow_1dptcxp",
+        "SequenceFlow_1h5h7h5",
+        "SequenceFlow_0ljbxox",
+        "SequenceFlow_1qku5do",
+        "SequenceFlow_1pk6qce",
+        "SequenceFlow_0ybs6n8",
+        "SequenceFlow_0p2zcuo",
+        "SequenceFlow_1fn4lqy",
+        "SequenceFlow_0b34324",
+        "SequenceFlow_0yhi6sc",
+        "SequenceFlow_1yvkisw",
+        "SequenceFlow_1oyuvjd",
+        "SequenceFlow_1ey63mn",
+        "SequenceFlow_17r8ru7",
+        "SequenceFlow_1j6r6o5",
+        "SequenceFlow_0bejayl",
+        "SequenceFlow_0ot5p93",
+        "SequenceFlow_023db5j"
+    ],
+    "messages": [
+        "Offer",
+        "Travel",
+        "Confirmation",
+        "Payment",
+        "Ticket",
+        "NoMore",
+        "Abort"
+    ],
+    "sourceE": {
+        "SequenceFlow_1h5h7h5": "Task_1q91vog",
+        "SequenceFlow_0ybs6n8": "IntermediateThrowEvent_02q48nh",
+        "SequenceFlow_0sfyd5z": "Task_07u875a",
+        "SequenceFlow_0p2zcuo": "Task_1bn6n5q",
+        "SequenceFlow_17r8ru7": "StartEvent_0qomvov",
+        "SequenceFlow_0ot5p93": "Task_002ndsu",
+        "SequenceFlow_0ljbxox": "IntermediateThrowEvent_12d113r",
+        "SequenceFlow_1pk6qce": "BoundaryEvent_0qlhw6m",
+        "SequenceFlow_0yhi6sc": "IntermediateThrowEvent_0b4rm53",
+        "SequenceFlow_016h32p": "ExclusiveGateway_0wgdt1i",
+        "SequenceFlow_1uwq0b6": "ExclusiveGateway_192ovii",
+        "MessageFlow_1m551dh": "Task_002ndsu",
+        "MessageFlow_1yfhhru": "Task_1v9s881",
+        "MessageFlow_04an7oz": "Task_1ne4gpy",
+        "SequenceFlow_0b34324": "ExclusiveGateway_1dc5v3z",
+        "SequenceFlow_023db5j": "Task_1ne4gpy",
+        "SequenceFlow_1yvkisw": "SubProcess_1agd6n3",
+        "SequenceFlow_1qku5do": "EndEvent_0u6deep",
+        "SequenceFlow_1rma3l8": "StartEvent_1",
+        "SequenceFlow_0b6ku63": "ExclusiveGateway_192ovii",
+        "MessageFlow_1goz1mt": "Task_1q91vog",
+        "MessageFlow_18qwt5e": "IntermediateThrowEvent_02q48nh",
+        "MessageFlow_0knd10s": "Task_1bn6n5q",
+        "SequenceFlow_1oyuvjd": "BoundaryEvent_19y0yk9",
+        "SequenceFlow_1dptcxp": "Task_1v9s881",
+        "SequenceFlow_1fn4lqy": "StartEvent_1f3jj6d",
+        "MessageFlow_0joml9p": "IntermediateThrowEvent_0b4rm53",
+        "SequenceFlow_0bejayl": "IntermediateThrowEvent_0neineb",
+        "SequenceFlow_1j6r6o5": "IntermediateThrowEvent_0xjpikb",
+        "SequenceFlow_1ey63mn": "BoundaryEvent_0j1yvnw"
+    },
+    "nodes": [
+        "Customer_",
+        "TravelAgency_",
+        "Task_1v9s881",
+        "ExclusiveGateway_192ovii",
+        "ExclusiveGateway_0wgdt1i",
+        "StartEvent_1",
+        "Task_07u875a",
+        "EndEvent_055yt9k",
+        "EndEvent_0u6deep",
+        "IntermediateThrowEvent_12d113r",
+        "Task_1q91vog",
+        "BoundaryEvent_0qlhw6m",
+        "EndEvent_0syu44v",
+        "IntermediateThrowEvent_02q48nh",
+        "BoundaryEvent_19y0yk9",
+        "EndEvent_17rlcaz",
+        "EndEvent_10gqkzy",
+        "SubProcess_1agd6n3",
+        "Task_1bn6n5q",
+        "ExclusiveGateway_1dc5v3z",
+        "StartEvent_1f3jj6d",
+        "BoundaryEvent_0j1yvnw",
+        "IntermediateThrowEvent_0b4rm53",
+        "StartEvent_0qomvov",
+        "IntermediateThrowEvent_0xjpikb",
+        "IntermediateThrowEvent_0neineb",
+        "Task_002ndsu",
+        "Task_1ne4gpy",
+        "EndEvent_1vkzo14"
+    ],
+    "nameN": {
+        "Task_1q91vog": "Pay Travel",
+        "EndEvent_17rlcaz": "Offer Aborted",
+        "IntermediateThrowEvent_0neineb": "Payment Received",
+        "IntermediateThrowEvent_12d113r": "Ticket Received",
+        "ExclusiveGateway_192ovii": "is the offer interesting?",
+        "StartEvent_1": "Offer Management",
+        "StartEvent_1f3jj6d": "Offer Needed",
+        "SubProcess_1agd6n3": "ExchangeSP",
+        "EndEvent_0u6deep": "Booking Confirmed",
+        "Task_07u875a": "Check Travel Offer",
+        "Task_1bn6n5q": "Make Travel Offer",
+        "EndEvent_055yt9k": "Transaction Completed",
+        "EndEvent_10gqkzy": "Offer Completed",
+        "Task_002ndsu": "Confirm Booking",
+        "Task_1ne4gpy": "Order Ticket",
+        "EndEvent_0syu44v": "Transaction Aborted",
+        "IntermediateThrowEvent_0xjpikb": "Booking Received",
+        "Task_1v9s881": "Book Travel"
+    }
+}
