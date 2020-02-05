@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_00sp5ic" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
-  <bpmn:collaboration id="e038TravelAgency">
+  <bpmn:collaboration id="e040TravelAgency">
     <bpmn:documentation>modified from "A Classification of BPMN Collaborations based on Safeness and Soundness Notions", EXPRESS/SOS 2018.</bpmn:documentation>
     <bpmn:participant id="Customer" name="Customer" processRef="Customer_" />
     <bpmn:participant id="TravelAgency" name="Travel Agency" processRef="TravelAgency_" />
@@ -151,7 +151,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_1ey63mn" sourceRef="BoundaryEvent_0j1yvnw" targetRef="IntermediateThrowEvent_0b4rm53" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="e038TravelAgency">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="e040TravelAgency">
       <bpmndi:BPMNShape id="Participant_1jwnza9_di" bpmnElement="Customer" isHorizontal="true">
         <dc:Bounds x="112" y="59" width="1063" height="264" />
       </bpmndi:BPMNShape>
