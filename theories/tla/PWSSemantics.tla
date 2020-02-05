@@ -178,7 +178,6 @@ LOCAL mbe_start_subprocess_noninterrupting(n) ==
   /\ LET act == BoundaryEvent[n].attachedTo IN
      /\ CatN[act] = SubProcess
       /\ nodemarks[act] >= 1
-      /\ ~ subprocess_may_complete(act)
       /\ \E e2 \in intype(MessageFlowType, n) :
         /\ edgemarks[e2] >= 1
         /\ Network!receive(ProcessOf(source[e2]), ProcessOf(n), msgtype[e2])
@@ -235,7 +234,6 @@ LOCAL tbe_start_subprocess_noninterrupting(n) ==
   /\ LET act == BoundaryEvent[n].attachedTo IN
      /\ CatN[act] = SubProcess
       /\ nodemarks[act] >= 1
-      /\ ~ subprocess_may_complete(act)
         /\ edgemarks' = [ ee \in DOMAIN edgemarks |->
                                 IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                                 ELSE edgemarks[ee] ]

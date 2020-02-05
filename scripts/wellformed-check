@@ -19,7 +19,7 @@ fi
 
 runtlc="java -XX:+UseParallelGC -classpath ${TLA2TOOLS_HOME}/tla2tools.jar tlc2.TLC -deadlock"
 
-ALLASSUME='ASSUME WF!C1_SubProcessUniqueStart\nASSUME WF!C2_NoProcessInSubProcess\nASSUME WF!C3_ProcessNode\nASSUME WF!C4_NoLoopingEdge\nASSUME WF!C5_NoNodeIsolation\nASSUME WF!C6_DefaultSeqFlow\nASSUME WF!C7_NoIncomingMessageFlow\nASSUME WF!C8_NoOutgoingMessageFlow\nASSUME WF!C9_MessageFlowDifferentProcesses\nASSUME WF!C10_EBTwoOutgoingEdges\nASSUME WF!C11_ParEb_NoConditional\nASSUME WF!C12_EXOR_NextElements\nASSUME WF!C13_OrXor_OutgoingEdges\nASSUME WF!C14_MessageFlowEdge\nASSUME WF!C15_ReceiveIncomingEdge\nASSUME WF!C16_SendOutgoingEdge'
+ALLASSUME='ASSUME WF!C1_StartNoIncomingEdge\nASSUME WF!C2_EndNoOutgoingEdge\nASSUME WF!C3_SubProcessUniqueStart\nASSUME WF!C4_NoProcessInSubProcess\nASSUME WF!C5_ProcessNode\nASSUME WF!C6_NoLoopingEdge\nASSUME WF!C7_NoNodeIsolation\nASSUME WF!C8_DefaultSeqFlow\nASSUME WF!C9_NoIncomingMessageFlow\nASSUME WF!C10_NoOutgoingMessageFlow\nASSUME WF!C11_MessageFlowDifferentProcesses\nASSUME WF!C12_EBTwoOutgoingEdges\nASSUME WF!C13_ParEb_NoConditional\nASSUME WF!C14_EXOR_NextElements\nASSUME WF!C15_OrXor_OutgoingEdges\nASSUME WF!C16_MessageFlowEdge\nASSUME WF!C17_ReceiveIncomingEdge\nASSUME WF!C18_SendOutgoingEdge'
 
 if [ $# -ne 1 ]; then
   echo `basename $0` '<model>'

@@ -94,7 +94,7 @@ for network in Configs/Network*.tla; do
         cfgname=`basename $cfg .cfg`
         log=$model.$networkname.$cfgname.log
         cp $cfg $model.cfg
-        if [ -f $fullpath.constraint ]; then cat $fullpath.constraint >> $model.cfg; fi
+        if [ -f $model.constraint ]; then cat $model.constraint >> $model.cfg; fi
         $runtlc $model -workers $workers > $log
         rm -rf states
         if grep -q "Error: Assumption.*is false" $log; then
