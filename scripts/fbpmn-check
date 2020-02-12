@@ -94,17 +94,13 @@ for network in Configs/Network*.tla; do
         cfgname=`basename $cfg .cfg`
         log=$model.$networkname.$cfgname.log
         cp $cfg $model.cfg
-        if [ -f $fullpath.constraint ]; then cat $fullpath.constraint >> $model.cfg; fi
-        if [ $# -eq 1 ]; then
-            $runtlc $model > $log
-        else
-            $runtlc $model -workers $workers > $log
-        fi
+        if [ -f $model.constraint ]; then cat $model.constraint >> $model.cfg; fi
+        $runtlc $model -workers $workers > $log
         rm -rf states
-        if `grep -q "Error: Assumption.*is false" $log`; then
+        if grep -q "Error: Assumption.*is false" $log; then
             echo "  ! PANIC: bad model (assume failed)"
         else
-            if `grep -q "No error has been found" $log`; then
+            if grep -q "No error has been found" $log; then
                echo "[X] $cfgname"
             else
                echo "[ ] $cfgname"
@@ -115,9 +111,6 @@ for network in Configs/Network*.tla; do
         fi
     done
 done
-
-# clean up
-rm -rf Configs StatsBPMN.cfg StatsBPMN.tla
 
 echo "done."
 

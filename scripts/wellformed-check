@@ -1,0 +1,73 @@
+#!/bin/sh
+
+# wellformed-check model.bpmn
+# Translate a model and check its well-formedness
+# Beware: changing PWSWellFormed!WellFormedness requires changing ALLASSUME here.
+
+if [ -z $FBPMN_HOME ]; then
+        echo FBPMN_HOME is not set; exit 1
+fi
+if [ ! -d $FBPMN_HOME/theories/tla ]; then
+        echo "wrong FBPMN_HOME (theories/tla not found)"; exit 1
+fi
+if [ -z $TLA2TOOLS_HOME ]; then
+        echo TLA2TOOLS_HOME is no set; exit 1
+fi
+if [ ! -f $TLA2TOOLS_HOME/tla2tools.jar ]; then
+        echo "wrong TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
+fi
+
+runtlc="java -XX:+UseParallelGC -classpath ${TLA2TOOLS_HOME}/tla2tools.jar tlc2.TLC -deadlock"
+
+ALLASSUME='ASSUME WF!C1_StartNoIncomingEdge\nASSUME WF!C2_EndNoOutgoingEdge\nASSUME WF!C3_SubProcessUniqueStart\nASSUME WF!C4_NoProcessInSubProcess\nASSUME WF!C5_ProcessNode\nASSUME WF!C6_NoLoopingEdge\nASSUME WF!C7_NoNodeIsolation\nASSUME WF!C8_DefaultSeqFlow\nASSUME WF!C9_NoIncomingMessageFlow\nASSUME WF!C10_NoOutgoingMessageFlow\nASSUME WF!C11_MessageFlowDifferentProcesses\nASSUME WF!C12_EBTwoOutgoingEdges\nASSUME WF!C13_ParEb_NoConditional\nASSUME WF!C14_EXOR_NextElements\nASSUME WF!C15_OrXor_OutgoingEdges\nASSUME WF!C16_MessageFlowEdge\nASSUME WF!C17_ReceiveIncomingEdge\nASSUME WF!C18_SendOutgoingEdge'
+
+if [ $# -ne 1 ]; then
+  echo `basename $0` '<model>'
+  exit 1
+fi
+
+fullpath="${1%.bpmn}"  # just strip extension if necessary
+model=`basename $fullpath`
+dir=`mktemp -d /tmp/$model.XXXXX`
+
+if [ ! -f $fullpath.bpmn ]; then
+    echo "$fullpath.bpmn not found."
+    exit 1
+fi
+
+cp $fullpath.bpmn $dir
+if [ -f $fullpath.constraint ]; then cp $fullpath.constraint $dir; fi
+cd $dir
+fbpmn bpmn2tla $model $model >/dev/null
+
+if [ ! -f $model.tla ]; then
+    echo "model transformation failed"
+    exit 1
+fi
+
+# Copy verification files
+cp $FBPMN_HOME/theories/tla/PWS*.tla $FBPMN_HOME/theories/tla/Network*.tla .
+# add a spec with no next
+sed -e 's/INSTANCE PWSSemantics/INSTANCE PWSSemantics\nSpecEmpty == Init \/\\ [][UNCHANGED <<nodemarks, edgemarks, net>>]_var/'  $model.tla >${model}2.tla
+
+# Remove ASSUME WellFormedness and put in place individual assumes
+sed -e "s/ASSUME WF!WellFormedness/$ALLASSUME/" ${model}2.tla >$model.tla
+
+echo "SPECIFICATION SpecEmpty" >${model}.cfg
+log=$model.log
+
+$runtlc $model >$log 2>&1
+
+if grep -q 'Error: Assumption.*is false' $log; then
+    echo "[ ] $model: bad model. Check $dir"
+    error=`grep 'Error: Assumption.*is false' $log`
+    linenum=`expr "$error" : '.*line \([0-9]*\),'`
+    msg=`head -$linenum ${model}.tla | tail -1`
+    echo "    failed: $msg"
+else
+    if grep -q "No error has been found" $log; then
+        echo "[X] $model: Well-Formed"
+    else
+        echo "Unexpected log, check $dir/$log"
+    fi
+fi
