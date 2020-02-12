@@ -114,20 +114,26 @@ pIx :: Element -> Bool
 pIx e = case findAttr (nA "cancelActivity") e of
   Just "false" -> False
   _            -> True -- cancelActivity by default
+-- timer events
+pTimex :: Element -> Bool
+pTimex = hasChildren (nE "timerEventDefinition")
 
 -- start events
--- NSE or MSE
+-- NSE, MSE, or TSE
 -- other start events are assimilated to NSE
 pSE :: [Element] -> Element -> Bool
 pSE _ = (?=) "startEvent"
 pMSE :: [Element] -> Element -> Maybe NodeType
 pMSE es e = if pSE es e && pMx e then Just MessageStartEvent else Nothing
+pTSE :: [Element] -> Element -> Maybe NodeType
+pTSE es e = if pSE es e && pTimex e then Just TimerStartEvent else Nothing
 pNSE :: [Element] -> Element -> Maybe NodeType
-pNSE es e =
-  if pSE es e && (isNothing . pMSE es $ e) then Just NoneStartEvent else Nothing
+pNSE es e = if pSE es e && not (e `oneMaybeOf` [pMSE es, pTSE es])
+  then Just NoneStartEvent
+  else Nothing
 
 -- intermediary events
--- CMIE or TMIE
+-- CMIE, TMIE, or (C)TIE
 -- other intermediary events are discarded
 pITE :: [Element] -> Element -> Bool
 pITE _ = (?=) "intermediateThrowEvent"
@@ -137,8 +143,10 @@ pICE :: [Element] -> Element -> Bool
 pICE _ = (?=) "intermediateCatchEvent"
 pCMIE :: [Element] -> Element -> Maybe NodeType
 pCMIE es e = if pICE es e && pMx e then Just CatchMessageIntermediateEvent else Nothing
+pCTIE :: [Element] -> Element -> Maybe NodeType
+pCTIE es e = if pICE es e && pTimex e then Just TimerIntermediateEvent else Nothing
 pIE :: [Element] -> Element -> Bool
-pIE es e = e `oneMaybeOf` [pTMIE es, pCMIE es]
+pIE es e = e `oneMaybeOf` [pTMIE es, pCMIE es, pCTIE es]
 
 -- end events
 -- NEE, MEE, or TEE
@@ -155,13 +163,16 @@ pNEE es e = if pEE es e && not (e `oneMaybeOf` [pMEE es, pTEE es])
   else Nothing
 
 -- boundary events
--- MBE (default is interrupting, i.e., cancelActivity=true if not given)
+-- MBE or TBE (default is interrupting, i.e., cancelActivity=true if not given)
 -- other boundary events are discarded
 pBE :: [Element] -> Element -> Bool
 pBE _ = (?=) "boundaryEvent"
 pMBE :: [Element] -> Element -> Maybe NodeType
 pMBE es e =
   if pBE es e && pMx e then Just $ MessageBoundaryEvent (pIx e) else Nothing
+pTBE :: [Element] -> Element -> Maybe NodeType
+pTBE es e =
+  if pBE es e && pTimex e then Just $ TimerBoundaryEvent (pIx e) else Nothing
 
 -- events
 pE :: [Element] -> Element -> Bool
@@ -346,9 +357,9 @@ bname mf = (getId mf, getName mf)
 bcatN :: [Element] -> Element -> (Maybe Node, Maybe NodeType)
 bcatN xs e = f e preds
  where
-  preds = [pNSE, pMSE
-          ,pCMIE, pTMIE
-          ,pMBE
+  preds = [pNSE, pMSE, pTSE
+          ,pCMIE, pTMIE, pCTIE
+          ,pMBE, pTBE
           ,pNEE, pMEE, pTEE
           ,pAndGateway, pXorGateway, pOrGateway, pEventBasedGateway
           ,pST, pRT, pAsAT

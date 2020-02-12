@@ -29,14 +29,15 @@
 - soundness
 - message-relaxed soundness
 
-for six different communication semantics:
+for seven different communication semantics:
 
-- unordered (bag of messages)
-- fifo between each couple of processes (array of queues)
-- fifo inbox (input queue at each process where messages are added)
-- fifo outbox (output queue at each process where messages are fetched)
-- global fifo (unique shared queue)
-- RSC (realizable with synchronous communication)
+- **Bag** (shared message multiset, no ordering)
+- **Fifo all** (shared message queue, ordering *wrt.* emission time)
+- **Causal**, (shared message causality structure, ordering *wrt.* message emission causality)
+- **Realizable with Synchronous Communication (RSC)** (shared 1-sized message buffer)
+- **Fifo pair** (message queue for each couple of processes, ordering *wrt.* emission time)
+- **Fifo inbox** (input message queue for each process, ordering *wrt.* emission time)
+- **Fifo outbox**, (output message queue for each process, ordering *wrt.* emission time)
 
 **New properties and communication semantics can be easily taken into account** (see Sect. 5, *Extending the verification*).
 
@@ -107,11 +108,15 @@ Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Or
 
 To verify your BPMN models, you will need:
 
-- 1.1. A Java SE Development Kit (JDK 8), get it [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+- 1.1. A Java SE Development Kit, get it [here](https://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
-	There is an issue (wrt. `tla2tools.jar`) with version 11 so you will need to install version 8. 
 - 1.2. The TLA+ tools, get `tla2tools.jar` [here](https://github.com/tlaplus/tlaplus/releases).
 	
+:warning: `fbpmn` is known to be working with:
+
+- Java 12 and TLA+ tools version 1.6.0 (not 1.5.7)
+- Java 8 and TLA+ tools version 1.5.7 or 1.6.0	
+
 If you build `fbpmn` from sources (which is required only for **Windows**), you will also need:
 
 - 2.1. The `stack` build system for Haskell, see [here](https://docs.haskellstack.org/en/stable/README/).
@@ -193,7 +198,7 @@ Verification requires that:
 - `FBPMN_HOME` is set to the place where the `fbpmn` sources have been installed (see Sect. 2).
 - `TLA2TOOLS_HOME` is set to the place where `tla2tools.jar` is installed (see Sect. 1).
 - `fbpmn` is found on the command `PATH` (see Sect. 3a/3b).
-- (**optional, available for Linux and OSX only**) `fbpmn-check` and `fbpmn-logs2dot` (from the `scripts` directory of the source distribution) are found on the command `PATH`.<br/> 
+- (**optional, available for Linux and OSX only**) `fbpmn-check` and `fbpmn-logs2*` (from the `scripts` directory of the source distribution) are found on the command `PATH`.<br/> 
 
 ### Principles
 

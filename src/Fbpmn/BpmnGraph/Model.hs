@@ -22,7 +22,9 @@ data NodeType = AbstractTask
               | ReceiveTask
               | ThrowMessageIntermediateEvent
               | CatchMessageIntermediateEvent
+              | TimerIntermediateEvent
               | MessageBoundaryEvent {cancelActivity :: Bool }
+              | TimerBoundaryEvent {cancelActivity :: Bool }
               | SubProcess
               | XorGateway
               | OrGateway
@@ -30,6 +32,7 @@ data NodeType = AbstractTask
               | EventBasedGateway
               | NoneStartEvent
               | MessageStartEvent
+              | TimerStartEvent
               | NoneEndEvent
               | TerminateEndEvent
               | MessageEndEvent

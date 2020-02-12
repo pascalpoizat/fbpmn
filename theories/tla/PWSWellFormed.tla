@@ -58,8 +58,8 @@ C13_EXOR_NoConditional ==
 
 C14_EXOR_NextElements ==
     \A n \in Node : CatN[n] = EventBased =>
-       \/ \A e \in outtype(SeqFlowType, n) : CatN[target[e]] = ReceiveTask
-       \/ \A e \in outtype(SeqFlowType, n) : CatN[target[e]] = CatchMessageIntermediateEvent
+       \/ \A e \in outtype(SeqFlowType, n) : CatN[target[e]] \in { ReceiveTask, TimerIntermediateEvent }
+       \/ \A e \in outtype(SeqFlowType, n) : CatN[target[e]] \in { CatchMessageIntermediateEvent, TimerIntermediateEvent }
 
 (*
 Cx_MessageFlowEdge ==
