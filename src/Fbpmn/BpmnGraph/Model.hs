@@ -7,12 +7,13 @@ import qualified Data.Set                      as S
                                                 ( fromList )
 import qualified Data.Map.Strict               as M
                                                 ( empty )
-import           Data.Map.Strict                ( Map
-                                                , (!?)
+import           Data.Map.Strict                ( (!?)
                                                 , keys
                                                 , assocs
                                                 )
 import           Fbpmn.Helper                   ( filter' )
+
+import           Data.Time.Format.ISO8601
 
 --
 -- Node types
@@ -54,6 +55,15 @@ isInGraph :: (Ord a)
           -> a
           -> Maybe Bool
 isInGraph g f p x = p <$> f g !? x
+
+--
+-- Time information
+--
+newtype TimeInformation = TimeInformationCategory TimeValue
+
+data TimeInformationCategory = TimeDate | TimeCycle | TimeInterval
+
+type TimeValue = String
 
 --
 -- Edge types
@@ -123,34 +133,36 @@ instance FromJSON BpmnGraph
 
 instance Semigroup BpmnGraph
   where
-      (BpmnGraph n ns es cn ce se te nn rn re at m me)
-        <> (BpmnGraph n' ns' es' cn' ce' se' te' nn' rn' re' at' m' me')
-        =
-        BpmnGraph
-          (n <> n')
-          (ns <> ns')
-          (es <> es')
-          (cn <> cn')
-          (ce <> ce')
-          (se <> se')
-          (te <> te')
-          (nn <> nn')
-          (rn <> rn')
-          (re <> re')
-          (at <> at')
-          (m <> m')
-          (me <> me')
+  (BpmnGraph n ns es cn ce se te nn rn re at m me) <> (BpmnGraph n' ns' es' cn' ce' se' te' nn' rn' re' at' m' me')
+    = BpmnGraph (n <> n')
+                (ns <> ns')
+                (es <> es')
+                (cn <> cn')
+                (ce <> ce')
+                (se <> se')
+                (te <> te')
+                (nn <> nn')
+                (rn <> rn')
+                (re <> re')
+                (at <> at')
+                (m <> m')
+                (me <> me')
 
 instance Monoid BpmnGraph
   where
-    mempty =
-      BpmnGraph
-        ""
-        [] [] M.empty M.empty
-        M.empty M.empty
-        M.empty
-        M.empty M.empty M.empty
-        [] M.empty
+  mempty = BpmnGraph ""
+                     []
+                     []
+                     M.empty
+                     M.empty
+                     M.empty
+                     M.empty
+                     M.empty
+                     M.empty
+                     M.empty
+                     M.empty
+                     []
+                     M.empty
 
 mkGraph :: Text
         -> [Node]
@@ -315,17 +327,21 @@ isValidMessageFlow g mf =
         pure (cats, catt, msg)
     of
       Nothing -> False
-      Just (cs, ct, m)
-        -> (  cs
-           == SendTask
-           || cs
-           == ThrowMessageIntermediateEvent
-           || cs
-           == MessageEndEvent
-           )
-          && (  ct == ReceiveTask
-             || ct == CatchMessageIntermediateEvent
-             || ct == MessageStartEvent )
+      Just (cs, ct, m) ->
+        (  cs
+          == SendTask
+          || cs
+          == ThrowMessageIntermediateEvent
+          || cs
+          == MessageEndEvent
+          )
+          && (  ct
+             == ReceiveTask
+             || ct
+             == CatchMessageIntermediateEvent
+             || ct
+             == MessageStartEvent
+             )
           && isValidMessage g m
 
 allValidMessageFlow :: BpmnGraph -> Bool
