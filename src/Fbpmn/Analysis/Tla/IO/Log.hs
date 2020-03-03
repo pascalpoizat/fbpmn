@@ -111,7 +111,7 @@ parseLog = do
                 return $ Log "log" Nothing Failure $ Just states
 
 readLOG :: FilePath -> IO (Maybe Text)
-readLOG p = (Just <$> readFile p) `catchIOError` handler
+readLOG p = (Just . fromString <$> readFile p) `catchIOError` handler
  where
 
   handler :: IOError -> IO (Maybe Text)

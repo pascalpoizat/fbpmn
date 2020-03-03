@@ -9,7 +9,7 @@ import qualified Data.Map.Strict               as M
 import qualified Data.Text                     as T
 
 writeToDOT :: FilePath -> Maybe String -> Log -> IO ()
-writeToDOT p _ = writeFile p . encodeLogToDot
+writeToDOT p _ = writeFile p . show . encodeLogToDot
 
 encodeLogToDot :: Log -> Text
 encodeLogToDot l =
