@@ -7,8 +7,7 @@ import qualified Data.Set                      as S
                                                 ( fromList )
 import qualified Data.Map.Strict               as M
                                                 ( empty )
-import           Data.Map.Strict                ( Map
-                                                , (!?)
+import           Data.Map.Strict                ( (!?)
                                                 , keys
                                                 , assocs
                                                 )

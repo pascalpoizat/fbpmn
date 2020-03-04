@@ -12,15 +12,15 @@ cache:
   - "$TRAVIS_BUILD_DIR/.stack-work"
 matrix:
   include:
-  - env: BUILD=stack ARGS="--resolver lts-12" OS=linux ARCH=x86_64
-    compiler: ": #stack 8.4.4"
+  - env: BUILD=stack ARGS="--resolver lts-15" OS=linux ARCH=x86_64
+    compiler: ": #stack 8.8.2"
     addons:
       apt:
         packages:
         - libgmp-dev
     os: linux
-  - env: BUILD=stack ARGS="--resolver lts-12" OS=osx ARCH=x86_64
-    compiler: ": #stack 8.4.4 osx"
+  - env: BUILD=stack ARGS="--resolver lts-15" OS=osx ARCH=x86_64
+    compiler: ": #stack 8.8.2 osx"
     os: osx
 before_install:
 - unset CC

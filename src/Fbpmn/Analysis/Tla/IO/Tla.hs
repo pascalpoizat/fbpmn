@@ -12,7 +12,7 @@ import           Data.Map.Strict   ((!?), foldrWithKey)
 Write a BPMN Graph to a TLA+ file.
 -}
 writeToTLA :: FilePath -> Maybe a -> BpmnGraph -> IO ()
-writeToTLA p _ = writeFile p . encodeBpmnGraphToTla
+writeToTLA p _ = writeFile p . toString . encodeBpmnGraphToTla
 
 {-|
 Transform a BPMN Graph to a TLA specification.
