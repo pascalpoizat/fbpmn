@@ -6,7 +6,7 @@ import           Fbpmn.BpmnGraph.Model
 Write a BPMN Graph to an SMT file.
 -}
 writeToSMT :: FilePath -> BpmnGraph -> IO ()
-writeToSMT p = writeFile p . show . encodeBpmnGraphToSmt
+writeToSMT p = writeFile p . toString . encodeBpmnGraphToSmt
 
 {-|
 Transform a BPMN Graph to an SMT description.

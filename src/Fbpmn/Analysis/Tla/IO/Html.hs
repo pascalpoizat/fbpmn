@@ -13,7 +13,7 @@ Generates an HTML+JS animation for a log.
 The model file must be in the same place than the log file.
 -}
 writeToHTML :: FilePath -> Maybe String -> Log -> IO ()
-writeToHTML p _ = writeFile p . show . encodeLogToHtml
+writeToHTML p _ = writeFile p . toString . encodeLogToHtml
 
 genSetup :: Log -> Text
 genSetup (Log _ _ Success _) =
