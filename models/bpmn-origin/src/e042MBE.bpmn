@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1nr3p85" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.1">
-  <bpmn:collaboration id="e041MBE">
+  <bpmn:collaboration id="e042MBE">
     <bpmn:participant id="P" name="P" processRef="Pid" />
     <bpmn:participant id="Q" name="Q" processRef="Qid" />
     <bpmn:messageFlow id="MessageFlow_0vpnljc" name="interrupt" sourceRef="SInterrupt" targetRef="InterruptBE" />
@@ -55,14 +55,13 @@
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P30M</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:endEvent id="EndEvent_08qbw2d">
-      <bpmn:incoming>SequenceFlow_0mtfqyq</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1uh9c90</bpmn:incoming>
-      <bpmn:terminateEventDefinition />
-    </bpmn:endEvent>
     <bpmn:endEvent id="EndEvent_086sfn7">
       <bpmn:incoming>SequenceFlow_1qzgvib</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_13lhzc9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndEvent_08qbw2d">
+      <bpmn:incoming>SequenceFlow_0mtfqyq</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1uh9c90</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>
   <bpmn:process id="Qid" name="Q" isExecutable="false">
@@ -98,7 +97,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_0v3rr2b" sourceRef="ExclusiveGateway_1dkr7pq" targetRef="EndEvent_14tvnqu" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="e041MBE">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="e042MBE">
       <bpmndi:BPMNShape id="Participant_1uuvy8w_di" bpmnElement="P" isHorizontal="true">
         <dc:Bounds x="129" y="81" width="697" height="356" />
       </bpmndi:BPMNShape>
@@ -239,11 +238,11 @@
           <dc:Bounds x="582" y="335" width="54" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0pp8984_di" bpmnElement="EndEvent_08qbw2d">
-        <dc:Bounds x="731" y="209" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0w093ny_di" bpmnElement="EndEvent_086sfn7">
         <dc:Bounds x="731" y="328" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1pq76pi_di" bpmnElement="EndEvent_08qbw2d">
+        <dc:Bounds x="731" y="209" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
