@@ -247,29 +247,27 @@ encodeBpmnGraphPreNToTla _ =
   |]
 
 encodeBpmnBoundaryEventsToTla :: BpmnGraph -> Text
-encodeBpmnBoundaryEventsToTla g =
-  [text|
+encodeBpmnBoundaryEventsToTla g = [text|
     BoundaryEvent ==
     $sbes
   |]
-  where
-    sbes = relationTla beToTla bes
-    beToTla e =
-      case (catN g !? e, attached g !? e) of
-        (Just (MessageBoundaryEvent v), Just spid) ->
-          [text|$side :> [ attachedTo |-> $sspid, cancelActivity |-> $scae ]|]
-          where
-            side = show e
-            sspid = show spid
-            scae = if v then trueTla else falseTla
-        (Just (TimerBoundaryEvent v), Just spid) ->
-          [text|$side :> [ attachedTo |-> $sspid, cancelActivity |-> $scae ]|]
-          where
-            side = show e
-            sspid = show spid
-            scae = if v then trueTla else falseTla
-        _ -> ""
-    bes = nodesTs g $ [MessageBoundaryEvent,TimerBoundaryEvent] <*> [True, False]
+ where
+  sbes = relationTla beToTla bes
+  beToTla e = case (catN g !? e, attached g !? e) of
+    (Just MessageBoundaryEvent, Just spid) ->
+      [text|$side :> [ attachedTo |-> $sspid, cancelActivity |-> $scae ]|]
+     where
+      side  = show e
+      sspid = show spid
+      scae  = if fromMaybe False (isInterrupt g !? e) then trueTla else falseTla
+    (Just TimerBoundaryEvent, Just spid) ->
+      [text|$side :> [ attachedTo |-> $sspid, cancelActivity |-> $scae ]|]
+     where
+      side  = show e
+      sspid = show spid
+      scae  = if fromMaybe False (isInterrupt g !? e) then trueTla else falseTla
+    _ -> ""
+  bes = nodesTs g [MessageBoundaryEvent, TimerBoundaryEvent]
 
 trueTla :: Text
 trueTla = "TRUE"
@@ -288,28 +286,34 @@ relationTla f xs =
 
 nodeTypeToTLA :: NodeType -> Text
 nodeTypeToTLA AbstractTask                  = "AbstractTask"
+-- start
+nodeTypeToTLA NoneStartEvent                = "NoneStartEvent"
+-- end
+nodeTypeToTLA NoneEndEvent                  = "NoneEndEvent"
+nodeTypeToTLA TerminateEndEvent             = "TerminateEndEvent"
+-- gateways
+nodeTypeToTLA XorGateway                    = "ExclusiveOr"
+nodeTypeToTLA OrGateway                     = "InclusiveOr"
+nodeTypeToTLA AndGateway                    = "Parallel"
+nodeTypeToTLA EventBasedGateway             = "EventBased"
+-- structure
+nodeTypeToTLA SubProcess                    = "SubProcess"
+nodeTypeToTLA Process                       = "Process"
+-- communication
+nodeTypeToTLA MessageStartEvent             = "MessageStartEvent"
 nodeTypeToTLA SendTask                      = "SendTask"
 nodeTypeToTLA ReceiveTask                   = "ReceiveTask"
 nodeTypeToTLA ThrowMessageIntermediateEvent = "ThrowMessageIntermediateEvent"
 nodeTypeToTLA CatchMessageIntermediateEvent = "CatchMessageIntermediateEvent"
+nodeTypeToTLA MessageBoundaryEvent          = "MessageBoundaryEvent"
+nodeTypeToTLA MessageEndEvent               = "MessageEndEvent"
+-- time
+nodeTypeToTLA TimerStartEvent               = "TimerStartEvent"
 nodeTypeToTLA TimerIntermediateEvent        = "TimerIntermediateEvent"
-nodeTypeToTLA (MessageBoundaryEvent _)      = "MessageBoundaryEvent"
-nodeTypeToTLA (TimerBoundaryEvent _)        = "TimerBoundaryEvent"
-nodeTypeToTLA SubProcess     = "SubProcess"
-nodeTypeToTLA XorGateway     = "ExclusiveOr"
-nodeTypeToTLA OrGateway      = "InclusiveOr"
-nodeTypeToTLA AndGateway     = "Parallel"
-nodeTypeToTLA EventBasedGateway = "EventBased"
-nodeTypeToTLA NoneStartEvent = "NoneStartEvent"
-nodeTypeToTLA MessageStartEvent = "MessageStartEvent"
-nodeTypeToTLA TimerStartEvent = "TimerStartEvent"
-nodeTypeToTLA NoneEndEvent      = "NoneEndEvent"
-nodeTypeToTLA TerminateEndEvent = "TerminateEndEvent"
-nodeTypeToTLA MessageEndEvent   = "MessageEndEvent"
-nodeTypeToTLA Process           = "Process"
+nodeTypeToTLA TimerBoundaryEvent            = "TimerBoundaryEvent"
 
 edgeTypeToTLA :: EdgeType -> Text
 edgeTypeToTLA NormalSequenceFlow      = "NormalSeqFlow"
 edgeTypeToTLA ConditionalSequenceFlow = "ConditionalSeqFlow"
-edgeTypeToTLA DefaultSequenceFlow = "DefaultSeqFlow"
-edgeTypeToTLA MessageFlow = "MessageFlow"
+edgeTypeToTLA DefaultSequenceFlow     = "DefaultSeqFlow"
+edgeTypeToTLA MessageFlow             = "MessageFlow"

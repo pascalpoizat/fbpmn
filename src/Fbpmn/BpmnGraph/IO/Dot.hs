@@ -55,21 +55,32 @@ encodeBpmnGraphNodeDeclToDot g =
 nodeRepresentation :: Maybe NodeType -> (Node, String) -> Text
 nodeRepresentation (Just AndGateway) _ = [text|label = "+", shape = "diamond"|]
 nodeRepresentation (Just XorGateway) _ = [text|label = "x", shape = "diamond"|]
-nodeRepresentation (Just OrGateway) _ = [text|label = "o", shape = "diamond"|]
-nodeRepresentation (Just EventBasedGateway) _ = [text|label = "@", shape = "diamond"|]
-nodeRepresentation (Just NoneStartEvent) _ = [text|label = "", shape = "circle"|]
-nodeRepresentation (Just MessageStartEvent) _ = [text|label = "??", shape = "circle"|]
-nodeRepresentation (Just TimerStartEvent) _ = [text|label = "??", shape = "circle"|]
-nodeRepresentation (Just CatchMessageIntermediateEvent) _ = [text|label = "??", shape = "doublecircle"|]
-nodeRepresentation (Just ThrowMessageIntermediateEvent) _ = [text|label = "!!", shape = "doublecircle"|]
-nodeRepresentation (Just TimerIntermediateEvent) _ = [text|label = "!!", shape = "doublecircle"|]
+nodeRepresentation (Just OrGateway ) _ = [text|label = "o", shape = "diamond"|]
+nodeRepresentation (Just EventBasedGateway) _ =
+  [text|label = "@", shape = "diamond"|]
+nodeRepresentation (Just NoneStartEvent) _ =
+  [text|label = "", shape = "circle"|]
+nodeRepresentation (Just MessageStartEvent) _ =
+  [text|label = "??", shape = "circle"|]
+nodeRepresentation (Just TimerStartEvent) _ =
+  [text|label = "??", shape = "circle"|]
+nodeRepresentation (Just CatchMessageIntermediateEvent) _ =
+  [text|label = "??", shape = "doublecircle"|]
+nodeRepresentation (Just ThrowMessageIntermediateEvent) _ =
+  [text|label = "!!", shape = "doublecircle"|]
+nodeRepresentation (Just TimerIntermediateEvent) _ =
+  [text|label = "!!", shape = "doublecircle"|]
 nodeRepresentation (Just NoneEndEvent) _ = [text|label = "", shape = "circle"|]
-nodeRepresentation (Just MessageEndEvent) _ = [text|label = "!!", shape = "circle"|]
-nodeRepresentation (Just TerminateEndEvent) _ = [text|label = "T", shape = "circle"|]
+nodeRepresentation (Just MessageEndEvent) _ =
+  [text|label = "!!", shape = "circle"|]
+nodeRepresentation (Just TerminateEndEvent) _ =
+  [text|label = "T", shape = "circle"|]
 nodeRepresentation (Just SendTask) (_, x) = [text|label = $l, shape = "box" |]
-        where l = show $ "!! " <> x
-nodeRepresentation (Just _) (_, x) = [text|label = $sx, shape = "box"|] where sx = show x
-nodeRepresentation Nothing  (_, x) = [text|label = $sx, shape = "box"|] where sx = show x
+  where l = show $ "!! " <> x
+nodeRepresentation (Just _) (_, x) = [text|label = $sx, shape = "box"|]
+  where sx = show x
+nodeRepresentation Nothing (_, x) = [text|label = $sx, shape = "box"|]
+  where sx = show x
 
 nameOrElseIdForNode :: BpmnGraph -> Node -> (Node, String)
 nameOrElseIdForNode g n = (n, fromMaybe n $ nameN g !? n)

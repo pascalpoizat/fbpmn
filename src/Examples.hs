@@ -28,6 +28,8 @@ g0 = mkGraph
   attached
   messages
   messageE
+  isInterrupt
+  timeInformation
  where
   catN = fromList
     [ ("Sender"  , Process)
@@ -57,6 +59,8 @@ g0 = mkGraph
   attached = fromList []
   messages = ["message"]
   messageE = fromList [("m", "message")]
+  isInterrupt = fromList []
+  timeInformation = fromList []
 
 --
 -- g1
@@ -78,6 +82,8 @@ g1 = mkGraph
   attached
   messages
   messageN
+  isInterrupt
+  timeInformation
  where
   catN = fromList
     [ ("Process" , Process)
@@ -131,4 +137,6 @@ g1 = mkGraph
   attached = fromList []
   messages = []
   messageN = fromList []
+  isInterrupt = fromList []
+  timeInformation = fromList []
 

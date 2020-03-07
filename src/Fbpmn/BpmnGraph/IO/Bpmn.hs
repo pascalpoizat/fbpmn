@@ -126,7 +126,8 @@ pSE _ = (?=) "startEvent"
 pMSE :: [Element] -> Element -> Maybe NodeType
 pMSE es e = if pSE es e && pMx e then Just MessageStartEvent else Nothing
 pTSE :: [Element] -> Element -> Maybe NodeType
-pTSE es e = if pSE es e && pTimex e then Just TimerStartEvent else Nothing
+pTSE es e =
+  if pSE es e && pTimex e then Just TimerStartEvent else Nothing
 pNSE :: [Element] -> Element -> Maybe NodeType
 pNSE es e = if pSE es e && not (e `oneMaybeOf` [pMSE es, pTSE es])
   then Just NoneStartEvent
@@ -138,13 +139,17 @@ pNSE es e = if pSE es e && not (e `oneMaybeOf` [pMSE es, pTSE es])
 pITE :: [Element] -> Element -> Bool
 pITE _ = (?=) "intermediateThrowEvent"
 pTMIE :: [Element] -> Element -> Maybe NodeType
-pTMIE es e = if pITE es e && pMx e then Just ThrowMessageIntermediateEvent else Nothing
+pTMIE es e =
+  if pITE es e && pMx e then Just ThrowMessageIntermediateEvent else Nothing
 pICE :: [Element] -> Element -> Bool
 pICE _ = (?=) "intermediateCatchEvent"
 pCMIE :: [Element] -> Element -> Maybe NodeType
-pCMIE es e = if pICE es e && pMx e then Just CatchMessageIntermediateEvent else Nothing
+pCMIE es e =
+  if pICE es e && pMx e then Just CatchMessageIntermediateEvent else Nothing
 pCTIE :: [Element] -> Element -> Maybe NodeType
-pCTIE es e = if pICE es e && pTimex e then Just TimerIntermediateEvent else Nothing
+pCTIE es e = if pICE es e && pTimex e
+  then Just TimerIntermediateEvent
+  else Nothing
 pIE :: [Element] -> Element -> Bool
 pIE es e = e `oneMaybeOf` [pTMIE es, pCMIE es, pCTIE es]
 
@@ -169,10 +174,11 @@ pBE :: [Element] -> Element -> Bool
 pBE _ = (?=) "boundaryEvent"
 pMBE :: [Element] -> Element -> Maybe NodeType
 pMBE es e =
-  if pBE es e && pMx e then Just $ MessageBoundaryEvent (pIx e) else Nothing
+  if pBE es e && pMx e then Just MessageBoundaryEvent else Nothing
 pTBE :: [Element] -> Element -> Maybe NodeType
-pTBE es e =
-  if pBE es e && pTimex e then Just $ TimerBoundaryEvent (pIx e) else Nothing
+pTBE es e = if pBE es e && pTimex e
+  then Just TimerBoundaryEvent
+  else Nothing
 
 -- events
 pE :: [Element] -> Element -> Bool
@@ -306,6 +312,8 @@ decode cs = do
     M.empty
     cMessageTypes
     (M.fromList $ catMaybes $ tlift2 . bname <$> cMessageFlows)
+    M.empty
+    M.empty
   -- compute for participant processes
   processGraphs <- sequence $ compute <$> cProcesses
   pure $ g <> mconcat processGraphs
@@ -339,6 +347,8 @@ compute e = do
     (M.fromList $ catMaybes $ tlift2 . battached <$> nbes)
     []
     M.empty
+    M.empty -- TODO:
+    M.empty -- TODO:
   spgs <- sequence $ compute <$> sps
   pure $ g <> mconcat spgs
 

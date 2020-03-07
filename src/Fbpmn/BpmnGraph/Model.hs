@@ -19,25 +19,31 @@ import           Data.Time.Format.ISO8601
 -- Node types
 --
 data NodeType = AbstractTask
-              | SendTask
-              | ReceiveTask
-              | ThrowMessageIntermediateEvent
-              | CatchMessageIntermediateEvent
-              | TimerIntermediateEvent
-              | MessageBoundaryEvent {cancelActivity :: Bool }
-              | TimerBoundaryEvent {cancelActivity :: Bool }
-              | SubProcess
+              -- start
+              | NoneStartEvent
+              -- end
+              | NoneEndEvent
+              | TerminateEndEvent
+              -- gateways
               | XorGateway
               | OrGateway
               | AndGateway
               | EventBasedGateway
-              | NoneStartEvent
-              | MessageStartEvent
-              | TimerStartEvent
-              | NoneEndEvent
-              | TerminateEndEvent
-              | MessageEndEvent
+              -- structure
+              | SubProcess
               | Process -- for top-level processes
+              -- communication
+              | MessageStartEvent
+              | SendTask
+              | ReceiveTask
+              | ThrowMessageIntermediateEvent
+              | CatchMessageIntermediateEvent
+              | MessageBoundaryEvent
+              | MessageEndEvent
+              -- time
+              | TimerStartEvent
+              | TimerIntermediateEvent
+              | TimerBoundaryEvent
   deriving (Eq, Show, Generic)
 instance ToJSON NodeType
 instance FromJSON NodeType
@@ -58,10 +64,60 @@ isInGraph g f p x = p <$> f g !? x
 
 --
 -- Time information
+-- for ISO8601, see https://fr.wikipedia.org/wiki/ISO_8601
 --
-newtype TimeInformation = TimeInformationCategory TimeValue
+-- we support :
+--
+-- TimeDate ::= yyyy-mm-ddThh:mm:ss
+--  ex: 2020-03-04T15:30:00 (March 4th, 2020, at 3:30pm)
+-- isoparse1 str = parseTimeM True defaultTimeLocale "%Y-%-m-%-dT%H:%M:%S" str :: Maybe LocalTime
+-- isoparse1 "2020-3-4T15:30:25" (Just 2020-03-04 15:30:25)
+-- localDay <$> isoparse1 "2020-3-4T15:30:25" (Just 2020-03-04)
+-- toModifiedJulianDay . localDay <$> isoparse1 "2020-3-4T15:30:25" (Just 58912)
+-- toGregorian . localDay <$> isoparse1 "2020-3-4T15:30:25" (Just (2020,3,4))
+-- localTimeOfDay <$> isoparse1 "2020-3-4T15:30:25" (Just 15:30:25)
+--
+-- TimeDuration ::= PyYmMdDThHmMsS
+--  ex: P0Y0M1DT12H0M0S (1 day 1/2)
+--  isoparse2 x = parseTimeM True defaultTimeLocale "P%yY%mM%dDT%HH%MM%SS" x :: Maybe CalendarDiffTime
+-- PB: ne prend pas les mois correctement en compte (comptent comme minutes)
+-- isoparse2 "P1Y1M1DT1H2M1S" (Just P12MT90181S)
+-- solution : se restreindre à PThHmMsS, dans les autres cas, sans date de référence (format date + duration) comment connaître durée mois ou année.
+-- donc :
+-- isoparse2 x = parseTimeM True defaultTimeLocale "PT%HH%MM%SS" x :: Maybe CalendarDiffTime
+-- isoparse2 "PT1H10M4S" (Just P0MT4204S)
+--
+-- TimeCycle ::= R(n)(/TimeDate)/TimeDuration
+--  ex: R/P0Y0M1DT12H0M0S (repeat every 1 day 1/2)
+--  ex: R4/P0Y0M1DT12H0M0S (repeat 4 times every 1 day 1/2)
+--    question: begins at t0 or t0+delay?
+--  ex: R4/2020-03-04T15:30:00/P0Y0M1DT12H0M0S
+--    (repeat 4 times every 1 day 1/2 after March 4th, 2020, at 3:30 pm)
+--    question: begins at date & time or date & time + delay?
+--
+-- for the time being we impose all information is given
+-- ex: PT12H0M0S and not PT12H, 2020-03-04T00:00:00 and not 2020-03-04
+--
+-- TSE TimeDate (start at exact date & time)
+-- TSE TimeDuration (start after an amount of time)
+-- CTIE TimeDate (wait until exact date & time)
+-- CTIE TimeDuration (wait an amount of time)
+-- TBE TimeDate (act at exact date & time)
+-- TBE TimeDuration (act after an amount of time since the activity started)
+-- TBE TimeCycle (act n times given the cycle information, once for interrupt)
+--
 
-data TimeInformationCategory = TimeDate | TimeCycle | TimeInterval
+data TimeInformation = TimeInformation
+  {tiCategory :: TimeInformationCategory
+  ,tiValue :: TimeValue}
+  deriving (Eq, Show, Generic)
+instance ToJSON TimeInformation
+instance FromJSON TimeInformation
+
+data TimeInformationCategory = TimeDate | TimeInterval | TimeCycle
+  deriving (Eq, Show, Generic)
+instance ToJSON TimeInformationCategory
+instance FromJSON TimeInformationCategory
 
 type TimeValue = String
 
@@ -126,6 +182,8 @@ data BpmnGraph = BpmnGraph { name     :: Text -- name of the model
                            , attached :: Map Node Node -- gives the sub process a boundary event is attached to
                            , messages :: [Message] -- gives all messages types
                            , messageE :: Map Edge Message -- message types associated to message flows
+                           , isInterrupt :: Map Node Bool -- for boundary events, tells if interrupting or not
+                           , timeInformation :: Map Node (Maybe TimeInformation) -- for time events, give the possibly associated time information
 }
   deriving (Eq, Show, Generic)
 instance ToJSON BpmnGraph
@@ -133,7 +191,7 @@ instance FromJSON BpmnGraph
 
 instance Semigroup BpmnGraph
   where
-  (BpmnGraph n ns es cn ce se te nn rn re at m me) <> (BpmnGraph n' ns' es' cn' ce' se' te' nn' rn' re' at' m' me')
+  (BpmnGraph n ns es cn ce se te nn rn re at m me ca ti) <> (BpmnGraph n' ns' es' cn' ce' se' te' nn' rn' re' at' m' me' ca' ti')
     = BpmnGraph (n <> n')
                 (ns <> ns')
                 (es <> es')
@@ -147,6 +205,8 @@ instance Semigroup BpmnGraph
                 (at <> at')
                 (m <> m')
                 (me <> me')
+                (ca <> ca')
+                (ti <> ti')
 
 instance Monoid BpmnGraph
   where
@@ -163,6 +223,8 @@ instance Monoid BpmnGraph
                      M.empty
                      []
                      M.empty
+                     M.empty
+                     M.empty
 
 mkGraph :: Text
         -> [Node]
@@ -177,8 +239,10 @@ mkGraph :: Text
         -> Map Node Node
         -> [Message]
         -> Map Edge Message
+        -> Map Node Bool
+        -> Map Node (Maybe TimeInformation)
         -> BpmnGraph
-mkGraph n ns es catN catE sourceE targetE nameN containN containE attached messages messageE
+mkGraph n ns es catN catE sourceE targetE nameN containN containE attached messages messageE isInterrupt timeInformation
   = let graph = BpmnGraph n
                           ns
                           es
@@ -192,6 +256,8 @@ mkGraph n ns es catN catE sourceE targetE nameN containN containE attached messa
                           attached
                           messages
                           messageE
+                          isInterrupt
+                          timeInformation
     in  graph
 
 --
@@ -289,6 +355,7 @@ isValidGraph g =
                               --                             /\ messageE(e) \in messages
         , allValidSubProcess -- \forall n \in N^{SubProcess} \union N^{Process} . n \in dom(containN) \wedge n \in dom(containE)
         , allValidContainers -- \forall n \in dom(containN) \union dom(containE) . n \in N^{SubProcess} \union N^{Process}
+        , allValidBoundaryEvents -- \forall n \in N^{MBE,TBE} . n \in dom(isInterrupt)
         ]
     <*> [g]
 
@@ -311,6 +378,15 @@ isValidSubProcess g n = n `elem` dom_containN && n `elem` dom_containE
 allValidSubProcess :: BpmnGraph -> Bool
 allValidSubProcess g = getAll $ foldMap (All . isValidSubProcess g) ns
   where ns = nodesTs g [SubProcess, Process]
+
+isValidBoundaryEvent :: BpmnGraph -> Node -> Bool
+isValidBoundaryEvent g n = n `elem` dom_isInterrupt
+  where
+    dom_isInterrupt = keys $ isInterrupt g
+
+allValidBoundaryEvents :: BpmnGraph -> Bool
+allValidBoundaryEvents g = getAll $ foldMap (All . isValidBoundaryEvent g) ns
+  where ns = nodesTs g [MessageBoundaryEvent, TimerBoundaryEvent]
 
 isValidMessage :: BpmnGraph -> Message -> Bool
 isValidMessage _ _ = True
