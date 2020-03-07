@@ -253,21 +253,21 @@ encodeBpmnBoundaryEventsToTla g = [text|
   |]
  where
   sbes = relationTla beToTla bes
+  bes = nodesTs g [MessageBoundaryEvent, TimerBoundaryEvent]
   beToTla e = case (catN g !? e, attached g !? e) of
     (Just MessageBoundaryEvent, Just spid) ->
       [text|$side :> [ attachedTo |-> $sspid, cancelActivity |-> $scae ]|]
      where
       side  = show e
       sspid = show spid
-      scae  = if fromMaybe False (isInterrupt g !? e) then trueTla else falseTla
+      scae  = boolToTLA $ fromMaybe True (isInterrupt g !? e)
     (Just TimerBoundaryEvent, Just spid) ->
       [text|$side :> [ attachedTo |-> $sspid, cancelActivity |-> $scae ]|]
      where
       side  = show e
       sspid = show spid
-      scae  = if fromMaybe False (isInterrupt g !? e) then trueTla else falseTla
+      scae  = boolToTLA $ fromMaybe True (isInterrupt g !? e)
     _ -> ""
-  bes = nodesTs g [MessageBoundaryEvent, TimerBoundaryEvent]
 
 trueTla :: Text
 trueTla = "TRUE"
@@ -317,3 +317,7 @@ edgeTypeToTLA NormalSequenceFlow      = "NormalSeqFlow"
 edgeTypeToTLA ConditionalSequenceFlow = "ConditionalSeqFlow"
 edgeTypeToTLA DefaultSequenceFlow     = "DefaultSeqFlow"
 edgeTypeToTLA MessageFlow             = "MessageFlow"
+
+boolToTLA :: Bool -> Text
+boolToTLA True = trueTla
+boolToTLA False = falseTla

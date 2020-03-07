@@ -107,19 +107,19 @@ isInGraph g f p x = p <$> f g !? x
 -- TBE TimeCycle (act n times given the cycle information, once for interrupt)
 --
 
-data TimeInformation = TimeInformation
-  {tiCategory :: TimeInformationCategory
-  ,tiValue :: TimeValue}
+data TimerEventDefinition = TimerEventDefinition
+  {timerDefinitionType  :: Maybe TimerDefinitionType
+  ,timerDefinitionValue :: Maybe TimerValue}
   deriving (Eq, Show, Generic)
-instance ToJSON TimeInformation
-instance FromJSON TimeInformation
+instance ToJSON TimerEventDefinition
+instance FromJSON TimerEventDefinition
 
-data TimeInformationCategory = TimeDate | TimeInterval | TimeCycle
+data TimerDefinitionType = TimeDate | TimeDuration | TimeCycle
   deriving (Eq, Show, Generic)
-instance ToJSON TimeInformationCategory
-instance FromJSON TimeInformationCategory
+instance ToJSON TimerDefinitionType
+instance FromJSON TimerDefinitionType
 
-type TimeValue = String
+type TimerValue = String
 
 --
 -- Edge types
@@ -182,8 +182,8 @@ data BpmnGraph = BpmnGraph { name     :: Text -- name of the model
                            , attached :: Map Node Node -- gives the sub process a boundary event is attached to
                            , messages :: [Message] -- gives all messages types
                            , messageE :: Map Edge Message -- message types associated to message flows
-                           , isInterrupt :: Map Node Bool -- for boundary events, tells if interrupting or not
-                           , timeInformation :: Map Node (Maybe TimeInformation) -- for time events, give the possibly associated time information
+                           , isInterrupt :: Map Node Bool -- for boundary events, tells if interrupting (default) or not
+                           , timeInformation :: Map Node TimerEventDefinition -- for time events, give the possibly associated time information
 }
   deriving (Eq, Show, Generic)
 instance ToJSON BpmnGraph
@@ -240,7 +240,7 @@ mkGraph :: Text
         -> [Message]
         -> Map Edge Message
         -> Map Node Bool
-        -> Map Node (Maybe TimeInformation)
+        -> Map Node TimerEventDefinition
         -> BpmnGraph
 mkGraph n ns es catN catE sourceE targetE nameN containN containE attached messages messageE isInterrupt timeInformation
   = let graph = BpmnGraph n

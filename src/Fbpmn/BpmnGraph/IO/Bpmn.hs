@@ -117,6 +117,12 @@ pIx e = case findAttr (nA "cancelActivity") e of
 -- timer events
 pTimex :: Element -> Bool
 pTimex = hasChildren (nE "timerEventDefinition")
+pTimerDefinitionType :: Element -> Maybe TimerDefinitionType
+pTimerDefinitionType e = case () of
+  _ | hasChildren (nE "timeDate") e     -> Just TimeDate
+    | hasChildren (nE "timeDuration") e -> Just TimeDuration
+    | hasChildren (nE "timeCycle") e    -> Just TimeCycle
+    | otherwise                         -> Nothing
 
 -- start events
 -- NSE, MSE, or TSE
@@ -173,12 +179,14 @@ pNEE es e = if pEE es e && not (e `oneMaybeOf` [pMEE es, pTEE es])
 pBE :: [Element] -> Element -> Bool
 pBE _ = (?=) "boundaryEvent"
 pMBE :: [Element] -> Element -> Maybe NodeType
-pMBE es e =
-  if pBE es e && pMx e then Just MessageBoundaryEvent else Nothing
+pMBE es e = if pBE es e && pMx e then Just MessageBoundaryEvent else Nothing
 pTBE :: [Element] -> Element -> Maybe NodeType
-pTBE es e = if pBE es e && pTimex e
-  then Just TimerBoundaryEvent
-  else Nothing
+pTBE es e = if pBE es e && pTimex e then Just TimerBoundaryEvent else Nothing
+pCancelActivity :: Element -> Bool
+pCancelActivity e = case findAttr (nA "cancelActivity") e of
+  Just "true" -> True
+  Just "false" -> False
+  _ -> True -- boundary events are interrupting by default
 
 -- events
 pE :: [Element] -> Element -> Bool
@@ -347,10 +355,13 @@ compute e = do
     (M.fromList $ catMaybes $ tlift2 . battached <$> nbes)
     []
     M.empty
-    M.empty -- TODO:
-    M.empty -- TODO:
+    (M.fromList $ catMaybes $ tlift2 . bisInterrupting <$> nbes)
+    M.empty -- TODO: for time events
   spgs <- sequence $ compute <$> sps
   pure $ g <> mconcat spgs
+
+bisInterrupting :: Element -> (Maybe Node, Maybe Bool)
+bisInterrupting n = (getId n, Just $ pCancelActivity n)
 
 battached :: Element -> (Maybe Node, Maybe Node)
 battached n = (getId n, findAttr (nA "attachedToRef") n)
