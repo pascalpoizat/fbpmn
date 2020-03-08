@@ -5,9 +5,10 @@ import           Fbpmn.BpmnGraph.Model
 import           Text.XML.Light                 ( Element(..)
                                                 , Content(..)
                                                 , QName(..)
+                                                , cdData
                                                 , elChildren
                                                 , findAttr
-                                                , findChildren
+                                                , findChild
                                                 , findChildren
                                                 , filterChildren
                                                 , parseXML
@@ -117,12 +118,31 @@ pIx e = case findAttr (nA "cancelActivity") e of
 -- timer events
 pTimex :: Element -> Bool
 pTimex = hasChildren (nE "timerEventDefinition")
-pTimerDefinitionType :: Element -> Maybe TimerDefinitionType
-pTimerDefinitionType e = case () of
+pTimerDefinitionType' :: Element -> Maybe TimerDefinitionType
+pTimerDefinitionType' e = case () of
   _ | hasChildren (nE "timeDate") e     -> Just TimeDate
     | hasChildren (nE "timeDuration") e -> Just TimeDuration
     | hasChildren (nE "timeCycle") e    -> Just TimeCycle
     | otherwise                         -> Nothing
+pTimerDefinitionValue' :: Element -> Maybe TimerValue
+pTimerDefinitionValue' e = do
+    contents <- elContent <$> eval
+    content1 <- listToMaybe contents
+    case content1 of
+      Text cdata -> Just $ cdData cdata
+      _ -> Nothing
+  where
+    eval = case () of
+      _ | hasChildren (nE "timeDate") e -> findChild (nE "timeDate") e
+        | hasChildren (nE "timeDuration") e -> findChild (nE "timeDuration") e
+        | hasChildren (nE "timeCycle") e -> findChild (nE "timeCycle") e
+        | otherwise -> Nothing
+pTimerDefinitionType :: Element -> Maybe TimerDefinitionType
+pTimerDefinitionType e =
+  pTimerDefinitionType' =<< findChild (nE "timerEventDefinition") e
+pTimerDefinitionValue :: Element -> Maybe TimerValue
+pTimerDefinitionValue e =
+  pTimerDefinitionValue' =<< findChild (nE "timerEventDefinition") e
 
 -- start events
 -- NSE, MSE, or TSE
@@ -187,6 +207,10 @@ pCancelActivity e = case findAttr (nA "cancelActivity") e of
   Just "true" -> True
   Just "false" -> False
   _ -> True -- boundary events are interrupting by default
+
+-- time-related events
+pTE :: [Element] -> Element -> Bool
+pTE es e = e `oneMaybeOf` [pTSE es, pCTIE es, pTBE es]
 
 -- events
 pE :: [Element] -> Element -> Bool
@@ -337,6 +361,7 @@ compute e = do
   pid         <- getId e
   ns          <- pure $ filterChildren (pNode allElements) e
   nbes        <- pure $ filterChildren (pBE allElements) e
+  ntes        <- pure $ filterChildren (pTE allElements) e
   nids        <- sequence $ getId <$> ns
   es          <- pure $ filterChildren (pEdge allElements) e
   eids        <- sequence $ getId <$> es
@@ -356,9 +381,15 @@ compute e = do
     []
     M.empty
     (M.fromList $ catMaybes $ tlift2 . bisInterrupting <$> nbes)
-    M.empty -- TODO: for time events
+    (M.fromList $ catMaybes $ tlift2 . btimeDefinition <$> ntes)
   spgs <- sequence $ compute <$> sps
   pure $ g <> mconcat spgs
+
+btimeDefinition :: Element -> (Maybe Node, Maybe TimerEventDefinition)
+btimeDefinition n = (getId n, Just $ TimerEventDefinition ttype tval)
+ where
+  ttype = pTimerDefinitionType n
+  tval  = pTimerDefinitionValue n
 
 bisInterrupting :: Element -> (Maybe Node, Maybe Bool)
 bisInterrupting n = (getId n, Just $ pCancelActivity n)

@@ -21,6 +21,8 @@ encodeBpmnGraphToAlloy :: BpmnGraph -> Text
 encodeBpmnGraphToAlloy g =
   unlines
     $   [ encodeBpmnGraphHeaderToAlloy          -- header
+        , encodeNodes                           -- experimental
+        , encodeTimerEventDefinitions           -- experimental
         , encodeBpmnGraphFooterToAlloy          -- footer
         ]
     <*> [g]
@@ -42,3 +44,36 @@ encodeBpmnGraphFooterToAlloy g =
   |]
   where
     n = name g
+
+encodeNodes :: BpmnGraph -> Text
+encodeNodes g = [text|
+  $sn
+  |]
+  where
+    sn = unlines $ nodeToAlloy <$> ns
+    ns = nodes g
+    nodeToAlloy n = [text|$ssn :: $tn|]
+      where
+        ssn = show n
+        tn = maybe "type not known" show $ catN g !? n
+
+encodeTimerEventDefinitions :: BpmnGraph -> Text
+encodeTimerEventDefinitions g = [text|
+    TimerEventDefinitions ==
+    $stes
+  |]
+ where
+  stes = unlines $ teToAlloy <$> tes
+  tes  = nodesTs g [TimerStartEvent, TimerIntermediateEvent, TimerBoundaryEvent]
+  teToAlloy e = case timeInformation g !? e of
+    Just (TimerEventDefinition (Just ttype) tval) ->
+      [text|$side :: $sttype -> $stval|]
+     where
+      side   = show e
+      sttype = case ttype of
+        TimeDate     -> "date"
+        TimeDuration -> "duration"
+        TimeCycle    -> "cycle"
+      stval = maybe "value not set" show tval
+    _ -> [text|$side = type not set|] where side = show e
+
