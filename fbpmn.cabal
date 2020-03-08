@@ -26,6 +26,7 @@ library
                        Fbpmn.BpmnGraph.IO.Bpmn
                        Fbpmn.BpmnGraph.IO.Dot
                        Fbpmn.BpmnGraph.IO.Json
+                       Fbpmn.Analysis.Alloy.IO.Alloy
                        Fbpmn.Analysis.Tla.Model
                        Fbpmn.Analysis.Tla.IO.Tla
                        Fbpmn.Analysis.Tla.IO.Log
