@@ -3,18 +3,20 @@ module PWSSyntax
 /**************** Nodes ****************/
 abstract sig Node {}
 
-abstract sig InternalProcess extends Node {
+abstract sig Container extends Node {
   contains: set Node
 }
+fact ContainerNotReflexive { no p : Container | p in p.^contains }
+fact NoFreeNode { all n : Node - Process | one p : Container | n in p.contains }
 
-abstract sig Process extends InternalProcess {}
+abstract sig Process extends Container {}
 
 /** Activities **/
 abstract sig Activity extends Node {}
 abstract sig AbstractTask extends Activity {}
 abstract sig SendTask extends Activity {}
 abstract sig ReceiveTask extends Activity {}
-abstract sig SubProcess extends InternalProcess {}
+abstract sig SubProcess extends Container {}
 
 /** Gateways **/
 abstract sig Gateway extends Node {}

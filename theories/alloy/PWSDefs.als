@@ -2,6 +2,9 @@ module PWSDefs
 
 open PWSSyntax
 
+fun inc[n : Int] : Int { plus[n,1] }
+fun dec[n : Int] : Int { minus[n,1] }
+
 // incoming edges for this node
 fun Node.incoming : Edge { this.~target }
 
@@ -21,7 +24,7 @@ fun Node.intype(type: set Edge) : Edge { this.incoming & type }
 fun Node.outtype(type: set Edge) : Edge { this.outgoing & type }
 
 // process or subprocess node of this node
-// (immediate containee)
+// (immediate container)
 fun Node.containInv : Process {
     this.~contains
 }

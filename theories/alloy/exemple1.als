@@ -26,8 +26,9 @@ one sig p1 extends Process {} {
 
 check {Safe} for 0 but 10 State
 
-// how can it be true for 2 state?
-check {SimpleTermination} for 0 but 2 State
-check {CorrectTermination} for 0 but 3 State
+check {SimpleTermination} for 0 but 5 State
+check {CorrectTermination} for 0 but 5 State
 
 run {Safe} for 0 but 2 State
+
+
