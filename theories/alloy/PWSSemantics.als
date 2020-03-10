@@ -103,14 +103,13 @@ pred step[s, s' : State, n: Node] {
     n in NoneStartEvent implies completeNoneStartEvent[s,s',n]
     else
     n in NoneEndEvent implies startNoneEndEvent[s, s', n]
-    else
-    n in Process implies s' = s
-    else
-    s' = s
+    else // impossible?
+    delta[s, s', none, none]
 }
 
 fact init { initialState }
 
 fact traces {
-	all s: State - last | some n : Node | step[s, s.next, n]
+    // il faut bégayer si on ne peut rien faire d'autre. Comment ?
+	all s: State - last | some n : Node - Process | step[s, s.next, n]
 }

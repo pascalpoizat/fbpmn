@@ -7,21 +7,21 @@ NSE -> AT -> TSE
 open PWSSyntax
 open PWSProp
 
-one sig t1 extends AbstractTask {}
+one sig at extends AbstractTask {}
 one sig se extends NoneStartEvent {}
 one sig ee extends NoneEndEvent {}
 
 one sig f1 extends SequentialFlow {} {
     source = se
-    target = t1
+    target = at
 }
 one sig f2 extends SequentialFlow {} {
-    source = t1
+    source = at
     target = ee
 }
 
 one sig p1 extends Process {} {
-    contains = se + t1 + ee
+    contains = se + at + ee
 }
 
 check {Safe} for 0 but 10 State
