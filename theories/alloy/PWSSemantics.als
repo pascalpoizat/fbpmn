@@ -21,11 +21,10 @@ pred delta[s, s': State, n : Node, e: Edge] {
 
 /**************** Activities ****************/
 
-/* useless?
 pred State.canstartAbstractTask(n : AbstractTask) {
-    some e: n.incoming[SequentialFlow] | this.edgemarks[e] > 0
+    some e: n.intype[SequentialFlow] | this.edgemarks[e] > 0
 }
-*/
+
 
 pred startAbstractTask[s, s': State, n: AbstractTask] {
     one e : n.intype[SequentialFlow] | {
@@ -34,6 +33,11 @@ pred startAbstractTask[s, s': State, n: AbstractTask] {
         s'.nodemarks[n] = s.nodemarks[n].inc
         delta[s, s', n, e]
     }
+}
+
+pred State.cancompleteAbstractTask(n : Node) {
+    n in AbstractTask
+    this.nodemarks[n] >= 1
 }
 
 pred completeAbstractTask[s, s' : State, n : AbstractTask] {
@@ -45,6 +49,11 @@ pred completeAbstractTask[s, s' : State, n : AbstractTask] {
 
  /************ Gateways ****************/
 
+pred State.cancompleteExclusiveOr(n : Node) {
+    n in ExclusiveOr
+    some ei : n.intype[SequentialFlow] | this.edgemarks[ei] >= 1
+}
+
 pred completeExclusiveOr[s, s' : State, n: ExclusiveOr] {
     one ei : n.intype[SequentialFlow] | {
         s.edgemarks[ei] >= 1
@@ -54,6 +63,11 @@ pred completeExclusiveOr[s, s' : State, n: ExclusiveOr] {
             delta[s, s', none, ei + eo]
         }
     }
+}
+
+pred State.cancompleteParallel(n : Node) {
+    n in Parallel
+    all ei : n.intype[SequentialFlow] | this.edgemarks[ei] >= 1
 }
 
 pred completeParallel[s, s' : State, n: Parallel] {
@@ -67,6 +81,11 @@ pred completeParallel[s, s' : State, n: Parallel] {
 
  /************ Events ****************/
 
+pred State.cancompleteNoneStartEvent(n : Node) {
+    n in NoneStartEvent
+    this.nodemarks[n] >= 1
+}
+
 pred completeNoneStartEvent[s, s' : State, n: NoneStartEvent] {
     s.nodemarks[n] >= 1
     s'.nodemarks[n] = s.nodemarks[n].dec
@@ -75,6 +94,11 @@ pred completeNoneStartEvent[s, s' : State, n: NoneStartEvent] {
         s'.nodemarks[p] = s.nodemarks[p].inc
         delta[s, s', n + p, n.outtype[SequentialFlow]]
     } 
+}
+
+pred State.canstartNoneEndEvent(n : Node) {
+    n in NoneEndEvent
+    some e : n.intype[SequentialFlow] | this.edgemarks[e] >= 1
 }
 
 pred startNoneEndEvent[s, s' : State, n: NoneEndEvent] {
@@ -93,6 +117,17 @@ pred initialState {
     first.nodemarks = (Node -> 0) ++ (NoneStartEvent -> 1)
 }
 
+pred State.deadlock {
+    no n : Node | {
+        this.canstartAbstractTask[n]
+        or this.cancompleteAbstractTask[n]
+        or this.cancompleteExclusiveOr[n]
+        or this.cancompleteParallel[n]
+        or this.cancompleteNoneStartEvent[n]
+        or this.canstartNoneEndEvent[n]
+    }
+}
+
 pred step[s, s' : State, n: Node] {
     n in AbstractTask implies { startAbstractTask[s,s',n] or completeAbstractTask[s,s',n] }
     else
@@ -103,13 +138,14 @@ pred step[s, s' : State, n: Node] {
     n in NoneStartEvent implies completeNoneStartEvent[s,s',n]
     else
     n in NoneEndEvent implies startNoneEndEvent[s, s', n]
-    else // impossible?
-    delta[s, s', none, none]
 }
 
 fact init { initialState }
 
 fact traces {
     // il faut bégayer si on ne peut rien faire d'autre. Comment ?
-	all s: State - last | some n : Node - Process | step[s, s.next, n]
+	all s: State - last {
+        s.deadlock implies delta[s, s.next, none, none]
+        else some n : Node - Process | step[s, s.next, n]
+    }
 }
