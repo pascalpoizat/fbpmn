@@ -1,8 +1,12 @@
 module PWSSyntax
 
 /**** Message Names ****/
-abstract sig Message {}
-
+abstract sig MessageKind {}
+abstract sig Message {
+    from : Process,
+    to : Process,
+    content : MessageKind
+}
 /**************** Nodes ****************/
 abstract sig Node {}
 
@@ -66,5 +70,11 @@ abstract sig DefaultSequentialFlow extends SequentialFlow {}
 abstract sig ConditionalSequentialFlow extends SequentialFlow {}
 
 abstract sig MessageFlow extends Edge {
-     msg: Message
+     message: Message
+}
+{ message.from = source.processOf && message.to = target.processOf }
+
+// process of this node
+fun Node.processOf : Process {
+    this.^(~contains) & Process
 }

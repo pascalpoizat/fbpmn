@@ -42,9 +42,11 @@ one sig proc extends Process {} {
     contains = se + p1 + at1 + at2 + p2 + ee
 }
 
-check {Safe} for 0 but 15 State
+check {Safe} for 0 but 20 State
 
 check {SimpleTermination} for 0 but 20 State
 check {CorrectTermination} for 0 but 20 State
 
 run {Safe} for 0 but 15 State
+
+run {0=0} for 0 but 11 State

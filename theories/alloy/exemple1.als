@@ -7,6 +7,8 @@ NSE -> AT -> TSE
 open PWSSyntax
 open PWSProp
 
+one sig m extends MessageKind {}
+
 one sig at extends AbstractTask {}
 one sig se extends NoneStartEvent {}
 one sig ee extends NoneEndEvent {}

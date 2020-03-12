@@ -25,6 +25,7 @@ fun Node.outtype(type: set Edge) : Edge { this.outgoing & type }
 
 // process or subprocess node of this node
 // (immediate container)
-fun Node.containInv : Process {
+fun Node.containInv : Container {
     this.~contains
 }
+

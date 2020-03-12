@@ -9,22 +9,31 @@ open PWSDefs
 
 sig State {
     nodemarks : Node -> one Int,
-    edgemarks : Edge -> one Int
-    // network
+    edgemarks : Edge -> one Int,
+    network : set Message
 }
 
-/* all marks except those for n and e are left unchanged. */
-pred delta[s, s': State, n : Node, e: Edge] {
+/* all marks except those for n and e are left unchanged.
+ * Doesn't care of network. */
+pred deltaN[s, s': State, n : Node, e: Edge] {
     all othernode : Node - n | s'.nodemarks[othernode] = s.nodemarks[othernode]
     all otheredge : Edge - e | s'.edgemarks[otheredge] = s.edgemarks[otheredge]
 }
 
-/**************** Activities ****************/
-
-pred State.canstartAbstractTask(n : AbstractTask) {
-    some e: n.intype[SequentialFlow] | this.edgemarks[e] > 0
+/* All marks except those for n and e are left unchanged.
+ * Network is left unchanged */
+pred delta[s, s': State, n : Node, e: Edge] {
+    deltaN[s, s', n, e ]
+    s'.network = s.network
 }
 
+/**************** Activities ****************/
+
+/**** Abstract Task ****/
+
+pred State.canstartAbstractTask[n : AbstractTask] {
+    some e: n.intype[SequentialFlow] | this.edgemarks[e] > 0
+}
 
 pred startAbstractTask[s, s': State, n: AbstractTask] {
     one e : n.intype[SequentialFlow] | {
@@ -35,7 +44,7 @@ pred startAbstractTask[s, s': State, n: AbstractTask] {
     }
 }
 
-pred State.cancompleteAbstractTask(n : Node) {
+pred State.cancompleteAbstractTask[n : Node] {
     n in AbstractTask
     this.nodemarks[n] >= 1
 }
@@ -47,9 +56,74 @@ pred completeAbstractTask[s, s' : State, n : AbstractTask] {
     delta[s, s', n, n.outtype[SequentialFlow]]
 }
 
- /************ Gateways ****************/
+/**** Send Task ****/
 
-pred State.cancompleteExclusiveOr(n : Node) {
+pred State.canstartSendTask[n : Node] {
+    some e : n.intype[SequentialFlow] | this.edgemarks[e] >= 1
+}
+
+pred startSendTask[s, s' : State, n : SendTask] {
+    one e : n.intype[SequentialFlow] {
+        s.edgemarks[e] >= 1
+        s'.edgemarks[e] = s.edgemarks[e].dec
+        s'.nodemarks[n] = s.nodemarks[n].inc
+        delta[s, s', n, e]
+    }
+}
+
+pred State.cancompleteSendTask[n : Node] {
+    n in SendTask
+    this.nodemarks[n] >= 1
+    some e : n.outtype[MessageFlow] | cansend[this, e.message]
+}
+
+pred completeSendTask[s, s' : State, n : SendTask] {
+    s.nodemarks[n] >= 1
+    one e : n.outtype[MessageFlow] {
+        send[s, s', e.message]
+        s'.nodemarks[n] = s.nodemarks[n].dec
+        all ee : n.outtype[SequentialFlow] | s'.edgemarks[ee] = s.edgemarks[ee].inc
+        s'.edgemarks[e] = s.edgemarks[e].inc
+        deltaN[s, s', n, n.outtype[SequentialFlow] + e]
+    }
+}
+
+/**** Receive Task ****/
+
+pred State.canstartReceiveTask[n : Node] {
+    some e : n.intype[SequentialFlow] | this.edgemarks[e] >= 1
+}
+
+pred startReceiveTask[s, s' : State, n : ReceiveTask] {
+    one e : n.intype[SequentialFlow] {
+        s.edgemarks[e] >= 1
+        s'.edgemarks[e] = s.edgemarks[e].dec
+        s'.nodemarks[n] = s.nodemarks[n].inc
+        delta[s, s', n, e]
+    }
+}
+
+pred State.cancompleteReceiveTask[n : Node] {
+    n in ReceiveTask
+    this.nodemarks[n] >= 1
+    some e : n.intype[MessageFlow] | canreceive[this, e.message]
+}
+
+pred completeReceiveTask[s, s' : State, n : ReceiveTask] {
+    s.nodemarks[n] >= 1
+    one e : n.intype[MessageFlow] {
+        receive[s, s', e.message]
+        s'.nodemarks[n] = s.nodemarks[n].dec
+        all ee : n.outtype[SequentialFlow] | s'.edgemarks[ee] = s.edgemarks[ee].inc
+        s'.edgemarks[e] = s.edgemarks[e].dec
+        deltaN[s, s', n, n.outtype[SequentialFlow] + e]
+    }
+}
+
+
+/************ Gateways ****************/
+
+pred State.cancompleteExclusiveOr[n : Node] {
     n in ExclusiveOr
     some ei : n.intype[SequentialFlow] | this.edgemarks[ei] >= 1
 }
@@ -65,7 +139,7 @@ pred completeExclusiveOr[s, s' : State, n: ExclusiveOr] {
     }
 }
 
-pred State.cancompleteParallel(n : Node) {
+pred State.cancompleteParallel[n : Node] {
     n in Parallel
     all ei : n.intype[SequentialFlow] | this.edgemarks[ei] >= 1
 }
@@ -81,7 +155,11 @@ pred completeParallel[s, s' : State, n: Parallel] {
 
  /************ Events ****************/
 
-pred State.cancompleteNoneStartEvent(n : Node) {
+/**** Start Events ****/
+
+/* None Start Event */
+
+pred State.cancompleteNoneStartEvent[n : Node] {
     n in NoneStartEvent
     this.nodemarks[n] >= 1
 }
@@ -96,7 +174,49 @@ pred completeNoneStartEvent[s, s' : State, n: NoneStartEvent] {
     } 
 }
 
-pred State.canstartNoneEndEvent(n : Node) {
+/* Message Start Event */
+
+pred State.canstartMessageStartEvent[n: Node] {
+    n in MessageStartEvent
+    this.nodemarks[n] = 0
+    some e : n.intype[MessageFlow] {
+        this.edgemarks[e] >= 1
+        canreceive[this, e.message]
+    }
+}
+pred startMessageStartEvent[s, s' : State, n : MessageStartEvent] {
+    s.nodemarks[n] = 0
+    one e : n.intype[MessageFlow] {
+        s.edgemarks[e] >= 1
+        receive[s, s', e.message]
+        s'.edgemarks[e] = s.edgemarks[e].dec
+        s'.nodemarks[n] = s.nodemarks[n].inc
+        deltaN[s, s', n, e]
+    }
+}
+
+pred State.cancompleteMessageStartEvent[n : Node] {
+    n in MessageStartEvent
+    this.nodemarks[n] >= 1
+    this.nodemarks[n.processOf] = 0
+}
+
+pred completeMessageStartEvent[s, s': State, n : MessageStartEvent] {
+    s.nodemarks[n] >= 1
+    let p = n.processOf {
+        s.nodemarks[p] = 0  // no multi-instance
+        s'.nodemarks[n] = s.nodemarks[n].dec
+        s'.nodemarks[p] = s.nodemarks[p].inc
+        all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
+        delta[s, s', n + p, n.outtype[SequentialFlow] ]
+    }
+}
+
+/**** End Events ****/
+
+/* None End Event */
+
+pred State.canstartNoneEndEvent[n : Node] {
     n in NoneEndEvent
     some e : n.intype[SequentialFlow] | this.edgemarks[e] >= 1
 }
@@ -110,26 +230,58 @@ pred startNoneEndEvent[s, s' : State, n: NoneEndEvent] {
     }
 }
 
+/* Terminate End Event */
+
+pred State.canstartTerminateEndEvent[n : Node] {
+    n in TerminateEndEvent
+    some e : n.intype[SequentialFlow] | this.edgemarks[e] >= 1
+}
+
+pred startTerminateEndEvent[s, s' : State, n : TerminateEndEvent] {
+    one e : n.intype[SequentialFlow] {
+        s.edgemarks[e] >= 1
+        s'.nodemarks[n] = 1
+        let pr = n.~contains,
+            edges = { e : Edge | e.source = pr && e.target = pr},
+            nodes =  pr.contains - n {
+                all e : edges | s'.edgemarks[e] = 0
+                all nn : nodes | s'.nodemarks[nn] = 0
+                delta[s, s', nodes, edges]
+        }
+    }
+}
 /************ Run ****************/
 
 pred initialState {
     first.edgemarks = (Edge -> 0)
     first.nodemarks = (Node -> 0) ++ (NoneStartEvent -> 1)
+    first.network = networkinit
 }
 
 pred State.deadlock {
     no n : Node | {
         this.canstartAbstractTask[n]
         or this.cancompleteAbstractTask[n]
+        or this.canstartSendTask[n]
+        or this.cancompleteSendTask[n]
+        or this.canstartReceiveTask[n]
+        or this.cancompleteReceiveTask[n]
         or this.cancompleteExclusiveOr[n]
         or this.cancompleteParallel[n]
         or this.cancompleteNoneStartEvent[n]
+        or this.canstartMessageStartEvent[n]
+        or this.cancompleteMessageStartEvent[n]
         or this.canstartNoneEndEvent[n]
+        or this.canstartTerminateEndEvent[n]
     }
 }
 
 pred step[s, s' : State, n: Node] {
     n in AbstractTask implies { startAbstractTask[s,s',n] or completeAbstractTask[s,s',n] }
+    else
+    n in SendTask implies { startSendTask[s,s',n] or completeSendTask[s,s',n] }
+    else
+    n in ReceiveTask implies { startReceiveTask[s,s',n] or completeReceiveTask[s,s',n] }
     else
     n in ExclusiveOr implies completeExclusiveOr[s,s',n]
     else
@@ -137,7 +289,11 @@ pred step[s, s' : State, n: Node] {
     else
     n in NoneStartEvent implies completeNoneStartEvent[s,s',n]
     else
+    n in MessageStartEvent implies { startMessageStartEvent[s,s',n] or completeMessageStartEvent[s,s',n] }
+    else
     n in NoneEndEvent implies startNoneEndEvent[s, s', n]
+    else
+    n in TerminateEndEvent implies startTerminateEndEvent[s, s', n]
 }
 
 fact init { initialState }
@@ -148,4 +304,27 @@ fact traces {
         s.deadlock implies delta[s, s.next, none, none]
         else some n : Node - Process | step[s, s.next, n]
     }
+}
+
+/**************************************************/
+
+/* TODO: replace the set of Message with a bag of Message. */
+
+fun networkinit : set Message { none }
+
+pred cansend[s : State, m : Message] {
+    // always true
+}
+
+pred send[s, s' : State, m : Message] {
+    s'.network = s.network + m
+}
+
+pred canreceive[s : State, m : Message] {
+        m in s.network
+}
+
+pred receive[s, s' : State, m : Message] {
+    m in s.network
+    s'.network = s.network - m
 }
