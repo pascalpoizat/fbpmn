@@ -77,17 +77,26 @@ encodeEdges :: BpmnGraph -> Text
 encodeEdges g = [text|
   $ses
   |]
-  where
-    ses = unlines $ edgeToAlloy <$> edges g
-    edgeToAlloy e = [text|
+ where
+  ses = unlines $ edgeToAlloy <$> edges g
+  edgeToAlloy e = [text|
       one sig $ename extends $etype {
         $econtents
       }
       |]
-      where
-        ename = toText e
-        etype = maybe "" edgeTypeToAlloy (catE g !? e)
-        econtents = ""
+   where
+    ename     = toText e
+    etype     = maybe "" edgeTypeToAlloy (catE g !? e)
+    esource   = sourceE g !? e
+    etarget   = targetE g !? e
+    econtents = case (esource, etarget) of
+      (Just n1, Just n2) -> [text|
+              source = $sn1
+              target = $sn2|]
+       where
+        sn1 = toText n1
+        sn2 = toText n2
+      _ -> ""
 
 nodeTypeToAlloy :: NodeType -> Text
 nodeTypeToAlloy AbstractTask                  = "AbstractTask"
