@@ -254,7 +254,9 @@ pred startTerminateEndEvent[s, s' : State, n : TerminateEndEvent] {
 
 pred initialState {
     first.edgemarks = (Edge -> 0)
-    first.nodemarks = (Node -> 0) ++ (NoneStartEvent -> 1)
+    let processNSE = { n : NoneStartEvent | n.containInv in Process } {
+        first.nodemarks = (Node -> 0) ++ (processNSE -> 1)
+    }
     first.network = networkinit
 }
 
@@ -278,28 +280,20 @@ pred State.deadlock {
 
 pred step[s, s' : State, n: Node] {
     n in AbstractTask implies { startAbstractTask[s,s',n] or completeAbstractTask[s,s',n] }
-    else
-    n in SendTask implies { startSendTask[s,s',n] or completeSendTask[s,s',n] }
-    else
-    n in ReceiveTask implies { startReceiveTask[s,s',n] or completeReceiveTask[s,s',n] }
-    else
-    n in ExclusiveOr implies completeExclusiveOr[s,s',n]
-    else
-    n in Parallel implies completeParallel[s,s',n]
-    else
-    n in NoneStartEvent implies completeNoneStartEvent[s,s',n]
-    else
-    n in MessageStartEvent implies { startMessageStartEvent[s,s',n] or completeMessageStartEvent[s,s',n] }
-    else
-    n in NoneEndEvent implies startNoneEndEvent[s, s', n]
-    else
-    n in TerminateEndEvent implies startTerminateEndEvent[s, s', n]
+    else n in SendTask implies { startSendTask[s,s',n] or completeSendTask[s,s',n] }
+    else n in ReceiveTask implies { startReceiveTask[s,s',n] or completeReceiveTask[s,s',n] }
+    else n in ExclusiveOr implies completeExclusiveOr[s,s',n]
+    else n in Parallel implies completeParallel[s,s',n]
+    else n in NoneStartEvent implies completeNoneStartEvent[s,s',n]
+    else n in MessageStartEvent implies { startMessageStartEvent[s,s',n] or completeMessageStartEvent[s,s',n] }
+    else n in NoneEndEvent implies startNoneEndEvent[s, s', n]
+    else n in TerminateEndEvent implies startTerminateEndEvent[s, s', n]
 }
 
 fact init { initialState }
 
+// stutters if no action is possible.
 fact traces {
-    // il faut bégayer si on ne peut rien faire d'autre. Comment ?
 	all s: State - last {
         s.deadlock implies delta[s, s.next, none, none]
         else some n : Node - Process | step[s, s.next, n]
