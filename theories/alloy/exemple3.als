@@ -15,19 +15,19 @@ one sig se extends NoneStartEvent {}
 one sig ee extends NoneEndEvent {}
 one sig g1 extends ExclusiveOr {}
 
-one sig f1 extends SequentialFlow {} {
+one sig f1 extends NormalSequentialFlow {} {
     source = se
     target = g1
 }
-one sig f2 extends SequentialFlow {} {
+one sig f2 extends NormalSequentialFlow {} {
     source = g1
     target = ee
 }
-one sig f3 extends SequentialFlow {} {
+one sig f3 extends NormalSequentialFlow {} {
     source = g1
     target = at
 }
-one sig f4 extends SequentialFlow {} {
+one sig f4 extends NormalSequentialFlow {} {
     source = at
     target = at
 }

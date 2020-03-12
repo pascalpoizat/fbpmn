@@ -14,27 +14,27 @@ one sig ee extends NoneEndEvent {}
 one sig p1 extends Parallel {}
 one sig p2 extends Parallel {}
 
-one sig f1 extends SequentialFlow {} {
+one sig f1 extends NormalSequentialFlow {} {
     source = se
     target = p1
 }
-one sig f2 extends SequentialFlow {} {
+one sig f2 extends NormalSequentialFlow {} {
     source = p1
     target = at1
 }
-one sig f3 extends SequentialFlow {} {
+one sig f3 extends NormalSequentialFlow {} {
     source = p1
     target = at2
 }
-one sig f4 extends SequentialFlow {} {
+one sig f4 extends NormalSequentialFlow {} {
     source = at1
     target = p2
 }
-one sig f5 extends SequentialFlow {} {
+one sig f5 extends NormalSequentialFlow {} {
     source = at2
     target = p2
 }
-one sig f6 extends SequentialFlow {} {
+one sig f6 extends NormalSequentialFlow {} {
     source = p2
     target = ee
 }

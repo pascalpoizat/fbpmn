@@ -22,19 +22,19 @@ one sig se2 extends NoneStartEvent {}
 one sig ee1 extends NoneEndEvent {}
 one sig ee2 extends NoneEndEvent {}
 
-one sig f1 extends SequentialFlow {} {
+one sig f1 extends NormalSequentialFlow {} {
     source = se1
     target = st1
 }
-one sig f2 extends SequentialFlow {} {
+one sig f2 extends NormalSequentialFlow {} {
     source = st1
     target = ee1
 }
-one sig f3 extends SequentialFlow {} {
+one sig f3 extends NormalSequentialFlow {} {
     source = se2
     target = rt2
 }
-one sig f4 extends SequentialFlow {} {
+one sig f4 extends NormalSequentialFlow {} {
     source = rt2
     target = ee2
 }
