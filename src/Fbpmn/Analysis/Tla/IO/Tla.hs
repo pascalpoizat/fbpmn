@@ -313,9 +313,9 @@ nodeTypeToTLA TimerIntermediateEvent        = "TimerIntermediateEvent"
 nodeTypeToTLA TimerBoundaryEvent            = "TimerBoundaryEvent"
 
 edgeTypeToTLA :: EdgeType -> Text
-edgeTypeToTLA NormalSequenceFlow      = "NormalSeqFlow"
-edgeTypeToTLA ConditionalSequenceFlow = "ConditionalSeqFlow"
-edgeTypeToTLA DefaultSequenceFlow     = "DefaultSeqFlow"
+edgeTypeToTLA NormalSequenceFlow      = "NormalSequentialFlow"
+edgeTypeToTLA ConditionalSequenceFlow = "ConditionalSequentialFlow"
+edgeTypeToTLA DefaultSequenceFlow     = "DefaultSequentialFlow"
 edgeTypeToTLA MessageFlow             = "MessageFlow"
 
 boolToTLA :: Bool -> Text
