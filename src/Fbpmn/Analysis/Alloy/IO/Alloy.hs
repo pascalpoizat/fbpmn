@@ -118,9 +118,9 @@ nodeTypeToAlloy TimerIntermediateEvent        = "TimerIntermediateEvent"
 nodeTypeToAlloy TimerBoundaryEvent            = "TimerBoundaryEvent"
 
 edgeTypeToAlloy :: EdgeType -> Text
-edgeTypeToAlloy NormalSequenceFlow      = "NormalSeqFlow"
-edgeTypeToAlloy ConditionalSequenceFlow = "ConditionalSeqFlow"
-edgeTypeToAlloy DefaultSequenceFlow     = "DefaultSeqFlow"
+edgeTypeToAlloy NormalSequenceFlow      = "NormalSequentialFlow"
+edgeTypeToAlloy ConditionalSequenceFlow = "ConditionalSequentialFlow"
+edgeTypeToAlloy DefaultSequenceFlow     = "DefaultSequentialFlow"
 edgeTypeToAlloy MessageFlow             = "MessageFlow"
 
 encodeTimerEventDefinitions :: BpmnGraph -> Text
