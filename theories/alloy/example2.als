@@ -1,6 +1,6 @@
 /*
-Un process avec :
-NSE -> PAR -> {AT1,AT2} -> PAR -> TSE
+A process:
+NSE -> PAR -> {AT1,AT2} -> PAR -> NEE
 */
 
 

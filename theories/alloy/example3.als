@@ -1,9 +1,11 @@
 /*
-Un process avec :
-NSE -> XOR -> TSE
-        |_> AT loop
+A process:
+NSE -> (PAR or XOR) -> (NEE or TEE)
+             |_> AT loop
 
-No SimpleTermination, as it get stuck in the lower branch.
+With XOR and NEE/TEE: No SimpleTermination, as it can get stuck in the lower branch.
+With PAR and TEE: No SimpleTermination: there is no fairness that forces the transition -> NEE, the token stays on the edge PAR->NEE.
+With PAR and NEE: as above.
 */
 
 
@@ -12,8 +14,8 @@ open PWSProp
 
 one sig at extends AbstractTask {}
 one sig se extends NoneStartEvent {}
-one sig ee extends NoneEndEvent {}
-one sig g1 extends ExclusiveOr {}
+one sig ee extends TerminateEndEvent {}
+one sig g1 extends Parallel {}
 
 one sig f1 extends NormalSequentialFlow {} {
     source = se

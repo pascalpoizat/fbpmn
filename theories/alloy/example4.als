@@ -1,7 +1,9 @@
 /*
-Deux process avec :
-NSE -> ST -> TSE
-NSE -> RT -> TSE
+Two processes:
+NSE -> ST -> NEE
+NSE -> RT -> NEE
+
+CorrectTermination with 9 states
 */
 
 

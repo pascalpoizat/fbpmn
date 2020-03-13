@@ -1,6 +1,6 @@
 /*
-Un process avec :
-NSE -> AT -> TSE
+A process:
+NSE -> AT -> NEE
 */
 
 
