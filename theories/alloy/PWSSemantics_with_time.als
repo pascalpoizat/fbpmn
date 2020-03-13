@@ -1,4 +1,4 @@
-module PWSSemantics
+module PWSSemantics_with_time
 
 open util/ordering[State]
 open util/integer
@@ -11,6 +11,9 @@ sig State {
     nodemarks : Node -> one Int,
     edgemarks : Edge -> one Int,
     network : set Message,
+    globalclock : one Int,
+    localclock : (TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent) -> one Int,
+    record : (Process + Task + SubProcess) -> one Int
 }
 
 /* all marks except those for n and e are left unchanged.
@@ -258,6 +261,9 @@ pred initialState {
         first.nodemarks = (Node -> 0) ++ (processNSE -> 1)
     }
     first.network = networkinit
+    first.globalclock = 0
+    first.localclock = (TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent) -> 0
+    first.record = (Process + Task + SubProcess) -> 0
 }
 
 pred State.deadlock {

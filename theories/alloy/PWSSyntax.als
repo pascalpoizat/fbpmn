@@ -7,6 +7,15 @@ abstract sig Message {
     to : Process,
     content : MessageKind
 }
+
+/**** Time ****/
+
+abstract sig TimeMode {}
+one sig Date extends TimeMode {}
+one sig Duration extends TimeMode {}
+one sig Cycle extends TimeMode {} 
+
+
 /**************** Nodes ****************/
 abstract sig Node {}
 
@@ -39,7 +48,10 @@ abstract sig Event extends Node {}
 abstract sig StartEvent extends Event {}
 abstract sig NoneStartEvent extends StartEvent {}
 abstract sig MessageStartEvent extends StartEvent {}
-abstract sig TimerStartEvent extends StartEvent {}
+abstract sig TimerStartEvent extends StartEvent {
+    ctime : Int,
+    mode  : TimeMode
+}
 
 /** End Events */
 abstract sig EndEvent extends Event {}
@@ -51,12 +63,18 @@ abstract sig MessageEndEvent extends EndEvent {}
 abstract sig IntermediateEvent extends Event {}
 abstract sig ThrowMessageIntermediateEvent extends IntermediateEvent {}
 abstract sig CatchMessageIntermediateEvent extends IntermediateEvent {}
-abstract sig TimerIntermediateEvent extends IntermediateEvent {}
+abstract sig TimerIntermediateEvent extends IntermediateEvent {
+    ctime : Int,
+    mode  : TimeMode
+}
 
 /** Boundary Events */
 abstract sig BoundaryEvent extends Event {}
 abstract sig MessageBoundaryEvent extends BoundaryEvent {}
-abstract sig TimerBoundaryEvent extends BoundaryEvent {}
+abstract sig TimerBoundaryEvent extends BoundaryEvent {
+    ctime : Int,
+    mode  : TimeMode
+}
 
 /**************** Edges ****************/
 
