@@ -328,7 +328,7 @@ decode cs = do
   -- message flows and messages
   cMessageFlows    <- pure $ findChildren (nE "messageFlow") c
   cMessageFlowIds  <- sequence $ getId <$> cMessageFlows
-  cMessageTypes    <- sequence $ nameOrElseId <$> cMessageFlows
+  cMessageTypes    <- sequence . hashNub $ nameOrElseId <$> cMessageFlows
   -- high level information (collaboration level)
   g                <- pure $ BpmnGraph
     (toText cId)

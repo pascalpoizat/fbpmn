@@ -86,7 +86,7 @@ encodeBpmnInterestToTla g =
           |]
           where
             sn = show n
-            sns = T.intercalate ", " $ show <$> interestedIn 
+            sns = T.intercalate ", " . hashNub $ show <$> interestedIn 
             interestedIn =
                 foldrWithKey (\e m l -> if (targetInContainer (targetE g !? e) n) then m:l else l ) [] (messageE g)
                 where
