@@ -36,7 +36,7 @@ pred State.canstartAbstractTask[n : AbstractTask] {
 }
 
 pred startAbstractTask[s, s': State, n: AbstractTask] {
-    one e : n.intype[SequentialFlow] | {
+    one e : n.intype[SequentialFlow] {
         s.edgemarks[e] >= 1
         s'.edgemarks[e] = s.edgemarks[e].dec
         s'.nodemarks[n] = s.nodemarks[n].inc
@@ -52,7 +52,7 @@ pred State.cancompleteAbstractTask[n : Node] {
 pred completeAbstractTask[s, s' : State, n : AbstractTask] {
     s.nodemarks[n] >= 1
     s'.nodemarks[n] = s.nodemarks[n].dec
-    all e : n.outtype[SequentialFlow] | { s'.edgemarks[e] = s.edgemarks[e].inc }
+    all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
     delta[s, s', n, n.outtype[SequentialFlow]]
 }
 
@@ -129,10 +129,10 @@ pred State.cancompleteExclusiveOr[n : Node] {
 }
 
 pred completeExclusiveOr[s, s' : State, n: ExclusiveOr] {
-    one ei : n.intype[SequentialFlow] | {
+    one ei : n.intype[SequentialFlow] {
         s.edgemarks[ei] >= 1
         s'.edgemarks[ei] = s.edgemarks[ei].dec
-        one eo : n.outtype[SequentialFlow] | {
+        one eo : n.outtype[SequentialFlow] {
             s'.edgemarks[eo] = s.edgemarks[eo].inc
             delta[s, s', none, ei + eo]
         }
@@ -145,12 +145,44 @@ pred State.cancompleteParallel[n : Node] {
 }
 
 pred completeParallel[s, s' : State, n: Parallel] {
-    all ei : n.intype[SequentialFlow] | {
+    all ei : n.intype[SequentialFlow] {
         s.edgemarks[ei] >= 1
         s'.edgemarks[ei] = s.edgemarks[ei].dec
         all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
     }
     delta[s, s', none, n.intype[SequentialFlow] + n.outtype[SequentialFlow]]
+}
+
+pred State.cancompleteEventBased[n : Node] {
+    n in EventBased
+    some ei : n.intype[SequentialFlow] | this.edgemarks[ei] >= 1
+    some eo : n.outtype[SequentialFlow] {
+        { eo.target in (ReceiveTask + CatchMessageIntermediateEvent)
+          some emsg : eo.target.intype[MessageFlow] | this.edgemarks[emsg] > 0
+        }
+        or
+        { eo.target in TimerIntermediateEvent
+          this.canfire[eo.target]
+        }
+    }
+}
+
+pred completeEventBased[s, s' : State, n : EventBased] {
+    one ei : n.intype[SequentialFlow] {
+        s.edgemarks[ei] >= 1
+        one eo : n.outtype[SequentialFlow] {
+            { eo.target in (ReceiveTask + CatchMessageIntermediateEvent)
+              some emsg : eo.target.intype[MessageFlow] | s.edgemarks[emsg] > 0
+            }
+            or
+            { eo.target in TimerIntermediateEvent
+              s.canfire[eo.target]
+            }
+            s'.edgemarks[eo] = s.edgemarks[eo].inc
+            s'.edgemarks[ei] = s.edgemarks[ei].dec
+            delta[s, s', none, ei + eo]
+        }
+    }
 }
 
  /************ Events ****************/
@@ -168,7 +200,7 @@ pred completeNoneStartEvent[s, s' : State, n: NoneStartEvent] {
     s.nodemarks[n] >= 1
     s'.nodemarks[n] = s.nodemarks[n].dec
     all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
-    let p = n.~contains | {
+    let p = n.~contains {
         s'.nodemarks[p] = s.nodemarks[p].inc
         delta[s, s', n + p, n.outtype[SequentialFlow]]
     } 
@@ -250,6 +282,31 @@ pred startTerminateEndEvent[s, s' : State, n : TerminateEndEvent] {
         }
     }
 }
+
+/* TimerIntermediateEvent */
+
+pred State.canstartTimerIntermediateEvent[n : Node] {
+    n in TimerIntermediateEvent
+    some ei : n.intype[SequentialFlow] | this.edgemarks[ei] > 0
+    this.canfire[n]
+}
+
+pred startTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
+    one ei : n.intype[SequentialFlow] {
+        s'.edgemarks[ei] = s.edgemarks[ei].dec
+        all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
+        delta[s, s', none, ei + n.outtype[SequentialFlow]]
+    }
+}
+
+/************ Time ***************/
+
+pred State.canfire[n : TimerIntermediateEvent + TimerStartEvent + TimerBoundaryEvent] {
+    // conditions handling time
+    // Nondeterminism time => true
+}
+
+
 /************ Run ****************/
 
 pred initialState {
@@ -261,7 +318,7 @@ pred initialState {
 }
 
 pred State.deadlock {
-    no n : Node | {
+    no n : Node {
         this.canstartAbstractTask[n]
         or this.cancompleteAbstractTask[n]
         or this.canstartSendTask[n]
@@ -270,11 +327,13 @@ pred State.deadlock {
         or this.cancompleteReceiveTask[n]
         or this.cancompleteExclusiveOr[n]
         or this.cancompleteParallel[n]
+        or this.cancompleteEventBased[n]
         or this.cancompleteNoneStartEvent[n]
         or this.canstartMessageStartEvent[n]
         or this.cancompleteMessageStartEvent[n]
         or this.canstartNoneEndEvent[n]
         or this.canstartTerminateEndEvent[n]
+        or this.canstartTimerIntermediateEvent[n]
     }
 }
 
@@ -284,10 +343,12 @@ pred step[s, s' : State, n: Node] {
     else n in ReceiveTask implies { startReceiveTask[s,s',n] or completeReceiveTask[s,s',n] }
     else n in ExclusiveOr implies completeExclusiveOr[s,s',n]
     else n in Parallel implies completeParallel[s,s',n]
+    else n in EventBased implies completeEventBased[s,s',n]
     else n in NoneStartEvent implies completeNoneStartEvent[s,s',n]
     else n in MessageStartEvent implies { startMessageStartEvent[s,s',n] or completeMessageStartEvent[s,s',n] }
     else n in NoneEndEvent implies startNoneEndEvent[s, s', n]
     else n in TerminateEndEvent implies startTerminateEndEvent[s, s', n]
+    else n in TimerIntermediateEvent implies startTimerIntermediateEvent[s, s', n]
 }
 
 fact init { initialState }
