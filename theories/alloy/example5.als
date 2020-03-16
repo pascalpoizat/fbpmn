@@ -10,12 +10,7 @@ CorrectTermination with 10 states
 open PWSSyntax
 open PWSProp
 
-one sig hello extends MessageKind {}
-one sig m extends Message {} {
-    from = proc1
-    to = proc2
-    content = hello
-}
+one sig hello extends Message {}
 
 one sig st1 extends SendTask {}
 one sig se1 extends NoneStartEvent {}
@@ -43,7 +38,7 @@ one sig f4 extends NormalSequentialFlow {} {
 one sig mf extends MessageFlow {} {
     source = st1
     target = mse2
-    message = m
+    message = hello
 }
 
 one sig proc1 extends Process {} {
