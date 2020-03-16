@@ -71,7 +71,12 @@ encodeNodes g = [text|
    where
     nname = toText n
     ntype = maybe "" nodeTypeToAlloy (catN g !? n)
-    ncontents = ""
+    ncontents = if n `elem` nodesTs g [SubProcess, Process]
+      then [text|contains = $nces|]
+      else ""
+        where
+          ces = concat $ containN g !? n
+          nces = toText $ intercalate " + " ces  
 
 encodeEdges :: BpmnGraph -> Text
 encodeEdges g = [text|
@@ -81,7 +86,7 @@ encodeEdges g = [text|
   ses = unlines $ edgeToAlloy <$> edges g
   edgeToAlloy e = [text|
       one sig $ename extends $etype {
-        $econtents
+        $eflowinformation
       }
       |]
    where
@@ -89,7 +94,7 @@ encodeEdges g = [text|
     etype     = maybe "" edgeTypeToAlloy (catE g !? e)
     esource   = sourceE g !? e
     etarget   = targetE g !? e
-    econtents = case (esource, etarget) of
+    eflowinformation = case (esource, etarget) of
       (Just n1, Just n2) -> [text|
               source = $sn1
               target = $sn2|]
