@@ -23,7 +23,8 @@ Transform a BPMN Graph to an Alloy specification.
 encodeBpmnGraphToAlloy :: BpmnGraph -> Text
 encodeBpmnGraphToAlloy g =
   unlines
-    $   [ encodeBpmnGraphHeaderToAlloy          --    
+    $   [ encodeBpmnGraphHeaderToAlloy
+        , encodeMessages
         , encodeNodes
         , encodeEdges
         , encodeBpmnGraphFooterToAlloy vs
@@ -56,6 +57,15 @@ verificationToAlloy v = [text|$tact {$tprop} for 0 but $tnb State|]
       SimpleTermination -> "SimpleTermination"
       CorrectTermination -> "CorrectTermination"
     tnb = show $ nb v
+
+encodeMessages :: BpmnGraph -> Text
+encodeMessages g = unlines $ messageToAlloy <$> messages g
+  where
+    messageToAlloy m = [text|
+      one sig $mname extends MessageKind {}
+    |]
+      where
+        mname = toText m
 
 encodeNodes :: BpmnGraph -> Text
 encodeNodes g = [text|
@@ -94,13 +104,18 @@ encodeEdges g = [text|
     etype     = maybe "" edgeTypeToAlloy (catE g !? e)
     esource   = sourceE g !? e
     etarget   = targetE g !? e
+    emessage  = messageE g !? e
     eflowinformation = case (esource, etarget) of
       (Just n1, Just n2) -> [text|
               source = $sn1
-              target = $sn2|]
+              target = $sn2
+              $smsg|]
        where
         sn1 = toText n1
         sn2 = toText n2
+        smsg = case emessage of
+          Just m -> let sm = toText m in [text|message = $sm|]
+          Nothing -> ""
       _ -> ""
 
 nodeTypeToAlloy :: NodeType -> Text
