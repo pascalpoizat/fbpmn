@@ -1,22 +1,22 @@
-min :
+minimal core:
 - P     done
-- SP    ??? => later, when everything works
+- SP    => later, when everything works
 - AT    done
 - NSE   done
 - NEE   done
 - TEE   done
 - XOR   done
 - PAR   done
-- EBG   done, not tested
+- EBG   done
 - TSE
 - TBE
-- TICE  done (with non-determinism), not tested
+- TICE  done (with non-determinism, predicate canfire)
 
-mieux :
- - min
+Extended core:
+ - minimal core
  - MSE  : done
  - ST   : done
  - RT   : done
- - CMIE
- - TMIE
+ - CMIE : done
+ - TMIE : done
  - MBE

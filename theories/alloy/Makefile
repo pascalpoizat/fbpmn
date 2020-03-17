@@ -1,4 +1,7 @@
 
+all :
+	@echo 'I see no all here. Try compile, clean, nonregression-build, nonregression-check.'
+
 compile : RunAlloy.class RunAlloyAll.class
 
 RunAlloy.class : RunAlloy.java org.alloytools.alloy.dist.jar
@@ -15,3 +18,13 @@ runall :
 
 run1 :
 	java -cp .:org.alloytools.alloy.dist.jar RunAlloy example1.als 'check$$1'
+
+# explicitely list the validated tests
+NONREGRESSIONTESTS=example1.als example2.als example3.als example4.als example5.als example6.als example7.als
+
+nonregression-build :
+	java -cp .:org.alloytools.alloy.dist.jar RunAlloyAll $(NONREGRESSIONTESTS) >nonregression.out
+
+nonregression-check :
+	java -cp .:org.alloytools.alloy.dist.jar RunAlloyAll $(NONREGRESSIONTESTS) >/tmp/nonregression.out
+	diff -u2 /tmp/nonregression.out nonregression.out
