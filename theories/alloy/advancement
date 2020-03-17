@@ -8,7 +8,7 @@ minimal core:
 - XOR   done
 - PAR   done
 - EBG   done
-- TSE
+- TSE   done (with non-determinism, predicate canfire)
 - TBE
 - TICE  done (with non-determinism, predicate canfire)
 

@@ -1,6 +1,6 @@
 /*
 A process:
-NSE -> AT -> NEE
+{NSE,TSE} -> AT -> NEE
 */
 
 
@@ -8,7 +8,7 @@ open PWSSyntax
 open PWSProp
 
 one sig at extends AbstractTask {}
-one sig se extends NoneStartEvent {}
+one sig se extends TimerStartEvent {}
 one sig ee extends NoneEndEvent {}
 
 one sig f1 extends NormalSequentialFlow {} {

@@ -209,6 +209,25 @@ pred completeNoneStartEvent[s, s' : State, n: NoneStartEvent] {
     } 
 }
 
+/* Timer Start Event */
+
+pred State.cancompleteTimerStartEvent[n : Node] {
+    n in TimerStartEvent
+    this.nodemarks[n] > 0
+    this.canfire[n]
+}
+
+pred completeTimerStartEvent[s, s' : State, n: TimerStartEvent] {
+    s.nodemarks[n] > 0
+    s.canfire[n]
+    s'.nodemarks[n] = s.nodemarks[n].dec
+    all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
+    let p = n.~contains {
+        s'.nodemarks[p] = s.nodemarks[p].inc
+        delta[s, s', n + p, n.outtype[SequentialFlow]]
+    } 
+}
+
 /* Message Start Event */
 
 pred State.canstartMessageStartEvent[n: Node] {
@@ -349,7 +368,7 @@ pred startTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
 
 pred State.canfire[n : TimerIntermediateEvent + TimerStartEvent + TimerBoundaryEvent] {
     // conditions handling time
-    // Nondeterminism time => true
+    // Nondeterministic time => true
 }
 
 
@@ -357,7 +376,7 @@ pred State.canfire[n : TimerIntermediateEvent + TimerStartEvent + TimerBoundaryE
 
 pred initialState {
     first.edgemarks = (Edge -> 0)
-    let processNSE = { n : NoneStartEvent | n.containInv in Process } {
+    let processNSE = { n : NoneStartEvent + TimerStartEvent | n.containInv in Process } {
         first.nodemarks = (Node -> 0) ++ (processNSE -> 1)
     }
     first.network = networkinit
@@ -375,6 +394,7 @@ pred State.deadlock {
         or this.cancompleteParallel[n]
         or this.cancompleteEventBased[n]
         or this.cancompleteNoneStartEvent[n]
+        or this.cancompleteTimerStartEvent[n]
         or this.canstartMessageStartEvent[n]
         or this.cancompleteMessageStartEvent[n]
         or this.canstartNoneEndEvent[n]
@@ -393,7 +413,9 @@ pred step[s, s' : State, n: Node] {
     else n in Parallel implies completeParallel[s,s',n]
     else n in EventBased implies completeEventBased[s,s',n]
     else n in NoneStartEvent implies completeNoneStartEvent[s,s',n]
+    else n in TimerStartEvent implies completeTimerStartEvent[s,s',n]
     else n in MessageStartEvent implies { startMessageStartEvent[s,s',n] or completeMessageStartEvent[s,s',n] }
+    else n in NoneEndEvent implies startNoneEndEvent[s, s', n]
     else n in NoneEndEvent implies startNoneEndEvent[s, s', n]
     else n in TerminateEndEvent implies startTerminateEndEvent[s, s', n]
     else n in ThrowMessageIntermediateEvent implies startThrowMessageIntermediateEvent[s, s', n]
