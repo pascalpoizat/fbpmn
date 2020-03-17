@@ -1,0 +1,22 @@
+min :
+- P     done
+- SP    ??? => later, when everything works
+- AT    done
+- NSE   done
+- NEE   done
+- TEE   done
+- XOR   done
+- PAR   done
+- EBG   done, not tested
+- TSE
+- TBE
+- TICE  done (with non-determinism), not tested
+
+mieux :
+ - min
+ - MSE  : done
+ - ST   : done
+ - RT   : done
+ - CMIE
+ - TMIE
+ - MBE
