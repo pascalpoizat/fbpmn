@@ -13,8 +13,6 @@ import           Data.Map.Strict                ( (!?)
                                                 )
 import           Fbpmn.Helper                   ( filter' )
 
-import           Data.Time.Format.ISO8601
-
 --
 -- Node types
 --

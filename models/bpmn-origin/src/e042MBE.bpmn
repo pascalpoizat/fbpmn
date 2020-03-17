@@ -32,9 +32,6 @@
       <bpmn:outgoing>SequenceFlow_1qzgvib</bpmn:outgoing>
       <bpmn:messageEventDefinition />
     </bpmn:boundaryEvent>
-    <bpmn:startEvent id="StartEvent_1">
-      <bpmn:outgoing>SequenceFlow_1hkg88d</bpmn:outgoing>
-    </bpmn:startEvent>
     <bpmn:endEvent id="EndEvent_0rzkmq3">
       <bpmn:incoming>SequenceFlow_1wjaklx</bpmn:incoming>
     </bpmn:endEvent>
@@ -42,7 +39,7 @@
     <bpmn:boundaryEvent id="BoundaryEvent_0ofx7yq" name="10 minutes" cancelActivity="false" attachedToRef="SubProcess_0gsfmc3">
       <bpmn:outgoing>SequenceFlow_1uh9c90</bpmn:outgoing>
       <bpmn:timerEventDefinition>
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P10M</bpmn:timeDuration>
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">R4/P10M</bpmn:timeCycle>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:boundaryEvent id="NonInterruptBE" cancelActivity="false" attachedToRef="SubProcess_0gsfmc3">
@@ -63,11 +60,14 @@
       <bpmn:incoming>SequenceFlow_0mtfqyq</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1uh9c90</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_1hkg88d</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">2020-03-17T12:00:00</bpmn:timeDate>
+      </bpmn:timerEventDefinition>
+    </bpmn:startEvent>
   </bpmn:process>
   <bpmn:process id="Qid" name="Q" isExecutable="false">
-    <bpmn:startEvent id="StartEvent_1s47y70">
-      <bpmn:outgoing>SequenceFlow_19yqu7y</bpmn:outgoing>
-    </bpmn:startEvent>
     <bpmn:exclusiveGateway id="ExclusiveGateway_0xuurqz">
       <bpmn:incoming>SequenceFlow_19yqu7y</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1sctg40</bpmn:outgoing>
@@ -95,14 +95,17 @@
     <bpmn:sequenceFlow id="SequenceFlow_1c63kjk" sourceRef="SInterrupt" targetRef="ExclusiveGateway_1dkr7pq" />
     <bpmn:sequenceFlow id="SequenceFlow_0c9btso" sourceRef="SInfo" targetRef="ExclusiveGateway_1dkr7pq" />
     <bpmn:sequenceFlow id="SequenceFlow_0v3rr2b" sourceRef="ExclusiveGateway_1dkr7pq" targetRef="EndEvent_14tvnqu" />
+    <bpmn:startEvent id="StartEvent_1s47y70">
+      <bpmn:outgoing>SequenceFlow_19yqu7y</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">1970-01-01T01:01:01</bpmn:timeDate>
+      </bpmn:timerEventDefinition>
+    </bpmn:startEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="e042MBE">
       <bpmndi:BPMNShape id="Participant_1uuvy8w_di" bpmnElement="P" isHorizontal="true">
         <dc:Bounds x="129" y="81" width="697" height="356" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="181" y="246" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Participant_1n9wx28_di" bpmnElement="Q" isHorizontal="true">
         <dc:Bounds x="129" y="454" width="701" height="194" />
@@ -138,9 +141,6 @@
         <di:waypoint x="609" y="149" />
         <di:waypoint x="731" y="149" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="StartEvent_1s47y70_di" bpmnElement="StartEvent_1s47y70">
-        <dc:Bounds x="184" y="536" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0mtfqyq_di" bpmnElement="SequenceFlow_0mtfqyq">
         <di:waypoint x="627" y="264" />
         <di:waypoint x="749" y="264" />
@@ -243,6 +243,12 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1pq76pi_di" bpmnElement="EndEvent_08qbw2d">
         <dc:Bounds x="731" y="209" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_117bnz2_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="181" y="246" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_13kv6ek_di" bpmnElement="StartEvent_1s47y70">
+        <dc:Bounds x="184" y="536" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

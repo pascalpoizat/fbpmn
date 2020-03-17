@@ -11,6 +11,12 @@ import           Data.Map.Strict                ( (!?)
                                                 , foldrWithKey
                                                 )
 
+import           Data.Time.Format.ISO8601
+import           Data.Time.Format
+import           Data.Time.LocalTime
+import           Data.Time.Clock
+import           Data.Time.Clock.POSIX
+
 {-|
 Write a BPMN Graph to an Alloy file.
 -}
@@ -30,11 +36,13 @@ encodeBpmnGraphToAlloy g =
         , encodeBpmnGraphFooterToAlloy vs
         ]
     <*> [g]
-    where
-      vs = [ AlloyVerification Check Safety 15
-           , AlloyVerification Check SimpleTermination 9
-           , AlloyVerification Check CorrectTermination 9
-           , AlloyVerification Run Safety 11]
+ where
+  vs =
+    [ AlloyVerification Check Safety             15
+    , AlloyVerification Check SimpleTermination  9
+    , AlloyVerification Check CorrectTermination 9
+    , AlloyVerification Run   Safety             11
+    ]
 
 encodeBpmnGraphHeaderToAlloy :: BpmnGraph -> Text
 encodeBpmnGraphHeaderToAlloy _ = [text|
@@ -48,75 +56,24 @@ encodeBpmnGraphFooterToAlloy vs _ = unlines $ verificationToAlloy <$> vs
 
 verificationToAlloy :: AlloyVerification -> Text
 verificationToAlloy v = [text|$tact {$tprop} for 0 but $tnb State|]
-  where
-    tact = case action v of
-      Run -> "run"
-      Check -> "check"
-    tprop = case property v of
-      Safety -> "Safe"
-      SimpleTermination -> "SimpleTermination"
-      CorrectTermination -> "CorrectTermination"
-    tnb = show $ nb v
+ where
+  tact = case action v of
+    Run   -> "run"
+    Check -> "check"
+  tprop = case property v of
+    Safety             -> "Safe"
+    SimpleTermination  -> "SimpleTermination"
+    CorrectTermination -> "CorrectTermination"
+  tnb = show $ nb v
 
 encodeMessages :: BpmnGraph -> Text
 encodeMessages g = unlines $ messageToAlloy <$> messages g
-  where
-    messageToAlloy m = [text|
-      one sig $mname extends MessageKind {}
-    |]
-      where
-        mname = toText m
 
 encodeNodes :: BpmnGraph -> Text
-encodeNodes g = [text|
-  $sns
-  |]
- where
-  sns = unlines $ nodeToAlloy <$> nodes g
-  nodeToAlloy n = [text|
-      one sig $nname extends $ntype {
-        $ncontents
-      }
-      |]
-   where
-    nname = toText n
-    ntype = maybe "" nodeTypeToAlloy (catN g !? n)
-    ncontents = if n `elem` nodesTs g [SubProcess, Process]
-      then [text|contains = $nces|]
-      else ""
-        where
-          ces = concat $ containN g !? n
-          nces = toText $ intercalate " + " ces  
+encodeNodes g = unlines $ nodeToAlloy g <$> nodes g
 
 encodeEdges :: BpmnGraph -> Text
-encodeEdges g = [text|
-  $ses
-  |]
- where
-  ses = unlines $ edgeToAlloy <$> edges g
-  edgeToAlloy e = [text|
-      one sig $ename extends $etype {
-        $eflowinformation
-      }
-      |]
-   where
-    ename     = toText e
-    etype     = maybe "" edgeTypeToAlloy (catE g !? e)
-    esource   = sourceE g !? e
-    etarget   = targetE g !? e
-    emessage  = messageE g !? e
-    eflowinformation = case (esource, etarget) of
-      (Just n1, Just n2) -> [text|
-              source = $sn1
-              target = $sn2
-              $smsg|]
-       where
-        sn1 = toText n1
-        sn2 = toText n2
-        smsg = case emessage of
-          Just m -> let sm = toText m in [text|message = $sm|]
-          Nothing -> ""
-      _ -> ""
+encodeEdges g = unlines $ edgeToAlloy g <$> edges g
 
 nodeTypeToAlloy :: NodeType -> Text
 nodeTypeToAlloy AbstractTask                  = "AbstractTask"
@@ -152,23 +109,73 @@ edgeTypeToAlloy ConditionalSequenceFlow = "ConditionalSequentialFlow"
 edgeTypeToAlloy DefaultSequenceFlow     = "DefaultSequentialFlow"
 edgeTypeToAlloy MessageFlow             = "MessageFlow"
 
-encodeTimerEventDefinitions :: BpmnGraph -> Text
-encodeTimerEventDefinitions g = [text|
-    TimerEventDefinitions ==
-    $stes
-  |]
- where
-  stes = unlines $ teToAlloy <$> tes
-  tes  = nodesTs g [TimerStartEvent, TimerIntermediateEvent, TimerBoundaryEvent]
-  teToAlloy e = case timeInformation g !? e of
-    Just (TimerEventDefinition (Just ttype) tval) ->
-      [text|$side :: $sttype -> $stval|]
-     where
-      side   = show e
-      sttype = case ttype of
-        TimeDate     -> "date"
-        TimeDuration -> "duration"
-        TimeCycle    -> "cycle"
-      stval = maybe "value not set" show tval
-    _ -> [text|$side = type not set|] where side = show e
+messageToAlloy :: Message -> Text
+messageToAlloy m = [text|one sig $mname extends MessageKind {}|]
+  where mname = toText m
 
+nodeToAlloy :: BpmnGraph -> Node -> Text
+nodeToAlloy g n = [text|one sig $nname extends $ntype {$values}|]
+ where
+  nname  = toText n
+  ntype  = maybe "" nodeTypeToAlloy (catN g !? n)
+  values = unlines . catMaybes $ [containsToAlloy g, timeInfoToAlloy g] <*> [n]
+
+containsToAlloy :: BpmnGraph -> Node -> Maybe Text
+containsToAlloy g n = if n `elem` nodesTs g [SubProcess, Process]
+  then Just [text|
+    contains = $nces|]
+  else Nothing
+  where nces = toText $ intercalate " + " $ concat (containN g !? n)
+
+timeInfoToAlloy :: BpmnGraph -> Node -> Maybe Text
+timeInfoToAlloy g n =
+  if n `elem` nodesTs
+       g
+       [TimerStartEvent, TimerIntermediateEvent, TimerBoundaryEvent]
+    then case timerEventDefinitionToAlloy =<< timeInformation g !? n of
+      Just (ttd, ttv) -> Just [text|ctime = $ttv
+        mode = $ttd|]
+      Nothing -> Nothing
+    else Nothing
+
+timerEventDefinitionToAlloy :: TimerEventDefinition -> Maybe (Text, Text)
+timerEventDefinitionToAlloy (TimerEventDefinition (Just tdt) (Just tdv)) =
+  case tdt of
+    TimeDate -> do -- yyyy-mm-ddThh:mm:ss
+      parsed <-
+        parseTimeM True defaultTimeLocale formatDateTime tdv :: Maybe UTCTime
+      let nuot = nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds $ parsed
+      Just ("Date", show nuot)
+    TimeDuration -> Just ("Duration", "0")
+    TimeCycle    -> Just ("Cycle", "0") -- TODO:
+timerEventDefinitionToAlloy _ = Nothing
+
+formatDateTime :: String
+formatDateTime = "%Y-%-m-%-dT%H:%M:%S"
+
+edgeToAlloy :: BpmnGraph -> Edge -> Text
+edgeToAlloy g e = [text|one sig $ename extends $etype {$values}|]
+ where
+  ename = toText e
+  etype = maybe "" edgeTypeToAlloy (catE g !? e)
+  values =
+    unlines . catMaybes $ [flowToAlloy g, messageInformationToAlloy g] <*> [e]
+
+flowToAlloy :: BpmnGraph -> Edge -> Maybe Text
+flowToAlloy g e = case (esource, etarget) of
+  (Just n1, Just n2) -> Just [text|
+      source = $sn1
+      target = $sn2
+    |]
+   where
+    sn1 = toText n1
+    sn2 = toText n2
+  _ -> Nothing
+ where
+  esource = sourceE g !? e
+  etarget = targetE g !? e
+
+messageInformationToAlloy :: BpmnGraph -> Edge -> Maybe Text
+messageInformationToAlloy g e = case messageE g !? e of
+  Just m  -> Just [text|message = $sm|] where sm = toText m
+  Nothing -> Nothing
