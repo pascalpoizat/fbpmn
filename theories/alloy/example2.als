@@ -49,4 +49,4 @@ check {CorrectTermination} for 0 but 20 State
 
 run {Safe} for 0 but 15 State
 
-run {0=0} for 0 but 11 State
+run {} for 0 but 11 State

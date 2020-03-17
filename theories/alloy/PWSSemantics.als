@@ -293,6 +293,8 @@ pred State.canstartTimerIntermediateEvent[n : Node] {
 
 pred startTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
     one ei : n.intype[SequentialFlow] {
+        s.edgemarks[ei] > 0
+        s.canfire[n]
         s'.edgemarks[ei] = s.edgemarks[ei].dec
         all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
         delta[s, s', none, ei + n.outtype[SequentialFlow]]

@@ -1,7 +1,7 @@
 /*
 Two processes:
-NSE -> ST -> TSE
-MSE -> AT -> TSE
+NSE -> ST -> NEE
+MSE -> AT -> NEE
 
 CorrectTermination with 10 states
 */
