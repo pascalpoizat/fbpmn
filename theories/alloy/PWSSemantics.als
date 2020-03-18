@@ -11,6 +11,8 @@ sig State {
     nodemarks : Node -> one Int,
     edgemarks : Edge -> one Int,
     network : set (Message -> Process -> Process),
+    globalclock : one Int,
+    localclock : (TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent) -> one Int,
 }
 
 /* all marks except those for n and e are left unchanged.
@@ -376,6 +378,8 @@ pred initialState {
         first.nodemarks = (Node -> 0) ++ (processNSE -> 1)
     }
     first.network = networkinit
+    first.globalclock = 0
+    first.localclock = (TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent) -> 0
 }
 
 pred State.deadlock {
@@ -421,11 +425,31 @@ pred step[s, s' : State, n: Node] {
 
 fact init { initialState }
 
-// stutters if no action is possible.
+pred deltatime[s, s': State] {
+     all n : TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent | s'.localclock[n] = s.localclock[n]
+     s'.globalclock = s.globalclock
+}
+
+pred advancetime[s, s': State] {
+     // see below: 
+     // no n : TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent | s.canfire[n]
+     all n : TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent {
+         // isn't timerActive iff localclock[n] > 0 ?
+         s.localclock[n] > 0 implies s'.localclock[n] = s.localclock[n].inc
+         else s'.localclock[n] = s.localclock[n]
+     }
+     s'.globalclock = s.globalclock.inc
+}
+
+/* As we are doing bounded model-checking, we must ensure that enough steps are done.
+ * Formally, with infinite executions, weak-fairness is sufficient.
+ * With bounded model-checking, we could just make a few advancetime and not terminate with the given number of steps.
+ */
 fact traces {
 	all s: State - last {
-        s.deadlock implies delta[s, s.next, none, none]
-        else some n : Node - Process | step[s, s.next, n]
+        { s.deadlock && delta[s, s.next, none, none] && advancetime[s, s.next] }
+        or
+        { some n : Node - Process | step[s, s.next, n] && deltatime[s, s.next] }
     }
 }
 

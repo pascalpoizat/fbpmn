@@ -14,10 +14,10 @@ clean :
 	rm -f RunAlloyAll.class RunAlloy.class
 
 runall :
-	java -cp .:org.alloytools.alloy.dist.jar RunAlloyAll example1.als
+	java -cp .:org.alloytools.alloy.dist.jar RunAlloyAll example1_check.als
 
 run1 :
-	java -cp .:org.alloytools.alloy.dist.jar RunAlloy example1.als 'check$$1'
+	java -cp .:org.alloytools.alloy.dist.jar RunAlloy example1_check.als 'check$$1'
 
 # explicitely list the validated tests
 NONREGRESSIONTESTS=example1 example2 example3 example4 example5 example6 example7

@@ -36,7 +36,8 @@ public final class RunAlloy {
 
         // Choose some default options for how you want to execute the commands
         A4Options options = new A4Options();
-        options.solver = A4Options.SatSolver.SAT4J;
+        //options.solver = A4Options.SatSolver.SAT4J;
+        options.solver = A4Options.SatSolver.Glucose41JNI;
 
         boolean foundprop = false;
         for (Command command : world.getAllCommands()) {
