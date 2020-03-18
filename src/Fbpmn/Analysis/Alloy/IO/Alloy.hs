@@ -159,6 +159,7 @@ timeInfoToAlloy g n =
 -- evolutions:
 -- - add timezones
 -- - take into account a parametric time start (not 1970-01-01T00:00:00)
+--    note: this will require supporting negative numbers
 -- - signal errors at parsing or transforming
 --
 timerEventDefinitionToAlloy :: TimerEventDefinition
@@ -167,14 +168,15 @@ timerEventDefinitionToAlloy (TimerEventDefinition (Just tdt) (Just tdv)) =
   case tdt of
     TimeDate -> do
       parsed <- formatParseM iso8601Format tdv
-      let nuot = nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds $ parsed
+      let nuot =
+            truncate . nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds $ parsed :: Natural
       Just ("Date", undefAlloy, undefAlloy, show nuot)
     TimeDuration -> do
       parsed <- formatParseM iso8601Format tdv
       nuot   <- case ctMonths parsed of
         -- if we have months then year/month has been used in duration: error
-        0 -> Just . nominalDiffTimeToSeconds . ctTime $ parsed
-        _ -> Nothing
+        0 -> Just . truncate . nominalDiffTimeToSeconds . ctTime $ parsed
+        _ -> Nothing :: Maybe Natural
       Just ("Duration", undefAlloy, show nuot, undefAlloy)
     TimeCycle -> Just ("Cycle", undefAlloy, undefAlloy, undefAlloy) -- TODO:
 timerEventDefinitionToAlloy _ = Nothing
