@@ -60,31 +60,6 @@ isInGraph :: (Ord a)
           -> Maybe Bool
 isInGraph g f p x = p <$> f g !? x
 
---
--- TimeCycle ::= R(n)(/TimeDate)/TimeDuration
---  ex: R/P0Y0M1DT12H0M0S (repeat every 1 day 1/2)
---  ex: R4/P0Y0M1DT12H0M0S (repeat 4 times every 1 day 1/2)
---    question: begins at t0 or t0+delay?
---  ex: R4/2020-03-04T15:30:00/P0Y0M1DT12H0M0S
---    (repeat 4 times every 1 day 1/2 after March 4th, 2020, at 3:30 pm)
---    question: begins at date & time or date & time + delay?
---
--- For Alloy:
---
--- TimeDate format = yyyy-mm-ddThh:mm:ssZ (MUST BE UTC)
--- TimeDuration format = PdDThHmMsS (NO YEARS, NO MONTHS)
--- TimeCycle format = ONGOING
--- all parts must be given
---
--- [X] TSE TimeDate (start at exact date & time)
--- [X] TSE TimeDuration (start after an amount of time)
--- [X] CTIE TimeDate (wait until exact date & time)
--- [X] CTIE TimeDuration (wait an amount of time)
--- [X] TBE TimeDate (act at exact date & time)
--- [X] TBE TimeDuration (act after an amount of time since the activity started)
--- [ ] TBE TimeCycle (act n times given the cycle information, once for interrupt)
---
-
 data TimerEventDefinition = TimerEventDefinition
   {timerDefinitionType  :: Maybe TimerDefinitionType
   ,timerDefinitionValue :: Maybe TimerValue}

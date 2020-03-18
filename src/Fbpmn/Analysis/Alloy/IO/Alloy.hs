@@ -17,6 +17,27 @@ import           Data.Time.LocalTime
 import           Data.Time.Clock
 import           Data.Time.Clock.POSIX
 
+-- Time-related elements
+--
+-- TimeDate format = yyyy-mm-ddThh:mm:ssZ (MUST BE UTC)
+--  all parts must be given (even if 0)
+-- TimeDuration format = PyYmmMdDThHmMsS
+--  y and mm must be O or not given
+-- TimeCycle format = several choices (6):
+-- - R(n)?/duration
+-- - R(n)?/timedate/duration
+-- - R(n)?/duration/timedate
+--
+-- NO VERIFICATION DONE IN THE BPMN PARSING NOR HERE
+--
+-- [X] TSE + timedate
+-- [X] TICE + timedate
+-- [X] TICE + duration
+-- [X] TBE interrupting + timedate
+-- [X] TBE interrupting + duration
+-- [ ] TBE non interrupting + cycle (6 formats for the cycle)
+--
+
 {-|
 Write a BPMN Graph to an Alloy file.
 -}
@@ -143,34 +164,31 @@ timeInfoToAlloy g n =
     else Nothing
 
 -- evolutions:
--- - use formatParseM
 -- - add timezones
+-- - take into account a parametric time start (not 1970-01-01T00:00:00)
+-- - signal errors at parsing or transforming
+--
 timerEventDefinitionToAlloy :: TimerEventDefinition
                             -> Maybe (Text, Text, Text, Text)
 timerEventDefinitionToAlloy (TimerEventDefinition (Just tdt) (Just tdv)) =
   case tdt of
-    TimeDate -> do -- yyyy-mm-ddThh:mm:ssZ
-      parsed <-
-        parseTimeM True defaultTimeLocale formatDateTime tdv :: Maybe UTCTime
+    TimeDate -> do
+      parsed <- formatParseM iso8601Format tdv
       let nuot = nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds $ parsed
       Just ("Date", undefAlloy, undefAlloy, show nuot)
-    TimeDuration -> do -- PdDThHmMsS
-      parsed <-
-        parseTimeM True defaultTimeLocale formatDuration tdv :: Maybe
-          CalendarDiffTime
-      let nuot = nominalDiffTimeToSeconds . ctTime $ parsed
+    TimeDuration -> do
+      parsed <- formatParseM iso8601Format tdv
+      nuot <- case ctMonths parsed of
+        -- if we have months then year/month has been used in duration: error
+        0 -> Just . nominalDiffTimeToSeconds . ctTime $ parsed
+        _ -> Nothing
       Just ("Duration", undefAlloy, show nuot, undefAlloy)
-    TimeCycle -> Just ("Cycle", undefAlloy, undefAlloy, undefAlloy) -- TODO:
+    TimeCycle ->
+      Just ("Cycle", undefAlloy, undefAlloy, undefAlloy) -- TODO:
 timerEventDefinitionToAlloy _ = Nothing
 
 undefAlloy :: Text
 undefAlloy = "0"
-
-formatDateTime :: String
-formatDateTime = "%Y-%-m-%-dT%H:%M:%SZ"
-
-formatDuration :: String
-formatDuration = "P%dDT%HH%MM%SS"
 
 edgeToAlloy :: BpmnGraph -> Edge -> Text
 edgeToAlloy g e = [text|one sig $ename extends $etype {$values}|]
