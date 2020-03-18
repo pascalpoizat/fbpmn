@@ -1,18 +1,11 @@
 {-# LANGUAGE QuasiQuotes #-}
 module Fbpmn.Analysis.Alloy.IO.Alloy where
 
-import qualified Data.Text                     as T
-import           Fbpmn.Helper
 import           Fbpmn.BpmnGraph.Model
 import           Fbpmn.Analysis.Alloy.Model
 import           NeatInterpolation              ( text )
--- import           Data.List                      ( intercalate )
-import           Data.Map.Strict                ( (!?)
-                                                , foldrWithKey
-                                                )
-
+import           Data.Map.Strict                ( (!?) )
 import           Data.Time.Format.ISO8601
-import           Data.Time.Format
 import           Data.Time.LocalTime
 import           Data.Time.Clock
 import           Data.Time.Clock.POSIX
@@ -178,13 +171,12 @@ timerEventDefinitionToAlloy (TimerEventDefinition (Just tdt) (Just tdv)) =
       Just ("Date", undefAlloy, undefAlloy, show nuot)
     TimeDuration -> do
       parsed <- formatParseM iso8601Format tdv
-      nuot <- case ctMonths parsed of
+      nuot   <- case ctMonths parsed of
         -- if we have months then year/month has been used in duration: error
         0 -> Just . nominalDiffTimeToSeconds . ctTime $ parsed
         _ -> Nothing
       Just ("Duration", undefAlloy, show nuot, undefAlloy)
-    TimeCycle ->
-      Just ("Cycle", undefAlloy, undefAlloy, undefAlloy) -- TODO:
+    TimeCycle -> Just ("Cycle", undefAlloy, undefAlloy, undefAlloy) -- TODO:
 timerEventDefinitionToAlloy _ = Nothing
 
 undefAlloy :: Text
