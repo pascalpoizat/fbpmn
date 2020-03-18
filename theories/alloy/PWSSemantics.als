@@ -10,7 +10,7 @@ open PWSDefs
 sig State {
     nodemarks : Node -> one Int,
     edgemarks : Edge -> one Int,
-    network : set Message,
+    network : set (Message -> Process -> Process),
 }
 
 /* all marks except those for n and e are left unchanged.
@@ -74,14 +74,13 @@ pred startSendTask[s, s' : State, n : SendTask] {
 pred State.cancompleteSendTask[n : Node] {
     n in SendTask
     this.nodemarks[n] > 0
-    some e : n.outtype[MessageFlow] | this.cansend[e.message]
+    some e : n.outtype[MessageFlow] | this.cansend[e.message, e.source.processOf, e.target.processOf]
 }
 
 pred completeSendTask[s, s' : State, n : SendTask] {
     s.nodemarks[n] > 0
     one e : n.outtype[MessageFlow] {
-        s.cansend[e.message]
-        send[s, s', e.message]
+        send[s, s', e.message, e.source.processOf, e.target.processOf]
         s'.nodemarks[n] = s.nodemarks[n].dec
         s'.edgemarks[e] = s.edgemarks[e].inc
         all ee : n.outtype[SequentialFlow] | s'.edgemarks[ee] = s.edgemarks[ee].inc
@@ -107,15 +106,14 @@ pred startReceiveTask[s, s' : State, n : ReceiveTask] {
 pred State.cancompleteReceiveTask[n : Node] {
     n in ReceiveTask
     this.nodemarks[n] > 0
-    some e : n.intype[MessageFlow] { this.edgemarks[e] > 0 && this.canreceive[e.message] }
+    some e : n.intype[MessageFlow] { this.edgemarks[e] > 0 && this.canreceive[e.message, e.source.processOf, e.target.processOf] }
 }
 
 pred completeReceiveTask[s, s' : State, n : ReceiveTask] {
     s.nodemarks[n] > 0
     one e : n.intype[MessageFlow] {
         s.edgemarks[e] > 0
-        s.canreceive[e.message]
-        receive[s, s', e.message]
+        receive[s, s', e.message, e.source.processOf, e.target.processOf]
         s'.nodemarks[n] = s.nodemarks[n].dec
         s'.edgemarks[e] = s.edgemarks[e].dec
         all ee : n.outtype[SequentialFlow] | s'.edgemarks[ee] = s.edgemarks[ee].inc
@@ -235,14 +233,14 @@ pred State.canstartMessageStartEvent[n: Node] {
     this.nodemarks[n] = 0
     some e : n.intype[MessageFlow] {
         this.edgemarks[e] > 0
-        this.canreceive[e.message]
+        this.canreceive[e.message, e.source.processOf, e.target.processOf]
     }
 }
 pred startMessageStartEvent[s, s' : State, n : MessageStartEvent] {
     s.nodemarks[n] = 0
     one e : n.intype[MessageFlow] {
         s.edgemarks[e] > 0
-        receive[s, s', e.message]
+        receive[s, s', e.message, e.source.processOf, e.target.processOf]
         s'.edgemarks[e] = s.edgemarks[e].dec
         s'.nodemarks[n] = s.nodemarks[n].inc
         deltaN[s, s', n, e]
@@ -310,14 +308,13 @@ pred startTerminateEndEvent[s, s' : State, n : TerminateEndEvent] {
 pred State.canstartThrowMessageIntermediateEvent[n : Node] {
     n in ThrowMessageIntermediateEvent
     some e1 : n.intype[SequentialFlow] | this.edgemarks[e1] > 0
-    some e2 : n.outtype[MessageFlow] | this.cansend[e2.message]
+    some e2 : n.outtype[MessageFlow] | this.cansend[e2.message, e2.source.processOf, e2.target.processOf]
 }
 
 pred startThrowMessageIntermediateEvent[s, s' : State, n : ThrowMessageIntermediateEvent] {
     one e1 : n.intype[SequentialFlow], e2 : n.outtype[MessageFlow] {
         s.edgemarks[e1] > 0
-        s.cansend[e2.message]
-        send[s, s', e2.message]
+        send[s, s', e2.message, e2.source.processOf, e2.target.processOf]
         s'.edgemarks[e1] = s.edgemarks[e1].dec
         s'.edgemarks[e2] = s.edgemarks[e2].inc
         all ee : n.outtype[SequentialFlow] | s'.edgemarks[ee] = s.edgemarks[ee].inc
@@ -330,15 +327,14 @@ pred startThrowMessageIntermediateEvent[s, s' : State, n : ThrowMessageIntermedi
 pred State.canstartCatchMessageIntermediateEvent[n : Node] {
     n in CatchMessageIntermediateEvent
     some e1 : n.intype[SequentialFlow] | this.edgemarks[e1] > 0
-    some e2 : n.intype[MessageFlow] { this.edgemarks[e2] > 0 && this.canreceive[e2.message] }
+    some e2 : n.intype[MessageFlow] { this.edgemarks[e2] > 0 && this.canreceive[e2.message, e2.source.processOf, e2.target.processOf] }
 }
 
 pred startCatchMessageIntermediateEvent[s, s' : State, n : CatchMessageIntermediateEvent] {
     one e1 : n.intype[SequentialFlow], e2 : n.intype[MessageFlow] {
         s.edgemarks[e1] > 0
         s.edgemarks[e2] > 0
-        s.canreceive[e2.message]
-        receive[s, s', e2.message]
+        receive[s, s', e2.message, e2.source.processOf, e2.target.processOf]
         s'.edgemarks[e1] = s.edgemarks[e1].dec
         s'.edgemarks[e2] = s.edgemarks[e2].dec
         all ee : n.outtype[SequentialFlow] | s'.edgemarks[ee] = s.edgemarks[ee].inc
@@ -437,22 +433,49 @@ fact traces {
 
 /* TODO: replace the set of Message with a bag of Message. */
 
-fun networkinit : set Message { none }
+fun networkinit : set (Message -> Process -> Process) { none -> none -> none  }
 
-pred State.cansend[m : Message] {
+pred State.cansend[m : Message, from: Process, to: Process] {
     // always true
 }
 
-pred send[s, s' : State, m : Message] {
-    s.cansend[m]
-    s'.network = s.network + m
+pred send[s, s' : State, m : Message, from: Process, to: Process] {
+    s.cansend[m, from, to]
+    s'.network = s.network + (m -> from -> to)
 }
 
-pred State.canreceive[m : Message] {
-        m in this.network
+pred State.canreceive[m : Message, from: Process, to: Process] {
+        (m -> from -> to) in this.network
 }
 
-pred receive[s, s' : State, m : Message] {
-    s.canreceive[m]
-    s'.network = s.network - m
+pred receive[s, s' : State, m : Message, from: Process, to: Process] {
+    s.canreceive[m, from, to]
+    s'.network = s.network - (m -> from -> to)
 }
+
+/*************************************************/
+
+/**** Consistency ****/
+
+/* commented out once verified, to avoid overloading Alloy. */
+
+/*
+assert { all s: State, n : Node |  s.canstartAbstractTask[n] iff (some s': State | startAbstractTask[s, s', n]) }
+assert { all s: State, n : Node |  s.cancompleteAbstractTask[n] iff (some s': State | completeAbstractTask[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartSendTask[n] iff (some s': State | startSendTask[s, s', n]) }
+assert { all s: State, n : Node |  s.cancompleteSendTask[n] iff (some s': State | completeSendTask[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartReceiveTask[n] iff (some s': State | startReceiveTask[s, s', n]) }
+assert { all s: State, n : Node |  s.cancompleteReceiveTask[n] iff (some s': State | completeReceiveTask[s, s', n]) }
+assert { all s: State, n : Node |  s.cancompleteExclusiveOr[n] iff (some s': State | completeExclusiveOr[s, s', n]) }
+assert { all s: State, n : Node |  s.cancompleteParallel[n] iff (some s': State | completeParallel[s, s', n]) }
+assert { all s: State, n : Node |  s.cancompleteEventBased[n] iff (some s': State | completeEventBased[s, s', n]) }
+assert { all s: State, n : Node |  s.cancompleteNoneStartEvent[n] iff (some s': State | completeNoneStartEvent[s, s', n]) }
+assert { all s: State, n : Node |  s.cancompleteTimerStartEvent[n] iff (some s': State | completeTimerStartEvent[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartMessageStartEvent[n] iff (some s': State | startMessageStartEvent[s, s', n]) }
+assert { all s: State, n : Node |  s.cancompleteMessageStartEvent[n] iff (some s': State | completeMessageStartEvent[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartNoneEndEvent[n] iff (some s': State | startNoneEndEvent[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartTerminateEndEvent[n] iff (some s': State | startTerminateEndEvent[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartThrowMessageIntermediateEvent[n] iff (some s': State | startThrowMessageIntermediateEvent[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartCatchMessageIntermediateEvent[n] iff (some s': State | startCatchMessageIntermediateEvent[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartTimerIntermediateEvent[n] iff (some s': State | startTimerIntermediateEvent[s, s', n]) }
+*/
