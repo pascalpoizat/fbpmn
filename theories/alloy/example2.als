@@ -2,7 +2,7 @@
 A process:
 NSE -> PAR -> {AT1,AT2} -> PAR -> NEE
 */
-
+module example2
 
 open PWSSyntax
 open PWSProp

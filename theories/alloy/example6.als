@@ -7,7 +7,7 @@ NSE -> EB -> RT -> NEE
 CorrectTermination with 10 states
 EmptyNetTermination is invalid (by taking the TICE branch)
 */
-
+module example6
 
 open PWSSyntax
 open PWSProp
@@ -67,10 +67,3 @@ one sig proc2 extends Process {} {
     contains = se2 + eb2 + rt2a + ee2a + tice2b + ee2b
 }
 
-check {Safe} for 0 but 10 State
-
-check {SimpleTermination} for 0 but 10 State
-check {CorrectTermination} for 0 but 10 State
-check {EmptyNetTermination} for 0 but 20 State
-
-run {Safe} for 0 but 11 State

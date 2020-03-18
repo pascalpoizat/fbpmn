@@ -5,7 +5,7 @@ NSE -> RT -> NEE
 
 CorrectTermination with 9 states
 */
-
+module example4
 
 open PWSSyntax
 open PWSProp
@@ -48,10 +48,3 @@ one sig proc1 extends Process {} {
 one sig proc2 extends Process {} {
     contains = se2 + rt2 + ee2
 }
-
-check {Safe} for 0 but 15 State
-
-check {SimpleTermination} for 0 but 9 State
-check {CorrectTermination} for 0 but 9 State
-
-run {Safe} for 0 but 11 State
