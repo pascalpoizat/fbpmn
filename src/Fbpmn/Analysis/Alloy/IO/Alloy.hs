@@ -138,20 +138,30 @@ timeInfoToAlloy g n =
       Nothing -> Nothing
     else Nothing
 
+-- evolutions:
+-- - use formatParseM
+-- - add timezones
 timerEventDefinitionToAlloy :: TimerEventDefinition -> Maybe (Text, Text)
 timerEventDefinitionToAlloy (TimerEventDefinition (Just tdt) (Just tdv)) =
   case tdt of
-    TimeDate -> do -- yyyy-mm-ddThh:mm:ss
+    TimeDate -> do -- yyyy-mm-ddThh:mm:ssZ
       parsed <-
         parseTimeM True defaultTimeLocale formatDateTime tdv :: Maybe UTCTime
       let nuot = nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds $ parsed
       Just ("Date", show nuot)
-    TimeDuration -> Just ("Duration", "0")
-    TimeCycle    -> Just ("Cycle", "0") -- TODO:
+    TimeDuration -> do -- PdDThHmMsS
+      parsed <- parseTimeM True defaultTimeLocale formatDuration tdv :: Maybe CalendarDiffTime
+      let nuot = nominalDiffTimeToSeconds . ctTime $ parsed
+      Just ("Duration", show nuot)
+    TimeCycle    -> 
+      Just ("Cycle", "0") -- TODO:
 timerEventDefinitionToAlloy _ = Nothing
 
 formatDateTime :: String
-formatDateTime = "%Y-%-m-%-dT%H:%M:%S"
+formatDateTime = "%Y-%-m-%-dT%H:%M:%SZ"
+
+formatDuration :: String
+formatDuration = "P%dDT%HH%MM%SS"
 
 edgeToAlloy :: BpmnGraph -> Edge -> Text
 edgeToAlloy g e = [text|one sig $ename extends $etype {$values}|]

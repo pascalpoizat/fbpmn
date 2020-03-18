@@ -49,7 +49,7 @@
     <bpmn:boundaryEvent id="BoundaryEvent_0lkn8pc" name="30 minutes" attachedToRef="SubProcess_0gsfmc3">
       <bpmn:outgoing>SequenceFlow_13lhzc9</bpmn:outgoing>
       <bpmn:timerEventDefinition>
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P30M</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P0DT0H30M0S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:endEvent id="EndEvent_086sfn7">
@@ -63,7 +63,7 @@
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>SequenceFlow_1hkg88d</bpmn:outgoing>
       <bpmn:timerEventDefinition>
-        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">2020-03-17T12:00:00</bpmn:timeDate>
+        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">2020-03-17T12:00:00Z</bpmn:timeDate>
       </bpmn:timerEventDefinition>
     </bpmn:startEvent>
   </bpmn:process>
@@ -98,7 +98,7 @@
     <bpmn:startEvent id="StartEvent_1s47y70">
       <bpmn:outgoing>SequenceFlow_19yqu7y</bpmn:outgoing>
       <bpmn:timerEventDefinition>
-        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">1970-01-01T01:01:01</bpmn:timeDate>
+        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">1970-01-01T01:01:01Z</bpmn:timeDate>
       </bpmn:timerEventDefinition>
     </bpmn:startEvent>
   </bpmn:process>

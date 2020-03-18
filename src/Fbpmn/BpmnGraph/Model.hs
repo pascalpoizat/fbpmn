@@ -61,30 +61,6 @@ isInGraph :: (Ord a)
 isInGraph g f p x = p <$> f g !? x
 
 --
--- Time information
--- for ISO8601, see https://fr.wikipedia.org/wiki/ISO_8601
---
--- we support :
---
--- TimeDate ::= yyyy-mm-ddThh:mm:ss
---  ex: 2020-03-04T15:30:00 (March 4th, 2020, at 3:30pm)
--- isoparse1 str = parseTimeM True defaultTimeLocale "%Y-%-m-%-dT%H:%M:%S" str :: Maybe LocalTime
--- isoparse1 "2020-3-4T15:30:25" (Just 2020-03-04 15:30:25)
--- localDay <$> isoparse1 "2020-3-4T15:30:25" (Just 2020-03-04)
--- toModifiedJulianDay . localDay <$> isoparse1 "2020-3-4T15:30:25" (Just 58912)
--- toGregorian . localDay <$> isoparse1 "2020-3-4T15:30:25" (Just (2020,3,4))
--- localTimeOfDay <$> isoparse1 "2020-3-4T15:30:25" (Just 15:30:25)
---
--- TimeDuration ::= PyYmMdDThHmMsS
---  ex: P0Y0M1DT12H0M0S (1 day 1/2)
---  isoparse2 x = parseTimeM True defaultTimeLocale "P%yY%mM%dDT%HH%MM%SS" x :: Maybe CalendarDiffTime
--- PB: ne prend pas les mois correctement en compte (comptent comme minutes)
--- isoparse2 "P1Y1M1DT1H2M1S" (Just P12MT90181S)
--- solution : se restreindre à PThHmMsS, dans les autres cas, sans date de référence (format date + duration) comment connaître durée mois ou année.
--- donc :
--- isoparse2 x = parseTimeM True defaultTimeLocale "PT%HH%MM%SS" x :: Maybe CalendarDiffTime
--- isoparse2 "PT1H10M4S" (Just P0MT4204S)
---
 -- TimeCycle ::= R(n)(/TimeDate)/TimeDuration
 --  ex: R/P0Y0M1DT12H0M0S (repeat every 1 day 1/2)
 --  ex: R4/P0Y0M1DT12H0M0S (repeat 4 times every 1 day 1/2)
@@ -93,16 +69,20 @@ isInGraph g f p x = p <$> f g !? x
 --    (repeat 4 times every 1 day 1/2 after March 4th, 2020, at 3:30 pm)
 --    question: begins at date & time or date & time + delay?
 --
--- for the time being we impose all information is given
--- ex: PT12H0M0S and not PT12H, 2020-03-04T00:00:00 and not 2020-03-04
+-- For Alloy:
 --
--- TSE TimeDate (start at exact date & time)
--- TSE TimeDuration (start after an amount of time)
--- CTIE TimeDate (wait until exact date & time)
--- CTIE TimeDuration (wait an amount of time)
--- TBE TimeDate (act at exact date & time)
--- TBE TimeDuration (act after an amount of time since the activity started)
--- TBE TimeCycle (act n times given the cycle information, once for interrupt)
+-- TimeDate format = yyyy-mm-ddThh:mm:ssZ (MUST BE UTC)
+-- TimeDuration format = PdDThHmMsS (NO YEARS, NO MONTHS)
+-- TimeCycle format = ONGOING
+-- all parts must be given
+--
+-- [X] TSE TimeDate (start at exact date & time)
+-- [X] TSE TimeDuration (start after an amount of time)
+-- [X] CTIE TimeDate (wait until exact date & time)
+-- [X] CTIE TimeDuration (wait an amount of time)
+-- [X] TBE TimeDate (act at exact date & time)
+-- [X] TBE TimeDuration (act after an amount of time since the activity started)
+-- [ ] TBE TimeCycle (act n times given the cycle information, once for interrupt)
 --
 
 data TimerEventDefinition = TimerEventDefinition
