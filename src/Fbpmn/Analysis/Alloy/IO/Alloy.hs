@@ -133,29 +133,38 @@ timeInfoToAlloy g n =
        g
        [TimerStartEvent, TimerIntermediateEvent, TimerBoundaryEvent]
     then case timerEventDefinitionToAlloy =<< timeInformation g !? n of
-      Just (ttd, ttv) -> Just [text|ctime = $ttv
-        mode = $ttd|]
+      Just (mode, repetition, duration, date) -> Just [text|
+        mode = $mode
+        repetition = $repetition
+        duration = $duration
+        date = $date
+        |]
       Nothing -> Nothing
     else Nothing
 
 -- evolutions:
 -- - use formatParseM
 -- - add timezones
-timerEventDefinitionToAlloy :: TimerEventDefinition -> Maybe (Text, Text)
+timerEventDefinitionToAlloy :: TimerEventDefinition
+                            -> Maybe (Text, Text, Text, Text)
 timerEventDefinitionToAlloy (TimerEventDefinition (Just tdt) (Just tdv)) =
   case tdt of
     TimeDate -> do -- yyyy-mm-ddThh:mm:ssZ
       parsed <-
         parseTimeM True defaultTimeLocale formatDateTime tdv :: Maybe UTCTime
       let nuot = nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds $ parsed
-      Just ("Date", show nuot)
+      Just ("Date", undefAlloy, undefAlloy, show nuot)
     TimeDuration -> do -- PdDThHmMsS
-      parsed <- parseTimeM True defaultTimeLocale formatDuration tdv :: Maybe CalendarDiffTime
+      parsed <-
+        parseTimeM True defaultTimeLocale formatDuration tdv :: Maybe
+          CalendarDiffTime
       let nuot = nominalDiffTimeToSeconds . ctTime $ parsed
-      Just ("Duration", show nuot)
-    TimeCycle    -> 
-      Just ("Cycle", "0") -- TODO:
+      Just ("Duration", undefAlloy, show nuot, undefAlloy)
+    TimeCycle -> Just ("Cycle", undefAlloy, undefAlloy, undefAlloy) -- TODO:
 timerEventDefinitionToAlloy _ = Nothing
+
+undefAlloy :: Text
+undefAlloy = "0"
 
 formatDateTime :: String
 formatDateTime = "%Y-%-m-%-dT%H:%M:%SZ"
