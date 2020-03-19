@@ -15,15 +15,22 @@ sig State {
     localclock : (TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent) -> one Int,
 }
 
+/* Time is left unchanged except for node n. */
+pred deltaT[s, s' : State, n : TimerIntermediateEvent + TimerStartEvent + TimerBoundaryEvent] {
+    all nn : Node - n | s'.localclock[nn] = s.localclock[nn] 
+    s'.globalclock = s.globalclock
+}
+
 /* all marks except those for n and e are left unchanged.
- * Doesn't care of network. */
+ * Doesn't care of network or time. */
 pred deltaN[s, s': State, n : Node, e: Edge] {
     all othernode : Node - n | s'.nodemarks[othernode] = s.nodemarks[othernode]
     all otheredge : Edge - e | s'.edgemarks[otheredge] = s.edgemarks[otheredge]
 }
 
 /* All marks except those for n and e are left unchanged.
- * Network is left unchanged */
+ * Network is left unchanged.
+ * doesn't core of time */
 pred delta[s, s': State, n : Node, e: Edge] {
     deltaN[s, s', n, e ]
     s'.network = s.network
@@ -43,6 +50,7 @@ pred startAbstractTask[s, s': State, n: AbstractTask] {
         s'.edgemarks[e] = s.edgemarks[e].dec
         s'.nodemarks[n] = s.nodemarks[n].inc
         delta[s, s', n, e]
+        deltaT[s, s', none]
     }
 }
 
@@ -56,6 +64,7 @@ pred completeAbstractTask[s, s' : State, n : AbstractTask] {
     s'.nodemarks[n] = s.nodemarks[n].dec
     all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
     delta[s, s', n, n.outtype[SequentialFlow]]
+    deltaT[s, s', none]
 }
 
 /**** Send Task ****/
@@ -70,6 +79,7 @@ pred startSendTask[s, s' : State, n : SendTask] {
         s'.edgemarks[e] = s.edgemarks[e].dec
         s'.nodemarks[n] = s.nodemarks[n].inc
         delta[s, s', n, e]
+        deltaT[s, s', none]
     }
 }
 
@@ -87,6 +97,7 @@ pred completeSendTask[s, s' : State, n : SendTask] {
         s'.edgemarks[e] = s.edgemarks[e].inc
         all ee : n.outtype[SequentialFlow] | s'.edgemarks[ee] = s.edgemarks[ee].inc
         deltaN[s, s', n, n.outtype[SequentialFlow] + e]
+        deltaT[s, s', none]
     }
 }
 
@@ -102,6 +113,7 @@ pred startReceiveTask[s, s' : State, n : ReceiveTask] {
         s'.edgemarks[e] = s.edgemarks[e].dec
         s'.nodemarks[n] = s.nodemarks[n].inc
         delta[s, s', n, e]
+        deltaT[s, s', none]
     }
 }
 
@@ -120,6 +132,7 @@ pred completeReceiveTask[s, s' : State, n : ReceiveTask] {
         s'.edgemarks[e] = s.edgemarks[e].dec
         all ee : n.outtype[SequentialFlow] | s'.edgemarks[ee] = s.edgemarks[ee].inc
         deltaN[s, s', n, n.outtype[SequentialFlow] + e]
+        deltaT[s, s', none]
     }
 }
 
@@ -138,6 +151,7 @@ pred completeExclusiveOr[s, s' : State, n: ExclusiveOr] {
         one eo : n.outtype[SequentialFlow] {
             s'.edgemarks[eo] = s.edgemarks[eo].inc
             delta[s, s', none, ei + eo]
+            deltaT[s, s', none]
         }
     }
 }
@@ -154,6 +168,7 @@ pred completeParallel[s, s' : State, n: Parallel] {
         all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
     }
     delta[s, s', none, n.intype[SequentialFlow] + n.outtype[SequentialFlow]]
+    deltaT[s, s', none]
 }
 
 pred State.cancompleteEventBased[n : Node] {
@@ -165,7 +180,7 @@ pred State.cancompleteEventBased[n : Node] {
         }
         or
         { eo.target in TimerIntermediateEvent
-          this.canfire[eo.target]
+          this.canfire[eo.target <: TimerIntermediateEvent]
         }
     }
 }
@@ -179,11 +194,12 @@ pred completeEventBased[s, s' : State, n : EventBased] {
             }
             or
             { eo.target in TimerIntermediateEvent
-              s.canfire[eo.target]
+              s.canfire[eo.target <: TimerIntermediateEvent]
             }
             s'.edgemarks[eo] = s.edgemarks[eo].inc
             s'.edgemarks[ei] = s.edgemarks[ei].dec
             delta[s, s', none, ei + eo]
+            deltaT[s, s', none]
         }
     }
 }
@@ -206,6 +222,7 @@ pred completeNoneStartEvent[s, s' : State, n: NoneStartEvent] {
     let p = n.~contains {
         s'.nodemarks[p] = s.nodemarks[p].inc
         delta[s, s', n + p, n.outtype[SequentialFlow]]
+        deltaT[s, s', none]
     } 
 }
 
@@ -214,7 +231,7 @@ pred completeNoneStartEvent[s, s' : State, n: NoneStartEvent] {
 pred State.cancompleteTimerStartEvent[n : Node] {
     n in TimerStartEvent
     this.nodemarks[n] > 0
-    this.canfire[n]
+    this.canfire[n <: TimerStartEvent]
 }
 
 pred completeTimerStartEvent[s, s' : State, n: TimerStartEvent] {
@@ -225,6 +242,7 @@ pred completeTimerStartEvent[s, s' : State, n: TimerStartEvent] {
     let p = n.~contains {
         s'.nodemarks[p] = s.nodemarks[p].inc
         delta[s, s', n + p, n.outtype[SequentialFlow]]
+        deltaT[s, s', none] // localclock is unused
     } 
 }
 
@@ -246,6 +264,7 @@ pred startMessageStartEvent[s, s' : State, n : MessageStartEvent] {
         s'.edgemarks[e] = s.edgemarks[e].dec
         s'.nodemarks[n] = s.nodemarks[n].inc
         deltaN[s, s', n, e]
+        deltaT[s, s', none]
     }
 }
 
@@ -263,6 +282,7 @@ pred completeMessageStartEvent[s, s': State, n : MessageStartEvent] {
         s'.nodemarks[p] = s.nodemarks[p].inc
         all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
         delta[s, s', n + p, n.outtype[SequentialFlow] ]
+        deltaT[s, s', none]
     }
 }
 
@@ -281,6 +301,7 @@ pred startNoneEndEvent[s, s' : State, n: NoneEndEvent] {
         s'.edgemarks[e] = s.edgemarks[e].dec
         s'.nodemarks[n] = s.nodemarks[n].inc
         delta[s, s', n, e]
+        deltaT[s, s', none]
     }
 }
 
@@ -301,6 +322,7 @@ pred startTerminateEndEvent[s, s' : State, n : TerminateEndEvent] {
                 all e : edges | s'.edgemarks[e] = 0
                 all nn : nodes | s'.nodemarks[nn] = 0
                 delta[s, s', nodes, edges]
+                deltaT[s, s', none]
         }
     }
 }
@@ -321,6 +343,7 @@ pred startThrowMessageIntermediateEvent[s, s' : State, n : ThrowMessageIntermedi
         s'.edgemarks[e2] = s.edgemarks[e2].inc
         all ee : n.outtype[SequentialFlow] | s'.edgemarks[ee] = s.edgemarks[ee].inc
         deltaN[s, s', none, n.outtype[SequentialFlow] + e1 + e2]
+        deltaT[s, s', none]
     }
 }
 
@@ -341,6 +364,7 @@ pred startCatchMessageIntermediateEvent[s, s' : State, n : CatchMessageIntermedi
         s'.edgemarks[e2] = s.edgemarks[e2].dec
         all ee : n.outtype[SequentialFlow] | s'.edgemarks[ee] = s.edgemarks[ee].inc
         deltaN[s, s', none, n.outtype[SequentialFlow] + e1 + e2]
+        deltaT[s, s', none]
     }
 }
 
@@ -349,25 +373,52 @@ pred startCatchMessageIntermediateEvent[s, s' : State, n : CatchMessageIntermedi
 pred State.canstartTimerIntermediateEvent[n : Node] {
     n in TimerIntermediateEvent
     some ei : n.intype[SequentialFlow] | this.edgemarks[ei] > 0
-    this.canfire[n]
+    (n <: TimerIntermediateEvent).mode = Duration
+    this.localclock[n] = 0
 }
 
 pred startTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
+    s.canstartTimerIntermediateEvent[n]
+    s'.localclock[n] = 1
+    delta[s, s', none, none]
+    deltaT[s, s', n]
+}
+
+pred State.cancompleteTimerIntermediateEvent[n : Node] {
+    n in TimerIntermediateEvent
+    some ei : n.intype[SequentialFlow] | this.edgemarks[ei] > 0
+    this.canfire[n <: TimerIntermediateEvent]
+}
+
+pred completeTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
     one ei : n.intype[SequentialFlow] {
         s.edgemarks[ei] > 0
         s.canfire[n]
         s'.edgemarks[ei] = s.edgemarks[ei].dec
         all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
         delta[s, s', none, ei + n.outtype[SequentialFlow]]
+        deltaT[s, s', none]
     }
 }
 
 /************ Time ***************/
 
-pred State.canfire[n : TimerIntermediateEvent + TimerStartEvent + TimerBoundaryEvent] {
-    // conditions handling time
-    // Nondeterministic time => true
+pred State.canfire[n : TimerIntermediateEvent] {
+    { n.mode = Date && n.date = this.globalclock } 
+    or
+    { n.mode = Duration && this.localclock[n] = n.duration }
 }
+
+pred State.canfire[n : TimerStartEvent] {
+    n.mode = Date && n.date = this.globalclock
+}
+
+pred State.canfire[n : TimerBoundaryEvent] {
+    { n.mode = Date && n.date = this.globalclock } 
+    or
+    { n.mode = Duration && this.localclock[n] = n.duration }
+}
+
 
 
 /************ Run ****************/
@@ -402,6 +453,7 @@ pred State.deadlock {
         or this.canstartThrowMessageIntermediateEvent[n]
         or this.canstartCatchMessageIntermediateEvent[n]
         or this.canstartTimerIntermediateEvent[n]
+        or this.cancompleteTimerIntermediateEvent[n]
     }
 }
 
@@ -421,17 +473,13 @@ pred step[s, s' : State, n: Node] {
     else n in ThrowMessageIntermediateEvent implies startThrowMessageIntermediateEvent[s, s', n]
     else n in CatchMessageIntermediateEvent implies startCatchMessageIntermediateEvent[s, s', n]
     else n in TimerIntermediateEvent implies startTimerIntermediateEvent[s, s', n]
+    else n in TimerIntermediateEvent implies completeTimerIntermediateEvent[s, s', n]
 }
 
 fact init { initialState }
 
-pred deltatime[s, s': State] {
-     all n : TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent | s'.localclock[n] = s.localclock[n]
-     s'.globalclock = s.globalclock
-}
-
 pred advancetime[s, s': State] {
-     // see below: 
+     // see below: time advances only if deadlock.
      // no n : TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent | s.canfire[n]
      all n : TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent {
          // isn't timerActive iff localclock[n] > 0 ?
@@ -449,7 +497,7 @@ fact traces {
 	all s: State - last {
         { s.deadlock && delta[s, s.next, none, none] && advancetime[s, s.next] }
         or
-        { some n : Node - Process | step[s, s.next, n] && deltatime[s, s.next] }
+        { some n : Node - Process | step[s, s.next, n] }
     }
 }
 

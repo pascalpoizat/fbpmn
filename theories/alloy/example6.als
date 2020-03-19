@@ -5,7 +5,8 @@ NSE -> EB -> RT -> NEE
         | -> TICE -> NEE
         
 CorrectTermination with 10 states
-EmptyNetTermination is invalid (by taking the TICE branch)
+EmptyNetTermination should be invalid (by taking the TICE branch)
+ [ but is currently valid - to be debugged ]
 */
 module example6
 
@@ -22,7 +23,12 @@ one sig se2 extends NoneStartEvent {}
 one sig eb2 extends EventBased {}
 one sig rt2a extends ReceiveTask {}
 one sig ee2a extends NoneEndEvent {}
-one sig tice2b extends TimerIntermediateEvent {}
+one sig tice2b extends TimerIntermediateEvent {} {
+    mode = Date
+    date = 4
+    duration = 0
+    repetition = 0
+}
 one sig ee2b extends NoneEndEvent {}
 
 one sig f1 extends NormalSequentialFlow {} {
