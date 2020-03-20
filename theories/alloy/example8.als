@@ -1,6 +1,8 @@
 /*
 A process:
 NSE -> TICE -> NEE
+
+CorrectTermination with 9 State (to give enough time for the globalclock to reach 4)
 */
 module example8
 
@@ -13,7 +15,7 @@ one sig ti extends TimerIntermediateEvent {} {
     mode = Date
     repetition = 0
     duration = 0
-    date = 10
+    date = 4
 }
 
 

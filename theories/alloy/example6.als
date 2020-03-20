@@ -5,8 +5,16 @@ NSE -> EB -> RT -> NEE
         | -> TICE -> NEE
         
 CorrectTermination with 10 states
+
 EmptyNetTermination should be invalid (by taking the TICE branch)
- [ but is currently valid - to be debugged ]
+but :
+  - it is indeed invalid with the non deterministic time.
+  - it is (wrongly) valid with the explicit time, because
+    time advances only when no step can be done.
+    Here RT is enabled (because ST was and thus done) :
+    the lower branch is never taken, and time can be > 4
+    only when the upper branch is done and there is
+    nothing yet to do.
 */
 module example6
 

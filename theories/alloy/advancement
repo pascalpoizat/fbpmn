@@ -10,7 +10,7 @@ minimal core:
 - EBG   done
 - TSE   done (with non-determinism, predicate canfire)
 - TBE
-- TICE  done (with non-determinism, predicate canfire)
+- TICE  done but buggy (exemple8)
 
 Extended core:
  - minimal core
