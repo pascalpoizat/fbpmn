@@ -167,19 +167,58 @@ timerEventDefinitionToAlloy :: TimerEventDefinition
 timerEventDefinitionToAlloy (TimerEventDefinition (Just tdt) (Just tdv)) =
   case tdt of
     TimeDate -> do
-      parsed <- formatParseM iso8601Format tdv
-      let nuot =
-            truncate . nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds $ parsed :: Natural
+      parsed <- iso8601DateTimeParser tdv
+      let nuot = dateToAlloy parsed
       Just ("Date", undefAlloy, undefAlloy, show nuot)
     TimeDuration -> do
-      parsed <- formatParseM iso8601Format tdv
+      parsed <- iso8601DurationParser tdv
       nuot   <- case ctMonths parsed of
         -- if we have months then year/month has been used in duration: error
-        0 -> Just . truncate . nominalDiffTimeToSeconds . ctTime $ parsed
-        _ -> Nothing :: Maybe Natural
+        0 -> Just . durationToAlloy $ parsed
+        _ -> Nothing
       Just ("Duration", undefAlloy, show nuot, undefAlloy)
-    TimeCycle -> Just ("Cycle", undefAlloy, undefAlloy, undefAlloy) -- TODO:
+    TimeCycle ->
+      let
+        parsed1 = iso8601CycleStartParser tdv
+        parsed2 = iso8601CycleEndParser tdv
+      in
+        case (parsed1, parsed2) of
+          (Just (nb, date, dur), Nothing) ->
+            Just
+              ( "CycleDurationStart"
+              , show nb
+              , show $ durationToAlloy dur
+              , show $ dateToAlloy date
+              )
+          (Nothing, Just (nb, dur, date)) ->
+            Just
+              ( "CycleDurationEnd"
+              , show nb
+              , show $ durationToAlloy dur
+              , show $ dateToAlloy date
+              )
+          _ -> Just ("CycleDuration", undefAlloy, undefAlloy, undefAlloy)
 timerEventDefinitionToAlloy _ = Nothing
+
+iso8601DateTimeParser :: String -> Maybe UTCTime
+iso8601DateTimeParser = formatParseM iso8601Format
+
+iso8601DurationParser :: String -> Maybe CalendarDiffTime
+iso8601DurationParser = formatParseM iso8601Format
+
+iso8601DateTimeFormat :: Format UTCTime
+iso8601DateTimeFormat = utcTimeFormat iso8601Format iso8601Format
+
+iso8601DurationFormat :: Format CalendarDiffTime
+iso8601DurationFormat = durationTimeFormat 
+
+iso8601CycleStartParser :: String -> Maybe (Int, UTCTime, CalendarDiffTime)
+iso8601CycleStartParser = formatParseM
+  (recurringIntervalFormat iso8601DateTimeFormat iso8601DurationFormat)
+
+iso8601CycleEndParser :: String -> Maybe (Int, CalendarDiffTime, UTCTime)
+iso8601CycleEndParser = formatParseM
+  (recurringIntervalFormat iso8601DurationFormat iso8601DateTimeFormat)
 
 undefAlloy :: Text
 undefAlloy = "0"
@@ -210,3 +249,10 @@ messageInformationToAlloy :: BpmnGraph -> Edge -> Maybe Text
 messageInformationToAlloy g e = case messageE g !? e of
   Just m  -> Just [text|message = $sm|] where sm = toText m
   Nothing -> Nothing
+
+dateToAlloy :: UTCTime -> Natural
+dateToAlloy =
+  truncate . nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds
+
+durationToAlloy :: CalendarDiffTime -> Natural
+durationToAlloy = truncate . nominalDiffTimeToSeconds . ctTime
