@@ -1,6 +1,6 @@
 minimal core:
 - P     done
-- SP    => later, when everything works
+- SP    done, not tested
 - AT    done
 - NSE   done
 - NEE   done
@@ -10,11 +10,12 @@ minimal core:
 - EBG   done
 - TSE   done (with non-determinism, predicate canfire)
 - TBE
-- TICE  done (with non-determinism, predicate canfire)
+- TICE  done but buggy (exemple8)
 
 Extended core:
  - minimal core
  - MSE  : done
+ - MEE  : done
  - ST   : done
  - RT   : done
  - CMIE : done

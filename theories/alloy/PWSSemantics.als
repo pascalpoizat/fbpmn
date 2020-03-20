@@ -36,11 +36,21 @@ pred delta[s, s': State, n : Node, e: Edge] {
     s'.network = s.network
 }
 
+/*********************************************/
+
+pred State.subprocessMayComplete[n : SubProcess] {
+    this.nodemarks[n] >= 1
+    all e : Edge { (e.source in n.contains && e.target in n.contains) implies this.edgemarks[e] = 0 }
+    some ee : n.contains & EndEvent | this.nodemarks[ee] >= 1
+    all x : n.contains | this.nodemarks[x] = 0 or x in EndEvent
+}
+
 /**************** Activities ****************/
 
 /**** Abstract Task ****/
 
-pred State.canstartAbstractTask[n : AbstractTask] {
+pred State.canstartAbstractTask[n : Node] {
+    n in AbstractTask
     some e: n.intype[SequentialFlow] | this.edgemarks[e] > 0
 }
 
@@ -70,6 +80,7 @@ pred completeAbstractTask[s, s' : State, n : AbstractTask] {
 /**** Send Task ****/
 
 pred State.canstartSendTask[n : Node] {
+    n in SendTask
     some e : n.intype[SequentialFlow] | this.edgemarks[e] > 0
 }
 
@@ -104,6 +115,7 @@ pred completeSendTask[s, s' : State, n : SendTask] {
 /**** Receive Task ****/
 
 pred State.canstartReceiveTask[n : Node] {
+    n in ReceiveTask
     some e : n.intype[SequentialFlow] | this.edgemarks[e] > 0
 }
 
@@ -134,6 +146,49 @@ pred completeReceiveTask[s, s' : State, n : ReceiveTask] {
         deltaN[s, s', n, n.outtype[SequentialFlow] + e]
         deltaT[s, s', none]
     }
+}
+
+/**** SubProcess ****/
+
+pred State.canstartSubProcess[n : Node] {
+    n in SubProcess
+    this.nodemarks[n] = 0 // no reenter
+    some e : n.intype[SequentialFlow] | this.edgemarks[e] > 0
+}
+
+pred startSubProcess[s, s' : State, n : SubProcess] {
+    s.nodemarks[n] = 0 // no reenter
+    one e : n.intype[SequentialFlow] {
+        s.edgemarks[e] > 0
+        s'.edgemarks[e] = s.edgemarks[e].dec
+        let se = (n.contains & StartEvent) {
+            all nn : se | s'.nodemarks[nn] = s.nodemarks[nn].inc
+            s'.nodemarks[n] = s.nodemarks[n].inc
+            delta[s, s', n + se, e]
+            deltaT[s, s', none]
+        }
+    }
+}
+
+pred State.cancompleteSubProcess[n : Node] {
+    n in SubProcess
+    this.nodemarks[n] > 0
+    all e : Edge { (e.source in n.contains && e.target in n.contains) implies this.edgemarks[e] = 0 }
+    some nee : n.contains & EndEvent | this.nodemarks[nee] > 0
+    all nn : n.contains | this.nodemarks[nn] > 0 implies nn in EndEvent    
+}
+
+pred completeSubProcess[s, s' : State, n : SubProcess] {
+    s.nodemarks[n] > 0
+    all e : Edge { (e.source in n.contains && e.target in n.contains) implies s.edgemarks[e] = 0 }
+    some nee : n.contains & EndEvent | s.nodemarks[nee] > 0
+    all nn : n.contains | s.nodemarks[nn] > 0 implies nn in EndEvent
+    s'.nodemarks[n] = 0
+    all nee : n.contains & EndEvent | s'.nodemarks[nee] = 0
+    all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
+    delta[s, s', n + (n.contains & EndEvent), n.outtype[SequentialFlow]]
+    deltaT[s, s', none]
+    // TODO
 }
 
 
@@ -220,8 +275,14 @@ pred completeNoneStartEvent[s, s' : State, n: NoneStartEvent] {
     s'.nodemarks[n] = s.nodemarks[n].dec
     all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
     let p = n.~contains {
-        s'.nodemarks[p] = s.nodemarks[p].inc
-        delta[s, s', n + p, n.outtype[SequentialFlow]]
+        {   
+            p in Process
+            s'.nodemarks[p] = s.nodemarks[p].inc
+            delta[s, s', n + p, n.outtype[SequentialFlow]]
+        } or {
+            p in SubProcess
+            delta[s, s', n, n.outtype[SequentialFlow]]
+        }
         deltaT[s, s', none]
     } 
 }
@@ -327,6 +388,30 @@ pred startTerminateEndEvent[s, s' : State, n : TerminateEndEvent] {
     }
 }
 
+/* Message End Event */
+
+pred State.canstartMessageEndEvent[n : Node] {
+    n in MessageEndEvent
+    some e1 : n.intype[SequentialFlow], e2 : n.outtype[MessageFlow] {
+        this.edgemarks[e1] > 0
+        this.cansend[e2.message, e2.source.processOf, e2.target.processOf]
+    }
+}
+
+pred startMessageEndEvent[s, s' : State, n : MessageEndEvent] {
+    one e1 : n.intype[SequentialFlow], e2 : n.outtype[MessageFlow] {
+        s.edgemarks[e1] > 0
+        send[s, s', e2.message, e2.source.processOf, e2.target.processOf]
+        s'.edgemarks[e1] = s.edgemarks[e1].dec
+        s'.edgemarks[e2] = s.edgemarks[e2].inc
+        s'.nodemarks[n] = s.nodemarks[n].inc
+        deltaN[s, s', n, e1 + e2]
+        deltaT[s, s', none]
+    }
+}
+
+/**** Intermediate Events ****/
+
 /* Throw Message Intermediate Event TMIE */
 
 pred State.canstartThrowMessageIntermediateEvent[n : Node] {
@@ -368,12 +453,11 @@ pred startCatchMessageIntermediateEvent[s, s' : State, n : CatchMessageIntermedi
     }
 }
 
-/* TimerIntermediateEvent */
+/* Timer Intermediate Event TICE */
 
 pred State.canstartTimerIntermediateEvent[n : Node] {
     n in TimerIntermediateEvent
     some ei : n.intype[SequentialFlow] | this.edgemarks[ei] > 0
-    (n <: TimerIntermediateEvent).mode = Duration
     this.localclock[n] = 0
 }
 
@@ -450,10 +534,13 @@ pred State.deadlock {
         or this.cancompleteMessageStartEvent[n]
         or this.canstartNoneEndEvent[n]
         or this.canstartTerminateEndEvent[n]
+        or this.canstartMessageEndEvent[n]
         or this.canstartThrowMessageIntermediateEvent[n]
         or this.canstartCatchMessageIntermediateEvent[n]
         or this.canstartTimerIntermediateEvent[n]
         or this.cancompleteTimerIntermediateEvent[n]
+        or this.canstartSubProcess[n]
+        or this.cancompleteSubProcess[n]
     }
 }
 
@@ -468,12 +555,13 @@ pred step[s, s' : State, n: Node] {
     else n in TimerStartEvent implies completeTimerStartEvent[s,s',n]
     else n in MessageStartEvent implies { startMessageStartEvent[s,s',n] or completeMessageStartEvent[s,s',n] }
     else n in NoneEndEvent implies startNoneEndEvent[s, s', n]
-    else n in NoneEndEvent implies startNoneEndEvent[s, s', n]
     else n in TerminateEndEvent implies startTerminateEndEvent[s, s', n]
+    else n in MessageEndEvent implies startMessageEndEvent[s, s', n]
     else n in ThrowMessageIntermediateEvent implies startThrowMessageIntermediateEvent[s, s', n]
     else n in CatchMessageIntermediateEvent implies startCatchMessageIntermediateEvent[s, s', n]
     else n in TimerIntermediateEvent implies startTimerIntermediateEvent[s, s', n]
     else n in TimerIntermediateEvent implies completeTimerIntermediateEvent[s, s', n]
+    else n in SubProcess implies { startSubProcess[s, s', n] or completeSubProcess[s, s', n]}
 }
 
 fact init { initialState }
@@ -492,6 +580,8 @@ pred advancetime[s, s': State] {
 /* As we are doing bounded model-checking, we must ensure that enough steps are done.
  * Formally, with infinite executions, weak-fairness is sufficient.
  * With bounded model-checking, we could just make a few advancetime and not terminate with the given number of steps.
+ * Unfortunately, it breaks any example where there is a timeout for a potentially slow transition (see exemple6) :
+ * if the transition is possible, time cannot advances => the transition does necessarily occur.
  */
 fact traces {
 	all s: State - last {
@@ -547,7 +637,10 @@ assert { all s: State, n : Node |  s.canstartMessageStartEvent[n] iff (some s': 
 assert { all s: State, n : Node |  s.cancompleteMessageStartEvent[n] iff (some s': State | completeMessageStartEvent[s, s', n]) }
 assert { all s: State, n : Node |  s.canstartNoneEndEvent[n] iff (some s': State | startNoneEndEvent[s, s', n]) }
 assert { all s: State, n : Node |  s.canstartTerminateEndEvent[n] iff (some s': State | startTerminateEndEvent[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartMessageEndEvent[n] iff (some s': State | startMessageEndEvent[s, s', n]) }
 assert { all s: State, n : Node |  s.canstartThrowMessageIntermediateEvent[n] iff (some s': State | startThrowMessageIntermediateEvent[s, s', n]) }
 assert { all s: State, n : Node |  s.canstartCatchMessageIntermediateEvent[n] iff (some s': State | startCatchMessageIntermediateEvent[s, s', n]) }
 assert { all s: State, n : Node |  s.canstartTimerIntermediateEvent[n] iff (some s': State | startTimerIntermediateEvent[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartSubProcess[n] iff (some s': State | startSubProcess[s, s', n]) }
+assert { all s: State, n : Node |  s.cancompleteSubProcess[n] iff (some s': State | completeSubProcess[s, s', n]) }
 */

@@ -1,4 +1,4 @@
-open example6 as m
+open example9 as m
 open PWSSemantics
 open PWSProp
 
@@ -6,6 +6,6 @@ check {Safe} for 0 but 10 State
 
 check {SimpleTermination} for 0 but 10 State
 check {CorrectTermination} for 0 but 10 State
-check {EmptyNetTermination} for 0 but 30 State
+check {EmptyNetTermination} for 0 but 10 State
 
-run {Safe} for 0 but 6 Int, 20 State
+run {Safe} for 0 but 10 State

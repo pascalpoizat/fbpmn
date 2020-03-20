@@ -124,11 +124,11 @@ edgeTypeToAlloy DefaultSequenceFlow     = "DefaultSequentialFlow"
 edgeTypeToAlloy MessageFlow             = "MessageFlow"
 
 messageToAlloy :: Message -> Text
-messageToAlloy m = [text|one sig $mname extends MessageKind {}|]
+messageToAlloy m = [text|one sig $mname extends Message {}|]
   where mname = toText m
 
 nodeToAlloy :: BpmnGraph -> Node -> Text
-nodeToAlloy g n = [text|one sig $nname extends $ntype {$values}|]
+nodeToAlloy g n = [text|one sig $nname extends $ntype {} {$values}|]
  where
   nname  = toText n
   ntype  = maybe "" nodeTypeToAlloy (catN g !? n)
@@ -224,7 +224,7 @@ undefAlloy :: Text
 undefAlloy = "0"
 
 edgeToAlloy :: BpmnGraph -> Edge -> Text
-edgeToAlloy g e = [text|one sig $ename extends $etype {$values}|]
+edgeToAlloy g e = [text|one sig $ename extends $etype {} {$values}|]
  where
   ename = toText e
   etype = maybe "" edgeTypeToAlloy (catE g !? e)
