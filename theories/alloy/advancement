@@ -1,6 +1,6 @@
 minimal core:
 - P     done
-- SP    => later, when everything works
+- SP    done, not tested
 - AT    done
 - NSE   done
 - NEE   done
@@ -15,6 +15,7 @@ minimal core:
 Extended core:
  - minimal core
  - MSE  : done
+ - MEE  : done
  - ST   : done
  - RT   : done
  - CMIE : done
