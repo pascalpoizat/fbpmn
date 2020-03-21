@@ -13,7 +13,7 @@ pred SimpleTermination {
 pred CorrectTermination {
     some s : State | all p : Process | some n: EndEvent {
        n in p.contains && s.nodemarks[n] >= 1
-       all nn : p.contains - n | s.nodemarks[nn] = 0
+       all nn : p.^contains - n | s.nodemarks[nn] = 0
        all e : Edge | e.source = p && e.target = p => s.edgemarks[e] = 0
        }
 }
