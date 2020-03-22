@@ -47,7 +47,7 @@ encodeBpmnGraphToAlloy g =
         , encodeMessages
         , encodeNodes
         , encodeEdges
-        , encodeBpmnGraphFooterToAlloy vs
+        -- , encodeBpmnGraphFooterToAlloy vs
         ]
     <*> [g]
  where
@@ -59,11 +59,14 @@ encodeBpmnGraphToAlloy g =
     ]
 
 encodeBpmnGraphHeaderToAlloy :: BpmnGraph -> Text
-encodeBpmnGraphHeaderToAlloy _ = [text|
+encodeBpmnGraphHeaderToAlloy g = [text|
+  module $mname
+
   open PWSSyntax
   open PWSProp
 
   |]
+  where mname = name g
 
 encodeBpmnGraphFooterToAlloy :: [AlloyVerification] -> BpmnGraph -> Text
 encodeBpmnGraphFooterToAlloy vs _ = unlines $ verificationToAlloy <$> vs
