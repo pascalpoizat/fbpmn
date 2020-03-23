@@ -559,8 +559,7 @@ pred step[s, s' : State, n: Node] {
     else n in MessageEndEvent implies startMessageEndEvent[s, s', n]
     else n in ThrowMessageIntermediateEvent implies startThrowMessageIntermediateEvent[s, s', n]
     else n in CatchMessageIntermediateEvent implies startCatchMessageIntermediateEvent[s, s', n]
-    else n in TimerIntermediateEvent implies startTimerIntermediateEvent[s, s', n]
-    else n in TimerIntermediateEvent implies completeTimerIntermediateEvent[s, s', n]
+    else n in TimerIntermediateEvent implies { startTimerIntermediateEvent[s, s', n] or completeTimerIntermediateEvent[s, s', n] }
     else n in SubProcess implies { startSubProcess[s, s', n] or completeSubProcess[s, s', n]}
 }
 
