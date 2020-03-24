@@ -485,6 +485,64 @@ pred completeTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
     }
 }
 
+/**** Boundary Events *****/
+
+/* Message Boundary Event */
+
+pred State.canstartMessageBoundaryEvent[n : (InterruptingMessageBoundaryEvent + NonInterruptingMessageBoundaryEvent)] {
+    this.nodemarks[n.attachedTo] > 0
+    some ei : n.intype[MessageFlow] {
+        this.edgemarks[ei] > 0
+        canreceive[this, ei.message, ei.source.processOf, ei.target.processOf]    
+    }
+    (n in InterruptingMessageBoundaryEvent && n.attachedTo in SubProcess) => ! this.subprocessMayComplete[n.attachedTo]
+}
+
+pred startMessageBoundaryEvent_Basic[s, s' : State, n : (InterruptingMessageBoundaryEvent + NonInterruptingMessageBoundaryEvent), interrupted: lone Task] {
+    let act = n.attachedTo {
+        s.nodemarks[act] > 0
+        one ei : n.intype[MessageFlow] {
+            s.edgemarks[ei] > 0
+            receive[s, s', ei.message, ei.source.processOf, ei.target.processOf]
+            s'.edgemarks[ei] = s.edgemarks[ei].dec            
+            all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
+            s'.nodemarks[interrupted] = 0
+            deltaN[s, s', interrupted, ei + n.outtype[SequentialFlow]]
+            deltaT[s, s', none]
+        }
+    }
+}
+
+pred startMessageBoundaryEvent_InterruptingProcess[s, s' : State, n : InterruptingMessageBoundaryEvent] {
+    let act = n.attachedTo <: SubProcess {
+        s.nodemarks[act] > 0
+        !s.subprocessMayComplete[act]
+        one ei : n.intype[MessageFlow] {
+            s.edgemarks[ei] > 0
+            receive[s, s', ei.message, ei.source.processOf, ei.target.processOf]
+            all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
+            s'.edgemarks[ei] = s.edgemarks[ei].dec
+            let includednodes = act.^contains {  // interrupt the subprocess
+                s'.nodemarks[act] = 0
+                all inc : includednodes | s'.nodemarks[inc] = 0
+                let inedges = { e : Edge | e.source in includednodes && e.target in includednodes } {
+                    all ei : inedges | s'.edgemarks[ei] = 0
+                    deltaN[s, s', act + includednodes, ei + n.outtype[SequentialFlow] + inedges]
+                    deltaT[s, s', none]
+                }
+            }
+        }
+    }
+}
+
+pred startMessageBoundaryEvent[s, s' : State, n : (InterruptingMessageBoundaryEvent + NonInterruptingMessageBoundaryEvent)] {
+    n.attachedTo in Task && n in InterruptingMessageBoundaryEvent implies startMessageBoundaryEvent_Basic[s, s', n, n.attachedTo]
+    else n.attachedTo in Task && n in NonInterruptingMessageBoundaryEvent implies startMessageBoundaryEvent_Basic[s, s', n, none]
+    else n.attachedTo in SubProcess && n in InterruptingMessageBoundaryEvent implies startMessageBoundaryEvent_InterruptingProcess[s, s', n]
+    else n.attachedTo in SubProcess && n in NonInterruptingMessageBoundaryEvent implies startMessageBoundaryEvent_Basic[s, s', n, none]
+}
+
+
 /************ Time ***************/
 
 pred State.canfire[n : TimerIntermediateEvent] {
@@ -541,6 +599,7 @@ pred State.deadlock {
         or this.cancompleteTimerIntermediateEvent[n]
         or this.canstartSubProcess[n]
         or this.cancompleteSubProcess[n]
+        or this.canstartMessageBoundaryEvent[n]
     }
 }
 
@@ -561,6 +620,7 @@ pred step[s, s' : State, n: Node] {
     else n in CatchMessageIntermediateEvent implies startCatchMessageIntermediateEvent[s, s', n]
     else n in TimerIntermediateEvent implies { startTimerIntermediateEvent[s, s', n] or completeTimerIntermediateEvent[s, s', n] }
     else n in SubProcess implies { startSubProcess[s, s', n] or completeSubProcess[s, s', n]}
+    else n in (InterruptingMessageBoundaryEvent + NonInterruptingMessageBoundaryEvent) implies startMessageBoundaryEvent[s, s', n]
 }
 
 fact init { initialState }
@@ -642,4 +702,5 @@ assert { all s: State, n : Node |  s.canstartCatchMessageIntermediateEvent[n] if
 assert { all s: State, n : Node |  s.canstartTimerIntermediateEvent[n] iff (some s': State | startTimerIntermediateEvent[s, s', n]) }
 assert { all s: State, n : Node |  s.canstartSubProcess[n] iff (some s': State | startSubProcess[s, s', n]) }
 assert { all s: State, n : Node |  s.cancompleteSubProcess[n] iff (some s': State | completeSubProcess[s, s', n]) }
+assert { all s: State, n : Node |  s.canstartMessageBoundaryEvent[n] iff (some s': State | startMessageBoundaryEvent[s, s', n]) }
 */
