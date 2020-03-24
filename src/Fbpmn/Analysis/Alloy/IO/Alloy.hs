@@ -7,8 +7,19 @@ import           NeatInterpolation              ( text )
 import           Data.Map.Strict                ( (!?) )
 import           Data.Time.Format.ISO8601
 import           Data.Time.LocalTime
+import           Data.Time.Calendar
 import           Data.Time.Clock
 import           Data.Time.Clock.POSIX
+import           Control.Monad
+import           Data.Attoparsec.Text           ( Parser
+                                                , parse
+                                                , decimal
+                                                , string
+                                                , option
+                                                , maybeResult
+                                                , eitherResult
+                                                , endOfInput
+                                                )
 
 -- Time-related elements
 --
@@ -50,13 +61,13 @@ encodeBpmnGraphToAlloy g =
         -- , encodeBpmnGraphFooterToAlloy vs
         ]
     <*> [g]
- where
-  vs =
-    [ AlloyVerification Check Safety             15
-    , AlloyVerification Check SimpleTermination  9
-    , AlloyVerification Check CorrectTermination 9
-    , AlloyVerification Run   Safety             11
-    ]
+--  where
+--   vs =
+--     [ AlloyVerification Check Safety             15
+--     , AlloyVerification Check SimpleTermination  9
+--     , AlloyVerification Check CorrectTermination 9
+--     , AlloyVerification Run   Safety             11
+--     ]
 
 encodeBpmnGraphHeaderToAlloy :: BpmnGraph -> Text
 encodeBpmnGraphHeaderToAlloy g = [text|
@@ -169,38 +180,74 @@ timerEventDefinitionToAlloy :: TimerEventDefinition
                             -> Maybe (Text, Text, Text, Text)
 timerEventDefinitionToAlloy (TimerEventDefinition (Just tdt) (Just tdv)) =
   case tdt of
-    TimeDate -> do
-      parsed <- iso8601DateTimeParser tdv
-      let nuot = dateToAlloy parsed
-      Just ("Date", undefAlloy, undefAlloy, show nuot)
-    TimeDuration -> do
-      parsed <- iso8601DurationParser tdv
-      nuot   <- case ctMonths parsed of
-        -- if we have months then year/month has been used in duration: error
-        0 -> Just . durationToAlloy $ parsed
-        _ -> Nothing
-      Just ("Duration", undefAlloy, show nuot, undefAlloy)
-    TimeCycle ->
-      let
-        parsed1 = iso8601CycleStartParser tdv
-        parsed2 = iso8601CycleEndParser tdv
+    --
+    -- datetime
+    --
+    TimeDate ->
+      let parsed = parse parseDateTime $ toText tdv
       in
-        case (parsed1, parsed2) of
-          (Just (nb, date, dur), Nothing) ->
-            Just
-              ( "CycleDurationStart"
-              , show nb
-              , show $ durationToAlloy dur
-              , show $ dateToAlloy date
-              )
-          (Nothing, Just (nb, dur, date)) ->
-            Just
-              ( "CycleDurationEnd"
-              , show nb
-              , show $ durationToAlloy dur
-              , show $ dateToAlloy date
-              )
-          _ -> Just ("CycleDuration", undefAlloy, undefAlloy, undefAlloy)
+        case maybeResult parsed of
+          Just res -> Just ("Date", undefAlloy, undefAlloy, show $ dateToAlloy res)
+          Nothing -> Just ("ERROR", msg, undefAlloy, undefAlloy)
+            where
+                msg = case eitherResult parsed of
+                  Right _ -> ""
+                  Left m -> toText m
+    --
+    -- duration
+    --
+    TimeDuration ->
+      let parsed = parse parseDuration $ toText tdv
+      in
+        case maybeResult parsed of
+          Just res -> if ctMonths res == 0
+            then Just
+              ("Duration", undefAlloy, show $ durationToAlloy res, undefAlloy)
+            else Nothing
+          Nothing -> Just ("ERROR", undefAlloy, msg, undefAlloy)
+            where
+              msg = case eitherResult parsed of
+                Right _ -> ""
+                Left m -> toText m
+    --
+    -- cycle
+    --
+    TimeCycle ->
+      let parsed1 = parse parseCycleStart $ toText tdv
+          parsed2 = parse parseCycleEnd $ toText tdv
+          parsed3 = parse parseCycleDuration $ toText tdv
+      in  case
+              (maybeResult parsed1, maybeResult parsed2, maybeResult parsed3)
+            of
+              (Just (nb, date, dur), _, _) -> Just
+                ( "CycleDurationStart"
+                , show $ fromMaybe 0 nb
+                , show $ durationToAlloy dur
+                , show $ dateToAlloy date
+                )
+              (Nothing, Just (nb, dur, date), _) -> Just
+                ( "CycleDurationEnd"
+                , show $ fromMaybe 0 nb
+                , show $ durationToAlloy dur
+                , show $ dateToAlloy date
+                )
+              (Nothing, Nothing, Just (nb, dur)) -> Just
+                ( "CycleDuration"
+                , show $ fromMaybe 0 nb
+                , show $ durationToAlloy dur
+                , undefAlloy
+                )
+              _ -> Just ("ERROR", msg1, msg2, msg3)
+               where
+                msg1 = case eitherResult parsed1 of
+                  Right _ -> ""
+                  Left  m -> toText m
+                msg2 = case eitherResult parsed2 of
+                  Right _ -> ""
+                  Left  m -> toText m
+                msg3 = case eitherResult parsed3 of
+                  Right _ -> ""
+                  Left  m -> toText m
 timerEventDefinitionToAlloy _ = Nothing
 
 iso8601DateTimeParser :: String -> Maybe UTCTime
@@ -213,7 +260,7 @@ iso8601DateTimeFormat :: Format UTCTime
 iso8601DateTimeFormat = utcTimeFormat iso8601Format iso8601Format
 
 iso8601DurationFormat :: Format CalendarDiffTime
-iso8601DurationFormat = durationTimeFormat 
+iso8601DurationFormat = durationTimeFormat
 
 iso8601CycleStartParser :: String -> Maybe (Int, UTCTime, CalendarDiffTime)
 iso8601CycleStartParser = formatParseM
@@ -222,6 +269,102 @@ iso8601CycleStartParser = formatParseM
 iso8601CycleEndParser :: String -> Maybe (Int, CalendarDiffTime, UTCTime)
 iso8601CycleEndParser = formatParseM
   (recurringIntervalFormat iso8601DurationFormat iso8601DateTimeFormat)
+
+-- from Text.Parsec.Combinator
+optionMaybe :: (Alternative f, Monad f) => f a -> f (Maybe a)
+optionMaybe p = option Nothing (liftM Just p)
+
+parseInteger :: Parser Integer
+parseInteger = decimal
+
+parseTerminal :: Text -> Parser ()
+parseTerminal sep = do
+  _ <- string sep
+  return ()
+
+parseValSep :: Text -> Parser Integer
+parseValSep sep = do
+  val <- parseInteger
+  _   <- parseTerminal sep
+  return val
+
+parseValSepOpt :: Text -> Parser Integer
+parseValSepOpt sep = option 0 (parseValSep sep)
+
+-- R(n)/DateTime/Duration
+parseCycleStart :: Parser (Maybe Integer, UTCTime, CalendarDiffTime)
+parseCycleStart = do
+  _   <- parseTerminal "R"
+  n   <- optionMaybe parseInteger
+  _   <- parseTerminal "/"
+  dt  <- parseDateTime
+  _   <- parseTerminal "/"
+  dur <- parseDuration
+  return (n, dt, dur)
+
+-- R(n)/Duration/DateTime
+parseCycleEnd :: Parser (Maybe Integer, CalendarDiffTime, UTCTime)
+parseCycleEnd = do
+  _   <- parseTerminal "R"
+  n   <- optionMaybe parseInteger
+  _   <- parseTerminal "/"
+  dur <- parseDuration
+  _   <- parseTerminal "/"
+  dt  <- parseDateTime
+  return (n, dur, dt)
+
+-- R(n)/Duration
+parseCycleDuration :: Parser (Maybe Integer, CalendarDiffTime)
+parseCycleDuration = do
+  _ <- parseTerminal "R"
+  n <- optionMaybe parseInteger
+  _ <- parseTerminal "/"
+  c <- parseDuration
+  return (n, c)
+
+-- YYYY-MM-DDTHH:MM:SSZ
+parseDateTime :: Parser (UTCTime)
+parseDateTime = do
+  y  <- parseInteger
+  _  <- parseTerminal "-"
+  m  <- parseInteger
+  _  <- parseTerminal "-"
+  d  <- parseInteger
+  _  <- parseTerminal "T"
+  h  <- parseInteger
+  _  <- parseTerminal ":"
+  mn <- parseInteger
+  _  <- parseTerminal ":"
+  s  <- parseInteger
+  _  <- parseTerminal "Z"
+  let day  = fromGregorian y (fromInteger m) (fromInteger d)
+  let time = secondsToDiffTime $ (h * 3600) + (mn * 60) + s
+  return $ UTCTime day time
+
+-- PyYmMdDThHmMsS
+parseDuration :: Parser (CalendarDiffTime)
+parseDuration = do
+  _          <- parseTerminal "P"
+  _          <- parseValSepOpt "Y"
+  m          <- parseValSepOpt "M"
+  d          <- parseValSepOpt "D"
+  (h, mn, s) <- option (0,0,0) parseHMS
+  return (CalendarDiffTime m $ computeDiff d h mn s)
+
+-- ThHmMsS
+parseHMS :: Parser (Integer, Integer, Integer)
+parseHMS = do
+  _ <- parseTerminal "T"
+  h <- parseValSepOpt "H"
+  m <- parseValSepOpt "M"
+  s <- parseValSepOpt "S"
+  return (h, m, s)
+
+computeDiff :: Integer -> Integer -> Integer -> Integer -> NominalDiffTime
+computeDiff d h m s = secondsToNominalDiffTime picos
+ where
+  seconds = (d * 24 * 3600) + (h * 3600) + (m * 60) + s
+  picos   = fromInteger seconds
 
 undefAlloy :: Text
 undefAlloy = "0"
@@ -254,8 +397,7 @@ messageInformationToAlloy g e = case messageE g !? e of
   Nothing -> Nothing
 
 dateToAlloy :: UTCTime -> Natural
-dateToAlloy =
-  truncate . nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds
+dateToAlloy = truncate . nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds
 
 durationToAlloy :: CalendarDiffTime -> Natural
 durationToAlloy = truncate . nominalDiffTimeToSeconds . ctTime
