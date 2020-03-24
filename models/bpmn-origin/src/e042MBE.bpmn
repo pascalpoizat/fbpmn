@@ -39,7 +39,7 @@
     <bpmn:boundaryEvent id="BoundaryEvent_0ofx7yq" name="4 times after 10 minutes" cancelActivity="false" attachedToRef="SubProcess_0gsfmc3">
       <bpmn:outgoing>SequenceFlow_1uh9c90</bpmn:outgoing>
       <bpmn:timerEventDefinition>
-        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">R4/P10M</bpmn:timeCycle>
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">R4/PT10M0S</bpmn:timeCycle>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:boundaryEvent id="NonInterruptBE" cancelActivity="false" attachedToRef="SubProcess_0gsfmc3">
@@ -49,7 +49,7 @@
     <bpmn:boundaryEvent id="BoundaryEvent_0lkn8pc" name="after 30 minutes" attachedToRef="SubProcess_0gsfmc3">
       <bpmn:outgoing>SequenceFlow_13lhzc9</bpmn:outgoing>
       <bpmn:timerEventDefinition>
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30M</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30M0S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:endEvent id="EndEvent_086sfn7">
