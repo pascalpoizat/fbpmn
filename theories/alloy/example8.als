@@ -7,7 +7,6 @@ CorrectTermination with 9 State (to give enough time for the globalclock to reac
 module example8
 
 open PWSSyntax
-open PWSWellformed
 
 one sig se extends NoneStartEvent {}
 

@@ -10,7 +10,6 @@ With PAR and NEE: as above.
 module example3
 
 open PWSSyntax
-open PWSWellformed
 
 one sig at extends AbstractTask {}
 one sig se extends NoneStartEvent {}

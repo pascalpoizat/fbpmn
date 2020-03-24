@@ -1,6 +1,7 @@
 open example1 as m
 open PWSSemantics
 open PWSProp
+open PWSWellformed
 
 check {Safe} for 0 but 10 State
 
@@ -9,4 +10,5 @@ check {CorrectTermination} for 0 but 5 State
 
 run {Safe} for 0 but 10 State
 
+check WellFormed
 

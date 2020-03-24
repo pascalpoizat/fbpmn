@@ -5,7 +5,6 @@ NSE -> PAR -> {AT1,AT2} -> PAR -> NEE
 module example2
 
 open PWSSyntax
-open PWSWellformed
 
 one sig at1 extends AbstractTask {}
 one sig at2 extends AbstractTask {}

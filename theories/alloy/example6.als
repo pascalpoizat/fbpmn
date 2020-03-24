@@ -19,7 +19,6 @@ but :
 module example6
 
 open PWSSyntax
-open PWSWellformed
 
 one sig hello extends Message {}
 

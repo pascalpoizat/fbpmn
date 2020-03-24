@@ -1,12 +1,16 @@
 module PWSWellformed
 
-open PWSProp
+open PWSSyntax
 
 /* Well-formed conditions */
 
-/* An assert is not checked, why? */
-fact MessageDifferentProcesses {
+pred MessageDifferentProcesses {
     all m : MessageFlow | !(m.source.processOf = m.target.processOf)
 }
 
 /* to be continued */
+
+assert WellFormed {
+    MessageDifferentProcesses
+    //...
+}
