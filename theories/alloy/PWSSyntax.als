@@ -9,11 +9,26 @@ abstract sig TimeMode {}
 /* TSE, TICE, TBE have a mode, an optional duration, an optional date, and/or a repetition factor.
  * The meaning of each field depends on the mode.
  * Unused fields are expected to be 0. */
-one sig Date extends TimeMode {}               // a date
-one sig Duration extends TimeMode {}           // a duration
-one sig CycleDuration extends TimeMode {}      // a number of repetition + a duration
-one sig CycleDurationStart extends TimeMode {} // a number of repetition + a start date + a duration
-one sig CycleDurationEnd extends TimeMode {}   // a number of repetition + a duration + an end date
+abstract sig Date extends TimeMode {
+    date : one Int
+}
+abstract sig Duration extends TimeMode {
+    duration : one Int
+}
+abstract sig CycleDuration extends TimeMode {
+    repetition : one Int,
+    duration   : one Int
+}
+abstract sig CycleDurationStart extends TimeMode {
+    repetition : one Int,
+    duration   : one Int,
+    startdate  : one Int
+}
+abstract sig CycleDurationEnd extends TimeMode {
+    repetition : one Int,
+    duration   : one Int,
+    enddate    : one Int
+}
 
 
 /**************** Nodes ****************/
@@ -50,10 +65,7 @@ abstract sig StartEvent extends Event {}
 abstract sig NoneStartEvent extends StartEvent {}
 abstract sig MessageStartEvent extends StartEvent {}
 abstract sig TimerStartEvent extends StartEvent {
-    mode       : TimeMode,
-    repetition : Int,
-    duration   : Int,
-    date       : Int,
+    mode       : one TimeMode
 }
 
 /** End Events */
@@ -67,20 +79,19 @@ abstract sig IntermediateEvent extends Event {}
 abstract sig ThrowMessageIntermediateEvent extends IntermediateEvent {}
 abstract sig CatchMessageIntermediateEvent extends IntermediateEvent {}
 abstract sig TimerIntermediateEvent extends IntermediateEvent {
-    mode       : TimeMode,
-    repetition : Int,
-    duration   : Int,
-    date       : Int,
+    mode       : one TimeMode,
 }
 
 /** Boundary Events */
-abstract sig BoundaryEvent extends Event {}
-abstract sig MessageBoundaryEvent extends BoundaryEvent {}
+abstract sig BoundaryEvent extends Event {
+    attachedTo : one (Task + SubProcess)
+}
+abstract sig InterruptingBoundaryEvent extends BoundaryEvent {}
+abstract sig NonInterruptingBoundaryEvent extends BoundaryEvent {}
+abstract sig InterruptingMessageBoundaryEvent extends InterruptingBoundaryEvent {}
+abstract sig NonInterruptingMessageBoundaryEvent extends NonInterruptingBoundaryEvent {}
 abstract sig TimerBoundaryEvent extends BoundaryEvent {
-    mode       : TimeMode,
-    repetition : Int,
-    duration   : Int,
-    date       : Int,
+    mode       : one TimeMode
 }
 
 /**************** Edges ****************/
@@ -95,7 +106,7 @@ abstract sig DefaultSequentialFlow extends SequentialFlow {}
 abstract sig ConditionalSequentialFlow extends SequentialFlow {}
 
 abstract sig MessageFlow extends Edge {
-     message: Message
+     message: one Message
 }
 
 // process of this node

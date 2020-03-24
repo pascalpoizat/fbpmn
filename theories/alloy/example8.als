@@ -7,15 +7,13 @@ CorrectTermination with 9 State (to give enough time for the globalclock to reac
 module example8
 
 open PWSSyntax
-open PWSProp
+open PWSWellformed
 
 one sig se extends NoneStartEvent {}
 
+one sig tidate extends Date {} { date = 4 }
 one sig ti extends TimerIntermediateEvent {} {
-    mode = Date
-    repetition = 0
-    duration = 0
-    date = 4
+    mode = tidate
 }
 
 

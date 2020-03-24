@@ -5,7 +5,7 @@ A process:
 module example1
 
 open PWSSyntax
-open PWSProp
+open PWSWellformed
 
 one sig at extends AbstractTask {}
 one sig se extends NoneStartEvent {}
