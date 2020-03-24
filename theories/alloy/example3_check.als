@@ -10,4 +10,4 @@ check {CorrectTermination} for 0 but 20 State
 
 run {Safe} for 0 but 11 State
 
-check WellFormed
+check WellFormed for 1

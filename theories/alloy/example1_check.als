@@ -10,5 +10,5 @@ check {CorrectTermination} for 0 but 5 State
 
 run {Safe} for 0 but 10 State
 
-check WellFormed
+check WellFormed for 1
 

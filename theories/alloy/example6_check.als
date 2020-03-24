@@ -11,4 +11,4 @@ check {EmptyNetTermination} for 0 but 30 State
 
 run {Safe} for 0 but 6 Int, 20 State
 
-check WellFormed
+check WellFormed for 1

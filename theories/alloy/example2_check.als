@@ -12,4 +12,4 @@ run {Safe} for 0 but 15 State
 
 run {} for 0 but 11 State
 
-check WellFormed
+check WellFormed for 1

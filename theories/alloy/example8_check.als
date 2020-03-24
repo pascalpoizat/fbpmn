@@ -10,6 +10,6 @@ check {CorrectTermination} for 0 but 9 State
 
 run {Safe} for 0 but 8 State
 
-check WellFormed
+check WellFormed for 1
 
 
