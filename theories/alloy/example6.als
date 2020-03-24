@@ -19,7 +19,7 @@ but :
 module example6
 
 open PWSSyntax
-open PWSProp
+open PWSWellformed
 
 one sig hello extends Message {}
 
@@ -31,11 +31,9 @@ one sig se2 extends NoneStartEvent {}
 one sig eb2 extends EventBased {}
 one sig rt2a extends ReceiveTask {}
 one sig ee2a extends NoneEndEvent {}
+one sig tice2bdate extends Date {} { date = 4 }
 one sig tice2b extends TimerIntermediateEvent {} {
-    mode = Date
-    date = 4
-    duration = 0
-    repetition = 0
+    mode = tice2bdate
 }
 one sig ee2b extends NoneEndEvent {}
 

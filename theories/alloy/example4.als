@@ -8,7 +8,7 @@ CorrectTermination with 9 states
 module example4
 
 open PWSSyntax
-open PWSProp
+open PWSWellformed
 
 one sig hello extends Message {}
 

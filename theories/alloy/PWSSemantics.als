@@ -17,7 +17,7 @@ sig State {
 
 /* Time is left unchanged except for node n. */
 pred deltaT[s, s' : State, n : TimerIntermediateEvent + TimerStartEvent + TimerBoundaryEvent] {
-    all nn : Node - n | s'.localclock[nn] = s.localclock[nn] 
+    all nn : Node - n | s'.localclock[nn] = s.localclock[nn]
     s'.globalclock = s.globalclock
 }
 
@@ -175,7 +175,7 @@ pred State.cancompleteSubProcess[n : Node] {
     this.nodemarks[n] > 0
     all e : Edge { (e.source in n.contains && e.target in n.contains) implies this.edgemarks[e] = 0 }
     some nee : n.contains & EndEvent | this.nodemarks[nee] > 0
-    all nn : n.contains | this.nodemarks[nn] > 0 implies nn in EndEvent    
+    all nn : n.contains | this.nodemarks[nn] > 0 implies nn in EndEvent
 }
 
 pred completeSubProcess[s, s' : State, n : SubProcess] {
@@ -275,7 +275,7 @@ pred completeNoneStartEvent[s, s' : State, n: NoneStartEvent] {
     s'.nodemarks[n] = s.nodemarks[n].dec
     all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
     let p = n.~contains {
-        {   
+        {
             p in Process
             s'.nodemarks[p] = s.nodemarks[p].inc
             delta[s, s', n + p, n.outtype[SequentialFlow]]
@@ -284,7 +284,7 @@ pred completeNoneStartEvent[s, s' : State, n: NoneStartEvent] {
             delta[s, s', n, n.outtype[SequentialFlow]]
         }
         deltaT[s, s', none]
-    } 
+    }
 }
 
 /* Timer Start Event */
@@ -304,7 +304,7 @@ pred completeTimerStartEvent[s, s' : State, n: TimerStartEvent] {
         s'.nodemarks[p] = s.nodemarks[p].inc
         delta[s, s', n + p, n.outtype[SequentialFlow]]
         deltaT[s, s', none] // localclock is unused
-    } 
+    }
 }
 
 /* Message Start Event */
@@ -488,19 +488,19 @@ pred completeTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
 /************ Time ***************/
 
 pred State.canfire[n : TimerIntermediateEvent] {
-    { n.mode = Date && n.date = this.globalclock } 
+    { n.mode in Date && (n.mode <: Date).date = this.globalclock }
     or
-    { n.mode = Duration && this.localclock[n] = n.duration }
+    { n.mode in Duration && this.localclock[n] = (n.mode <: Duration).duration }
 }
 
 pred State.canfire[n : TimerStartEvent] {
-    n.mode = Date && n.date = this.globalclock
+    n.mode = Date && (n.mode <: Date).date = this.globalclock
 }
 
 pred State.canfire[n : TimerBoundaryEvent] {
-    { n.mode = Date && n.date = this.globalclock } 
+    { n.mode in Date && (n.mode <: Date).date = this.globalclock }
     or
-    { n.mode = Duration && this.localclock[n] = n.duration }
+    { n.mode in Duration && this.localclock[n] = (n.mode <: Duration).duration }
 }
 
 
