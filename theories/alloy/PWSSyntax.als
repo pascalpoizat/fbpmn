@@ -67,7 +67,7 @@ abstract sig StartEvent extends Event {}
 abstract sig NoneStartEvent extends StartEvent {}
 abstract sig MessageStartEvent extends StartEvent {}
 abstract sig TimerStartEvent extends StartEvent {
-    mode       : one TimeMode
+    mode       : one Date
 }
 
 /** End Events */
@@ -81,7 +81,7 @@ abstract sig IntermediateEvent extends Event {}
 abstract sig ThrowMessageIntermediateEvent extends IntermediateEvent {}
 abstract sig CatchMessageIntermediateEvent extends IntermediateEvent {}
 abstract sig TimerIntermediateEvent extends IntermediateEvent {
-    mode       : one TimeMode,
+    mode       : one (Date + Duration),
 }
 
 /** Boundary Events */

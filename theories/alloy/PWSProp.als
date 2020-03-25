@@ -9,7 +9,8 @@ pred SimpleTermination {
     all p : Process | some s: State, n : EndEvent | n in p.contains && s.nodemarks[n] >= 1
 }
 
-/* Note the inversion all proc / some state : there is a state where all processes have correctly terminated. */
+/* There is a state where all processes have correctly terminated
+   (Note the inversion all proc / some state w.r.t. SimpleTermination) */
 pred CorrectTermination {
     some s : State | all p : Process | some n: EndEvent {
        n in p.contains && s.nodemarks[n] >= 1
@@ -30,6 +31,7 @@ pred EmptyNetTermination {
     }
 }
 
+/* No marking is above 1. */
 pred Safe {
     all s: State, n : Node | s.nodemarks[n] <= 1
     all s: State, e : Edge | s.edgemarks[e] <= 1

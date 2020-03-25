@@ -22,7 +22,7 @@ pred deltaT[s, s' : State, n : TimerIntermediateEvent + TimerStartEvent + TimerB
 }
 
 /* all marks except those for n and e are left unchanged.
- * Doesn't care of network or time. */
+ * Doesn't care about network or time. */
 pred deltaN[s, s': State, n : Node, e: Edge] {
     all othernode : Node - n | s'.nodemarks[othernode] = s.nodemarks[othernode]
     all otheredge : Edge - e | s'.edgemarks[otheredge] = s.edgemarks[otheredge]
@@ -30,7 +30,7 @@ pred deltaN[s, s': State, n : Node, e: Edge] {
 
 /* All marks except those for n and e are left unchanged.
  * Network is left unchanged.
- * doesn't core of time */
+ * doesn't care about time. */
 pred delta[s, s': State, n : Node, e: Edge] {
     deltaN[s, s', n, e ]
     s'.network = s.network
@@ -457,8 +457,13 @@ pred startCatchMessageIntermediateEvent[s, s' : State, n : CatchMessageIntermedi
 
 pred State.canstartTimerIntermediateEvent[n : Node] {
     n in TimerIntermediateEvent
-    some ei : n.intype[SequentialFlow] | this.edgemarks[ei] > 0
+    (n <: TimerIntermediateEvent).mode in Duration
     this.localclock[n] = 0
+    (some ei : n.intype[SequentialFlow] | this.edgemarks[ei] > 0)
+    or (some e : n.intype[SequentialFlow] {
+               e.source in EventBased
+               some e' : e.source.intype[SequentialFlow] | this.edgemarks[e'] > 0
+          })
 }
 
 pred startTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
@@ -481,7 +486,8 @@ pred completeTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
         s'.edgemarks[ei] = s.edgemarks[ei].dec
         all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
         delta[s, s', none, ei + n.outtype[SequentialFlow]]
-        deltaT[s, s', none]
+        n.mode = Duration implies { s'.localclock[n] = 0 && deltaT[s, s', n] }
+        else deltaT[s, s', none]
     }
 }
 
@@ -545,13 +551,13 @@ pred startMessageBoundaryEvent[s, s' : State, n : MessageBoundaryEvent ] {
 /************ Time ***************/
 
 pred State.canfire[n : TimerIntermediateEvent] {
-    { n.mode in Date && (n.mode <: Date).date = this.globalclock }
+    { n.mode in Date && (n.mode <: Date).date >= this.globalclock }
     or
-    { n.mode in Duration && this.localclock[n] = (n.mode <: Duration).duration }
+    { n.mode in Duration && this.localclock[n] >= (n.mode <: Duration).duration }
 }
 
 pred State.canfire[n : TimerStartEvent] {
-    n.mode = Date && (n.mode <: Date).date = this.globalclock
+    n.mode = Date && n.mode.date = this.globalclock
 }
 
 pred State.canfire[n : TimerBoundaryEvent] {
@@ -642,7 +648,7 @@ pred advancetime[s, s': State] {
  * if the transition is possible, time cannot advances => the transition does necessarily occur.
  */
 fact traces {
-	all s: State - last {
+    all s: State - last {
         { s.deadlock && delta[s, s.next, none, none] && advancetime[s, s.next] }
         or
         { some n : Node - Process | step[s, s.next, n] }
