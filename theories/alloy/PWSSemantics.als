@@ -489,31 +489,30 @@ pred completeTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
 
 /* Message Boundary Event */
 
-pred State.canstartMessageBoundaryEvent[n : (InterruptingMessageBoundaryEvent + NonInterruptingMessageBoundaryEvent)] {
+pred State.canstartMessageBoundaryEvent[n : Node] {
+    n in MessageBoundaryEvent
     this.nodemarks[n.attachedTo] > 0
     some ei : n.intype[MessageFlow] {
         this.edgemarks[ei] > 0
         canreceive[this, ei.message, ei.source.processOf, ei.target.processOf]    
     }
-    (n in InterruptingMessageBoundaryEvent && n.attachedTo in SubProcess) => ! this.subprocessMayComplete[n.attachedTo]
+    (n.interrupting.isTrue && n.attachedTo in SubProcess) => ! this.subprocessMayComplete[n.attachedTo]
 }
 
-pred startMessageBoundaryEvent_Basic[s, s' : State, n : (InterruptingMessageBoundaryEvent + NonInterruptingMessageBoundaryEvent), interrupted: lone Task] {
-    let act = n.attachedTo {
-        s.nodemarks[act] > 0
-        one ei : n.intype[MessageFlow] {
-            s.edgemarks[ei] > 0
-            receive[s, s', ei.message, ei.source.processOf, ei.target.processOf]
-            s'.edgemarks[ei] = s.edgemarks[ei].dec            
-            all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
-            s'.nodemarks[interrupted] = 0
-            deltaN[s, s', interrupted, ei + n.outtype[SequentialFlow]]
-            deltaT[s, s', none]
-        }
+pred startMessageBoundaryEvent_Basic[s, s' : State, n : MessageBoundaryEvent, interrupted: lone Task] {
+    s.nodemarks[n.attachedTo] > 0
+    one ei : n.intype[MessageFlow] {
+        s.edgemarks[ei] > 0
+        receive[s, s', ei.message, ei.source.processOf, ei.target.processOf]
+        s'.edgemarks[ei] = s.edgemarks[ei].dec            
+        all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
+        s'.nodemarks[interrupted] = 0
+        deltaN[s, s', interrupted, ei + n.outtype[SequentialFlow]]
+        deltaT[s, s', none]
     }
 }
 
-pred startMessageBoundaryEvent_InterruptingProcess[s, s' : State, n : InterruptingMessageBoundaryEvent] {
+pred startMessageBoundaryEvent_InterruptingProcess[s, s' : State, n : MessageBoundaryEvent] {
     let act = n.attachedTo <: SubProcess {
         s.nodemarks[act] > 0
         !s.subprocessMayComplete[act]
@@ -535,11 +534,11 @@ pred startMessageBoundaryEvent_InterruptingProcess[s, s' : State, n : Interrupti
     }
 }
 
-pred startMessageBoundaryEvent[s, s' : State, n : (InterruptingMessageBoundaryEvent + NonInterruptingMessageBoundaryEvent)] {
-    n.attachedTo in Task && n in InterruptingMessageBoundaryEvent implies startMessageBoundaryEvent_Basic[s, s', n, n.attachedTo]
-    else n.attachedTo in Task && n in NonInterruptingMessageBoundaryEvent implies startMessageBoundaryEvent_Basic[s, s', n, none]
-    else n.attachedTo in SubProcess && n in InterruptingMessageBoundaryEvent implies startMessageBoundaryEvent_InterruptingProcess[s, s', n]
-    else n.attachedTo in SubProcess && n in NonInterruptingMessageBoundaryEvent implies startMessageBoundaryEvent_Basic[s, s', n, none]
+pred startMessageBoundaryEvent[s, s' : State, n : MessageBoundaryEvent ] {
+    n.attachedTo in Task && n.interrupting.isTrue implies startMessageBoundaryEvent_Basic[s, s', n, n.attachedTo]
+    else n.attachedTo in Task && n.interrupting.isFalse implies startMessageBoundaryEvent_Basic[s, s', n, none]
+    else n.attachedTo in SubProcess && n.interrupting.isTrue implies startMessageBoundaryEvent_InterruptingProcess[s, s', n]
+    else n.attachedTo in SubProcess && n.interrupting.isFalse implies startMessageBoundaryEvent_Basic[s, s', n, none]
 }
 
 
@@ -620,7 +619,7 @@ pred step[s, s' : State, n: Node] {
     else n in CatchMessageIntermediateEvent implies startCatchMessageIntermediateEvent[s, s', n]
     else n in TimerIntermediateEvent implies { startTimerIntermediateEvent[s, s', n] or completeTimerIntermediateEvent[s, s', n] }
     else n in SubProcess implies { startSubProcess[s, s', n] or completeSubProcess[s, s', n]}
-    else n in (InterruptingMessageBoundaryEvent + NonInterruptingMessageBoundaryEvent) implies startMessageBoundaryEvent[s, s', n]
+    else n in MessageBoundaryEvent implies startMessageBoundaryEvent[s, s', n]
 }
 
 fact init { initialState }

@@ -20,4 +20,4 @@ Extended core:
  - RT   : done
  - CMIE : done
  - TMIE : done
- - MBE  : coded, not tested
+ - MBE  : coded, AT ok, SP not tested

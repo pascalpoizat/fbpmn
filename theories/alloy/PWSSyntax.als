@@ -1,5 +1,7 @@
 module PWSSyntax
 
+open util/boolean
+
 /**** Message Names ****/
 abstract sig Message {}
 
@@ -84,12 +86,11 @@ abstract sig TimerIntermediateEvent extends IntermediateEvent {
 
 /** Boundary Events */
 abstract sig BoundaryEvent extends Event {
-    attachedTo : one (Task + SubProcess)
+    attachedTo : one (Task + SubProcess),
+    interrupting : one Bool
 }
-abstract sig InterruptingBoundaryEvent extends BoundaryEvent {}
-abstract sig NonInterruptingBoundaryEvent extends BoundaryEvent {}
-abstract sig InterruptingMessageBoundaryEvent extends InterruptingBoundaryEvent {}
-abstract sig NonInterruptingMessageBoundaryEvent extends NonInterruptingBoundaryEvent {}
+
+abstract sig MessageBoundaryEvent extends BoundaryEvent {}
 abstract sig TimerBoundaryEvent extends BoundaryEvent {
     mode       : one TimeMode
 }
