@@ -5,6 +5,7 @@ open PWSWellformed
 
 check {Safe} for 0 but 7 Int, 10 State expect 0
 
+/* CorrectTermination with 9 State (to give enough time for the globalclock to reach 4) */
 check {SimpleTermination} for 0 but 9 State expect 0
 check {CorrectTermination} for 0 but 9 State expect 0
 

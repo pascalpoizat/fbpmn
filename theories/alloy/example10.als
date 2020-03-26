@@ -2,8 +2,6 @@
 Two processes:
 NSE -> AT(MBE -> NEE) -> NEE
 NSE -> TIME -> NEE
-
-? CorrectTermination with ? states
 */
 module example10
 

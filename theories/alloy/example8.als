@@ -1,8 +1,6 @@
 /*
 A process:
 NSE -> TICE -> NEE
-
-CorrectTermination with 9 State (to give enough time for the globalclock to reach 4)
 */
 module example8
 

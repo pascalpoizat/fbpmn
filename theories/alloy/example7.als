@@ -2,8 +2,6 @@
 Two processes:
 NSE -> TMIE -> NEE
 NSE -> CMIE -> NEE
-
-CorrectTermination with 7 states
 */
 module example7
 

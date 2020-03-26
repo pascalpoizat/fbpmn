@@ -3,19 +3,6 @@ Two processes:
 NSE -> ST -> NEE
 NSE -> EB -> RT -> NEE
         | -> TICE -> NEE
-        
-CorrectTermination with 10 states
-
-EmptyNetTermination should be invalid (by taking the TICE branch)
-but :
-  - it is indeed invalid with the non deterministic time.
-  - it is (wrongly) valid with the explicit time, because
-    time advances only when no step can be done.
-    Here RT is enabled (because ST was enabled and thus was done) :
-    the lower branch is never taken. Time increases only
-    when deadlocked, everything is finished, and
-    time can become > 4 only at that point.
-I can imagine a solution (without fairness).
 */
 module example6
 

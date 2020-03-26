@@ -7,28 +7,24 @@ abstract sig Message {}
 
 /**** Time ****/
 
-abstract sig TimeMode {}
-/* TSE, TICE, TBE have a mode, an optional duration, an optional date, and/or a repetition factor.
- * The meaning of each field depends on the mode.
- * Unused fields are expected to be 0. */
-abstract sig Date extends TimeMode {
+/* Timer nodes have a constraint that can be a date, a duration, or a
+   duration with a repetition factor. In this last case, it can also have a
+   starting date xor an ending date.
+   TSE can only have a Date, TICE can have Date or Duration, TBE any one.
+*/
+abstract sig Date {
     date : one Int
 }
-abstract sig Duration extends TimeMode {
+abstract sig Duration {
     duration : one Int
 }
-abstract sig CycleDuration extends TimeMode {
+abstract sig CycleDuration extends Duration {
     repetition : one Int,
-    duration   : one Int
 }
-abstract sig CycleDurationStart extends TimeMode {
-    repetition : one Int,
-    duration   : one Int,
+abstract sig CycleDurationStart extends CycleDuration {
     startdate  : one Int
 }
-abstract sig CycleDurationEnd extends TimeMode {
-    repetition : one Int,
-    duration   : one Int,
+abstract sig CycleDurationEnd extends CycleDuration {
     enddate    : one Int
 }
 
@@ -92,7 +88,7 @@ abstract sig BoundaryEvent extends Event {
 
 abstract sig MessageBoundaryEvent extends BoundaryEvent {}
 abstract sig TimerBoundaryEvent extends BoundaryEvent {
-    mode       : one TimeMode
+    mode       : one (Date + Duration)
 }
 
 /**************** Edges ****************/

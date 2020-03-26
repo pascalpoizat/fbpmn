@@ -2,10 +2,6 @@
 A process:
 NSE -> (PAR or XOR) -> (NEE or TEE)
              |_> AT loop
-
-With XOR and NEE/TEE: No SimpleTermination, as it can get stuck in the lower branch.
-With PAR and TEE: No SimpleTermination: there is no fairness that forces the transition -> NEE, the token stays on the edge PAR->NEE.
-With PAR and NEE: as above.
 */
 module example3
 
