@@ -730,8 +730,8 @@ pred advancetime[s, s': State] {
 /* As we are doing bounded model-checking, we must ensure that enough steps are done.
  * Formally, with infinite executions, weak-fairness is sufficient.
  * With bounded model-checking, if advancetime is always possible, we could just take it and waste any number of steps.
- * My solution is (currently) to advance time only when nothing else is possible.
- * However one must take care of ticking timer: time may also advance if one exists.
+ * Our solution is to advance time only when nothing else is possible.
+ * However one must take care of ticking timers: time may also advance if one exists.
  */
 fact traces {
     all s: State - last {

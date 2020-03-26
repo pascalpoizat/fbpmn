@@ -1,7 +1,7 @@
 /*
 NSE -> AT(TBE -> NEE) -> NEE
 */
-module example10
+module example11
 
 open PWSSyntax
 open PWSSemantics

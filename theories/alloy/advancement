@@ -26,4 +26,4 @@ Extended core:
  - RT   : done
  - CMIE : done
  - TMIE : done
- - MBE  : coded, AT ok, SP not tested
+ - MBE  : done interrupting and non-interrupting

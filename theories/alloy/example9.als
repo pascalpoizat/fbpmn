@@ -3,7 +3,7 @@ Two processes:
 NSE -> AT -> MEE
 MSE -> AT -> NEE
 */
-module example5
+module example9
 
 open PWSSyntax
 
