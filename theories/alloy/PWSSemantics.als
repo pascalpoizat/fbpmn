@@ -531,7 +531,7 @@ pred startMessageBoundaryEvent_InterruptingProcess[s, s' : State, n : MessageBou
                 s'.nodemarks[act] = 0
                 all inc : includednodes | s'.nodemarks[inc] = 0
                 let inedges = { e : Edge | e.source in includednodes && e.target in includednodes } {
-                    all ei : inedges | s'.edgemarks[ei] = 0
+                    all ee : inedges | s'.edgemarks[ee] = 0
                     deltaN[s, s', act + includednodes, ei + n.outtype[SequentialFlow] + inedges]
                     deltaT[s, s', none]
                 }
@@ -547,21 +547,88 @@ pred startMessageBoundaryEvent[s, s' : State, n : MessageBoundaryEvent ] {
     else n.attachedTo in SubProcess && n.interrupting.isFalse implies startMessageBoundaryEvent_Basic[s, s', n, none]
 }
 
+/* Timer Boundary Event */
+
+/* special case of TBENIcycle with start date */
+pred State.canstartTimerBoundaryEvent[n : Node] {
+    n in TimerBoundaryEvent
+    let nn = n <: TimerBoundaryEvent {
+        nn.mode in CycleDurationStart
+        // nn.interrupting.isFalse should be a fact
+        this.globalclock >= (nn.mode <: CycleDurationStart).startdate
+        this.localclock[nn] = 0
+        // s.record[nn] = (nn.mode <: CycleDurationStart).repetition
+    }
+}
+
+pred startTimerBoundaryEvent[s, s' : State, n : TimerBoundaryEvent ] {
+    s.canfire[n]
+    s'.localclock[n] = 1
+    // s'.record[n] = s.record[n].dec
+    delta[s, s', none, none]
+    deltaT[s, s', n]
+}
+
+/* TODO: repetition */
+
+pred State.cancompleteTimerBoundaryEvent[n : Node] {
+    n in TimerBoundaryEvent
+    this.nodemarks[n.attachedTo] > 0
+    this.canfire[n <: TimerBoundaryEvent]
+    (n.interrupting.isTrue && n.attachedTo in SubProcess) => ! this.subprocessMayComplete[n.attachedTo]
+}
+
+pred completeTimerBoundaryEvent_Basic[s, s' : State, n : TimerBoundaryEvent, interrupted: lone Task] {
+    s.nodemarks[n.attachedTo] > 0
+    s.canfire[n]
+    all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
+    s'.nodemarks[interrupted] = 0
+    s'.localclock[n] = 0  // actually only if Duration
+    deltaN[s, s', interrupted, n.outtype[SequentialFlow]]
+    deltaT[s, s', n]
+}
+
+pred completeTimerBoundaryEvent_InterruptingProcess[s, s' : State, n : TimerBoundaryEvent] {
+    let act = n.attachedTo <: SubProcess {
+        s.nodemarks[act] > 0
+        !s.subprocessMayComplete[act]
+        s.canfire[n]
+        s'.localclock[n] = 0  // actually only if Duration
+        all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
+        let includednodes = act.^contains {  // interrupt the subprocess
+            s'.nodemarks[act] = 0
+            all inc : includednodes | s'.nodemarks[inc] = 0
+            let inedges = { e : Edge | e.source in includednodes && e.target in includednodes } {
+                all ee : inedges | s'.edgemarks[ee] = 0
+                deltaN[s, s', act + includednodes, n.outtype[SequentialFlow] + inedges]
+                deltaT[s, s', none]
+            }
+        }
+    }
+}
+
+pred completeTimerBoundaryEvent[s, s' : State, n : TimerBoundaryEvent ] {
+    n.attachedTo in Task && n.interrupting.isTrue implies completeTimerBoundaryEvent_Basic[s, s', n, n.attachedTo]
+    else n.attachedTo in Task && n.interrupting.isFalse implies completeTimerBoundaryEvent_Basic[s, s', n, none]
+    else n.attachedTo in SubProcess && n.interrupting.isTrue implies completeTimerBoundaryEvent_InterruptingProcess[s, s', n]
+    else n.attachedTo in SubProcess && n.interrupting.isFalse implies completeTimerBoundaryEvent_Basic[s, s', n, none]
+}
+
 
 /************ Time ***************/
 
 pred State.canfire[n : TimerIntermediateEvent] {
-    { n.mode in Date && (n.mode <: Date).date >= this.globalclock }
+    { n.mode in Date && this.globalclock >= (n.mode <: Date).date }
     or
     { n.mode in Duration && this.localclock[n] >= (n.mode <: Duration).duration }
 }
 
 pred State.canfire[n : TimerStartEvent] {
-    n.mode = Date && n.mode.date = this.globalclock
+    n.mode = Date && this.globalclock >= n.mode.date 
 }
 
 pred State.canfire[n : TimerBoundaryEvent] {
-    { n.mode in Date && (n.mode <: Date).date = this.globalclock }
+    { n.mode in Date && this.globalclock >= (n.mode <: Date).date }
     or
     { n.mode in Duration && this.localclock[n] = (n.mode <: Duration).duration }
 }
@@ -605,6 +672,8 @@ pred State.deadlock {
         or this.canstartSubProcess[n]
         or this.cancompleteSubProcess[n]
         or this.canstartMessageBoundaryEvent[n]
+        or this.canstartTimerBoundaryEvent[n]
+        or this.cancompleteTimerBoundaryEvent[n]
     }
 }
 
@@ -626,6 +695,7 @@ pred step[s, s' : State, n: Node] {
     else n in TimerIntermediateEvent implies { startTimerIntermediateEvent[s, s', n] or completeTimerIntermediateEvent[s, s', n] }
     else n in SubProcess implies { startSubProcess[s, s', n] or completeSubProcess[s, s', n]}
     else n in MessageBoundaryEvent implies startMessageBoundaryEvent[s, s', n]
+    else n in TimerBoundaryEvent implies { startTimerIntermediateEvent[s, s', n] or completeTimerBoundaryEvent[s, s', n] }
 }
 
 fact init { initialState }

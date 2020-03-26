@@ -17,6 +17,7 @@ but :
     time can become > 4 only at that point.
 I cannot imagine a solution (without fairness).
 */
+
 check {Safe} for 0 but 10 State expect 0
 
 check {SimpleTermination} for 0 but 10 State expect 0
@@ -24,6 +25,10 @@ check {CorrectTermination} for 0 but 10 State expect 0
 
 // should be consistent but is not
 run {! EmptyNetTermination} for 0 but 20 State expect 1
+
+/* As EmptyNet : ee2b should be reachable, but is not for the same reason. */
+/* This should be consistent, and it is not. */
+run { some s: State | s.nodemarks[ee2b] = 1 } for 0 but 7 State expect 1
 
 run {Safe} for 0 but 6 Int, 20 State expect 0
 

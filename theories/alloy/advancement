@@ -9,7 +9,10 @@ minimal core:
 - PAR   done
 - EBG   done
 - TSE   done
-- TBE
+- TBE   TBEID done, not tested
+        TBEND done (without repetition), not tested
+        TBEIP done, not tested
+        TBENP done (without repetition), not tested
 - TICE  done
 
 Extended core:
