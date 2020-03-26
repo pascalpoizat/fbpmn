@@ -1,3 +1,6 @@
+"done" means coded and sufficiently tested to be confident.
+"coded" means coded in Alloy but not enough tested (or not at all).
+
 minimal core:
 - P     done
 - SP    done
@@ -9,10 +12,10 @@ minimal core:
 - PAR   done
 - EBG   done
 - TSE   done
-- TBE   TBEID done, not tested
-        TBEND done (without repetition), not tested
-        TBEIP done, not tested
-        TBENP done (without repetition), not tested
+- TBE   TBEID done
+        TBEIP done
+        TBEND coded (without repetition), not tested
+        TBENP coded (without repetition), not tested
 - TICE  done
 
 Extended core:

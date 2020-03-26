@@ -647,6 +647,22 @@ pred initialState {
     first.localclock = (TimerStartEvent + TimerIntermediateEvent + TimerBoundaryEvent) -> 0
 }
 
+// Is a timer ticking? I.E. waiting for time to advance and not ready to fire.
+pred State.someTimerIsActive {
+    // easy case: a local clock is counting
+    { some n : TimerStartEvent | this.localclock[n] > 0 && not this.canfire[n] }
+    or { some n : TimerIntermediateEvent | this.localclock[n] > 0 && not this.canfire[n] }
+    or { some n : TimerBoundaryEvent | this.localclock[n] > 0 && not this.canfire[n] }
+    or // a TSE is waiting to fire
+    { some n : TimerStartEvent | n.mode in Date && this.nodemarks[n] = 1 && not this.canfire[n] }
+    or // a TICE is waiting to fire
+    { some n : TimerIntermediateEvent | n.mode in Date && not this.canfire[n] && some e : n.intype[SequentialFlow] | this.edgemarks[e] > 0 }
+    or // a TICE follows an EB which is waiting to fire
+    { some n : TimerIntermediateEvent | n.mode in Date && not this.canfire[n] && some e : n.intype[SequentialFlow] | { e.source in EventBased && some ee : e.source.intype[SequentialFlow] | this.edgemarks[ee] > 0 } }
+    or // a TBE attached to an active node
+    { some n : TimerBoundaryEvent | n.mode in Date && not this.canfire[n] && this.nodemarks[n.attachedTo] > 0 }
+}
+
 pred State.deadlock {
     no n : Node {
         this.canstartAbstractTask[n]
@@ -713,13 +729,13 @@ pred advancetime[s, s': State] {
 
 /* As we are doing bounded model-checking, we must ensure that enough steps are done.
  * Formally, with infinite executions, weak-fairness is sufficient.
- * With bounded model-checking, we could just make a few advancetime and not terminate with the given number of steps.
- * Unfortunately, it breaks any example where there is a timeout for a potentially slow transition (see exemple6) :
- * if the transition is possible, time cannot advances => the transition does necessarily occur.
+ * With bounded model-checking, if advancetime is always possible, we could just take it and waste any number of steps.
+ * My solution is (currently) to advance time only when nothing else is possible.
+ * However one must take care of ticking timer: time may also advance if one exists.
  */
 fact traces {
     all s: State - last {
-        { s.deadlock && delta[s, s.next, none, none] && advancetime[s, s.next] }
+        { (s.deadlock or s.someTimerIsActive) && delta[s, s.next, none, none] && advancetime[s, s.next] }
         or
         { some n : Node - Process | step[s, s.next, n] }
     }
