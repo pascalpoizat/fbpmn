@@ -22,10 +22,10 @@ run1 :
 # explicitely list the validated tests
 
 NONREGRESSIONTESTS=example1 example2 example3 \
-	example-STRT example-TCMIE example-MSE-MEE example-MSE-ST \
-	example-TICE example-EB \
-	example-MBE-AT example-MBEI-SP example-MBENI-SP \
-	example-TBE-AT
+	example_STRT example_TCMIE example_MSE_MEE example_MSE_ST \
+	example_TICE example_EB \
+	example_MBE_AT example_MBEI_SP example_MBENI_SP \
+	example_TBE_AT
 
 
 nonregression-build :

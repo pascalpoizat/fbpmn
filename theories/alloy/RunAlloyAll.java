@@ -35,22 +35,24 @@ public final class RunAlloyAll {
 
             for (Command command : world.getAllCommands()) {
                 // Execute the command
-                System.out.println("  command " + command + ":");
+                System.out.println("  command " + command + " (line "+command.pos.y+"):");
                 System.out.print("  ");
                 A4Solution ans = TranslateAlloyToKodkod.execute_command(null, world.getAllReachableSigs(), command, options);
                 if (command.check) { // check predicate
-                    if (ans.satisfiable()) {
-                        System.out.println("Counterexample found. Assertion is invalid.");
-                    } else {
-                        System.out.println("No counterexample found. Assertion may be valid.");
-                    }
+                    if (ans.satisfiable())
+                        System.out.print("Counterexample found. Assertion is invalid");
+                    else
+                        System.out.print("No counterexample found. Assertion may be valid");
                 } else { // run predicate
-                    if (ans.satisfiable()) {
-                        System.out.println("Instance found. Predicate is consistent.");
-                    } else {
-                        System.out.println("No instance found. Predicate may be inconsistent..");
-                    }
+                    if (ans.satisfiable())
+                        System.out.print("Instance found. Predicate is consistent");
+                    else
+                        System.out.print("No instance found. Predicate may be inconsistent");
                 }
+                if (ans.satisfiable() == (command.expects == 1))
+                  System.out.println(", as expected.");
+                else
+                  System.out.println(", contrary to expectations.");
             }
         }
     }
