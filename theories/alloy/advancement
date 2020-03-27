@@ -14,8 +14,8 @@ minimal core:
 - TSE   done
 - TBE   TBEID done
         TBEIP done
-        TBEND coded (without repetition), not tested
-        TBENP coded (without repetition), not tested
+        TBEND done (without repetition)
+        TBENP done (without repetition)
 - TICE  done
 
 Extended core:

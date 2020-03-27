@@ -25,7 +25,7 @@ NONREGRESSIONTESTS=example1 example2 example3 \
 	example_STRT example_TCMIE example_MSE_MEE example_MSE_ST \
 	example_TICE example_EB \
 	example_MBE_AT example_MBEI_SP example_MBENI_SP \
-	example_TBE_AT
+	example_TBEI_AT example_TBENI_AT example_TBEI_SP example_TBENI_SP
 
 
 nonregression-build :
@@ -34,3 +34,6 @@ nonregression-build :
 nonregression-check :
 	java -cp .:org.alloytools.alloy.dist.jar RunAlloyAll $(addsuffix _check.als,$(NONREGRESSIONTESTS)) >/tmp/nonregression.out
 	diff -u2 /tmp/nonregression.out nonregression.out
+
+consistent-names :
+	./check-consistent-names

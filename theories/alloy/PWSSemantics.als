@@ -60,7 +60,10 @@ pred startAbstractTask[s, s': State, n: AbstractTask] {
         s'.edgemarks[e] = s.edgemarks[e].dec
         s'.nodemarks[n] = s.nodemarks[n].inc
         delta[s, s', n, e]
-        deltaT[s, s', none]
+        let te = { t : n.~attachedTo & TimerBoundaryEvent | t.mode in Duration - CycleDurationStart } {
+            all t : te | s'.localclock[t] = 1
+            deltaT[s, s', te]
+        }
     }
 }
 
@@ -74,7 +77,10 @@ pred completeAbstractTask[s, s' : State, n : AbstractTask] {
     s'.nodemarks[n] = s.nodemarks[n].dec
     all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
     delta[s, s', n, n.outtype[SequentialFlow]]
-    deltaT[s, s', none]
+    let te = { t : n.~attachedTo & TimerBoundaryEvent | t.mode in Duration } {
+        all t : te | s'.localclock[t] = 0
+        deltaT[s, s', te]
+    }
 }
 
 /**** Send Task ****/
@@ -165,7 +171,10 @@ pred startSubProcess[s, s' : State, n : SubProcess] {
             all nn : se | s'.nodemarks[nn] = s.nodemarks[nn].inc
             s'.nodemarks[n] = s.nodemarks[n].inc
             delta[s, s', n + se, e]
-            deltaT[s, s', none]
+            let te = { t : n.~attachedTo & TimerBoundaryEvent | t.mode in Duration - CycleDurationStart } {
+                all t : te | s'.localclock[t] = 1
+                deltaT[s, s', te]
+            }
         }
     }
 }
@@ -187,8 +196,10 @@ pred completeSubProcess[s, s' : State, n : SubProcess] {
     all nee : n.contains & EndEvent | s'.nodemarks[nee] = 0
     all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
     delta[s, s', n + (n.contains & EndEvent), n.outtype[SequentialFlow]]
-    deltaT[s, s', none]
-    // TODO
+    let te = { t : n.~attachedTo & TimerBoundaryEvent | t.mode in Duration } {
+        all t : te | s'.localclock[t] = 0
+        deltaT[s, s', te]
+    }
 }
 
 
@@ -561,6 +572,7 @@ pred State.canstartTimerBoundaryEvent[n : Node] {
     }
 }
 
+/* special case of TBENIcycle with start date */
 pred startTimerBoundaryEvent[s, s' : State, n : TimerBoundaryEvent ] {
     s.canfire[n]
     s'.localclock[n] = 1
@@ -618,7 +630,7 @@ pred completeTimerBoundaryEvent[s, s' : State, n : TimerBoundaryEvent ] {
 /************ Time ***************/
 
 pred State.canfire[n : TimerIntermediateEvent] {
-    { n.mode in Date && this.globalclock >= (n.mode <: Date).date }
+    { n.mode in Date && this.globalclock = (n.mode <: Date).date }
     or
     { n.mode in Duration && this.localclock[n] >= (n.mode <: Duration).duration }
 }
@@ -628,7 +640,7 @@ pred State.canfire[n : TimerStartEvent] {
 }
 
 pred State.canfire[n : TimerBoundaryEvent] {
-    { n.mode in Date && this.globalclock >= (n.mode <: Date).date }
+    { n.mode in Date && this.globalclock = (n.mode <: Date).date }
     or
     { n.mode in Duration && this.localclock[n] = (n.mode <: Duration).duration }
 }

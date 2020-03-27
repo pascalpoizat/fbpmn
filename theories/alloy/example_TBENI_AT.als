@@ -1,7 +1,8 @@
 /*
 NSE -> AT(TBE -> NEE) -> NEE
+TBE is non-interrupting
 */
-module example_TBE_AT
+module example_TBENI_AT
 
 open PWSSyntax
 open PWSSemantics
@@ -10,13 +11,13 @@ one sig hello extends Message {}
 
 one sig se1 extends NoneStartEvent {}
 one sig at1 extends AbstractTask {}
-one sig tbe1date extends Date {} {
-    date = 4
+one sig tbe1time extends Duration {} {
+    duration = 4
 }
 one sig tbe1 extends TimerBoundaryEvent {} {
     attachedTo = at1
-    interrupting = True
-    mode = tbe1date
+    interrupting = False
+    mode = tbe1time
 }
 one sig ee1a extends NoneEndEvent {}
 one sig ee1b extends NoneEndEvent {}

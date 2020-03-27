@@ -9,12 +9,11 @@ open PWSSyntax
 
 one sig se extends NoneStartEvent {}
 
-//one sig tidate extends Date {} { date = 4 }
-one sig tidate extends Duration {} { duration = 4 }
+//one sig titime extends Date {} { date = 4 }
+one sig titime extends Duration {} { duration = 4 }
 one sig ti extends TimerIntermediateEvent {} {
-    mode = tidate
+    mode = titime
 }
-
 
 one sig ee extends NoneEndEvent {}
 
