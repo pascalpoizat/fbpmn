@@ -755,7 +755,7 @@ fact traces {
 
 /**************************************************/
 
-/* TODO: replace the set of Message with a bag of Message. */
+/* Enhancement: replace the set of Message with a bag of Message. */
 
 fun networkinit : set (Message -> Process -> Process) { none -> none -> none  }
 
