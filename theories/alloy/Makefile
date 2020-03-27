@@ -20,7 +20,13 @@ run1 :
 	java -cp .:org.alloytools.alloy.dist.jar RunAlloy example1_check.als 'check$$1'
 
 # explicitely list the validated tests
-NONREGRESSIONTESTS=example1 example2 example3 example4 example5 example6 example7 example8 example9 example10 example11
+
+NONREGRESSIONTESTS=example1 example2 example3 \
+	example-STRT example-TCMIE example-MSE-MEE example-MSE-ST \
+	example-TICE example-EB \
+	example-MBE-AT example-MBEI-SP example-MBENI-SP \
+	example-TBE-AT
+
 
 nonregression-build :
 	java -cp .:org.alloytools.alloy.dist.jar RunAlloyAll $(addsuffix _check.als,$(NONREGRESSIONTESTS)) >nonregression.out
