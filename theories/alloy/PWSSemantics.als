@@ -512,7 +512,7 @@ pred startMessageBoundaryEvent_Basic[s, s' : State, n : MessageBoundaryEvent, in
         receive[s, s', ei.message, ei.source.processOf, ei.target.processOf]
         s'.edgemarks[ei] = s.edgemarks[ei].dec            
         all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
-        s'.nodemarks[interrupted] = 0
+        (interrupted = none) or (s'.nodemarks[interrupted] = 0)
         deltaN[s, s', interrupted, ei + n.outtype[SequentialFlow]]
         deltaT[s, s', none]
     }
@@ -582,7 +582,7 @@ pred completeTimerBoundaryEvent_Basic[s, s' : State, n : TimerBoundaryEvent, int
     s.nodemarks[n.attachedTo] > 0
     s.canfire[n]
     all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
-    s'.nodemarks[interrupted] = 0
+    (interrupted = none) or (s'.nodemarks[interrupted] = 0)
     s'.localclock[n] = 0  // actually only if Duration
     deltaN[s, s', interrupted, n.outtype[SequentialFlow]]
     deltaT[s, s', n]
