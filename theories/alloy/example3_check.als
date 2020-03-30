@@ -16,4 +16,5 @@ check {CorrectTermination} for 0 but 20 State expect 1
 
 run {Safe} for 0 but 11 State expect 1
 
-check WellFormed for 1 expect 0
+// Do not verify NoLoopingEdge!
+check WellFormed for 1 expect 1
