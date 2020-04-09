@@ -17,16 +17,19 @@ import           Data.Attoparsec.Text           ( Parser
                                                 , string
                                                 , option
                                                 , maybeResult
-                                                , eitherResult
-                                                , endOfInput
                                                 )
 
 -- Time-related elements
 --
--- TimeDate format = yyyy-mm-ddThh:mm:ssZ (MUST BE UTC)
---  all parts must be given (even if 0)
--- TimeDuration format = PyYmmMdDThHmMsS
---  y and mm must be O or not given
+-- TimeDate
+--  format: yyyy-mm-ddThh:mm:ssZ
+--  constraints:
+--    - all parts must be given (can be 0)
+-- TimeDuration
+--  format: PyYmmMdDThHmMsS
+--  constraints:
+--    - y and mm must be O or not given,
+--    - sS must be given (can be 0)
 -- TimeCycle format = several choices (6):
 -- - R(n)?/duration
 -- - R(n)?/timedate/duration
@@ -38,9 +41,46 @@ import           Data.Attoparsec.Text           ( Parser
 -- [X] TICE + timedate
 -- [X] TICE + duration
 -- [X] TBE interrupting + timedate
+-- [X] TBE non interrupting + timedate
 -- [X] TBE interrupting + duration
--- [ ] TBE non interrupting + cycle (6 formats for the cycle)
+-- [X] TBE non interrupting + duration
+-- [ ] TBE non interrupting + cycle duration
+-- [ ] TBE non interrupting + infinite cycle duration
+-- [ ] TBE non interrupting + cycle start/duration
+-- [ ] TBE non interrupting + infinite cycle start/duration
+-- [ ] TBE non interrupting + cycle duration/end
+-- [ ] TBE non interrupting + infinite cycle duration/end
 --
+
+{-|
+Helper for acting based on node types
+-}
+infixr 0 |>
+(|>) :: Bool -> a -> Maybe a
+True  |> x = Just x
+False |> _ = Nothing
+
+{-|
+Helpers for node types
+-}
+nTSE :: NodeType
+nTSE = TimerStartEvent
+nTICE :: NodeType
+nTICE = TimerIntermediateEvent
+nTBE :: NodeType
+nTBE = TimerBoundaryEvent
+nMBE :: NodeType
+nMBE = MessageBoundaryEvent
+nP :: NodeType
+nP = Process
+nSP :: NodeType
+nSP = SubProcess
+
+{-|
+Subtypes for cycles
+-}
+data TimeCycleSubtype = CycleStart | CycleEnd | CycleDuration
+  deriving (Show)
 
 {-|
 Write a BPMN Graph to an Alloy file.
@@ -142,33 +182,42 @@ messageToAlloy m = [text|one sig $mname extends Message {}|]
   where mname = toText m
 
 nodeToAlloy :: BpmnGraph -> Node -> Text
-nodeToAlloy g n = [text|one sig $nname extends $ntype {} {$values}|]
+nodeToAlloy g n = [text|
+  $tinfo
+  one sig $nname extends $ntype {} {$values}
+  |]
  where
-  nname  = toText n
-  ntype  = maybe "" nodeTypeToAlloy (catN g !? n)
-  values = unlines . catMaybes $ [containsToAlloy g, timeInfoToAlloy g] <*> [n]
+  nname = toText n
+  ntype = maybe "" nodeTypeToAlloy (catN g !? n)
+  values =
+    unlines
+      .   catMaybes
+      $   [containsToAlloy g, teInfoToAlloy g, beInfoToAlloy g]
+      <*> [n]
+  tinfo = fromMaybe "" $ timeInfoToAlloy g n
+
+teInfoToAlloy :: BpmnGraph -> Node -> Maybe Text
+teInfoToAlloy g n =
+  (n `elem` nodesTs g [nTSE, nTICE, nTBE]) |> [text|mode = $tmode|]
+  where tmode = toText n <> "time"
 
 containsToAlloy :: BpmnGraph -> Node -> Maybe Text
-containsToAlloy g n = if n `elem` nodesTs g [SubProcess, Process]
-  then Just [text|
-    contains = $nces|]
-  else Nothing
+containsToAlloy g n =
+  (n `elem` nodesTs g [nSP, nP]) |> [text|contains = $nces|]
   where nces = toText $ intercalate " + " $ concat (containN g !? n)
+
+beInfoToAlloy :: BpmnGraph -> Node -> Maybe Text
+beInfoToAlloy g n = join $ (n `elem` nodesTs g [nMBE, nTBE]) |> do
+  ncontainer    <- toText <$> attached g !? n
+  ninterrupting <- boolToAlloy <$> isInterrupt g !? n
+  Just [text|attachedTo = $ncontainer
+            interrupting = $ninterrupting|]
 
 timeInfoToAlloy :: BpmnGraph -> Node -> Maybe Text
 timeInfoToAlloy g n =
-  if n `elem` nodesTs
-       g
-       [TimerStartEvent, TimerIntermediateEvent, TimerBoundaryEvent]
-    then case timerEventDefinitionToAlloy =<< timeInformation g !? n of
-      Just (mode, repetition, duration, date) -> Just [text|
-        mode = $mode
-        repetition = $repetition
-        duration = $duration
-        date = $date
-        |]
-      Nothing -> Nothing
-    else Nothing
+  join
+    $  (n `elem` nodesTs g [nTSE, nTICE, nTBE])
+    |> (timeInformation g !? n >>= timerEventDefinitionToAlloy n)
 
 -- evolutions:
 -- - add timezones
@@ -176,49 +225,71 @@ timeInfoToAlloy g n =
 --    note: this will require supporting negative numbers
 -- - signal errors at parsing or transforming
 --
-timerEventDefinitionToAlloy :: TimerEventDefinition
-                            -> Maybe (Text, Text, Text, Text)
-timerEventDefinitionToAlloy (TimerEventDefinition (Just tdt) (Just tdv)) =
-  case tdt of
-    --
-    -- datetime
-    --
-    TimeDate ->
-      let parsed = parse parseDateTime $ toText tdv
-      in
-        case maybeResult parsed of
-          Just res -> Just ("Date", undefAlloy, undefAlloy, show $ dateToAlloy res)
-          Nothing -> Just ("ERROR", msg, undefAlloy, undefAlloy)
-            where
-                msg = case eitherResult parsed of
-                  Right _ -> ""
-                  Left m -> toText m
-    --
-    -- duration
-    --
-    TimeDuration ->
-      let parsed = parse parseDuration $ toText tdv
-      in
-        case maybeResult parsed of
-          Just res -> if ctMonths res == 0
-            then Just
-              ("Duration", undefAlloy, show $ durationToAlloy res, undefAlloy)
-            else Nothing
-          Nothing -> Just ("ERROR", undefAlloy, msg, undefAlloy)
-            where
-              msg = case eitherResult parsed of
-                Right _ -> ""
-                Left m -> toText m
-    --
-    -- cycle
-    --
-    TimeCycle ->
-      let parsed1 = parse parseCycleStart $ toText tdv
-          parsed2 = parse parseCycleEnd $ toText tdv
-          parsed3 = parse parseCycleDuration $ toText tdv
-      in  case
-              (maybeResult parsed1, maybeResult parsed2, maybeResult parsed3)
-            of
+timerEventDefinitionToAlloy :: Node -> TimerEventDefinition -> Maybe Text
+timerEventDefinitionToAlloy n (TimerEventDefinition (Just tdt) (Just tdv)) =
+  timerEventDefinitionToAlloy' tdt (toText tdv) (toText n)
+timerEventDefinitionToAlloy _ (TimerEventDefinition _ _) = Nothing
+
+timerEventDefinitionToAlloy' :: TimerDefinitionType
+                             -> Text
+                             -> Text
+                             -> Maybe Text
+timerEventDefinitionToAlloy' TimeDate val n = do
+  let parsed = parse parseDateTime val
+  res <- maybeResult parsed
+  let vval = dateToAlloy res
+  let ni   = n <> "time"
+  Just [text|one sig $ni extends Date {} {
+    date = $vval
+  }|]
+timerEventDefinitionToAlloy' TimeDuration val n = do
+  let parsed = parse parseDuration val
+  res <- maybeResult parsed
+  let vval = durationToAlloy res
+  let ni   = n <> "time"
+  Just [text|one sig $ni extends Duration {} {
+    duration = $vval
+  }|]
+timerEventDefinitionToAlloy' TimeCycle val n = do
+  let parsed =
+        [flip parse val]
+          <*> [parseCycleStart, parseCycleEnd, parseCycleDuration]
+  ti@(dtype, _, _, _) <- msum $ maybeResult <$> parsed
+  ncontents           <- timerEventDefinitionToAlloy'' ti
+  let ntype = show dtype
+  let ni    = n <> "time"
+  Just [text|one sig $ni extends $ntype {} {
+    $ncontents
+  }|]
+
+timerEventDefinitionToAlloy'' :: ( TimeCycleSubtype
+                                 , Maybe Integer
+                                 , CalendarDiffTime
+                                 , Maybe UTCTime
+                                 )
+                              -> Maybe Text
+timerEventDefinitionToAlloy'' (CycleStart, nb, dur, dat) = do
+  nbase <- timerEventDefinitionToAlloy'' (CycleDuration, nb, dur, dat)
+  ndat  <- dateToAlloy <$> dat
+  Just [text|$nbase
+    startdate = $ndat|]
+timerEventDefinitionToAlloy'' (CycleEnd, nb, dur, dat) = do
+  nbase <- timerEventDefinitionToAlloy'' (CycleDuration, nb, dur, dat)
+  ndat  <- dateToAlloy <$> dat
+  Just [text|$nbase
+    enddate = $ndat|]
+timerEventDefinitionToAlloy'' (CycleDuration, nb, dur, _) = do
+  nnb <- show <$> nb
+  let vval = durationToAlloy dur
+  Just [text|repetition = $nnb
+      duration = $vval|]
+
+{-   let parsed1 = parse parseCycleStart val
+      parsed2 = parse parseCycleEnd val
+      parsed3 = parse parseCycleDuration val
+      results = 
+    case (maybeResult parsed1, maybeResult parsed2, maybeResult parsed3)
+      of
               (Just (nb, date, dur), _, _) -> Just
                 ( "CycleDurationStart"
                 , show $ fromMaybe 0 nb
@@ -248,8 +319,7 @@ timerEventDefinitionToAlloy (TimerEventDefinition (Just tdt) (Just tdv)) =
                 msg3 = case eitherResult parsed3 of
                   Right _ -> ""
                   Left  m -> toText m
-timerEventDefinitionToAlloy _ = Nothing
-
+ -}
 iso8601DateTimeParser :: String -> Maybe UTCTime
 iso8601DateTimeParser = formatParseM iso8601Format
 
@@ -292,7 +362,12 @@ parseValSepOpt :: Text -> Parser Integer
 parseValSepOpt sep = option 0 (parseValSep sep)
 
 -- R(n)/DateTime/Duration
-parseCycleStart :: Parser (Maybe Integer, UTCTime, CalendarDiffTime)
+parseCycleStart :: Parser
+                     ( TimeCycleSubtype
+                     , Maybe Integer
+                     , CalendarDiffTime
+                     , Maybe UTCTime
+                     )
 parseCycleStart = do
   _   <- parseTerminal "R"
   n   <- optionMaybe parseInteger
@@ -300,10 +375,15 @@ parseCycleStart = do
   dt  <- parseDateTime
   _   <- parseTerminal "/"
   dur <- parseDuration
-  return (n, dt, dur)
+  return (CycleStart, n, dur, Just dt)
 
 -- R(n)/Duration/DateTime
-parseCycleEnd :: Parser (Maybe Integer, CalendarDiffTime, UTCTime)
+parseCycleEnd :: Parser
+                   ( TimeCycleSubtype
+                   , Maybe Integer
+                   , CalendarDiffTime
+                   , Maybe UTCTime
+                   )
 parseCycleEnd = do
   _   <- parseTerminal "R"
   n   <- optionMaybe parseInteger
@@ -311,16 +391,21 @@ parseCycleEnd = do
   dur <- parseDuration
   _   <- parseTerminal "/"
   dt  <- parseDateTime
-  return (n, dur, dt)
+  return (CycleEnd, n, dur, Just dt)
 
 -- R(n)/Duration
-parseCycleDuration :: Parser (Maybe Integer, CalendarDiffTime)
+parseCycleDuration :: Parser
+                        ( TimeCycleSubtype
+                        , Maybe Integer
+                        , CalendarDiffTime
+                        , Maybe UTCTime
+                        )
 parseCycleDuration = do
   _ <- parseTerminal "R"
   n <- optionMaybe parseInteger
   _ <- parseTerminal "/"
   c <- parseDuration
-  return (n, c)
+  return (CycleDuration, n, c, Nothing)
 
 -- YYYY-MM-DDTHH:MM:SSZ
 parseDateTime :: Parser (UTCTime)
@@ -348,7 +433,7 @@ parseDuration = do
   _          <- parseValSepOpt "Y"
   m          <- parseValSepOpt "M"
   d          <- parseValSepOpt "D"
-  (h, mn, s) <- option (0,0,0) parseHMS
+  (h, mn, s) <- option (0, 0, 0) parseHMS
   return (CalendarDiffTime m $ computeDiff d h mn s)
 
 -- ThHmMsS
@@ -368,6 +453,10 @@ computeDiff d h m s = secondsToNominalDiffTime picos
 
 undefAlloy :: Text
 undefAlloy = "0"
+
+boolToAlloy :: Bool -> Text
+boolToAlloy True  = "True"
+boolToAlloy False = "False"
 
 edgeToAlloy :: BpmnGraph -> Edge -> Text
 edgeToAlloy g e = [text|one sig $ename extends $etype {} {$values}|]
@@ -396,8 +485,11 @@ messageInformationToAlloy g e = case messageE g !? e of
   Just m  -> Just [text|message = $sm|] where sm = toText m
   Nothing -> Nothing
 
-dateToAlloy :: UTCTime -> Natural
-dateToAlloy = truncate . nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds
+dateToAlloy :: UTCTime -> Text
+dateToAlloy = timeToAlloy utcTimeToPOSIXSeconds
 
-durationToAlloy :: CalendarDiffTime -> Natural
-durationToAlloy = truncate . nominalDiffTimeToSeconds . ctTime
+durationToAlloy :: CalendarDiffTime -> Text
+durationToAlloy = timeToAlloy ctTime
+
+timeToAlloy :: (a -> NominalDiffTime) -> a -> Text
+timeToAlloy f = show . truncate . nominalDiffTimeToSeconds . f

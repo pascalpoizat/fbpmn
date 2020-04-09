@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1lt4fsc" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.1">
+  <bpmn:collaboration id="eXXX_TICEDate">
+    <bpmn:participant id="P" name="P" processRef="Pid" />
+  </bpmn:collaboration>
+  <bpmn:process id="Pid" name="P" isExecutable="true">
+    <bpmn:startEvent id="se">
+      <bpmn:outgoing>SequenceFlow_04jhviy</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="ee">
+      <bpmn:incoming>SequenceFlow_0b689qw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_04jhviy" sourceRef="se" targetRef="ti" />
+    <bpmn:sequenceFlow id="SequenceFlow_0b689qw" sourceRef="ti" targetRef="ee" />
+    <bpmn:intermediateCatchEvent id="ti" name="1970-01-01 T 01:01:01Z">
+      <bpmn:incoming>SequenceFlow_04jhviy</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0b689qw</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">1970-01-01T01:01:01Z</bpmn:timeDate>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="eXXX_TICEDate">
+      <bpmndi:BPMNShape id="Participant_0ivd07o_di" bpmnElement="P" isHorizontal="true">
+        <dc:Bounds x="129" y="52" width="600" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="se">
+        <dc:Bounds x="179" y="159" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0zyrkqy_di" bpmnElement="ee">
+        <dc:Bounds x="381" y="159" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_04jhviy_di" bpmnElement="SequenceFlow_04jhviy">
+        <di:waypoint x="215" y="177" />
+        <di:waypoint x="267" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0b689qw_di" bpmnElement="SequenceFlow_0b689qw">
+        <di:waypoint x="303" y="177" />
+        <di:waypoint x="381" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0xutkcu_di" bpmnElement="ti">
+        <dc:Bounds x="267" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="252" y="202" width="67" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
