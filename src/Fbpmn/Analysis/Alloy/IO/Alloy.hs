@@ -2,7 +2,6 @@
 module Fbpmn.Analysis.Alloy.IO.Alloy where
 
 import           Fbpmn.BpmnGraph.Model
-import           Fbpmn.Analysis.Alloy.Model
 import           NeatInterpolation              ( text )
 import           Data.Map.Strict                ( (!?) )
 import           Data.Time.Format.ISO8601
@@ -52,17 +51,43 @@ import           Data.Attoparsec.Text           ( Parser
 -- [ ] TBE non interrupting + infinite cycle duration/end
 --
 
-{-|
-Helper for acting based on node types
--}
-infixr 0 |>
-(|>) :: Bool -> a -> Maybe a
-True  |> x = Just x
-False |> _ = Nothing
+--
+-- Generic (may possibly be moved to a transformation library)
+--
 
-{-|
-Helpers for node types
--}
+-- predicate (check if something is true for a in context c)
+type Pred c a = c -> a -> Bool
+
+-- type predicate (check if a is of a type in [t] in context c)
+type TypePred c a t = [t] -> Pred c a
+
+-- selector (get all a that are of a type in [t] in context c)
+type Selector c a t = c -> [t] -> [a]
+
+-- transformers (transform a a into a text in context c, may fail)
+type Transformer c a = c -> a -> Maybe Text
+
+-- transformer application (over an a)
+apply :: Transformer c a -> c -> a -> Maybe Text
+apply = ($)
+
+-- transformer application (over a list of as)
+applyN :: Transformer c a -> c -> [a] -> Maybe Text
+applyN f c as = Just . unlines . catMaybes $ f c <$> as
+
+-- constrain a transformer with a predicate
+infixr 0 =>>
+(=>>) :: Pred c a -> Transformer c a -> Transformer c a
+s =>> t = \c a -> if s c a then t c a else Nothing
+
+-- predicate wrt being of a type defined in the context
+ofType :: (Eq a) => Selector c a t -> TypePred c a t
+ofType sel ts c a = a `elem` sel c ts
+
+--
+-- BPMN Graph specific (may possibly be moved to the BPMNGraph library)
+--
+
 nTSE :: NodeType
 nTSE = TimerStartEvent
 nTICE :: NodeType
@@ -76,11 +101,55 @@ nP = Process
 nSP :: NodeType
 nSP = SubProcess
 
-{-|
-Subtypes for cycles
--}
+-- graph predicate
+type GraphPred a = Pred BpmnGraph a
+
+-- node predicate
+type NodePredicate = GraphPred Node
+
+-- edge predicate
+type EdgePredicate = GraphPred Edge
+
+-- node type predicate
+type NodeTypePred = TypePred BpmnGraph Node NodeType
+
+-- edge type predicate
+type EdgeTypePred = TypePred BpmnGraph Edge EdgeType
+
+-- graph transformers
+type GraphTransformer a = Transformer BpmnGraph a
+
+inNodeTypes :: NodeTypePred
+inNodeTypes = ofType nodesTs
+
+inEdgeTypes :: EdgeTypePred
+inEdgeTypes = ofType edgesTs
+
+isTimed :: NodePredicate
+isTimed = inNodeTypes [nTSE, nTICE, nTBE]
+
+isContainer :: NodePredicate
+isContainer = inNodeTypes [nSP, nP]
+
+isBoundaryEvent :: NodePredicate
+isBoundaryEvent = inNodeTypes [nMBE, nTBE]
+
+--
+-- Alloy specific
+--
+
+-- sybtypes for cycles
 data TimeCycleSubtype = CycleStart | CycleEnd | CycleDuration
   deriving (Show)
+
+-- undefined value
+genUndef :: Text
+genUndef = "0"
+
+-- boolean values
+genBool :: GraphTransformer Bool
+genBool _ True  = Just "True"
+genBool _ False = Just "False"
 
 {-|
 Write a BPMN Graph to an Alloy file.
@@ -94,23 +163,13 @@ Transform a BPMN Graph to an Alloy specification.
 encodeBpmnGraphToAlloy :: BpmnGraph -> Text
 encodeBpmnGraphToAlloy g =
   unlines
-    $   [ encodeBpmnGraphHeaderToAlloy
-        , encodeMessages
-        , encodeNodes
-        , encodeEdges
-        -- , encodeBpmnGraphFooterToAlloy vs
-        ]
+    .   catMaybes
+    $   [genHeader, genMessages, genNodes, genEdges]
     <*> [g]
---  where
---   vs =
---     [ AlloyVerification Check Safety             15
---     , AlloyVerification Check SimpleTermination  9
---     , AlloyVerification Check CorrectTermination 9
---     , AlloyVerification Run   Safety             11
---     ]
+    <*> [()]
 
-encodeBpmnGraphHeaderToAlloy :: BpmnGraph -> Text
-encodeBpmnGraphHeaderToAlloy g = [text|
+genHeader :: GraphTransformer ()
+genHeader g _ = Just [text|
   module $mname
 
   open PWSSyntax
@@ -119,29 +178,14 @@ encodeBpmnGraphHeaderToAlloy g = [text|
   |]
   where mname = name g
 
-encodeBpmnGraphFooterToAlloy :: [AlloyVerification] -> BpmnGraph -> Text
-encodeBpmnGraphFooterToAlloy vs _ = unlines $ verificationToAlloy <$> vs
+genMessages :: GraphTransformer ()
+genMessages g _ = applyN genMessage g $ messages g
 
-verificationToAlloy :: AlloyVerification -> Text
-verificationToAlloy v = [text|$tact {$tprop} for 0 but $tnb State|]
- where
-  tact = case action v of
-    Run   -> "run"
-    Check -> "check"
-  tprop = case property v of
-    Safety             -> "Safe"
-    SimpleTermination  -> "SimpleTermination"
-    CorrectTermination -> "CorrectTermination"
-  tnb = show $ nb v
+genNodes :: GraphTransformer ()
+genNodes g _ = applyN genNode g $ nodes g
 
-encodeMessages :: BpmnGraph -> Text
-encodeMessages g = unlines $ messageToAlloy <$> messages g
-
-encodeNodes :: BpmnGraph -> Text
-encodeNodes g = unlines $ nodeToAlloy g <$> nodes g
-
-encodeEdges :: BpmnGraph -> Text
-encodeEdges g = unlines $ edgeToAlloy g <$> edges g
+genEdges :: GraphTransformer ()
+genEdges g _ = applyN genEdge g $ edges g
 
 nodeTypeToAlloy :: NodeType -> Text
 nodeTypeToAlloy AbstractTask                  = "AbstractTask"
@@ -177,47 +221,59 @@ edgeTypeToAlloy ConditionalSequenceFlow = "ConditionalSequentialFlow"
 edgeTypeToAlloy DefaultSequenceFlow     = "DefaultSequentialFlow"
 edgeTypeToAlloy MessageFlow             = "MessageFlow"
 
-messageToAlloy :: Message -> Text
-messageToAlloy m = [text|one sig $mname extends Message {}|]
+genMessage :: GraphTransformer Message
+genMessage _ m = Just [text|one sig $mname extends Message {}|]
   where mname = toText m
 
-nodeToAlloy :: BpmnGraph -> Node -> Text
-nodeToAlloy g n = [text|
+genNode :: GraphTransformer Node
+genNode g n = Just [text|
   $tinfo
   one sig $nname extends $ntype {} {$values}
   |]
  where
+  tinfo = fromMaybe "" $ apply genTimeDefinition g n
   nname = toText n
   ntype = maybe "" nodeTypeToAlloy (catN g !? n)
   values =
     unlines
       .   catMaybes
-      $   [containsToAlloy g, teInfoToAlloy g, beInfoToAlloy g]
+      $   [genContainment, genBoundaryInformation, genTimeReference]
+      <*> [g]
       <*> [n]
-  tinfo = fromMaybe "" $ timeInfoToAlloy g n
 
-teInfoToAlloy :: BpmnGraph -> Node -> Maybe Text
-teInfoToAlloy g n =
-  (n `elem` nodesTs g [nTSE, nTICE, nTBE]) |> [text|mode = $tmode|]
-  where tmode = toText n <> "time"
+genEdge :: GraphTransformer Edge
+genEdge g e = Just [text|one sig $ename extends $etype {} {$values}|]
+ where
+  ename = toText e
+  etype = maybe "" edgeTypeToAlloy (catE g !? e)
+  values =
+    unlines . catMaybes $ [flowToAlloy g, messageInformationToAlloy g] <*> [e]
 
-containsToAlloy :: BpmnGraph -> Node -> Maybe Text
-containsToAlloy g n =
-  (n `elem` nodesTs g [nSP, nP]) |> [text|contains = $nces|]
-  where nces = toText $ intercalate " + " $ concat (containN g !? n)
+genContainment :: GraphTransformer Node
+genContainment = isContainer =>> f
+ where
+  f g n =
+    let nces = toText $ intercalate " + " $ concat (containN g !? n)
+    in  Just [text|contains = $nces|]
 
-beInfoToAlloy :: BpmnGraph -> Node -> Maybe Text
-beInfoToAlloy g n = join $ (n `elem` nodesTs g [nMBE, nTBE]) |> do
-  ncontainer    <- toText <$> attached g !? n
-  ninterrupting <- boolToAlloy <$> isInterrupt g !? n
-  Just [text|attachedTo = $ncontainer
-            interrupting = $ninterrupting|]
+genBoundaryInformation :: GraphTransformer Node
+genBoundaryInformation = isBoundaryEvent =>> f
+ where
+  f g n = do
+    ncontainer    <- toText <$> attached g !? n
+    interrupting  <- isInterrupt g !? n
+    ninterrupting <- apply genBool g interrupting
+    Just [text|
+      attachedTo   = $ncontainer
+      interrupting = $ninterrupting|]
 
-timeInfoToAlloy :: BpmnGraph -> Node -> Maybe Text
-timeInfoToAlloy g n =
-  join
-    $  (n `elem` nodesTs g [nTSE, nTICE, nTBE])
-    |> (timeInformation g !? n >>= timerEventDefinitionToAlloy n)
+genTimeDefinition :: BpmnGraph -> Node -> Maybe Text
+genTimeDefinition = isTimed =>> f
+  where f g n = timeInformation g !? n >>= genTimeInformation n
+
+genTimeReference :: BpmnGraph -> Node -> Maybe Text
+genTimeReference = isTimed =>> f
+  where f _ n = let tmode = toText n <> "time" in Just [text|mode = $tmode|]
 
 -- evolutions:
 -- - add timezones
@@ -225,16 +281,13 @@ timeInfoToAlloy g n =
 --    note: this will require supporting negative numbers
 -- - signal errors at parsing or transforming
 --
-timerEventDefinitionToAlloy :: Node -> TimerEventDefinition -> Maybe Text
-timerEventDefinitionToAlloy n (TimerEventDefinition (Just tdt) (Just tdv)) =
-  timerEventDefinitionToAlloy' tdt (toText tdv) (toText n)
-timerEventDefinitionToAlloy _ (TimerEventDefinition _ _) = Nothing
+genTimeInformation :: Node -> TimerEventDefinition -> Maybe Text
+genTimeInformation n (TimerEventDefinition (Just tdt) (Just tdv)) =
+  genTimeInformation' tdt (toText tdv) (toText n)
+genTimeInformation _ (TimerEventDefinition _ _) = Nothing
 
-timerEventDefinitionToAlloy' :: TimerDefinitionType
-                             -> Text
-                             -> Text
-                             -> Maybe Text
-timerEventDefinitionToAlloy' TimeDate val n = do
+genTimeInformation' :: TimerDefinitionType -> Text -> Text -> Maybe Text
+genTimeInformation' TimeDate val n = do
   let parsed = parse parseDateTime val
   res <- maybeResult parsed
   let vval = dateToAlloy res
@@ -242,7 +295,7 @@ timerEventDefinitionToAlloy' TimeDate val n = do
   Just [text|one sig $ni extends Date {} {
     date = $vval
   }|]
-timerEventDefinitionToAlloy' TimeDuration val n = do
+genTimeInformation' TimeDuration val n = do
   let parsed = parse parseDuration val
   res <- maybeResult parsed
   let vval = durationToAlloy res
@@ -250,35 +303,35 @@ timerEventDefinitionToAlloy' TimeDuration val n = do
   Just [text|one sig $ni extends Duration {} {
     duration = $vval
   }|]
-timerEventDefinitionToAlloy' TimeCycle val n = do
+genTimeInformation' TimeCycle val n = do
   let parsed =
         [flip parse val]
           <*> [parseCycleStart, parseCycleEnd, parseCycleDuration]
   ti@(dtype, _, _, _) <- msum $ maybeResult <$> parsed
-  ncontents           <- timerEventDefinitionToAlloy'' ti
+  ncontents           <- genTimeInformation'' ti
   let ntype = show dtype
   let ni    = n <> "time"
   Just [text|one sig $ni extends $ntype {} {
     $ncontents
   }|]
 
-timerEventDefinitionToAlloy'' :: ( TimeCycleSubtype
-                                 , Maybe Integer
-                                 , CalendarDiffTime
-                                 , Maybe UTCTime
-                                 )
-                              -> Maybe Text
-timerEventDefinitionToAlloy'' (CycleStart, nb, dur, dat) = do
-  nbase <- timerEventDefinitionToAlloy'' (CycleDuration, nb, dur, dat)
+genTimeInformation'' :: ( TimeCycleSubtype
+                        , Maybe Integer
+                        , CalendarDiffTime
+                        , Maybe UTCTime
+                        )
+                     -> Maybe Text
+genTimeInformation'' (CycleStart, nb, dur, dat) = do
+  nbase <- genTimeInformation'' (CycleDuration, nb, dur, dat)
   ndat  <- dateToAlloy <$> dat
   Just [text|$nbase
     startdate = $ndat|]
-timerEventDefinitionToAlloy'' (CycleEnd, nb, dur, dat) = do
-  nbase <- timerEventDefinitionToAlloy'' (CycleDuration, nb, dur, dat)
+genTimeInformation'' (CycleEnd, nb, dur, dat) = do
+  nbase <- genTimeInformation'' (CycleDuration, nb, dur, dat)
   ndat  <- dateToAlloy <$> dat
   Just [text|$nbase
     enddate = $ndat|]
-timerEventDefinitionToAlloy'' (CycleDuration, nb, dur, _) = do
+genTimeInformation'' (CycleDuration, nb, dur, _) = do
   nnb <- show <$> nb
   let vval = durationToAlloy dur
   Just [text|repetition = $nnb
@@ -450,21 +503,6 @@ computeDiff d h m s = secondsToNominalDiffTime picos
  where
   seconds = (d * 24 * 3600) + (h * 3600) + (m * 60) + s
   picos   = fromInteger seconds
-
-undefAlloy :: Text
-undefAlloy = "0"
-
-boolToAlloy :: Bool -> Text
-boolToAlloy True  = "True"
-boolToAlloy False = "False"
-
-edgeToAlloy :: BpmnGraph -> Edge -> Text
-edgeToAlloy g e = [text|one sig $ename extends $etype {} {$values}|]
- where
-  ename = toText e
-  etype = maybe "" edgeTypeToAlloy (catE g !? e)
-  values =
-    unlines . catMaybes $ [flowToAlloy g, messageInformationToAlloy g] <*> [e]
 
 flowToAlloy :: BpmnGraph -> Edge -> Maybe Text
 flowToAlloy g e = case (esource, etarget) of
