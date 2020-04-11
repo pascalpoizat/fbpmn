@@ -7,8 +7,7 @@ import qualified Data.Set                      as S
                                                 ( fromList )
 import qualified Data.Map.Strict               as M
                                                 ( empty )
-import           Data.Map.Strict                ( Map
-                                                , (!?)
+import           Data.Map.Strict                ( (!?)
                                                 , keys
                                                 , assocs
                                                 )
@@ -18,25 +17,31 @@ import           Fbpmn.Helper                   ( filter' )
 -- Node types
 --
 data NodeType = AbstractTask
-              | SendTask
-              | ReceiveTask
-              | ThrowMessageIntermediateEvent
-              | CatchMessageIntermediateEvent
-              | TimerIntermediateEvent
-              | MessageBoundaryEvent {cancelActivity :: Bool }
-              | TimerBoundaryEvent {cancelActivity :: Bool }
-              | SubProcess
+              -- start
+              | NoneStartEvent
+              -- end
+              | NoneEndEvent
+              | TerminateEndEvent
+              -- gateways
               | XorGateway
               | OrGateway
               | AndGateway
               | EventBasedGateway
-              | NoneStartEvent
-              | MessageStartEvent
-              | TimerStartEvent
-              | NoneEndEvent
-              | TerminateEndEvent
-              | MessageEndEvent
+              -- structure
+              | SubProcess
               | Process -- for top-level processes
+              -- communication
+              | MessageStartEvent
+              | SendTask
+              | ReceiveTask
+              | ThrowMessageIntermediateEvent
+              | CatchMessageIntermediateEvent
+              | MessageBoundaryEvent
+              | MessageEndEvent
+              -- time
+              | TimerStartEvent
+              | TimerIntermediateEvent
+              | TimerBoundaryEvent
   deriving (Eq, Show, Generic)
 instance ToJSON NodeType
 instance FromJSON NodeType
@@ -54,6 +59,20 @@ isInGraph :: (Ord a)
           -> a
           -> Maybe Bool
 isInGraph g f p x = p <$> f g !? x
+
+data TimerEventDefinition = TimerEventDefinition
+  {timerDefinitionType  :: Maybe TimerDefinitionType
+  ,timerDefinitionValue :: Maybe TimerValue}
+  deriving (Eq, Show, Generic)
+instance ToJSON TimerEventDefinition
+instance FromJSON TimerEventDefinition
+
+data TimerDefinitionType = TimeDate | TimeDuration | TimeCycle
+  deriving (Eq, Show, Generic)
+instance ToJSON TimerDefinitionType
+instance FromJSON TimerDefinitionType
+
+type TimerValue = String
 
 --
 -- Edge types
@@ -116,6 +135,8 @@ data BpmnGraph = BpmnGraph { name     :: Text -- name of the model
                            , attached :: Map Node Node -- gives the sub process a boundary event is attached to
                            , messages :: [Message] -- gives all messages types
                            , messageE :: Map Edge Message -- message types associated to message flows
+                           , isInterrupt :: Map Node Bool -- for boundary events, tells if interrupting (default) or not
+                           , timeInformation :: Map Node TimerEventDefinition -- for time events, give the possibly associated time information
 }
   deriving (Eq, Show, Generic)
 instance ToJSON BpmnGraph
@@ -123,34 +144,40 @@ instance FromJSON BpmnGraph
 
 instance Semigroup BpmnGraph
   where
-      (BpmnGraph n ns es cn ce se te nn rn re at m me)
-        <> (BpmnGraph n' ns' es' cn' ce' se' te' nn' rn' re' at' m' me')
-        =
-        BpmnGraph
-          (n <> n')
-          (ns <> ns')
-          (es <> es')
-          (cn <> cn')
-          (ce <> ce')
-          (se <> se')
-          (te <> te')
-          (nn <> nn')
-          (rn <> rn')
-          (re <> re')
-          (at <> at')
-          (m <> m')
-          (me <> me')
+  (BpmnGraph n ns es cn ce se te nn rn re at m me ca ti) <> (BpmnGraph n' ns' es' cn' ce' se' te' nn' rn' re' at' m' me' ca' ti')
+    = BpmnGraph (n <> n')
+                (ns <> ns')
+                (es <> es')
+                (cn <> cn')
+                (ce <> ce')
+                (se <> se')
+                (te <> te')
+                (nn <> nn')
+                (rn <> rn')
+                (re <> re')
+                (at <> at')
+                (m <> m')
+                (me <> me')
+                (ca <> ca')
+                (ti <> ti')
 
 instance Monoid BpmnGraph
   where
-    mempty =
-      BpmnGraph
-        ""
-        [] [] M.empty M.empty
-        M.empty M.empty
-        M.empty
-        M.empty M.empty M.empty
-        [] M.empty
+  mempty = BpmnGraph ""
+                     []
+                     []
+                     M.empty
+                     M.empty
+                     M.empty
+                     M.empty
+                     M.empty
+                     M.empty
+                     M.empty
+                     M.empty
+                     []
+                     M.empty
+                     M.empty
+                     M.empty
 
 mkGraph :: Text
         -> [Node]
@@ -165,8 +192,10 @@ mkGraph :: Text
         -> Map Node Node
         -> [Message]
         -> Map Edge Message
+        -> Map Node Bool
+        -> Map Node TimerEventDefinition
         -> BpmnGraph
-mkGraph n ns es catN catE sourceE targetE nameN containN containE attached messages messageE
+mkGraph n ns es catN catE sourceE targetE nameN containN containE attached messages messageE isInterrupt timeInformation
   = let graph = BpmnGraph n
                           ns
                           es
@@ -180,6 +209,8 @@ mkGraph n ns es catN catE sourceE targetE nameN containN containE attached messa
                           attached
                           messages
                           messageE
+                          isInterrupt
+                          timeInformation
     in  graph
 
 --
@@ -277,6 +308,7 @@ isValidGraph g =
                               --                             /\ messageE(e) \in messages
         , allValidSubProcess -- \forall n \in N^{SubProcess} \union N^{Process} . n \in dom(containN) \wedge n \in dom(containE)
         , allValidContainers -- \forall n \in dom(containN) \union dom(containE) . n \in N^{SubProcess} \union N^{Process}
+        , allValidBoundaryEvents -- \forall n \in N^{MBE,TBE} . n \in dom(isInterrupt)
         ]
     <*> [g]
 
@@ -300,6 +332,15 @@ allValidSubProcess :: BpmnGraph -> Bool
 allValidSubProcess g = getAll $ foldMap (All . isValidSubProcess g) ns
   where ns = nodesTs g [SubProcess, Process]
 
+isValidBoundaryEvent :: BpmnGraph -> Node -> Bool
+isValidBoundaryEvent g n = n `elem` dom_isInterrupt
+  where
+    dom_isInterrupt = keys $ isInterrupt g
+
+allValidBoundaryEvents :: BpmnGraph -> Bool
+allValidBoundaryEvents g = getAll $ foldMap (All . isValidBoundaryEvent g) ns
+  where ns = nodesTs g [MessageBoundaryEvent, TimerBoundaryEvent]
+
 isValidMessage :: BpmnGraph -> Message -> Bool
 isValidMessage _ _ = True
 
@@ -315,17 +356,21 @@ isValidMessageFlow g mf =
         pure (cats, catt, msg)
     of
       Nothing -> False
-      Just (cs, ct, m)
-        -> (  cs
-           == SendTask
-           || cs
-           == ThrowMessageIntermediateEvent
-           || cs
-           == MessageEndEvent
-           )
-          && (  ct == ReceiveTask
-             || ct == CatchMessageIntermediateEvent
-             || ct == MessageStartEvent )
+      Just (cs, ct, m) ->
+        (  cs
+          == SendTask
+          || cs
+          == ThrowMessageIntermediateEvent
+          || cs
+          == MessageEndEvent
+          )
+          && (  ct
+             == ReceiveTask
+             || ct
+             == CatchMessageIntermediateEvent
+             || ct
+             == MessageStartEvent
+             )
           && isValidMessage g m
 
 allValidMessageFlow :: BpmnGraph -> Bool

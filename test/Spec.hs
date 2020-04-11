@@ -233,6 +233,8 @@ g0a = mkGraph
   attached
   []
   (fromList [])
+  (fromList [])
+  (fromList [])
  where
   catN = fromList
     [ ("Process" , Process)
@@ -241,9 +243,7 @@ g0a = mkGraph
     , ("T1a"     , AbstractTask)
     , ("T2a"     , AbstractTask)
     , ("T1b"     , AbstractTask)
-    , ( "T2b"
-      , AbstractTask
-      )
+    , ( "T2b"    , AbstractTask)
 --    , ("JoinAnd" , AndGateway)
     , ("End", NoneEndEvent)
     ]
@@ -296,6 +296,8 @@ g0b = mkGraph
   containE
   attached
   []
+  (fromList [])
+  (fromList [])
   (fromList [])
  where
   catN = fromList
@@ -361,6 +363,8 @@ g0c = mkGraph
   attached
   []
   (fromList [])
+  (fromList [])
+  (fromList [])
  where
   catN = fromList
     [ ("Process" , Process)
@@ -424,6 +428,8 @@ g0d = mkGraph
   containE
   attached
   []
+  (fromList [])
+  (fromList [])
   (fromList [])
  where
   catN = fromList
@@ -489,6 +495,8 @@ g0e1 = mkGraph
   attached
   ["message"]
   (fromList [("m", "message")])
+  (fromList [])
+  (fromList [])
  where
   catN = fromList
     [ ("Sender"  , Process)
@@ -532,6 +540,8 @@ g0e2 = mkGraph
   attached
   ["message"]
   (fromList [("m", "message")])
+  (fromList [])
+  (fromList [])
  where
   catN = fromList
     [ ("Sender"  , Process)
@@ -604,6 +614,8 @@ g2 = mkGraph
   containE
   attached
   []
+  (fromList [])
+  (fromList [])
   (fromList [])
  where
   catN = fromList
@@ -769,6 +781,8 @@ g3 = mkGraph
   attached
   ["message"]
   (fromList [("mf1", "message")])
+  (fromList [])
+  (fromList [])
  where
   catN = fromList
     [ ("Process", Process)

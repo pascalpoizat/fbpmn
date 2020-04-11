@@ -38,12 +38,7 @@ pred delta[s, s': State, n : Node, e: Edge] {
 
 /*********************************************/
 
-pred State.subprocessMayComplete[n : SubProcess] {
-    this.nodemarks[n] >= 1
-    all e : Edge { (e.source in n.contains && e.target in n.contains) implies this.edgemarks[e] = 0 }
-    some ee : n.contains & EndEvent | this.nodemarks[ee] >= 1
-    all x : n.contains | this.nodemarks[x] = 0 or x in EndEvent
-}
+// pred State.subprocessMayComplete[n : SubProcess] { this.cancompleteSubProcess[n] }
 
 /**************** Activities ****************/
 
@@ -184,14 +179,11 @@ pred State.cancompleteSubProcess[n : Node] {
     this.nodemarks[n] > 0
     all e : Edge { (e.source in n.contains && e.target in n.contains) implies this.edgemarks[e] = 0 }
     some nee : n.contains & EndEvent | this.nodemarks[nee] > 0
-    all nn : n.contains | this.nodemarks[nn] > 0 implies nn in EndEvent
+    all nn : n.contains | this.nodemarks[nn] = 0 or nn in EndEvent
 }
 
 pred completeSubProcess[s, s' : State, n : SubProcess] {
-    s.nodemarks[n] > 0
-    all e : Edge { (e.source in n.contains && e.target in n.contains) implies s.edgemarks[e] = 0 }
-    some nee : n.contains & EndEvent | s.nodemarks[nee] > 0
-    all nn : n.contains | s.nodemarks[nn] > 0 implies nn in EndEvent
+    s.cancompleteSubProcess[n]
     s'.nodemarks[n] = 0
     all nee : n.contains & EndEvent | s'.nodemarks[nee] = 0
     all e : n.outtype[SequentialFlow] | s'.edgemarks[e] = s.edgemarks[e].inc
@@ -513,7 +505,7 @@ pred State.canstartMessageBoundaryEvent[n : Node] {
         this.edgemarks[ei] > 0
         canreceive[this, ei.message, ei.source.processOf, ei.target.processOf]    
     }
-    (n.interrupting.isTrue && n.attachedTo in SubProcess) => ! this.subprocessMayComplete[n.attachedTo]
+    (n.interrupting.isTrue && n.attachedTo in SubProcess) => not this.cancompleteSubProcess[n.attachedTo]
 }
 
 pred startMessageBoundaryEvent_Basic[s, s' : State, n : MessageBoundaryEvent, interrupted: lone Task] {
@@ -532,7 +524,7 @@ pred startMessageBoundaryEvent_Basic[s, s' : State, n : MessageBoundaryEvent, in
 pred startMessageBoundaryEvent_InterruptingProcess[s, s' : State, n : MessageBoundaryEvent] {
     let act = n.attachedTo <: SubProcess {
         s.nodemarks[act] > 0
-        !s.subprocessMayComplete[act]
+        not s.cancompleteSubProcess[act]
         one ei : n.intype[MessageFlow] {
             s.edgemarks[ei] > 0
             receive[s, s', ei.message, ei.source.processOf, ei.target.processOf]
@@ -563,6 +555,7 @@ pred startMessageBoundaryEvent[s, s' : State, n : MessageBoundaryEvent ] {
 /* special case of TBENIcycle with start date */
 pred State.canstartTimerBoundaryEvent[n : Node] {
     n in TimerBoundaryEvent
+    this.nodemarks[n.attachedTo] > 0
     let nn = n <: TimerBoundaryEvent {
         nn.mode in CycleDurationStart
         // nn.interrupting.isFalse should be a fact
@@ -587,7 +580,7 @@ pred State.cancompleteTimerBoundaryEvent[n : Node] {
     n in TimerBoundaryEvent
     this.nodemarks[n.attachedTo] > 0
     this.canfire[n <: TimerBoundaryEvent]
-    (n.interrupting.isTrue && n.attachedTo in SubProcess) => ! this.subprocessMayComplete[n.attachedTo]
+    (n.interrupting.isTrue && n.attachedTo in SubProcess) => not this.cancompleteSubProcess[n.attachedTo]
 }
 
 pred completeTimerBoundaryEvent_Basic[s, s' : State, n : TimerBoundaryEvent, interrupted: lone Task] {
@@ -603,7 +596,7 @@ pred completeTimerBoundaryEvent_Basic[s, s' : State, n : TimerBoundaryEvent, int
 pred completeTimerBoundaryEvent_InterruptingProcess[s, s' : State, n : TimerBoundaryEvent] {
     let act = n.attachedTo <: SubProcess {
         s.nodemarks[act] > 0
-        !s.subprocessMayComplete[act]
+        not s.cancompleteSubProcess[act]
         s.canfire[n]
         s'.localclock[n] = 0  // actually only if Duration
         all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc

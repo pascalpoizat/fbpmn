@@ -1,6 +1,6 @@
-resolver: lts-12.26
+resolver: lts-15.2 # lts-12.26
 
-extra-deps: [base-noprelude-4.11.1.0
+extra-deps: [base-noprelude-4.13.0.0
             ,tasty-html-0.4.1.2]
 
 ghc-options:

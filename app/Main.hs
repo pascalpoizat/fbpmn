@@ -3,6 +3,7 @@ import           Fbpmn.BpmnGraph.Model
 import           Fbpmn.BpmnGraph.IO.Bpmn
 import qualified Fbpmn.BpmnGraph.IO.Dot        as BGD
 import qualified Fbpmn.BpmnGraph.IO.Json       as BG
+import           Fbpmn.Analysis.Alloy.IO.Alloy
 import           Fbpmn.Analysis.Tla.Model
 import           Fbpmn.Analysis.Tla.IO.Tla
 import qualified Fbpmn.Analysis.Tla.IO.Json    as TL
@@ -22,6 +23,7 @@ data RCommand = RQuit        -- quit REPL
              | RDot Text    -- save current graph as DOT
              | RJson Text   -- save current graph as JSON
              | RTla Text    -- save current graph as TLA+
+             | RAlloy Text  -- save current graph as Alloy
             -- to be deprecated: 
              -- | RList        -- list internal examples
              -- | RShow        -- show current graph
@@ -49,6 +51,9 @@ tlaSuffix = ".tla"
 logSuffix :: Text
 logSuffix = ".log"
 
+alloySuffix :: Text
+alloySuffix = ".als"
+
 htmlSuffix :: Text
 htmlSuffix = ".html"
 
@@ -57,10 +62,15 @@ newtype Options = Options Command
 data Command
   = CVersion
   | CRepl
+  -- transformations from JSON
   | CJson2Dot Text Text
   | CJson2Tla Text Text
+  | CJson2Alloy Text Text
+  -- transformations from BPMN
   | CBpmn2Json Text Text
   | CBpmn2Tla Text Text
+  | CBpmn2Alloy Text Text
+  -- transformations from TLA+ logs
   | CLog2Json Text Text
   | CLog2Dot Text Text
   | CLog2Html Text Text
@@ -80,6 +90,11 @@ parserOptions = Options <$> subparser
              (progDesc "transforms a collaboration from JSON to TLA+")
        )
   <> command
+       "json2alloy"
+       (info parserJson2Alloy
+             (progDesc "transforms a collaboration from JSON to Alloy")
+       )
+  <> command
        "bpmn2json"
        (info parserBpmn2Json
              (progDesc "transforms a collaboration from BPMN to JSON")
@@ -90,17 +105,20 @@ parserOptions = Options <$> subparser
              (progDesc "transforms a collaboration from BPMN to TLA+")
        )
   <> command
+       "bpmn2alloy"
+       (info parserBpmn2Alloy
+             (progDesc "transforms a collaboration from BPMN to Alloy")
+       )
+  <> command
        "log2json"
        (info parserLog2Json
              (progDesc "transforms a TLA+ log from LOG to JSON")
        )
   <> command
        "log2dot"
-       (info parserLog2Dot
-             (progDesc "transforms a TLA+ log from LOG to DOT")
-       )
+       (info parserLog2Dot (progDesc "transforms a TLA+ log from LOG to DOT"))
   <> command
-      "log2html"
+       "log2html"
        (info parserLog2Html
              (progDesc "transforms a TLA+ log from LOG to HTML")
        )
@@ -134,6 +152,20 @@ parserJson2Tla =
             "path to the output file in TLA+ format (without .tla suffix)"
           )
 
+parserJson2Alloy :: Parser Command
+parserJson2Alloy =
+  CJson2Alloy
+    <$> argument
+          str
+          (metavar "INPUT-PATH" <> help
+            "path to the input model in JSON format (without .json suffix)"
+          )
+    <*> argument
+          str
+          (metavar "OUTPUT-PATH" <> help
+            "path to the output file in Alloy format (without .als suffix)"
+          )
+
 parserBpmn2Json :: Parser Command
 parserBpmn2Json =
   CBpmn2Json
@@ -160,6 +192,20 @@ parserBpmn2Tla =
           str
           (metavar "OUTPUT-PATH" <> help
             "path to the output file in TLA+ format (without .tla suffix)"
+          )
+
+parserBpmn2Alloy :: Parser Command
+parserBpmn2Alloy =
+  CBpmn2Alloy
+    <$> argument
+          str
+          (metavar "INPUT-PATH" <> help
+            "path to the input model in BPMN format (without .bpmn suffix)"
+          )
+    <*> argument
+          str
+          (metavar "OUTPUT-PATH" <> help
+            "path to the output file in Alloy format (without .als suffix)"
           )
 
 parserLog2Json :: Parser Command
@@ -189,9 +235,8 @@ parserLog2Dot =
           )
     <*> argument
           str
-          (  metavar "OUTPUT-PATH"
-          <> help
-               "path to the output file in DOT format (without .dot suffix)"
+          (metavar "OUTPUT-PATH" <> help
+            "path to the output file in DOT format (without .dot suffix)"
           )
 
 parserLog2Html :: Parser Command
@@ -201,26 +246,27 @@ parserLog2Html =
           str
           (  metavar "INPUT-PATH"
           <> help
-              "path to the input TLA+ log in textual format (without .log suffix)"
+               "path to the input TLA+ log in textual format (without .log suffix)"
           )
     <*> argument
           str
-          (  metavar "OUTPUT-PATH"
-          <> help
-               "path to the output file in HTML format (without .html suffix)"
+          (metavar "OUTPUT-PATH" <> help
+            "path to the output file in HTML format (without .html suffix)"
           )
 
 -- no validation needed from BPMN since we build the graph ourselves
 run :: Options -> IO ()
-run (Options CVersion               ) = putStrLn toolversion
-run (Options CRepl                  ) = repl ("()", Nothing)
-run (Options (CJson2Dot    pin pout)) = json2dot True pin pout Nothing
-run (Options (CJson2Tla    pin pout)) = json2tla True pin pout Nothing
-run (Options (CBpmn2Json   pin pout)) = bpmn2json False pin pout Nothing
-run (Options (CBpmn2Tla    pin pout)) = bpmn2tla False pin pout Nothing
-run (Options (CLog2Json    pin pout)) = log2json False pin pout Nothing
-run (Options (CLog2Dot     pin pout)) = log2dot False pin pout Nothing
-run (Options (CLog2Html    pin pout)) = log2html False pin pout Nothing
+run (Options CVersion              ) = putStrLn $ toString toolversion
+run (Options CRepl                 ) = repl ("()", Nothing)
+run (Options (CJson2Dot   pin pout)) = json2dot True pin pout Nothing
+run (Options (CJson2Tla   pin pout)) = json2tla True pin pout Nothing
+run (Options (CJson2Alloy pin pout)) = json2alloy True pin pout Nothing
+run (Options (CBpmn2Json  pin pout)) = bpmn2json False pin pout Nothing
+run (Options (CBpmn2Tla   pin pout)) = bpmn2tla False pin pout Nothing
+run (Options (CBpmn2Alloy pin pout)) = bpmn2alloy False pin pout Nothing
+run (Options (CLog2Json   pin pout)) = log2json False pin pout Nothing
+run (Options (CLog2Dot    pin pout)) = log2dot False pin pout Nothing
+run (Options (CLog2Html   pin pout)) = log2html False pin pout Nothing
 
 transform2 :: Text                                       -- input file suffix
            -> Text                                       -- output file suffix
@@ -240,7 +286,9 @@ transform2 sourceSuffix targetSuffix mreader mwriter modelValidator modelFilter 
       Nothing    -> putLTextLn "wrong file"
       Just model -> if not withValidation || modelValidator model
         then do
-          mwriter (toString $ outputPath <> targetSuffix) minfo (modelFilter model)
+          mwriter (toString $ outputPath <> targetSuffix)
+                  minfo
+                  (modelFilter model)
           putTextLn "transformation done"
         else putTextLn "model is incorrect"
 
@@ -252,16 +300,29 @@ json2tla :: Bool -> Text -> Text -> Maybe String -> IO ()
 json2tla =
   transform2 jsonSuffix tlaSuffix BG.readFromJSON writeToTLA isValidGraph id
 
+json2alloy :: Bool -> Text -> Text -> Maybe String -> IO ()
+json2alloy =
+  transform2 jsonSuffix alloySuffix BG.readFromJSON writeToAlloy isValidGraph id
+
 bpmn2json :: Bool -> Text -> Text -> Maybe String -> IO ()
 bpmn2json =
   transform2 bpmnSuffix jsonSuffix readFromBPMN BG.writeToJSON isValidGraph id
 
 bpmn2tla :: Bool -> Text -> Text -> Maybe String -> IO ()
-bpmn2tla = transform2 bpmnSuffix tlaSuffix readFromBPMN writeToTLA isValidGraph id
+bpmn2tla =
+  transform2 bpmnSuffix tlaSuffix readFromBPMN writeToTLA isValidGraph id
+
+bpmn2alloy :: Bool -> Text -> Text -> Maybe String -> IO ()
+bpmn2alloy =
+  transform2 bpmnSuffix alloySuffix readFromBPMN writeToAlloy isValidGraph id
 
 log2json :: Bool -> Text -> Text -> Maybe String -> IO ()
-log2json =
-  transform2 logSuffix jsonSuffix readFromLOG TL.writeToJSON isValidLog filterLog
+log2json = transform2 logSuffix
+                      jsonSuffix
+                      readFromLOG
+                      TL.writeToJSON
+                      isValidLog
+                      filterLog
 
 log2dot :: Bool -> Text -> Text -> Maybe String -> IO ()
 log2dot =
@@ -286,7 +347,7 @@ TODO: use State monad.
 -}
 repl :: (Text, Maybe BpmnGraph) -> IO ()
 repl (p, g) = do
-  putStrLn $ p <> " > "
+  putStrLn . toString $ p <> " > "
   rawinput <- getLine
   rcommand <- rparse (words rawinput)
   case rcommand of
@@ -366,6 +427,13 @@ repl (p, g) = do
         repl (p, g)
       Just g' -> do
         writeToTLA (toString path) Nothing g'
+        repl (p, g)
+    Just (RAlloy path) -> case g of
+      Nothing -> do
+        putTextLn "no graph loaded"
+        repl (p, g)
+      Just g' -> do
+        writeToAlloy (toString path) Nothing g'
         repl (p, g)
     Just (RLoad path) -> do
       loadres <- BG.readFromJSON (toString path) Nothing

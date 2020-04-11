@@ -5,9 +5,10 @@ import           Fbpmn.BpmnGraph.Model
 import           Text.XML.Light                 ( Element(..)
                                                 , Content(..)
                                                 , QName(..)
+                                                , cdData
                                                 , elChildren
                                                 , findAttr
-                                                , findChildren
+                                                , findChild
                                                 , findChildren
                                                 , filterChildren
                                                 , parseXML
@@ -117,6 +118,31 @@ pIx e = case findAttr (nA "cancelActivity") e of
 -- timer events
 pTimex :: Element -> Bool
 pTimex = hasChildren (nE "timerEventDefinition")
+pTimerDefinitionType' :: Element -> Maybe TimerDefinitionType
+pTimerDefinitionType' e = case () of
+  _ | hasChildren (nE "timeDate") e     -> Just TimeDate
+    | hasChildren (nE "timeDuration") e -> Just TimeDuration
+    | hasChildren (nE "timeCycle") e    -> Just TimeCycle
+    | otherwise                         -> Nothing
+pTimerDefinitionValue' :: Element -> Maybe TimerValue
+pTimerDefinitionValue' e = do
+    contents <- elContent <$> eval
+    content1 <- listToMaybe contents
+    case content1 of
+      Text cdata -> Just $ cdData cdata
+      _ -> Nothing
+  where
+    eval = case () of
+      _ | hasChildren (nE "timeDate") e -> findChild (nE "timeDate") e
+        | hasChildren (nE "timeDuration") e -> findChild (nE "timeDuration") e
+        | hasChildren (nE "timeCycle") e -> findChild (nE "timeCycle") e
+        | otherwise -> Nothing
+pTimerDefinitionType :: Element -> Maybe TimerDefinitionType
+pTimerDefinitionType e =
+  pTimerDefinitionType' =<< findChild (nE "timerEventDefinition") e
+pTimerDefinitionValue :: Element -> Maybe TimerValue
+pTimerDefinitionValue e =
+  pTimerDefinitionValue' =<< findChild (nE "timerEventDefinition") e
 
 -- start events
 -- NSE, MSE, or TSE
@@ -126,7 +152,8 @@ pSE _ = (?=) "startEvent"
 pMSE :: [Element] -> Element -> Maybe NodeType
 pMSE es e = if pSE es e && pMx e then Just MessageStartEvent else Nothing
 pTSE :: [Element] -> Element -> Maybe NodeType
-pTSE es e = if pSE es e && pTimex e then Just TimerStartEvent else Nothing
+pTSE es e =
+  if pSE es e && pTimex e then Just TimerStartEvent else Nothing
 pNSE :: [Element] -> Element -> Maybe NodeType
 pNSE es e = if pSE es e && not (e `oneMaybeOf` [pMSE es, pTSE es])
   then Just NoneStartEvent
@@ -138,13 +165,17 @@ pNSE es e = if pSE es e && not (e `oneMaybeOf` [pMSE es, pTSE es])
 pITE :: [Element] -> Element -> Bool
 pITE _ = (?=) "intermediateThrowEvent"
 pTMIE :: [Element] -> Element -> Maybe NodeType
-pTMIE es e = if pITE es e && pMx e then Just ThrowMessageIntermediateEvent else Nothing
+pTMIE es e =
+  if pITE es e && pMx e then Just ThrowMessageIntermediateEvent else Nothing
 pICE :: [Element] -> Element -> Bool
 pICE _ = (?=) "intermediateCatchEvent"
 pCMIE :: [Element] -> Element -> Maybe NodeType
-pCMIE es e = if pICE es e && pMx e then Just CatchMessageIntermediateEvent else Nothing
+pCMIE es e =
+  if pICE es e && pMx e then Just CatchMessageIntermediateEvent else Nothing
 pCTIE :: [Element] -> Element -> Maybe NodeType
-pCTIE es e = if pICE es e && pTimex e then Just TimerIntermediateEvent else Nothing
+pCTIE es e = if pICE es e && pTimex e
+  then Just TimerIntermediateEvent
+  else Nothing
 pIE :: [Element] -> Element -> Bool
 pIE es e = e `oneMaybeOf` [pTMIE es, pCMIE es, pCTIE es]
 
@@ -168,11 +199,18 @@ pNEE es e = if pEE es e && not (e `oneMaybeOf` [pMEE es, pTEE es])
 pBE :: [Element] -> Element -> Bool
 pBE _ = (?=) "boundaryEvent"
 pMBE :: [Element] -> Element -> Maybe NodeType
-pMBE es e =
-  if pBE es e && pMx e then Just $ MessageBoundaryEvent (pIx e) else Nothing
+pMBE es e = if pBE es e && pMx e then Just MessageBoundaryEvent else Nothing
 pTBE :: [Element] -> Element -> Maybe NodeType
-pTBE es e =
-  if pBE es e && pTimex e then Just $ TimerBoundaryEvent (pIx e) else Nothing
+pTBE es e = if pBE es e && pTimex e then Just TimerBoundaryEvent else Nothing
+pCancelActivity :: Element -> Bool
+pCancelActivity e = case findAttr (nA "cancelActivity") e of
+  Just "true" -> True
+  Just "false" -> False
+  _ -> True -- boundary events are interrupting by default
+
+-- time-related events
+pTE :: [Element] -> Element -> Bool
+pTE es e = e `oneMaybeOf` [pTSE es, pCTIE es, pTBE es]
 
 -- events
 pE :: [Element] -> Element -> Bool
@@ -290,7 +328,7 @@ decode cs = do
   -- message flows and messages
   cMessageFlows    <- pure $ findChildren (nE "messageFlow") c
   cMessageFlowIds  <- sequence $ getId <$> cMessageFlows
-  cMessageTypes    <- sequence $ nameOrElseId <$> cMessageFlows
+  cMessageTypes    <- sequence . hashNub $ nameOrElseId <$> cMessageFlows
   -- high level information (collaboration level)
   g                <- pure $ BpmnGraph
     (toText cId)
@@ -306,6 +344,8 @@ decode cs = do
     M.empty
     cMessageTypes
     (M.fromList $ catMaybes $ tlift2 . bname <$> cMessageFlows)
+    M.empty
+    M.empty
   -- compute for participant processes
   processGraphs <- sequence $ compute <$> cProcesses
   pure $ g <> mconcat processGraphs
@@ -321,6 +361,7 @@ compute e = do
   pid         <- getId e
   ns          <- pure $ filterChildren (pNode allElements) e
   nbes        <- pure $ filterChildren (pBE allElements) e
+  ntes        <- pure $ filterChildren (pTE allElements) e
   nids        <- sequence $ getId <$> ns
   es          <- pure $ filterChildren (pEdge allElements) e
   eids        <- sequence $ getId <$> es
@@ -339,8 +380,19 @@ compute e = do
     (M.fromList $ catMaybes $ tlift2 . battached <$> nbes)
     []
     M.empty
+    (M.fromList $ catMaybes $ tlift2 . bisInterrupting <$> nbes)
+    (M.fromList $ catMaybes $ tlift2 . btimeDefinition <$> ntes)
   spgs <- sequence $ compute <$> sps
   pure $ g <> mconcat spgs
+
+btimeDefinition :: Element -> (Maybe Node, Maybe TimerEventDefinition)
+btimeDefinition n = (getId n, Just $ TimerEventDefinition ttype tval)
+ where
+  ttype = pTimerDefinitionType n
+  tval  = pTimerDefinitionValue n
+
+bisInterrupting :: Element -> (Maybe Node, Maybe Bool)
+bisInterrupting n = (getId n, Just $ pCancelActivity n)
 
 battached :: Element -> (Maybe Node, Maybe Node)
 battached n = (getId n, findAttr (nA "attachedToRef") n)
