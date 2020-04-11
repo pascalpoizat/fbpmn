@@ -42,12 +42,18 @@ import           Data.Attoparsec.Text           ( Parser
 -- [X] TBE non interrupting + timedate
 -- [X] TBE interrupting + duration
 -- [X] TBE non interrupting + duration
--- [ ] TBE non interrupting + cycle duration
--- [ ] TBE non interrupting + infinite cycle duration
--- [ ] TBE non interrupting + cycle start/duration
--- [ ] TBE non interrupting + infinite cycle start/duration
--- [ ] TBE non interrupting + cycle duration/end
--- [ ] TBE non interrupting + infinite cycle duration/end
+-- [X] TBE interrupting + cycle duration
+-- [X] TBE interrupting + infinite cycle duration
+-- [X] TBE interrupting + cycle start/duration
+-- [X] TBE interrupting + infinite cycle start/duration
+-- [X] TBE interrupting + cycle duration/end
+-- [X] TBE interrupting + infinite cycle duration/end
+-- [X] TBE non interrupting + cycle duration
+-- [X] TBE non interrupting + infinite cycle duration
+-- [X] TBE non interrupting + cycle start/duration
+-- [X] TBE non interrupting + infinite cycle start/duration
+-- [X] TBE non interrupting + cycle duration/end
+-- [X] TBE non interrupting + infinite cycle duration/end
 --
 
 --
@@ -248,11 +254,11 @@ genBoundaryInformation = isBoundaryEvent =>> f
       attachedTo   = $ncontainer
       interrupting = $ninterrupting|]
 
-genTimeDefinition :: BpmnGraph -> Node -> Maybe Text
+genTimeDefinition :: TR BpmnGraph Node
 genTimeDefinition = isTimed =>> f
   where f g n = timeInformation g !? n >>= genTimeInformation n
 
-genTimeReference :: BpmnGraph -> Node -> Maybe Text
+genTimeReference :: TR BpmnGraph Node
 genTimeReference = isTimed =>> f
   where f _ n = let tmode = toText n <> "time" in Just [text|mode = $tmode|]
 
@@ -262,58 +268,56 @@ genTimeReference = isTimed =>> f
 --    note: this will require supporting negative numbers
 -- - signal errors at parsing or transforming
 --
-genTimeInformation :: Node -> TimerEventDefinition -> Maybe Text
-genTimeInformation n (TimerEventDefinition (Just tdt) (Just tdv)) =
-  genTimeInformation' tdt (toText tdv) (toText n)
-genTimeInformation _ (TimerEventDefinition _ _) = Nothing
+genTimeInformation :: TR Node TimerEventDefinition
+genTimeInformation n ted = do
+  tdt <- timerDefinitionType ted
+  tdv <- timerDefinitionValue ted
+  genTimeInformation' (tdt, n) tdv
 
-genTimeInformation' :: TimerDefinitionType -> Text -> Text -> Maybe Text
-genTimeInformation' TimeDate val n = do
-  let parsed = parse parseDateTime val
+genTimeInformation' :: TR (TimerDefinitionType, Node) TimerValue
+genTimeInformation' (TimeDate, n) val = do
+  let parsed = parse parseDateTime $ toText val
   res  <- maybeResult parsed
   vval <- genDate () res
-  let ni = n <> "time"
+  let ni = toText n <> "time"
   Just [text|one sig $ni extends Date {} {
     date = $vval
   }|]
-genTimeInformation' TimeDuration val n = do
-  let parsed = parse parseDuration val
+genTimeInformation' (TimeDuration, n) val = do
+  let parsed = parse parseDuration $ toText val
   res  <- maybeResult parsed
   vval <- genDuration () res
-  let ni = n <> "time"
+  let ni = toText n <> "time"
   Just [text|one sig $ni extends Duration {} {
     duration = $vval
   }|]
-genTimeInformation' TimeCycle val n = do
+genTimeInformation' (TimeCycle, n) val = do
   let parsed =
-        [flip parse val]
+        [flip parse $ toText val]
           <*> [parseCycleStart, parseCycleEnd, parseCycleDuration]
-  ti@(dtype, _, _, _) <- msum $ maybeResult <$> parsed
-  ncontents           <- genTimeInformation'' ti
+  (dtype, dnb, dduration, ddate) <- msum $ maybeResult <$> parsed
+  ncontents <- genTimeInformation'' dtype (dnb, dduration, ddate)
   let ntype = show dtype
-  let ni    = n <> "time"
+  let ni    = toText n <> "time"
   Just [text|one sig $ni extends $ntype {} {
     $ncontents
   }|]
 
-genTimeInformation'' :: ( TimeCycleSubtype
-                        , Maybe Integer
-                        , CalendarDiffTime
-                        , Maybe UTCTime
-                        )
-                     -> Maybe Text
-genTimeInformation'' (CycleStart, nb, dur, dat) = do
-  nbase <- genTimeInformation'' (CycleDuration, nb, dur, dat)
+genTimeInformation'' :: TR
+                          TimeCycleSubtype
+                          (Maybe Integer, CalendarDiffTime, Maybe UTCTime)
+genTimeInformation'' CycleStart (nb, dur, dat) = do
+  nbase <- genTimeInformation'' CycleDuration (nb, dur, dat)
   ndat  <- genDate () =<< dat
   Just [text|$nbase
     startdate = $ndat|]
-genTimeInformation'' (CycleEnd, nb, dur, dat) = do
-  nbase <- genTimeInformation'' (CycleDuration, nb, dur, dat)
+genTimeInformation'' CycleEnd (nb, dur, dat) = do
+  nbase <- genTimeInformation'' CycleDuration (nb, dur, dat)
   ndat  <- genDate () =<< dat
   Just [text|$nbase
     enddate = $ndat|]
-genTimeInformation'' (CycleDuration, nb, dur, _) = do
-  nnb  <- show <$> nb
+genTimeInformation'' CycleDuration (nb, dur, _) = do
+  let nnb  = maybe genUndef show nb
   vval <- genDuration () dur
   Just [text|repetition = $nnb
       duration = $vval|]
@@ -385,12 +389,12 @@ parseCycleStart :: Parser
                      )
 parseCycleStart = do
   _   <- parseTerminal "R"
-  n   <- optionMaybe parseInteger
+  n   <- option 0 parseInteger
   _   <- parseTerminal "/"
   dt  <- parseDateTime
   _   <- parseTerminal "/"
   dur <- parseDuration
-  return (CycleStart, n, dur, Just dt)
+  return (CycleStart, if n==0 then Nothing else Just n, dur, Just dt)
 
 -- R(n)/Duration/DateTime
 parseCycleEnd :: Parser
@@ -401,12 +405,12 @@ parseCycleEnd :: Parser
                    )
 parseCycleEnd = do
   _   <- parseTerminal "R"
-  n   <- optionMaybe parseInteger
+  n   <- option 0 parseInteger
   _   <- parseTerminal "/"
   dur <- parseDuration
   _   <- parseTerminal "/"
   dt  <- parseDateTime
-  return (CycleEnd, n, dur, Just dt)
+  return (CycleEnd, if n==0 then Nothing else Just n, dur, Just dt)
 
 -- R(n)/Duration
 parseCycleDuration :: Parser
@@ -417,10 +421,10 @@ parseCycleDuration :: Parser
                         )
 parseCycleDuration = do
   _ <- parseTerminal "R"
-  n <- optionMaybe parseInteger
+  n <- option 0 parseInteger
   _ <- parseTerminal "/"
   c <- parseDuration
-  return (CycleDuration, n, c, Nothing)
+  return (CycleDuration, if n==0 then Nothing else Just n, c, Nothing)
 
 -- YYYY-MM-DDTHH:MM:SSZ
 parseDateTime :: Parser (UTCTime)
