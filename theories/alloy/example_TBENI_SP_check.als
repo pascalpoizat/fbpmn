@@ -3,10 +3,9 @@ open PWSProp
 open PWSSemantics
 open PWSWellformed
 
-check {Safe} for 0 but 10 State expect 1
-
-check {SimpleTermination} for 0 but 15 State expect 1
-check {CorrectTermination} for 0 but 15 State expect 1
+check {Safe} for 0 but 10 State expect 0
+check {SimpleTermination} for 0 but 15 State expect 0
+check {CorrectTermination} for 0 but 15 State expect 0
 
 run {Safe} for 0 but 5 Int, 16 State expect 1
 
