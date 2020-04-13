@@ -31,7 +31,7 @@ data RCommand = RQuit        -- quit REPL
              -- | RSmt Text    -- save current graph as SMT
 
 fversion :: Text
-fversion = "0.3.3"
+fversion = "0.3.4"
 
 toolversion :: Text
 toolversion = fversion
