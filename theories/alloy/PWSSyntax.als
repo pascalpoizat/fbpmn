@@ -21,10 +21,10 @@ abstract sig Duration {
 abstract sig CycleDuration extends Duration {
     repetition : one Int,
 }
-abstract sig CycleDurationStart extends CycleDuration {
+abstract sig CycleStart extends CycleDuration {
     startdate  : one Int
 }
-abstract sig CycleDurationEnd extends CycleDuration {
+abstract sig CycleEnd extends CycleDuration {
     enddate    : one Int
 }
 

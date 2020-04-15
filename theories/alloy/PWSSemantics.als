@@ -55,7 +55,7 @@ pred startAbstractTask[s, s': State, n: AbstractTask] {
         s'.edgemarks[e] = s.edgemarks[e].dec
         s'.nodemarks[n] = s.nodemarks[n].inc
         delta[s, s', n, e]
-        let te = { t : n.~attachedTo & TimerBoundaryEvent | t.mode in Duration - CycleDurationStart } {
+        let te = { t : n.~attachedTo & TimerBoundaryEvent | t.mode in Duration - CycleStart } {
             all t : te | s'.localclock[t] = 1
             deltaT[s, s', te]
         }
@@ -166,7 +166,7 @@ pred startSubProcess[s, s' : State, n : SubProcess] {
             all nn : se | s'.nodemarks[nn] = s.nodemarks[nn].inc
             s'.nodemarks[n] = s.nodemarks[n].inc
             delta[s, s', n + se, e]
-            let te = { t : n.~attachedTo & TimerBoundaryEvent | t.mode in Duration - CycleDurationStart } {
+            let te = { t : n.~attachedTo & TimerBoundaryEvent | t.mode in Duration - CycleStart } {
                 all t : te | s'.localclock[t] = 1
                 deltaT[s, s', te]
             }
@@ -557,11 +557,11 @@ pred State.canstartTimerBoundaryEvent[n : Node] {
     n in TimerBoundaryEvent
     this.nodemarks[n.attachedTo] > 0
     let nn = n <: TimerBoundaryEvent {
-        nn.mode in CycleDurationStart
+        nn.mode in CycleStart
         // nn.interrupting.isFalse should be a fact
-        this.globalclock >= (nn.mode <: CycleDurationStart).startdate
+        this.globalclock >= (nn.mode <: CycleStart).startdate
         this.localclock[nn] = 0
-        // s.record[nn] = (nn.mode <: CycleDurationStart).repetition
+        // s.record[nn] = (nn.mode <: CycleStart).repetition
     }
 }
 
