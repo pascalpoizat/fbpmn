@@ -489,7 +489,7 @@ pred completeTimerIntermediateEvent[s, s' : State, n : TimerIntermediateEvent] {
         s'.edgemarks[ei] = s.edgemarks[ei].dec
         all eo : n.outtype[SequentialFlow] | s'.edgemarks[eo] = s.edgemarks[eo].inc
         delta[s, s', none, ei + n.outtype[SequentialFlow]]
-        n.mode = Duration implies { s'.localclock[n] = 0 && deltaT[s, s', n] }
+        n.mode in Duration implies { s'.localclock[n] = 0 && deltaT[s, s', n] }
         else deltaT[s, s', none]
     }
 }
@@ -629,7 +629,7 @@ pred State.canfire[n : TimerIntermediateEvent] {
 }
 
 pred State.canfire[n : TimerStartEvent] {
-    n.mode = Date && this.globalclock >= n.mode.date 
+    n.mode in Date && this.globalclock >= n.mode.date
 }
 
 pred State.canfire[n : TimerBoundaryEvent] {
