@@ -51,6 +51,7 @@ library
                      , aeson-pretty
                      , attoparsec
                      , bytestring
+                     , colourista >= 0.0
                      , containers
                      , neat-interpolation
                      , optparse-applicative
@@ -86,6 +87,7 @@ executable fbpmn
                      , aeson-pretty
                      , attoparsec
                      , bytestring
+                     , colourista >= 0.0
                      , containers
                      , neat-interpolation
                      , optparse-applicative
@@ -122,6 +124,7 @@ test-suite fbpmn-test
                      , aeson-pretty
                      , attoparsec
                      , bytestring
+                     , colourista >= 0.0
                      , containers
                      , neat-interpolation
                      , optparse-applicative
