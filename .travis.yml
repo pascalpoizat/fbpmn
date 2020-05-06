@@ -13,14 +13,14 @@ cache:
 matrix:
   include:
   - env: BUILD=stack ARGS="--resolver lts-15" OS=linux ARCH=x86_64
-    compiler: ": #stack 8.8.2"
+    compiler: ": #stack 8.8.3"
     addons:
       apt:
         packages:
         - libgmp-dev
     os: linux
   - env: BUILD=stack ARGS="--resolver lts-15" OS=osx ARCH=x86_64
-    compiler: ": #stack 8.8.2 osx"
+    compiler: ": #stack 8.8.3 osx"
     os: osx
 before_install:
 - unset CC
