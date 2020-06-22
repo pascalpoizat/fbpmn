@@ -21,6 +21,10 @@ cabal.config
 cabal.project.local
 .ghc.environment.*
 .HTF/
+# Hie
+.hie
+# Stan
+stan.html
 # Stack
 .stack-work/
 stack.yaml.lock

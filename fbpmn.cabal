@@ -45,6 +45,8 @@ library
                        -fwarn-overlapping-patterns
                        -fwarn-missing-signatures
                        -fwarn-name-shadowing
+                       -fwrite-ide-info
+                       -hiedir=.hie
   build-depends:       base-noprelude
                      , relude
                      , aeson
