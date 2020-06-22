@@ -253,7 +253,7 @@ encodeBpmnBoundaryEventsToTla g = [text|
   |]
  where
   sbes = relationTla beToTla bes
-  bes = nodesTs g [MessageBoundaryEvent, TimerBoundaryEvent]
+  bes  = nodesTs g [MessageBoundaryEvent, TimerBoundaryEvent]
   beToTla e = case (catN g !? e, attached g !? e) of
     (Just MessageBoundaryEvent, Just spid) ->
       [text|$side :> [ attachedTo |-> $sspid, cancelActivity |-> $scae ]|]
@@ -267,7 +267,8 @@ encodeBpmnBoundaryEventsToTla g = [text|
       side  = show e
       sspid = show spid
       scae  = boolToTLA $ fromMaybe True (isInterrupt g !? e)
-    _ -> ""
+    (Just _ , _) -> ""
+    (Nothing, _) -> ""
 
 trueTla :: Text
 trueTla = "TRUE"

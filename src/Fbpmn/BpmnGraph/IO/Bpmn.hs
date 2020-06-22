@@ -114,7 +114,8 @@ pCx = hasChildren (nE "conditionExpression")
 pIx :: Element -> Bool
 pIx e = case findAttr (nA "cancelActivity") e of
   Just "false" -> False
-  _            -> True -- cancelActivity by default
+  Just _       -> True -- cancelActivity by default
+  Nothing      -> True -- cancelActivity by default
 -- timer events
 pTimex :: Element -> Bool
 pTimex = hasChildren (nE "timerEventDefinition")
@@ -126,17 +127,18 @@ pTimerDefinitionType' e = case () of
     | otherwise                         -> Nothing
 pTimerDefinitionValue' :: Element -> Maybe TimerValue
 pTimerDefinitionValue' e = do
-    contents <- elContent <$> eval
-    content1 <- listToMaybe contents
-    case content1 of
-      Text cdata -> Just $ cdData cdata
-      _ -> Nothing
-  where
-    eval = case () of
-      _ | hasChildren (nE "timeDate") e -> findChild (nE "timeDate") e
-        | hasChildren (nE "timeDuration") e -> findChild (nE "timeDuration") e
-        | hasChildren (nE "timeCycle") e -> findChild (nE "timeCycle") e
-        | otherwise -> Nothing
+  contents <- elContent <$> eval
+  content1 <- listToMaybe contents
+  case content1 of
+    Text cdata -> Just $ cdData cdata
+    Elem _     -> Nothing
+    CRef _     -> Nothing
+ where
+  eval = case () of
+    _ | hasChildren (nE "timeDate") e     -> findChild (nE "timeDate") e
+      | hasChildren (nE "timeDuration") e -> findChild (nE "timeDuration") e
+      | hasChildren (nE "timeCycle") e    -> findChild (nE "timeCycle") e
+      | otherwise                         -> Nothing
 pTimerDefinitionType :: Element -> Maybe TimerDefinitionType
 pTimerDefinitionType e =
   pTimerDefinitionType' =<< findChild (nE "timerEventDefinition") e
@@ -204,9 +206,9 @@ pTBE :: [Element] -> Element -> Maybe NodeType
 pTBE es e = if pBE es e && pTimex e then Just TimerBoundaryEvent else Nothing
 pCancelActivity :: Element -> Bool
 pCancelActivity e = case findAttr (nA "cancelActivity") e of
-  Just "true" -> True
   Just "false" -> False
-  _ -> True -- boundary events are interrupting by default
+  Just _       -> True -- boundary events are interrupting by default
+  Nothing      -> True -- boundary events are interrupting by default
 
 -- time-related events
 pTE :: [Element] -> Element -> Bool
