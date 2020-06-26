@@ -18,7 +18,7 @@ init == net =
                 vectorClocks    |-> [p \in PEERS |-> [ x \in PEERS |-> 0 ] ]
             ]
 
-send(from, to, m) == LET vc == [net.vectorClocks[from] EXCEPT ![from] = @ + 1]
+send(from, to, m) == LET vc == [net.vectorClocks[from] EXCEPT ![to] = @ + 1]
                      IN  net' = [net EXCEPT !.bag = @ (+) SetToBag({<<from, to, m, vc>>}),
                                             !.vectorClocks = [@ EXCEPT ![from] = vc] ]
 
