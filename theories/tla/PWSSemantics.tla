@@ -507,8 +507,8 @@ NoAbnormalTermination ==
   \A n \in Node : CatN[n] = TerminateEndEvent => [](nodemarks[n] = 0)
 
 (* No messages are eventually left in transit. *)
-NoUndeliveredMessages == LET msgflows == { ee \in Edge : CatE[ee] \in MessageFlowType } IN
-                         (\E e \in msgflows : edgemarks[e] > 0) ~>  (\A e \in msgflows : edgemarks[e] = 0)
+NoUndeliveredMessages == <>[](LET msgflows == { ee \in Edge : CatE[ee] \in MessageFlowType } IN
+                                   \A e \in msgflows : edgemarks[e] = 0)
 
 \* Any message is eventually delivered.
 \* NoUndeliveredMessages2 ==
@@ -534,11 +534,11 @@ SoundProcess(p) == <> SoundProcessInt(p)
 
 (* All processes are sound and there are no undelivered messages. *)
 SoundCollaboration ==
-   <>(/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n)
-      /\ \A e \in Edge : CatE[e] \in MessageFlowType => edgemarks[e] = 0)
+   <>[](/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n)
+        /\ \A e \in Edge : CatE[e] \in MessageFlowType => edgemarks[e] = 0)
 
 (* Like SoundCollaboration, but ignore messages in transit. *)
 MessageRelaxedSoundCollaboration ==
-   <>(/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n))
+   <>[](/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n))
 
 ================================================================
