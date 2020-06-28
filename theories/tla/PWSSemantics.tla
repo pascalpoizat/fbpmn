@@ -57,26 +57,20 @@ timerstart_complete(n) ==
 
 (* ---- message start event ---- *)
 
-messagestart_start(n) ==
-  /\ CatN[n] = MessageStartEvent
-  /\ nodemarks[n] = 0
-  /\ \E e \in intype(MessageFlowType, n) :
-     /\ edgemarks[e] >= 1
-     /\ Network!receive(ProcessOf(source[e]), ProcessOf(n), msgtype[e])
-     /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
-  /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
-
 messagestart_complete(n) ==
   /\ CatN[n] = MessageStartEvent
   /\ nodemarks[n] >= 1
+  /\ \E em \in intype(MessageFlowType, n) :
+     /\ edgemarks[em] >= 1
+     /\ Network!receive(ProcessOf(source[em]), ProcessOf(n), msgtype[em])
+     /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                         IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
+                         ELSE IF e = em THEN edgemarks[e] - 1
+                         ELSE edgemarks[e] ]
   /\ \E p \in Processes :
      /\ n \in ContainRel[p]
      /\ nodemarks[p] = 0  \* No multi-instance
      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
-  /\ edgemarks' = [ e \in DOMAIN edgemarks |->
-                      IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
-                      ELSE edgemarks[e] ]
-  /\ Network!unchanged
 
 (* ---- none end event, terminate end event ---- *)
 
@@ -443,7 +437,7 @@ process_complete(n) == FALSE
 step(n) ==
   CASE CatN[n] = NoneStartEvent -> nonestart_complete(n)
     [] CatN[n] = TimerStartEvent -> timerstart_complete(n)
-    [] CatN[n] = MessageStartEvent -> messagestart_start(n) \/ messagestart_complete(n)
+    [] CatN[n] = MessageStartEvent -> messagestart_complete(n)
     [] CatN[n] = NoneEndEvent -> noneend_start(n)
     [] CatN[n] = TerminateEndEvent -> terminateend_start(n)
     [] CatN[n] = MessageEndEvent -> messageend_start(n)
@@ -466,7 +460,7 @@ Next == \E n \in Node : step(n)
 
 Init ==
   /\ nodemarks = [ n \in Node |->
-                     IF CatN[n] \in {NoneStartEvent,TimerStartEvent} /\ (\E p \in Processes : n \in ContainRel[p]) THEN 1
+                     IF CatN[n] \in StartEventType /\ (\E p \in Processes : n \in ContainRel[p]) THEN 1
                      ELSE 0 ]
   /\ edgemarks = [ e \in Edge |-> 0 ]
   /\ Network!init
