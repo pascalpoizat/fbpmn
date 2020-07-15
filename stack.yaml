@@ -1,4 +1,4 @@
-resolver: lts-15.2 # lts-12.26
+resolver: lts-15.11 # lts-15.2
 
 extra-deps: [base-noprelude-4.13.0.0
             ,tasty-html-0.4.1.2]

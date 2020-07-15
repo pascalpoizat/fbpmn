@@ -1,3 +1,9 @@
+
+import           Colourista                     ( successMessage
+                                                , infoMessage
+                                                , warningMessage
+                                                , errorMessage
+                                                )
 import           Options.Applicative
 import           Fbpmn.BpmnGraph.Model
 import           Fbpmn.BpmnGraph.IO.Bpmn
@@ -256,7 +262,7 @@ parserLog2Html =
 
 -- no validation needed from BPMN since we build the graph ourselves
 run :: Options -> IO ()
-run (Options CVersion              ) = putStrLn $ toString toolversion
+run (Options CVersion              ) = infoMessage toolversion
 run (Options CRepl                 ) = repl ("()", Nothing)
 run (Options (CJson2Dot   pin pout)) = json2dot True pin pout Nothing
 run (Options (CJson2Tla   pin pout)) = json2tla True pin pout Nothing
@@ -283,14 +289,14 @@ transform2 sourceSuffix targetSuffix mreader mwriter modelValidator modelFilter 
   = do
     loadres <- mreader (toString $ inputPath <> sourceSuffix) minfo
     case loadres of
-      Nothing    -> putLTextLn "wrong file"
+      Nothing    -> errorMessage "wrong file"
       Just model -> if not withValidation || modelValidator model
         then do
           mwriter (toString $ outputPath <> targetSuffix)
                   minfo
                   (modelFilter model)
-          putTextLn "transformation done"
-        else putTextLn "model is incorrect"
+          successMessage "transformation done"
+        else errorMessage "model is incorrect"
 
 json2dot :: Bool -> Text -> Text -> Maybe String -> IO ()
 json2dot =
@@ -347,15 +353,15 @@ TODO: use State monad.
 -}
 repl :: (Text, Maybe BpmnGraph) -> IO ()
 repl (p, g) = do
-  putStrLn . toString $ p <> " > "
+  infoMessage $ p <> " > "
   rawinput <- getLine
   rcommand <- rparse (words rawinput)
   case rcommand of
     Nothing -> do
-      putTextLn "unknown command"
+      errorMessage "unknown command"
       repl (p, g)
     Just RHelp -> do
-      putTextLn $ unlines
+      infoMessage $ unlines
         [ "quit (quit REPL)"
         , "help (list commands)"
         -- , "list (list internal examples)"
@@ -369,7 +375,7 @@ repl (p, g) = do
         , "tla  (save current graph to TLA+)"
         ]
       repl (p, g)
-    Just RQuit       -> putTextLn "goodbye"
+    Just RQuit       -> infoMessage "goodbye"
     -- Just RShow -> case g of
     --   Nothing -> do
     --     putTextLn "no graph loaded"
@@ -389,14 +395,14 @@ repl (p, g) = do
     --     repl (name, Just g')
     Just (RDot path) -> case g of
       Nothing -> do
-        putTextLn "no graph loaded"
+        errorMessage "no graph loaded"
         repl (p, g)
       Just g' -> do
         BGD.writeToDOT (toString path) Nothing g'
         repl (p, g)
     Just (RJson path) -> case g of
       Nothing -> do
-        putTextLn "no graph loaded"
+        errorMessage "no graph loaded"
         repl (p, g)
       Just g' -> do
         BG.writeToJSON (toString path) Nothing g'
@@ -405,14 +411,14 @@ repl (p, g) = do
       loadres <- readFromBPMN (toString path) Nothing
       case loadres of
         Nothing -> do
-          putTextLn "wrong file"
+          errorMessage "wrong file"
           repl (p, g)
         Just graph -> if isValidGraph graph
           then do
-            putTextLn "graph is correct"
+            infoMessage "graph is correct"
             repl ("(" <> path <> ")", Just graph)
           else do
-            putTextLn "graph is incorrect"
+            errorMessage "graph is incorrect"
             repl (p, g)
     -- Just (RSmt path) -> case g of
     --   Nothing -> do
@@ -423,14 +429,14 @@ repl (p, g) = do
     --     repl (p, g)
     Just (RTla path) -> case g of
       Nothing -> do
-        putTextLn "no graph loaded"
+        errorMessage "no graph loaded"
         repl (p, g)
       Just g' -> do
         writeToTLA (toString path) Nothing g'
         repl (p, g)
     Just (RAlloy path) -> case g of
       Nothing -> do
-        putTextLn "no graph loaded"
+        errorMessage "no graph loaded"
         repl (p, g)
       Just g' -> do
         writeToAlloy (toString path) Nothing g'
@@ -439,14 +445,14 @@ repl (p, g) = do
       loadres <- BG.readFromJSON (toString path) Nothing
       case loadres of
         Nothing -> do
-          putTextLn "wrong file"
+          errorMessage "wrong file"
           repl (p, g)
         Just graph -> if isValidGraph graph
           then do
-            putTextLn "graph is correct"
+            infoMessage "graph is correct"
             repl ("(" <> path <> ")", Just graph)
           else do
-            putTextLn "graph is incorrect"
+            errorMessage "graph is incorrect"
             repl (p, g)
 
 rparse :: [Text] -> IO (Maybe RCommand)
@@ -457,23 +463,23 @@ rparse ("help" : _) = pure $ Just RHelp
 -- rparse ["import"  ] = do
 --   putTextLn "missing example name"
 --   pure Nothing
-rparse ["dot"     ] = do
-  putTextLn "missing file path"
+rparse ["dot"] = do
+  errorMessage "missing file path"
   pure Nothing
 rparse ["json"] = do
-  putTextLn "missing file path"
+  errorMessage "missing file path"
   pure Nothing
 rparse ["bpmn"] = do
-  putTextLn "missing file path"
+  errorMessage "missing file path"
   pure Nothing
 -- rparse ["smt"] = do
 --   putTextLn "missing file path"
 --   pure Nothing
 rparse ["tla"] = do
-  putTextLn "missing file path"
+  errorMessage "missing file path"
   pure Nothing
 rparse ["load"] = do
-  putTextLn "missing file path"
+  errorMessage "missing file path"
   pure Nothing
 -- rparse ("import" : name : _) = pure $ Just (RImport name)
 rparse ("dot"  : path : _) = pure $ Just (RDot path)
