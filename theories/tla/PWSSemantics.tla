@@ -28,7 +28,7 @@ subprocess_may_complete(n) ==
   /\ \E ee \in ContainRel[n] :
       /\ CatN[ee] \in EndEventType
       /\ nodemarks[ee] >= 1
-  /\ \A x \in ContainRel[n] : nodemarks[x] >= 1 => CatN[x] \in EndEventType
+  /\ \A x \in ContainRel[n] : CatN[x] \in EndEventType \/ nodemarks[x] = 0
 
 (* ---- none start event ---- *)
 
@@ -517,10 +517,11 @@ NoUndeliveredMessages == <>[](LET msgflows == { ee \in Edge : CatE[ee] \in Messa
 SafeCollaboration ==
    [](\A e \in Edge : CatE[e] \in SeqFlowType => edgemarks[e] <= 1)
 
-(* A process is sound if there are no token on inside edges, and one token only on EndEvents. *)
+(* A process is sound if there are no token on inside edges, and one token only on EndEvents. Start events are ignored. *)
 LOCAL SoundProcessInt(p) ==
    /\ \A e \in Edge : source[e] \in ContainRel[p] /\ target[e] \in ContainRel[p] => edgemarks[e] = 0
    /\ \A n \in ContainRel[p] :
+            \/ CatN[n] \in StartEventType
             \/ nodemarks[n] = 0
             \/ nodemarks[n] = 1 /\ CatN[n] \in EndEventType
 
@@ -533,6 +534,6 @@ SoundCollaboration ==
 
 (* Like SoundCollaboration, but ignore messages in transit. *)
 MessageRelaxedSoundCollaboration ==
-   <>[](/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n))
+   <>[](\A n \in Node : CatN[n] = Process => SoundProcessInt(n))
 
 ================================================================
