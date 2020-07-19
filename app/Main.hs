@@ -262,7 +262,7 @@ parserLog2Html =
 
 -- no validation needed from BPMN since we build the graph ourselves
 run :: Options -> IO ()
-run (Options CVersion              ) = infoMessage toolversion
+run (Options CVersion              ) = putStrLn . toString $ toolversion
 run (Options CRepl                 ) = repl ("()", Nothing)
 run (Options (CJson2Dot   pin pout)) = json2dot True pin pout Nothing
 run (Options (CJson2Tla   pin pout)) = json2tla True pin pout Nothing
