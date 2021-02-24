@@ -28,7 +28,7 @@ subprocess_may_complete(n) ==
   /\ \E ee \in ContainRel[n] :
       /\ CatN[ee] \in EndEventType
       /\ nodemarks[ee] >= 1
-  /\ \A x \in ContainRel[n] : nodemarks[x] >= 1 => CatN[x] \in EndEventType
+  /\ \A x \in ContainRel[n] : CatN[x] \in EndEventType \/ nodemarks[x] = 0
 
 (* ---- none start event ---- *)
 
@@ -57,26 +57,20 @@ timerstart_complete(n) ==
 
 (* ---- message start event ---- *)
 
-messagestart_start(n) ==
-  /\ CatN[n] = MessageStartEvent
-  /\ nodemarks[n] = 0
-  /\ \E e \in intype(MessageFlowType, n) :
-     /\ edgemarks[e] >= 1
-     /\ Network!receive(ProcessOf(source[e]), ProcessOf(n), msgtype[e])
-     /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
-  /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
-
 messagestart_complete(n) ==
   /\ CatN[n] = MessageStartEvent
   /\ nodemarks[n] >= 1
+  /\ \E em \in intype(MessageFlowType, n) :
+     /\ edgemarks[em] >= 1
+     /\ Network!receive(ProcessOf(source[em]), ProcessOf(n), msgtype[em])
+     /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                         IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
+                         ELSE IF e = em THEN edgemarks[e] - 1
+                         ELSE edgemarks[e] ]
   /\ \E p \in Processes :
      /\ n \in ContainRel[p]
      /\ nodemarks[p] = 0  \* No multi-instance
      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
-  /\ edgemarks' = [ e \in DOMAIN edgemarks |->
-                      IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
-                      ELSE edgemarks[e] ]
-  /\ Network!unchanged
 
 (* ---- none end event, terminate end event ---- *)
 
@@ -443,7 +437,7 @@ process_complete(n) == FALSE
 step(n) ==
   CASE CatN[n] = NoneStartEvent -> nonestart_complete(n)
     [] CatN[n] = TimerStartEvent -> timerstart_complete(n)
-    [] CatN[n] = MessageStartEvent -> messagestart_start(n) \/ messagestart_complete(n)
+    [] CatN[n] = MessageStartEvent -> messagestart_complete(n)
     [] CatN[n] = NoneEndEvent -> noneend_start(n)
     [] CatN[n] = TerminateEndEvent -> terminateend_start(n)
     [] CatN[n] = MessageEndEvent -> messageend_start(n)
@@ -466,7 +460,7 @@ Next == \E n \in Node : step(n)
 
 Init ==
   /\ nodemarks = [ n \in Node |->
-                     IF CatN[n] \in {NoneStartEvent,TimerStartEvent} /\ (\E p \in Processes : n \in ContainRel[p]) THEN 1
+                     IF CatN[n] \in StartEventType /\ (\E p \in Processes : n \in ContainRel[p]) THEN 1
                      ELSE 0 ]
   /\ edgemarks = [ e \in Edge |-> 0 ]
   /\ Network!init
@@ -507,8 +501,8 @@ NoAbnormalTermination ==
   \A n \in Node : CatN[n] = TerminateEndEvent => [](nodemarks[n] = 0)
 
 (* No messages are eventually left in transit. *)
-NoUndeliveredMessages == LET msgflows == { ee \in Edge : CatE[ee] \in MessageFlowType } IN
-                         (\E e \in msgflows : edgemarks[e] > 0) ~>  (\A e \in msgflows : edgemarks[e] = 0)
+NoUndeliveredMessages == <>[](LET msgflows == { ee \in Edge : CatE[ee] \in MessageFlowType } IN
+                                   \A e \in msgflows : edgemarks[e] = 0)
 
 \* Any message is eventually delivered.
 \* NoUndeliveredMessages2 ==
@@ -523,10 +517,11 @@ NoUndeliveredMessages == LET msgflows == { ee \in Edge : CatE[ee] \in MessageFlo
 SafeCollaboration ==
    [](\A e \in Edge : CatE[e] \in SeqFlowType => edgemarks[e] <= 1)
 
-(* A process is sound if there are no token on inside edges, and one token only on EndEvents. *)
+(* A process is sound if there are no token on inside edges, and one token only on EndEvents. Start events are ignored. *)
 LOCAL SoundProcessInt(p) ==
    /\ \A e \in Edge : source[e] \in ContainRel[p] /\ target[e] \in ContainRel[p] => edgemarks[e] = 0
    /\ \A n \in ContainRel[p] :
+            \/ CatN[n] \in StartEventType
             \/ nodemarks[n] = 0
             \/ nodemarks[n] = 1 /\ CatN[n] \in EndEventType
 
@@ -534,11 +529,11 @@ SoundProcess(p) == <> SoundProcessInt(p)
 
 (* All processes are sound and there are no undelivered messages. *)
 SoundCollaboration ==
-   <>(/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n)
-      /\ \A e \in Edge : CatE[e] \in MessageFlowType => edgemarks[e] = 0)
+   <>[](/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n)
+        /\ \A e \in Edge : CatE[e] \in MessageFlowType => edgemarks[e] = 0)
 
 (* Like SoundCollaboration, but ignore messages in transit. *)
 MessageRelaxedSoundCollaboration ==
-   <>(/\ \A n \in Node : CatN[n] = Process => SoundProcessInt(n))
+   <>[](\A n \in Node : CatN[n] = Process => SoundProcessInt(n))
 
 ================================================================
