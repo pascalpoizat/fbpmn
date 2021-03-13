@@ -1,29 +1,14 @@
 {
+    "isInterrupt": {},
     "catN": {
-        "ExclusiveGateway_1449jmr": {
-            "tag": "AndGateway"
-        },
-        "EndEvent_0a59w28": {
-            "tag": "NoneEndEvent"
-        },
-        "EndEvent_1bu7x75": {
-            "tag": "NoneEndEvent"
-        },
-        "StartEvent_1": {
-            "tag": "NoneStartEvent"
-        },
-        "StartEvent_09ojxru": {
-            "tag": "NoneStartEvent"
-        },
-        "P_": {
-            "tag": "Process"
-        },
-        "EndEvent_0atuxkh": {
-            "tag": "NoneEndEvent"
-        },
-        "SubProcess_1glz8ii": {
-            "tag": "SubProcess"
-        }
+        "ExclusiveGateway_1449jmr": "AndGateway",
+        "EndEvent_0a59w28": "NoneEndEvent",
+        "EndEvent_1bu7x75": "NoneEndEvent",
+        "StartEvent_1": "NoneStartEvent",
+        "StartEvent_09ojxru": "NoneStartEvent",
+        "P_": "Process",
+        "EndEvent_0atuxkh": "NoneEndEvent",
+        "SubProcess_1glz8ii": "SubProcess"
     },
     "catE": {
         "SequenceFlow_1ue74ws": "NormalSequenceFlow",
@@ -46,6 +31,7 @@
         ]
     },
     "messageE": {},
+    "timeInformation": {},
     "targetE": {
         "SequenceFlow_1ue74ws": "EndEvent_1bu7x75",
         "SequenceFlow_12utbfs": "SubProcess_1glz8ii",

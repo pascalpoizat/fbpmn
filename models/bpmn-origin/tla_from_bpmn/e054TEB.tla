@@ -5,21 +5,21 @@ EXTENDS TLC, PWSTypes
 VARIABLES nodemarks, edgemarks, net
 
 Interest ==
-  "Process_05gzdtd" :> {  }
-  @@ "Process_104kmox" :> { "m1", "m2" }
-  @@ "Process_12oxudf" :> {  }
+  "A_" :> {  }
+  @@ "B_" :> { "m1", "m2" }
+  @@ "C_" :> {  }
 
 ContainRel ==
-  "Process_05gzdtd" :> { "StartEvent_0ng45ln", "ExclusiveGateway_0kvru56", "EndEvent_1jr9ymp", "EndEvent_1imvmci", "SendTask_1i6lsga", "Task_00w4wn4" }
-  @@ "Process_104kmox" :> { "StartEvent_1xhyji9", "ExclusiveGateway_03wdh0i", "IntermediateCatchEvent_0v47yyg", "IntermediateCatchEvent_1ss52yx", "IntermediateCatchEvent_1krpoya", "EndEvent_0p6olxz", "EndEvent_1khaqp3", "EndEvent_06hq74j" }
-  @@ "Process_12oxudf" :> { "EndEvent_0om01ac", "Task_0eo34vw", "StartEvent_1eicooe", "ExclusiveGateway_1ukkste", "EndEvent_1i50law", "Task_0cjmppv" }
+  "A_" :> { "A_EE2", "A_T", "A_NSE", "A_XOR", "A_EE1", "A_ST" }
+  @@ "B_" :> { "B_NSE", "B_EB", "B_MICE1", "B_MICE2", "B_TIE", "B_EE1", "B_EE2", "B_EE3" }
+  @@ "C_" :> { "C_NSE", "C_XOR", "C_EE2", "C_EE1", "C_T", "C_ST" }
 
 Node == {
-  "Process_104kmox","Process_05gzdtd","Process_12oxudf","StartEvent_1xhyji9","ExclusiveGateway_03wdh0i","IntermediateCatchEvent_0v47yyg","IntermediateCatchEvent_1ss52yx","IntermediateCatchEvent_1krpoya","EndEvent_0p6olxz","EndEvent_1khaqp3","EndEvent_06hq74j","StartEvent_0ng45ln","ExclusiveGateway_0kvru56","EndEvent_1jr9ymp","EndEvent_1imvmci","SendTask_1i6lsga","Task_00w4wn4","EndEvent_0om01ac","Task_0eo34vw","StartEvent_1eicooe","ExclusiveGateway_1ukkste","EndEvent_1i50law","Task_0cjmppv"
+  "B_","C_","A_","B_NSE","B_EB","B_MICE1","B_MICE2","B_TIE","B_EE1","B_EE2","B_EE3","C_NSE","C_XOR","C_EE2","C_EE1","C_T","C_ST","A_EE2","A_T","A_NSE","A_XOR","A_EE1","A_ST"
 }
 
 Edge == {
-  "MessageFlow_0anis1g","MessageFlow_0mma6b7","SequenceFlow_02i9aub","SequenceFlow_1ejcjun","SequenceFlow_1lim0ak","SequenceFlow_0d4uo9u","SequenceFlow_01mi0z5","SequenceFlow_1w1q1tz","SequenceFlow_1kqxai7","SequenceFlow_0062gga","SequenceFlow_1fpdtzj","SequenceFlow_0m6s08w","SequenceFlow_1jusdil","SequenceFlow_0sz8f29","SequenceFlow_13q04ef","SequenceFlow_1jbid03","SequenceFlow_1qj818y","SequenceFlow_1lmhnxh","SequenceFlow_11z8969"
+  "MessageFlow_0anis1g","MessageFlow_0mma6b7","SequenceFlow_1kqxai7","SequenceFlow_1w1q1tz","SequenceFlow_01mi0z5","SequenceFlow_0d4uo9u","SequenceFlow_1lim0ak","SequenceFlow_1ejcjun","SequenceFlow_02i9aub","SequenceFlow_0062gga","SequenceFlow_1fpdtzj","SequenceFlow_0m6s08w","SequenceFlow_1jusdil","SequenceFlow_0sz8f29","SequenceFlow_13q04ef","SequenceFlow_1jbid03","SequenceFlow_1qj818y","SequenceFlow_1lmhnxh","SequenceFlow_11z8969"
 }
 
 Message == { "m1", "m2" }
@@ -29,82 +29,82 @@ msgtype ==
   @@ "MessageFlow_0mma6b7" :> "m2"
 
 source ==
-   "MessageFlow_0anis1g" :> "Task_0cjmppv"
-@@ "MessageFlow_0mma6b7" :> "Task_00w4wn4"
-@@ "SequenceFlow_02i9aub" :> "StartEvent_1xhyji9"
-@@ "SequenceFlow_1ejcjun" :> "ExclusiveGateway_03wdh0i"
-@@ "SequenceFlow_1lim0ak" :> "ExclusiveGateway_03wdh0i"
-@@ "SequenceFlow_0d4uo9u" :> "ExclusiveGateway_03wdh0i"
-@@ "SequenceFlow_01mi0z5" :> "IntermediateCatchEvent_0v47yyg"
-@@ "SequenceFlow_1w1q1tz" :> "IntermediateCatchEvent_1ss52yx"
-@@ "SequenceFlow_1kqxai7" :> "IntermediateCatchEvent_1krpoya"
-@@ "SequenceFlow_0062gga" :> "StartEvent_0ng45ln"
-@@ "SequenceFlow_1fpdtzj" :> "ExclusiveGateway_0kvru56"
-@@ "SequenceFlow_0m6s08w" :> "ExclusiveGateway_0kvru56"
-@@ "SequenceFlow_1jusdil" :> "SendTask_1i6lsga"
-@@ "SequenceFlow_0sz8f29" :> "Task_00w4wn4"
-@@ "SequenceFlow_13q04ef" :> "ExclusiveGateway_1ukkste"
-@@ "SequenceFlow_1jbid03" :> "Task_0cjmppv"
-@@ "SequenceFlow_1qj818y" :> "ExclusiveGateway_1ukkste"
-@@ "SequenceFlow_1lmhnxh" :> "StartEvent_1eicooe"
-@@ "SequenceFlow_11z8969" :> "Task_0eo34vw"
+   "MessageFlow_0anis1g" :> "A_ST"
+@@ "MessageFlow_0mma6b7" :> "C_ST"
+@@ "SequenceFlow_1kqxai7" :> "B_TIE"
+@@ "SequenceFlow_1w1q1tz" :> "B_MICE2"
+@@ "SequenceFlow_01mi0z5" :> "B_MICE1"
+@@ "SequenceFlow_0d4uo9u" :> "B_EB"
+@@ "SequenceFlow_1lim0ak" :> "B_EB"
+@@ "SequenceFlow_1ejcjun" :> "B_EB"
+@@ "SequenceFlow_02i9aub" :> "B_NSE"
+@@ "SequenceFlow_0062gga" :> "C_NSE"
+@@ "SequenceFlow_1fpdtzj" :> "C_XOR"
+@@ "SequenceFlow_0m6s08w" :> "C_XOR"
+@@ "SequenceFlow_1jusdil" :> "C_T"
+@@ "SequenceFlow_0sz8f29" :> "C_ST"
+@@ "SequenceFlow_13q04ef" :> "A_XOR"
+@@ "SequenceFlow_1jbid03" :> "A_ST"
+@@ "SequenceFlow_1qj818y" :> "A_XOR"
+@@ "SequenceFlow_1lmhnxh" :> "A_NSE"
+@@ "SequenceFlow_11z8969" :> "A_T"
 
 target ==
-   "MessageFlow_0anis1g" :> "IntermediateCatchEvent_0v47yyg"
-@@ "MessageFlow_0mma6b7" :> "IntermediateCatchEvent_1ss52yx"
-@@ "SequenceFlow_02i9aub" :> "ExclusiveGateway_03wdh0i"
-@@ "SequenceFlow_1ejcjun" :> "IntermediateCatchEvent_0v47yyg"
-@@ "SequenceFlow_1lim0ak" :> "IntermediateCatchEvent_1ss52yx"
-@@ "SequenceFlow_0d4uo9u" :> "IntermediateCatchEvent_1krpoya"
-@@ "SequenceFlow_01mi0z5" :> "EndEvent_0p6olxz"
-@@ "SequenceFlow_1w1q1tz" :> "EndEvent_1khaqp3"
-@@ "SequenceFlow_1kqxai7" :> "EndEvent_06hq74j"
-@@ "SequenceFlow_0062gga" :> "ExclusiveGateway_0kvru56"
-@@ "SequenceFlow_1fpdtzj" :> "SendTask_1i6lsga"
-@@ "SequenceFlow_0m6s08w" :> "Task_00w4wn4"
-@@ "SequenceFlow_1jusdil" :> "EndEvent_1jr9ymp"
-@@ "SequenceFlow_0sz8f29" :> "EndEvent_1imvmci"
-@@ "SequenceFlow_13q04ef" :> "Task_0cjmppv"
-@@ "SequenceFlow_1jbid03" :> "EndEvent_0om01ac"
-@@ "SequenceFlow_1qj818y" :> "Task_0eo34vw"
-@@ "SequenceFlow_1lmhnxh" :> "ExclusiveGateway_1ukkste"
-@@ "SequenceFlow_11z8969" :> "EndEvent_1i50law"
+   "MessageFlow_0anis1g" :> "B_MICE1"
+@@ "MessageFlow_0mma6b7" :> "B_MICE2"
+@@ "SequenceFlow_1kqxai7" :> "B_EE3"
+@@ "SequenceFlow_1w1q1tz" :> "B_EE2"
+@@ "SequenceFlow_01mi0z5" :> "B_EE1"
+@@ "SequenceFlow_0d4uo9u" :> "B_TIE"
+@@ "SequenceFlow_1lim0ak" :> "B_MICE2"
+@@ "SequenceFlow_1ejcjun" :> "B_MICE1"
+@@ "SequenceFlow_02i9aub" :> "B_EB"
+@@ "SequenceFlow_0062gga" :> "C_XOR"
+@@ "SequenceFlow_1fpdtzj" :> "C_T"
+@@ "SequenceFlow_0m6s08w" :> "C_ST"
+@@ "SequenceFlow_1jusdil" :> "C_EE2"
+@@ "SequenceFlow_0sz8f29" :> "C_EE1"
+@@ "SequenceFlow_13q04ef" :> "A_ST"
+@@ "SequenceFlow_1jbid03" :> "A_EE2"
+@@ "SequenceFlow_1qj818y" :> "A_T"
+@@ "SequenceFlow_1lmhnxh" :> "A_XOR"
+@@ "SequenceFlow_11z8969" :> "A_EE1"
 
 CatN ==
-   "Process_104kmox" :> Process
-@@ "Process_05gzdtd" :> Process
-@@ "Process_12oxudf" :> Process
-@@ "StartEvent_1xhyji9" :> NoneStartEvent
-@@ "ExclusiveGateway_03wdh0i" :> EventBased
-@@ "IntermediateCatchEvent_0v47yyg" :> CatchMessageIntermediateEvent
-@@ "IntermediateCatchEvent_1ss52yx" :> CatchMessageIntermediateEvent
-@@ "IntermediateCatchEvent_1krpoya" :> TimerIntermediateEvent
-@@ "EndEvent_0p6olxz" :> NoneEndEvent
-@@ "EndEvent_1khaqp3" :> NoneEndEvent
-@@ "EndEvent_06hq74j" :> NoneEndEvent
-@@ "StartEvent_0ng45ln" :> NoneStartEvent
-@@ "ExclusiveGateway_0kvru56" :> ExclusiveOr
-@@ "EndEvent_1jr9ymp" :> NoneEndEvent
-@@ "EndEvent_1imvmci" :> NoneEndEvent
-@@ "SendTask_1i6lsga" :> AbstractTask
-@@ "Task_00w4wn4" :> SendTask
-@@ "EndEvent_0om01ac" :> NoneEndEvent
-@@ "Task_0eo34vw" :> AbstractTask
-@@ "StartEvent_1eicooe" :> NoneStartEvent
-@@ "ExclusiveGateway_1ukkste" :> ExclusiveOr
-@@ "EndEvent_1i50law" :> NoneEndEvent
-@@ "Task_0cjmppv" :> SendTask
+   "B_" :> Process
+@@ "C_" :> Process
+@@ "A_" :> Process
+@@ "B_NSE" :> NoneStartEvent
+@@ "B_EB" :> EventBased
+@@ "B_MICE1" :> CatchMessageIntermediateEvent
+@@ "B_MICE2" :> CatchMessageIntermediateEvent
+@@ "B_TIE" :> TimerIntermediateEvent
+@@ "B_EE1" :> NoneEndEvent
+@@ "B_EE2" :> NoneEndEvent
+@@ "B_EE3" :> NoneEndEvent
+@@ "C_NSE" :> NoneStartEvent
+@@ "C_XOR" :> ExclusiveOr
+@@ "C_EE2" :> NoneEndEvent
+@@ "C_EE1" :> NoneEndEvent
+@@ "C_T" :> AbstractTask
+@@ "C_ST" :> SendTask
+@@ "A_EE2" :> NoneEndEvent
+@@ "A_T" :> AbstractTask
+@@ "A_NSE" :> NoneStartEvent
+@@ "A_XOR" :> ExclusiveOr
+@@ "A_EE1" :> NoneEndEvent
+@@ "A_ST" :> SendTask
 
 CatE ==
    "MessageFlow_0anis1g" :> MessageFlow
 @@ "MessageFlow_0mma6b7" :> MessageFlow
-@@ "SequenceFlow_02i9aub" :> NormalSeqFlow
-@@ "SequenceFlow_1ejcjun" :> NormalSeqFlow
-@@ "SequenceFlow_1lim0ak" :> NormalSeqFlow
-@@ "SequenceFlow_0d4uo9u" :> NormalSeqFlow
-@@ "SequenceFlow_01mi0z5" :> NormalSeqFlow
-@@ "SequenceFlow_1w1q1tz" :> NormalSeqFlow
 @@ "SequenceFlow_1kqxai7" :> NormalSeqFlow
+@@ "SequenceFlow_1w1q1tz" :> NormalSeqFlow
+@@ "SequenceFlow_01mi0z5" :> NormalSeqFlow
+@@ "SequenceFlow_0d4uo9u" :> NormalSeqFlow
+@@ "SequenceFlow_1lim0ak" :> NormalSeqFlow
+@@ "SequenceFlow_1ejcjun" :> NormalSeqFlow
+@@ "SequenceFlow_02i9aub" :> NormalSeqFlow
 @@ "SequenceFlow_0062gga" :> NormalSeqFlow
 @@ "SequenceFlow_1fpdtzj" :> NormalSeqFlow
 @@ "SequenceFlow_0m6s08w" :> NormalSeqFlow

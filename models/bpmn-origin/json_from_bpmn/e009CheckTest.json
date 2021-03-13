@@ -1,41 +1,18 @@
 {
+    "isInterrupt": {},
     "catN": {
-        "Task_1eirt50": {
-            "tag": "AbstractTask"
-        },
-        "StartEvent_1wwcoxd": {
-            "tag": "NoneStartEvent"
-        },
-        "Task_1rt44mz": {
-            "tag": "SendTask"
-        },
-        "StartEvent_1": {
-            "tag": "NoneStartEvent"
-        },
-        "B_": {
-            "tag": "Process"
-        },
-        "EndEvent_0v9lt5i": {
-            "tag": "NoneEndEvent"
-        },
-        "ExclusiveGateway_0079typ": {
-            "tag": "XorGateway"
-        },
-        "Task_18t09mk": {
-            "tag": "ReceiveTask"
-        },
-        "Task_097548f": {
-            "tag": "AbstractTask"
-        },
-        "ExclusiveGateway_1j1chqb": {
-            "tag": "AndGateway"
-        },
-        "EndEvent_1wbcvef": {
-            "tag": "NoneEndEvent"
-        },
-        "A_": {
-            "tag": "Process"
-        }
+        "Task_1eirt50": "AbstractTask",
+        "StartEvent_1wwcoxd": "NoneStartEvent",
+        "Task_1rt44mz": "SendTask",
+        "StartEvent_1": "NoneStartEvent",
+        "B_": "Process",
+        "EndEvent_0v9lt5i": "NoneEndEvent",
+        "ExclusiveGateway_0079typ": "XorGateway",
+        "Task_18t09mk": "ReceiveTask",
+        "Task_097548f": "AbstractTask",
+        "ExclusiveGateway_1j1chqb": "AndGateway",
+        "EndEvent_1wbcvef": "NoneEndEvent",
+        "A_": "Process"
     },
     "catE": {
         "SequenceFlow_0z2xwql": "NormalSequenceFlow",
@@ -68,6 +45,7 @@
     "messageE": {
         "MessageFlow_03ylhkh": "m1"
     },
+    "timeInformation": {},
     "targetE": {
         "SequenceFlow_0z2xwql": "ExclusiveGateway_1j1chqb",
         "SequenceFlow_14kzfo3": "Task_18t09mk",

@@ -1,92 +1,35 @@
 {
+    "isInterrupt": {},
     "catN": {
-        "Ticket_Ordered": {
-            "tag": "NoneEndEvent"
-        },
-        "Confirm_Payment": {
-            "tag": "SendTask"
-        },
-        "Pay_Travel": {
-            "tag": "SendTask"
-        },
-        "Handle_Payment": {
-            "tag": "AbstractTask"
-        },
-        "Is_the_Offer_Interesting": {
-            "tag": "XorGateway"
-        },
-        "Was_Payment_Made": {
-            "tag": "XorGateway"
-        },
-        "StartEvent_1": {
-            "tag": "MessageStartEvent"
-        },
-        "Order_Ticket": {
-            "tag": "SendTask"
-        },
-        "Booking_Confirmed": {
-            "tag": "CatchMessageIntermediateEvent"
-        },
-        "Reject_Offer": {
-            "tag": "SendTask"
-        },
-        "Offer_Rejection_Received": {
-            "tag": "CatchMessageIntermediateEvent"
-        },
-        "TravelAgency_": {
-            "tag": "Process"
-        },
-        "IntermediateThrowEvent_0kagqq2": {
-            "tag": "CatchMessageIntermediateEvent"
-        },
-        "Customer_": {
-            "tag": "Process"
-        },
-        "Payment_Confirmed": {
-            "tag": "NoneEndEvent"
-        },
-        "Book_Travel": {
-            "tag": "SendTask"
-        },
-        "Offer_Rejected": {
-            "tag": "NoneEndEvent"
-        },
-        "Confirm_Booking": {
-            "tag": "SendTask"
-        },
-        "Offer_Cancelled": {
-            "tag": "NoneEndEvent"
-        },
-        "Offer_Needed": {
-            "tag": "NoneStartEvent"
-        },
-        "Payment_Confirmation_Received": {
-            "tag": "CatchMessageIntermediateEvent"
-        },
-        "Make_Travel_Offer": {
-            "tag": "SendTask"
-        },
-        "Ticket_Order_Received": {
-            "tag": "MessageStartEvent"
-        },
-        "Status_Waiting": {
-            "tag": "EventBasedGateway"
-        },
-        "Travel_Paid": {
-            "tag": "NoneEndEvent"
-        },
-        "Airline_": {
-            "tag": "Process"
-        },
-        "Payment_Refused": {
-            "tag": "NoneEndEvent"
-        },
-        "Check_Offer": {
-            "tag": "AbstractTask"
-        },
-        "Booking_Received": {
-            "tag": "CatchMessageIntermediateEvent"
-        }
+        "Ticket_Ordered": "NoneEndEvent",
+        "Confirm_Payment": "SendTask",
+        "Pay_Travel": "SendTask",
+        "Handle_Payment": "AbstractTask",
+        "Is_the_Offer_Interesting": "XorGateway",
+        "Was_Payment_Made": "XorGateway",
+        "StartEvent_1": "MessageStartEvent",
+        "Order_Ticket": "SendTask",
+        "Booking_Confirmed": "CatchMessageIntermediateEvent",
+        "Reject_Offer": "SendTask",
+        "Offer_Rejection_Received": "CatchMessageIntermediateEvent",
+        "TravelAgency_": "Process",
+        "IntermediateThrowEvent_0kagqq2": "CatchMessageIntermediateEvent",
+        "Customer_": "Process",
+        "Payment_Confirmed": "NoneEndEvent",
+        "Book_Travel": "SendTask",
+        "Offer_Rejected": "NoneEndEvent",
+        "Confirm_Booking": "SendTask",
+        "Offer_Cancelled": "NoneEndEvent",
+        "Offer_Needed": "NoneStartEvent",
+        "Payment_Confirmation_Received": "CatchMessageIntermediateEvent",
+        "Make_Travel_Offer": "SendTask",
+        "Ticket_Order_Received": "MessageStartEvent",
+        "Status_Waiting": "EventBasedGateway",
+        "Travel_Paid": "NoneEndEvent",
+        "Airline_": "Process",
+        "Payment_Refused": "NoneEndEvent",
+        "Check_Offer": "AbstractTask",
+        "Booking_Received": "CatchMessageIntermediateEvent"
     },
     "catE": {
         "SequenceFlow_1bxiri7": "NormalSequenceFlow",
@@ -163,6 +106,7 @@
         "MessageFlow_1j3ru8z": "order",
         "MessageFlow_15n7wk4": "payment confirmation"
     },
+    "timeInformation": {},
     "targetE": {
         "SequenceFlow_1bxiri7": "Make_Travel_Offer",
         "Offer_is_Interesting": "Book_Travel",

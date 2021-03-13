@@ -4,6 +4,11 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "Airline_" :> { "order" }
+  @@ "Customer_" :> { "offer", "confirmation", "payment confirmation" }
+  @@ "TravelAgency_" :> { "travel", "payment", "rejection" }
+
 ContainRel ==
   "Airline_" :> { "Ticket_Order_Received", "Handle_Payment", "Was_Payment_Made", "Payment_Confirmed", "Payment_Refused", "Confirm_Payment" }
   @@ "Customer_" :> { "StartEvent_1", "Check_Offer", "Is_the_Offer_Interesting", "Reject_Offer", "Book_Travel", "Offer_Rejected", "Pay_Travel", "Booking_Confirmed", "Payment_Confirmation_Received", "Travel_Paid" }

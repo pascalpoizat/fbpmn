@@ -4,6 +4,10 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "Customer_" :> { "Ticket", "Offer", "Confirmation" }
+  @@ "TravelAgency_" :> { "Payment", "Travel" }
+
 ContainRel ==
   "Customer_" :> { "Task_1v9s881", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k", "EndEvent_0u6deep", "IntermediateThrowEvent_12d113r", "Task_1q91vog" }
   @@ "TravelAgency_" :> { "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "IntermediateThrowEvent_0xjpikb", "EndEvent_10gqkzy", "Task_1ne4gpy", "Task_002ndsu", "IntermediateThrowEvent_0neineb", "ExclusiveGateway_0i09ijx" }

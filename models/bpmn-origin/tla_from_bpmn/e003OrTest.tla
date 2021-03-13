@@ -4,6 +4,9 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "Process_" :> {  }
+
 ContainRel ==
   "Process_" :> { "AT1", "Or1", "Xor1", "AT3", "AT2", "Xor2", "Or2", "Xor3", "AT4", "AT5", "NEE", "NSE", "Xor0" }
 

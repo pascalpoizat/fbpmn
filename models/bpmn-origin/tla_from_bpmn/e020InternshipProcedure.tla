@@ -4,6 +4,12 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "Company_" :> { "agreement" }
+  @@ "InternshipDelegate_" :> { "termination notification", "documentation" }
+  @@ "InternshipOffice_" :> { "proposal", "access", "registration", "login" }
+  @@ "Student_" :> { "internship completion" }
+
 ContainRel ==
   "Company_" :> { "Task_1ukgtgd", "Task_0k3desy", "EndEvent_0g8hfyq", "Task_0z00tzq", "Task_1awa0vf", "Task_13r7bmt", "Task_10ik9d4", "Task_06e9es5", "Task_0zi619x", "ExclusiveGateway_1ojvmkc", "Task_16a1dy1", "Task_0ieueaf", "StartEvent_1wgj96l", "ExclusiveGateway_1wor220" }
   @@ "InternshipDelegate_" :> { "StartEvent_0sg8ueb", "SendTask_0bu2egl", "ReceiveTask_1eiaojy", "EndEvent_0r34c4w", "SendTask_1sfy3aq" }

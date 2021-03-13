@@ -1,0 +1,57 @@
+{
+    "isInterrupt": {},
+    "catN": {
+        "ti": "TimerIntermediateEvent",
+        "se": "NoneStartEvent",
+        "Pid": "Process",
+        "ee": "NoneEndEvent"
+    },
+    "catE": {
+        "SequenceFlow_04jhviy": "NormalSequenceFlow",
+        "SequenceFlow_0b689qw": "NormalSequenceFlow"
+    },
+    "containN": {
+        "Pid": [
+            "ee",
+            "ti",
+            "se"
+        ]
+    },
+    "messageE": {},
+    "timeInformation": {
+        "ti": {
+            "timerDefinitionValue": "P1DT1H30M0S",
+            "timerDefinitionType": "TimeDuration"
+        }
+    },
+    "targetE": {
+        "SequenceFlow_04jhviy": "ti",
+        "SequenceFlow_0b689qw": "ee"
+    },
+    "name": "eXXX_TICEDuration",
+    "attached": {},
+    "containE": {
+        "Pid": [
+            "SequenceFlow_04jhviy",
+            "SequenceFlow_0b689qw"
+        ]
+    },
+    "edges": [
+        "SequenceFlow_04jhviy",
+        "SequenceFlow_0b689qw"
+    ],
+    "messages": [],
+    "sourceE": {
+        "SequenceFlow_04jhviy": "se",
+        "SequenceFlow_0b689qw": "ti"
+    },
+    "nodes": [
+        "Pid",
+        "ee",
+        "ti",
+        "se"
+    ],
+    "nameN": {
+        "ti": "P1DT1H30M0S"
+    }
+}

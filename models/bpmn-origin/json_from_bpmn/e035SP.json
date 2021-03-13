@@ -1,38 +1,17 @@
 {
+    "isInterrupt": {},
     "catN": {
-        "EndEvent_0a59w28": {
-            "tag": "NoneEndEvent"
-        },
-        "EndEvent_1jzyo34": {
-            "tag": "NoneEndEvent"
-        },
-        "StartEvent_1": {
-            "tag": "NoneStartEvent"
-        },
-        "StartEvent_0943q6x": {
-            "tag": "NoneStartEvent"
-        },
-        "StartEvent_09ojxru": {
-            "tag": "MessageStartEvent"
-        },
-        "P_": {
-            "tag": "Process"
-        },
-        "EndEvent_0atuxkh": {
-            "tag": "NoneEndEvent"
-        },
-        "SubProcess_1glz8ii": {
-            "tag": "SubProcess"
-        },
-        "Q_": {
-            "tag": "Process"
-        },
-        "Task_1x5zvyz": {
-            "tag": "AbstractTask"
-        },
-        "Task_0mft1gb": {
-            "tag": "SendTask"
-        }
+        "EndEvent_0a59w28": "NoneEndEvent",
+        "EndEvent_1jzyo34": "NoneEndEvent",
+        "StartEvent_1": "NoneStartEvent",
+        "StartEvent_0943q6x": "NoneStartEvent",
+        "StartEvent_09ojxru": "MessageStartEvent",
+        "P_": "Process",
+        "EndEvent_0atuxkh": "NoneEndEvent",
+        "SubProcess_1glz8ii": "SubProcess",
+        "Q_": "Process",
+        "Task_1x5zvyz": "AbstractTask",
+        "Task_0mft1gb": "SendTask"
     },
     "catE": {
         "SequenceFlow_0pgod6g": "NormalSequenceFlow",
@@ -63,6 +42,7 @@
     "messageE": {
         "MessageFlow_183e2wp": "m1"
     },
+    "timeInformation": {},
     "targetE": {
         "SequenceFlow_0pgod6g": "EndEvent_1jzyo34",
         "SequenceFlow_12utbfs": "SubProcess_1glz8ii",

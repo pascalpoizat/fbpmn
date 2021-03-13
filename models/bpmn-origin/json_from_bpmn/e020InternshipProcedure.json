@@ -1,122 +1,45 @@
 {
+    "isInterrupt": {},
     "catN": {
-        "ReceiveTask_146lfh4": {
-            "tag": "ReceiveTask"
-        },
-        "Task_0z00tzq": {
-            "tag": "SendTask"
-        },
-        "Task_05rcgao": {
-            "tag": "AbstractTask"
-        },
-        "EventBasedGateway_1d92ix7": {
-            "tag": "EventBasedGateway"
-        },
-        "ExclusiveGateway_1pvytgl": {
-            "tag": "XorGateway"
-        },
-        "Task_12w7z0s": {
-            "tag": "AbstractTask"
-        },
-        "Task_10ik9d4": {
-            "tag": "SendTask"
-        },
-        "SendTask_1sfy3aq": {
-            "tag": "AbstractTask"
-        },
-        "InternshipDelegate_": {
-            "tag": "Process"
-        },
-        "IntermediateCatchEvent_0oxyhte": {
-            "tag": "CatchMessageIntermediateEvent"
-        },
-        "StartEvent_1wgj96l": {
-            "tag": "NoneStartEvent"
-        },
-        "Task_06e9es5": {
-            "tag": "AbstractTask"
-        },
-        "Student_": {
-            "tag": "Process"
-        },
-        "Task_0k3desy": {
-            "tag": "SendTask"
-        },
-        "EndEvent_0zeqiic": {
-            "tag": "NoneEndEvent"
-        },
-        "Task_0ieueaf": {
-            "tag": "SendTask"
-        },
-        "Task_1awa0vf": {
-            "tag": "AbstractTask"
-        },
-        "InternshipOffice_": {
-            "tag": "Process"
-        },
-        "EndEvent_131pwct": {
-            "tag": "NoneEndEvent"
-        },
-        "Task_16mub7w": {
-            "tag": "AbstractTask"
-        },
-        "Task_0zi619x": {
-            "tag": "ReceiveTask"
-        },
-        "ExclusiveGateway_1wor220": {
-            "tag": "XorGateway"
-        },
-        "EndEvent_0g8hfyq": {
-            "tag": "NoneEndEvent"
-        },
-        "StartEvent_0sg8ueb": {
-            "tag": "MessageStartEvent"
-        },
-        "SendTask_0bu2egl": {
-            "tag": "SendTask"
-        },
-        "Task_1ukgtgd": {
-            "tag": "SendTask"
-        },
-        "ExclusiveGateway_10r796g": {
-            "tag": "XorGateway"
-        },
-        "Task_0kueqty": {
-            "tag": "SendTask"
-        },
-        "Company_": {
-            "tag": "Process"
-        },
-        "IntermediateCatchEvent_180guhd": {
-            "tag": "CatchMessageIntermediateEvent"
-        },
-        "StartEvent_0efqept": {
-            "tag": "NoneStartEvent"
-        },
-        "Task_0y40xht": {
-            "tag": "ReceiveTask"
-        },
-        "ExclusiveGateway_1ojvmkc": {
-            "tag": "XorGateway"
-        },
-        "StartEvent_0y07koo": {
-            "tag": "MessageStartEvent"
-        },
-        "Task_13r7bmt": {
-            "tag": "SendTask"
-        },
-        "Task_16a1dy1": {
-            "tag": "AbstractTask"
-        },
-        "ReceiveTask_1eiaojy": {
-            "tag": "ReceiveTask"
-        },
-        "EndEvent_0r34c4w": {
-            "tag": "NoneEndEvent"
-        },
-        "ExclusiveGateway_025el3u": {
-            "tag": "XorGateway"
-        }
+        "ReceiveTask_146lfh4": "ReceiveTask",
+        "Task_0z00tzq": "SendTask",
+        "Task_05rcgao": "AbstractTask",
+        "EventBasedGateway_1d92ix7": "EventBasedGateway",
+        "ExclusiveGateway_1pvytgl": "XorGateway",
+        "Task_12w7z0s": "AbstractTask",
+        "Task_10ik9d4": "SendTask",
+        "SendTask_1sfy3aq": "AbstractTask",
+        "InternshipDelegate_": "Process",
+        "IntermediateCatchEvent_0oxyhte": "CatchMessageIntermediateEvent",
+        "StartEvent_1wgj96l": "NoneStartEvent",
+        "Task_06e9es5": "AbstractTask",
+        "Student_": "Process",
+        "Task_0k3desy": "SendTask",
+        "EndEvent_0zeqiic": "NoneEndEvent",
+        "Task_0ieueaf": "SendTask",
+        "Task_1awa0vf": "AbstractTask",
+        "InternshipOffice_": "Process",
+        "EndEvent_131pwct": "NoneEndEvent",
+        "Task_16mub7w": "AbstractTask",
+        "Task_0zi619x": "ReceiveTask",
+        "ExclusiveGateway_1wor220": "XorGateway",
+        "EndEvent_0g8hfyq": "NoneEndEvent",
+        "StartEvent_0sg8ueb": "MessageStartEvent",
+        "SendTask_0bu2egl": "SendTask",
+        "Task_1ukgtgd": "SendTask",
+        "ExclusiveGateway_10r796g": "XorGateway",
+        "Task_0kueqty": "SendTask",
+        "Company_": "Process",
+        "IntermediateCatchEvent_180guhd": "CatchMessageIntermediateEvent",
+        "StartEvent_0efqept": "NoneStartEvent",
+        "Task_0y40xht": "ReceiveTask",
+        "ExclusiveGateway_1ojvmkc": "XorGateway",
+        "StartEvent_0y07koo": "MessageStartEvent",
+        "Task_13r7bmt": "SendTask",
+        "Task_16a1dy1": "AbstractTask",
+        "ReceiveTask_1eiaojy": "ReceiveTask",
+        "EndEvent_0r34c4w": "NoneEndEvent",
+        "ExclusiveGateway_025el3u": "XorGateway"
     },
     "catE": {
         "SequenceFlow_1716tm6": "NormalSequenceFlow",
@@ -217,6 +140,7 @@
         "MessageFlow_1r2202w": "agreement",
         "MessageFlow_1uu4df2": "login"
     },
+    "timeInformation": {},
     "targetE": {
         "SequenceFlow_1716tm6": "Task_0kueqty",
         "SequenceFlow_0ye9pwd": "Task_06e9es5",

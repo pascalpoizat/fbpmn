@@ -1,101 +1,38 @@
 {
+    "isInterrupt": {},
     "catN": {
-        "giftVoucher": {
-            "tag": "AbstractTask"
-        },
-        "Process_": {
-            "tag": "Process"
-        },
-        "card": {
-            "tag": "AbstractTask"
-        },
-        "validatePayment": {
-            "tag": "AbstractTask"
-        },
-        "email": {
-            "tag": "AbstractTask"
-        },
-        "packageItems": {
-            "tag": "AbstractTask"
-        },
-        "signIn": {
-            "tag": "AbstractTask"
-        },
-        "initiateDelivery": {
-            "tag": "AbstractTask"
-        },
-        "parallelgateway4": {
-            "tag": "AndGateway"
-        },
-        "exclusivegateway1": {
-            "tag": "XorGateway"
-        },
-        "generateTrackingInfo": {
-            "tag": "AbstractTask"
-        },
-        "Payment": {
-            "tag": "AbstractTask"
-        },
-        "inclusivegateway1": {
-            "tag": "OrGateway"
-        },
-        "startevent1": {
-            "tag": "NoneStartEvent"
-        },
-        "parallelgateway3": {
-            "tag": "AndGateway"
-        },
-        "signUp": {
-            "tag": "AbstractTask"
-        },
-        "inclusivegateway2": {
-            "tag": "OrGateway"
-        },
-        "parallelgateway2": {
-            "tag": "AndGateway"
-        },
-        "exclusivegateway2": {
-            "tag": "XorGateway"
-        },
-        "errorendevent1": {
-            "tag": "NoneEndEvent"
-        },
-        "notifyUser": {
-            "tag": "AbstractTask"
-        },
-        "parallelgateway1": {
-            "tag": "AndGateway"
-        },
-        "endevent1": {
-            "tag": "NoneEndEvent"
-        },
-        "exclusivegateway4": {
-            "tag": "XorGateway"
-        },
-        "sms": {
-            "tag": "AbstractTask"
-        },
-        "payOnDelivery": {
-            "tag": "AbstractTask"
-        },
-        "parallelgateway6": {
-            "tag": "AndGateway"
-        },
-        "exclusivegateway3": {
-            "tag": "XorGateway"
-        },
-        "transport": {
-            "tag": "AbstractTask"
-        },
-        "parallelgateway5": {
-            "tag": "AndGateway"
-        },
-        "selectItems": {
-            "tag": "AbstractTask"
-        },
-        "initiateShipping": {
-            "tag": "AbstractTask"
-        }
+        "giftVoucher": "AbstractTask",
+        "Process_": "Process",
+        "card": "AbstractTask",
+        "validatePayment": "AbstractTask",
+        "email": "AbstractTask",
+        "packageItems": "AbstractTask",
+        "signIn": "AbstractTask",
+        "initiateDelivery": "AbstractTask",
+        "parallelgateway4": "AndGateway",
+        "exclusivegateway1": "XorGateway",
+        "generateTrackingInfo": "AbstractTask",
+        "Payment": "AbstractTask",
+        "inclusivegateway1": "OrGateway",
+        "startevent1": "NoneStartEvent",
+        "parallelgateway3": "AndGateway",
+        "signUp": "AbstractTask",
+        "inclusivegateway2": "OrGateway",
+        "parallelgateway2": "AndGateway",
+        "exclusivegateway2": "XorGateway",
+        "errorendevent1": "NoneEndEvent",
+        "notifyUser": "AbstractTask",
+        "parallelgateway1": "AndGateway",
+        "endevent1": "NoneEndEvent",
+        "exclusivegateway4": "XorGateway",
+        "sms": "AbstractTask",
+        "payOnDelivery": "AbstractTask",
+        "parallelgateway6": "AndGateway",
+        "exclusivegateway3": "XorGateway",
+        "transport": "AbstractTask",
+        "parallelgateway5": "AndGateway",
+        "selectItems": "AbstractTask",
+        "initiateShipping": "AbstractTask"
     },
     "catE": {
         "flow6": "NormalSequenceFlow",
@@ -171,6 +108,7 @@
         ]
     },
     "messageE": {},
+    "timeInformation": {},
     "targetE": {
         "flow6": "exclusivegateway2",
         "flow60": "parallelgateway6",

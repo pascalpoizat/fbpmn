@@ -4,6 +4,10 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "P_" :> { "m1" }
+  @@ "Q_" :> {  }
+
 ContainRel ==
   "P_" :> { "StartEvent_1", "SubProcess_1glz8ii", "EndEvent_0a59w28" }
   @@ "Q_" :> { "StartEvent_0943q6x", "EndEvent_1jzyo34", "Task_0mft1gb" }

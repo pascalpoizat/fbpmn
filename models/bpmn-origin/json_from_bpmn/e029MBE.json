@@ -1,83 +1,35 @@
 {
+    "isInterrupt": {
+        "BoundaryEvent_1fak9ar": true,
+        "BoundaryEvent_0k5p91i": true,
+        "BoundaryEvent_1q0fgiw": true
+    },
     "catN": {
-        "BoundaryEvent_1fak9ar": {
-            "tag": "MessageBoundaryEvent",
-            "cancelActivity": true
-        },
-        "SubProcess_0joqwjm": {
-            "tag": "SubProcess"
-        },
-        "Task_06osngf": {
-            "tag": "AbstractTask"
-        },
-        "EndEvent_112jhwq": {
-            "tag": "NoneEndEvent"
-        },
-        "StartEvent_1": {
-            "tag": "NoneStartEvent"
-        },
-        "ExclusiveGateway_0hzcbkt": {
-            "tag": "XorGateway"
-        },
-        "EndEvent_1hytbgh": {
-            "tag": "NoneEndEvent"
-        },
-        "Task_1i35ppr": {
-            "tag": "AbstractTask"
-        },
-        "StartEvent_0ef0xw9": {
-            "tag": "NoneStartEvent"
-        },
-        "EndEvent_1gf9mha": {
-            "tag": "NoneEndEvent"
-        },
-        "Task_0z3cxl5": {
-            "tag": "SendTask"
-        },
-        "BoundaryEvent_0k5p91i": {
-            "tag": "MessageBoundaryEvent",
-            "cancelActivity": true
-        },
-        "BoundaryEvent_1q0fgiw": {
-            "tag": "MessageBoundaryEvent",
-            "cancelActivity": true
-        },
-        "P_": {
-            "tag": "Process"
-        },
-        "ExclusiveGateway_0pvsvob": {
-            "tag": "XorGateway"
-        },
-        "ExclusiveGateway_1vvyptg": {
-            "tag": "XorGateway"
-        },
-        "EndEvent_1whel54": {
-            "tag": "NoneEndEvent"
-        },
-        "SubProcess_07e2e99": {
-            "tag": "SubProcess"
-        },
-        "ExclusiveGateway_1hukmk5": {
-            "tag": "XorGateway"
-        },
-        "StartEvent_1jxrjjb": {
-            "tag": "NoneStartEvent"
-        },
-        "EndEvent_0ovxd43": {
-            "tag": "MessageEndEvent"
-        },
-        "Task_1kso3jk": {
-            "tag": "AbstractTask"
-        },
-        "StartEvent_03bqw0j": {
-            "tag": "NoneStartEvent"
-        },
-        "Q_": {
-            "tag": "Process"
-        },
-        "Task_0ouyduq": {
-            "tag": "SendTask"
-        }
+        "BoundaryEvent_1fak9ar": "MessageBoundaryEvent",
+        "SubProcess_0joqwjm": "SubProcess",
+        "Task_06osngf": "AbstractTask",
+        "EndEvent_112jhwq": "NoneEndEvent",
+        "StartEvent_1": "NoneStartEvent",
+        "ExclusiveGateway_0hzcbkt": "XorGateway",
+        "EndEvent_1hytbgh": "NoneEndEvent",
+        "Task_1i35ppr": "AbstractTask",
+        "StartEvent_0ef0xw9": "NoneStartEvent",
+        "EndEvent_1gf9mha": "NoneEndEvent",
+        "Task_0z3cxl5": "SendTask",
+        "BoundaryEvent_0k5p91i": "MessageBoundaryEvent",
+        "BoundaryEvent_1q0fgiw": "MessageBoundaryEvent",
+        "P_": "Process",
+        "ExclusiveGateway_0pvsvob": "XorGateway",
+        "ExclusiveGateway_1vvyptg": "XorGateway",
+        "EndEvent_1whel54": "NoneEndEvent",
+        "SubProcess_07e2e99": "SubProcess",
+        "ExclusiveGateway_1hukmk5": "XorGateway",
+        "StartEvent_1jxrjjb": "NoneStartEvent",
+        "EndEvent_0ovxd43": "MessageEndEvent",
+        "Task_1kso3jk": "AbstractTask",
+        "StartEvent_03bqw0j": "NoneStartEvent",
+        "Q_": "Process",
+        "Task_0ouyduq": "SendTask"
     },
     "catE": {
         "SequenceFlow_17254s0": "NormalSequenceFlow",
@@ -142,6 +94,7 @@
         "MessageFlow_01dn8b3": "msg1",
         "MessageFlow_01rg2pg": "msg3"
     },
+    "timeInformation": {},
     "targetE": {
         "SequenceFlow_17254s0": "ExclusiveGateway_1vvyptg",
         "SequenceFlow_0y8q6ot": "EndEvent_112jhwq",

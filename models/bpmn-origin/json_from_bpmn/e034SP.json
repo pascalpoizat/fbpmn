@@ -1,32 +1,15 @@
 {
+    "isInterrupt": {},
     "catN": {
-        "ExclusiveGateway_0vdfgj4": {
-            "tag": "XorGateway"
-        },
-        "EndEvent_0a59w28": {
-            "tag": "NoneEndEvent"
-        },
-        "StartEvent_1": {
-            "tag": "NoneStartEvent"
-        },
-        "StartEvent_09ojxru": {
-            "tag": "NoneStartEvent"
-        },
-        "P_": {
-            "tag": "Process"
-        },
-        "EndEvent_0atuxkh": {
-            "tag": "NoneEndEvent"
-        },
-        "StartEvent_0p1e2cq": {
-            "tag": "NoneStartEvent"
-        },
-        "SubProcess_1glz8ii": {
-            "tag": "SubProcess"
-        },
-        "Task_1x5zvyz": {
-            "tag": "AbstractTask"
-        }
+        "ExclusiveGateway_0vdfgj4": "XorGateway",
+        "EndEvent_0a59w28": "NoneEndEvent",
+        "StartEvent_1": "NoneStartEvent",
+        "StartEvent_09ojxru": "NoneStartEvent",
+        "P_": "Process",
+        "EndEvent_0atuxkh": "NoneEndEvent",
+        "StartEvent_0p1e2cq": "NoneStartEvent",
+        "SubProcess_1glz8ii": "SubProcess",
+        "Task_1x5zvyz": "AbstractTask"
     },
     "catE": {
         "SequenceFlow_1t5jo8c": "NormalSequenceFlow",
@@ -51,6 +34,7 @@
         ]
     },
     "messageE": {},
+    "timeInformation": {},
     "targetE": {
         "SequenceFlow_1t5jo8c": "ExclusiveGateway_0vdfgj4",
         "SequenceFlow_04a621f": "Task_1x5zvyz",

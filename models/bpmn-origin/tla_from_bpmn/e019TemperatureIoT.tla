@@ -4,6 +4,13 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "Boiller_" :> { "mf8", "mf7", "mf4" }
+  @@ "Sensor_" :> { "mf6", "mf5" }
+  @@ "Thermostat_" :> { "mf1", "mf2", "mf9" }
+  @@ "User_" :> {  }
+  @@ "WSNGateway_" :> { "mf3", "mf", "mf10" }
+
 ContainRel ==
   "Boiller_" :> { "ExclusiveGateway_1feo3um", "ExclusiveGateway_0wtbkow", "ExclusiveGateway_0cpdpri", "IntermediateCatchEvent_1mqziug", "StartEvent_0tynlqh", "ExclusiveGateway_0sum07m", "Task_169t347", "ExclusiveGateway_19mjt5y", "EndEvent_0pa5oys", "Task_1e85hli", "Task_1spxdy2", "ExclusiveGateway_1izjr9z", "IntermediateThrowEvent_12cgsc9" }
   @@ "Sensor_" :> { "ExclusiveGateway_1alxwt7", "IntermediateThrowEvent_1ajpgtk", "EndEvent_0joc303", "ExclusiveGateway_0d9bxab", "StartEvent_12o3x3s", "Task_0aihuup", "Task_1p5k4vg" }

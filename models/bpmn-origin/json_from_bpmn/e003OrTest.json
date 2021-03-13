@@ -1,47 +1,20 @@
 {
+    "isInterrupt": {},
     "catN": {
-        "Process_": {
-            "tag": "Process"
-        },
-        "Or1": {
-            "tag": "OrGateway"
-        },
-        "AT2": {
-            "tag": "AbstractTask"
-        },
-        "Xor2": {
-            "tag": "XorGateway"
-        },
-        "AT5": {
-            "tag": "AbstractTask"
-        },
-        "NSE": {
-            "tag": "NoneStartEvent"
-        },
-        "AT4": {
-            "tag": "AbstractTask"
-        },
-        "Xor1": {
-            "tag": "XorGateway"
-        },
-        "AT1": {
-            "tag": "AbstractTask"
-        },
-        "Or2": {
-            "tag": "OrGateway"
-        },
-        "Xor0": {
-            "tag": "XorGateway"
-        },
-        "AT3": {
-            "tag": "AbstractTask"
-        },
-        "Xor3": {
-            "tag": "XorGateway"
-        },
-        "NEE": {
-            "tag": "NoneEndEvent"
-        }
+        "Process_": "Process",
+        "Or1": "OrGateway",
+        "AT2": "AbstractTask",
+        "Xor2": "XorGateway",
+        "AT5": "AbstractTask",
+        "NSE": "NoneStartEvent",
+        "AT4": "AbstractTask",
+        "Xor1": "XorGateway",
+        "AT1": "AbstractTask",
+        "Or2": "OrGateway",
+        "Xor0": "XorGateway",
+        "AT3": "AbstractTask",
+        "Xor3": "XorGateway",
+        "NEE": "NoneEndEvent"
     },
     "catE": {
         "e1": "NormalSequenceFlow",
@@ -79,6 +52,7 @@
         ]
     },
     "messageE": {},
+    "timeInformation": {},
     "targetE": {
         "e1": "AT1",
         "e10": "AT4",

@@ -4,6 +4,10 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "P_" :> { "query", "cancellation" }
+  @@ "Q_" :> { "confirmation", "estimate", "invoice", "results" }
+
 ContainRel ==
   "P_" :> { "StartEvent_1", "Task_05seu1l", "Task_0yk02ke", "EndEvent_1yasgxk", "ExclusiveGateway_06st2fh", "IntermediateThrowEvent_16df5b4", "Task_1lnz72e", "Task_1ypg0u2", "BoundaryEvent_1fgc3dg" }
   @@ "Q_" :> { "StartEvent_1axpofs", "Task_0k7ip70", "IntermediateThrowEvent_0yo36nb", "ExclusiveGateway_0phbzc0", "IntermediateThrowEvent_1ewiw3i", "ExclusiveGateway_14e5fg8", "IntermediateThrowEvent_0nfi6to", "EndEvent_0l9fmhf", "ExclusiveGateway_06aycf0", "IntermediateThrowEvent_1s2ehzf", "IntermediateThrowEvent_1q2mw0e" }

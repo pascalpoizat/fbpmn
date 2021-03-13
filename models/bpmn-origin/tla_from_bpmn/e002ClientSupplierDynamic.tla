@@ -4,6 +4,10 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "Client_" :> { "invoice", "goods" }
+  @@ "Supplier_" :> { "command" }
+
 ContainRel ==
   "Client_" :> { "cStart", "cSendCommand", "cEnd", "cReceiveInvoice", "cReceiveGoods", "cStoreRequest" }
   @@ "Supplier_" :> { "sShipCommand", "sSendInvoice", "sInvoiceManagement", "sPrepareCommand", "sEnd", "sStart", "sPar1", "sPar2" }

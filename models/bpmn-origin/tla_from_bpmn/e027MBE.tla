@@ -4,6 +4,10 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "P_" :> { "msg1", "msg2" }
+  @@ "Q_" :> { "msg3" }
+
 ContainRel ==
   "P_" :> { "SubProcess_07e2e99", "StartEvent_1", "EndEvent_1hytbgh", "Task_1haqr79", "Task_06osngf", "EndEvent_112jhwq", "BoundaryEvent_1q0fgiw", "BoundaryEvent_1fak9ar" }
   @@ "Q_" :> { "SubProcess_0joqwjm", "StartEvent_1jxrjjb", "EndEvent_1gf9mha", "BoundaryEvent_0k5p91i" }
@@ -140,8 +144,8 @@ PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
 
 BoundaryEvent ==
    "BoundaryEvent_1q0fgiw" :> [ attachedTo |-> "SubProcess_07e2e99", cancelActivity |-> TRUE ]
-@@ "BoundaryEvent_0k5p91i" :> [ attachedTo |-> "SubProcess_0joqwjm", cancelActivity |-> TRUE ]
 @@ "BoundaryEvent_1fak9ar" :> [ attachedTo |-> "SubProcess_07e2e99", cancelActivity |-> FALSE ]
+@@ "BoundaryEvent_0k5p91i" :> [ attachedTo |-> "SubProcess_0joqwjm", cancelActivity |-> TRUE ]
 
 WF == INSTANCE PWSWellFormed
 ASSUME WF!WellTyped

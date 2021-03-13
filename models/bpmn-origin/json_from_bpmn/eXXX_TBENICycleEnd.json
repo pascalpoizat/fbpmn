@@ -1,0 +1,115 @@
+{
+    "isInterrupt": {
+        "be": false
+    },
+    "catN": {
+        "be": "TimerBoundaryEvent",
+        "t3": "AbstractTask",
+        "ee2": "NoneEndEvent",
+        "sp": "SubProcess",
+        "se": "NoneStartEvent",
+        "StartEvent_0y9n6er": "NoneStartEvent",
+        "Pid": "Process",
+        "t1": "AbstractTask",
+        "eeSP": "NoneEndEvent",
+        "t2": "AbstractTask",
+        "ee1": "NoneEndEvent"
+    },
+    "catE": {
+        "SequenceFlow_0lpe900": "NormalSequenceFlow",
+        "SequenceFlow_1ckj6jx": "NormalSequenceFlow",
+        "SequenceFlow_069yln3": "NormalSequenceFlow",
+        "SequenceFlow_1351e66": "NormalSequenceFlow",
+        "SequenceFlow_0xvib5s": "NormalSequenceFlow",
+        "SequenceFlow_18ve5j0": "NormalSequenceFlow",
+        "SequenceFlow_0210zve": "NormalSequenceFlow"
+    },
+    "containN": {
+        "sp": [
+            "t1",
+            "StartEvent_0y9n6er",
+            "eeSP"
+        ],
+        "Pid": [
+            "sp",
+            "se",
+            "ee2",
+            "t2",
+            "ee1",
+            "t3",
+            "be"
+        ]
+    },
+    "messageE": {},
+    "timeInformation": {
+        "be": {
+            "timerDefinitionValue": "R2/PT10M0S/1970-01-01T01:01:01Z",
+            "timerDefinitionType": "TimeCycle"
+        }
+    },
+    "targetE": {
+        "SequenceFlow_0lpe900": "ee1",
+        "SequenceFlow_1ckj6jx": "t3",
+        "SequenceFlow_069yln3": "t2",
+        "SequenceFlow_1351e66": "sp",
+        "SequenceFlow_0xvib5s": "eeSP",
+        "SequenceFlow_18ve5j0": "t1",
+        "SequenceFlow_0210zve": "ee2"
+    },
+    "name": "eXXX_TBENICycleEnd",
+    "attached": {
+        "be": "sp"
+    },
+    "containE": {
+        "sp": [
+            "SequenceFlow_18ve5j0",
+            "SequenceFlow_0xvib5s"
+        ],
+        "Pid": [
+            "SequenceFlow_1351e66",
+            "SequenceFlow_069yln3",
+            "SequenceFlow_0210zve",
+            "SequenceFlow_0lpe900",
+            "SequenceFlow_1ckj6jx"
+        ]
+    },
+    "edges": [
+        "SequenceFlow_1351e66",
+        "SequenceFlow_069yln3",
+        "SequenceFlow_0210zve",
+        "SequenceFlow_0lpe900",
+        "SequenceFlow_1ckj6jx",
+        "SequenceFlow_18ve5j0",
+        "SequenceFlow_0xvib5s"
+    ],
+    "messages": [],
+    "sourceE": {
+        "SequenceFlow_0lpe900": "t3",
+        "SequenceFlow_1ckj6jx": "be",
+        "SequenceFlow_069yln3": "sp",
+        "SequenceFlow_1351e66": "se",
+        "SequenceFlow_0xvib5s": "t1",
+        "SequenceFlow_18ve5j0": "StartEvent_0y9n6er",
+        "SequenceFlow_0210zve": "t2"
+    },
+    "nodes": [
+        "Pid",
+        "sp",
+        "se",
+        "ee2",
+        "t2",
+        "ee1",
+        "t3",
+        "be",
+        "t1",
+        "StartEvent_0y9n6er",
+        "eeSP"
+    ],
+    "nameN": {
+        "be": "R2/PT10M0S/1970-01-01T01:01:01Z",
+        "t3": "T3",
+        "sp": "SP",
+        "t1": "T1",
+        "t2": "T2"
+    }
+}

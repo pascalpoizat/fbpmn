@@ -4,6 +4,10 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "Receiver_" :> { "m1", "m2" }
+  @@ "Sender_" :> {  }
+
 ContainRel ==
   "Receiver_" :> { "StartEvent_0x0o2ml", "ExclusiveGateway_1aidani", "EndEvent_1d6yy2u", "EndEvent_19gcpb9", "Task_1d78ih0", "Task_19wi6kk" }
   @@ "Sender_" :> { "StartEvent_1", "ExclusiveGateway_1gus05a", "EndEvent_198u4gq", "EndEvent_1e5c16l", "Task_1c559zv", "Task_1cbrss1" }

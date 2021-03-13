@@ -1,53 +1,22 @@
 {
+    "isInterrupt": {},
     "catN": {
-        "sPrepareCommand": {
-            "tag": "AbstractTask"
-        },
-        "cStoreRequest": {
-            "tag": "AbstractTask"
-        },
-        "Supplier_": {
-            "tag": "Process"
-        },
-        "sStart": {
-            "tag": "MessageStartEvent"
-        },
-        "cStart": {
-            "tag": "NoneStartEvent"
-        },
-        "Client_": {
-            "tag": "Process"
-        },
-        "sSendInvoice": {
-            "tag": "SendTask"
-        },
-        "sShipCommand": {
-            "tag": "SendTask"
-        },
-        "cReceiveInvoice": {
-            "tag": "ReceiveTask"
-        },
-        "sPar1": {
-            "tag": "AndGateway"
-        },
-        "sInvoiceManagement": {
-            "tag": "AbstractTask"
-        },
-        "cEnd": {
-            "tag": "NoneEndEvent"
-        },
-        "sEnd": {
-            "tag": "NoneEndEvent"
-        },
-        "sPar2": {
-            "tag": "AndGateway"
-        },
-        "cReceiveGoods": {
-            "tag": "ReceiveTask"
-        },
-        "cSendCommand": {
-            "tag": "SendTask"
-        }
+        "sPrepareCommand": "AbstractTask",
+        "cStoreRequest": "AbstractTask",
+        "Supplier_": "Process",
+        "sStart": "MessageStartEvent",
+        "cStart": "NoneStartEvent",
+        "Client_": "Process",
+        "sSendInvoice": "SendTask",
+        "sShipCommand": "SendTask",
+        "cReceiveInvoice": "ReceiveTask",
+        "sPar1": "AndGateway",
+        "sInvoiceManagement": "AbstractTask",
+        "cEnd": "NoneEndEvent",
+        "sEnd": "NoneEndEvent",
+        "sPar2": "AndGateway",
+        "cReceiveGoods": "ReceiveTask",
+        "cSendCommand": "SendTask"
     },
     "catE": {
         "cE2": "NormalSequenceFlow",
@@ -92,6 +61,7 @@
         "mf3": "goods",
         "mf2": "invoice"
     },
+    "timeInformation": {},
     "targetE": {
         "cE2": "cStoreRequest",
         "sE2": "sPrepareCommand",

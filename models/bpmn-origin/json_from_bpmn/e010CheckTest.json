@@ -1,50 +1,21 @@
 {
+    "isInterrupt": {},
     "catN": {
-        "Task_1eirt50": {
-            "tag": "AbstractTask"
-        },
-        "StartEvent_13qwxem": {
-            "tag": "NoneStartEvent"
-        },
-        "Task_1rt44mz": {
-            "tag": "SendTask"
-        },
-        "StartEvent_1": {
-            "tag": "NoneStartEvent"
-        },
-        "B_": {
-            "tag": "Process"
-        },
-        "EndEvent_1s2d234": {
-            "tag": "NoneEndEvent"
-        },
-        "SP": {
-            "tag": "SubProcess"
-        },
-        "EndEvent_0v9lt5i": {
-            "tag": "NoneEndEvent"
-        },
-        "ExclusiveGateway_0079typ": {
-            "tag": "XorGateway"
-        },
-        "ReceiveTask_0tuz5r7": {
-            "tag": "ReceiveTask"
-        },
-        "Task_097548f": {
-            "tag": "AbstractTask"
-        },
-        "ExclusiveGateway_1j1chqb": {
-            "tag": "AndGateway"
-        },
-        "EndEvent_0ns8te3": {
-            "tag": "NoneEndEvent"
-        },
-        "A_": {
-            "tag": "Process"
-        },
-        "StartEvent_0ayuyd2": {
-            "tag": "NoneStartEvent"
-        }
+        "Task_1eirt50": "AbstractTask",
+        "StartEvent_13qwxem": "NoneStartEvent",
+        "Task_1rt44mz": "SendTask",
+        "StartEvent_1": "NoneStartEvent",
+        "B_": "Process",
+        "EndEvent_1s2d234": "NoneEndEvent",
+        "SP": "SubProcess",
+        "EndEvent_0v9lt5i": "NoneEndEvent",
+        "ExclusiveGateway_0079typ": "XorGateway",
+        "ReceiveTask_0tuz5r7": "ReceiveTask",
+        "Task_097548f": "AbstractTask",
+        "ExclusiveGateway_1j1chqb": "AndGateway",
+        "EndEvent_0ns8te3": "NoneEndEvent",
+        "A_": "Process",
+        "StartEvent_0ayuyd2": "NoneStartEvent"
     },
     "catE": {
         "SequenceFlow_0ehu3gz": "NormalSequenceFlow",
@@ -84,6 +55,7 @@
     "messageE": {
         "mf1": "m1"
     },
+    "timeInformation": {},
     "targetE": {
         "SequenceFlow_0ehu3gz": "EndEvent_1s2d234",
         "SequenceFlow_1rma85g": "ReceiveTask_0tuz5r7",

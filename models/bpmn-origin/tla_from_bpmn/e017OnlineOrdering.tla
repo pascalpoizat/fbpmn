@@ -4,6 +4,9 @@ EXTENDS TLC, PWSTypes
 
 VARIABLES nodemarks, edgemarks, net
 
+Interest ==
+  "Process_" :> {  }
+
 ContainRel ==
   "Process_" :> { "exclusivegateway4", "exclusivegateway3", "validatePayment", "inclusivegateway2", "payOnDelivery", "card", "giftVoucher", "inclusivegateway1", "Payment", "selectItems", "exclusivegateway2", "signUp", "signIn", "exclusivegateway1", "startevent1", "initiateShipping", "parallelgateway1", "packageItems", "parallelgateway2", "initiateDelivery", "email", "notifyUser", "sms", "transport", "parallelgateway5", "parallelgateway6", "parallelgateway3", "parallelgateway4", "endevent1", "generateTrackingInfo", "errorendevent1" }
 

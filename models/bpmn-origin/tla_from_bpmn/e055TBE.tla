@@ -8,11 +8,11 @@ Interest ==
   "Process_1" :> {  }
 
 ContainRel ==
-  "Process_1" :> { "SubProcess_0h2vtyo", "BoundaryEvent_02b1vw4", "EndEvent_111i3i3", "StartEvent_1" }
+  "Process_1" :> { "SubProcess_0h2vtyo", "BoundaryEvent_02b1vw4", "StartEvent_1", "EndEvent_111i3i3" }
   @@ "SubProcess_0h2vtyo" :> { "StartEvent_0hi510e", "Task_0mfb6xu", "Task_0m7n5xk" }
 
 Node == {
-  "Process_1","SubProcess_0h2vtyo","BoundaryEvent_02b1vw4","EndEvent_111i3i3","StartEvent_1","StartEvent_0hi510e","Task_0mfb6xu","Task_0m7n5xk"
+  "Process_1","SubProcess_0h2vtyo","BoundaryEvent_02b1vw4","StartEvent_1","EndEvent_111i3i3","StartEvent_0hi510e","Task_0mfb6xu","Task_0m7n5xk"
 }
 
 Edge == {
@@ -42,8 +42,8 @@ CatN ==
    "Process_1" :> Process
 @@ "SubProcess_0h2vtyo" :> SubProcess
 @@ "BoundaryEvent_02b1vw4" :> TimerBoundaryEvent
-@@ "EndEvent_111i3i3" :> NoneEndEvent
 @@ "StartEvent_1" :> NoneStartEvent
+@@ "EndEvent_111i3i3" :> NoneEndEvent
 @@ "StartEvent_0hi510e" :> NoneStartEvent
 @@ "Task_0mfb6xu" :> AbstractTask
 @@ "Task_0m7n5xk" :> AbstractTask
@@ -63,7 +63,7 @@ PreNodes(n,e) == { target[ee] : ee \in preEdges[n,e] }
           \union { nn \in { source[ee] : ee \in preEdges[n,e] } : CatN[nn] \in { NoneStartEvent, MessageStartEvent } }
 
 BoundaryEvent ==
-  [ i \in {} |-> {}]
+   "BoundaryEvent_02b1vw4" :> [ attachedTo |-> "SubProcess_0h2vtyo", cancelActivity |-> TRUE ]
 
 WF == INSTANCE PWSWellFormed
 ASSUME WF!WellTyped

@@ -1,0 +1,83 @@
+{
+    "isInterrupt": {},
+    "catN": {
+        "Process_1": "Process",
+        "EndEvent_0gtkoek": "NoneEndEvent",
+        "NSE": "NoneStartEvent",
+        "Process_1fvo71o": "Process",
+        "Task_0x899gn": "AbstractTask",
+        "StartEvent_04szy8h": "TimerStartEvent",
+        "T1": "AbstractTask",
+        "EE1": "NoneEndEvent"
+    },
+    "catE": {
+        "SequenceFlow_12856fs": "NormalSequenceFlow",
+        "SF2": "NormalSequenceFlow",
+        "SF1": "NormalSequenceFlow",
+        "SequenceFlow_0ru7vyn": "NormalSequenceFlow"
+    },
+    "containN": {
+        "Process_1": [
+            "NSE",
+            "T1",
+            "EE1"
+        ],
+        "Process_1fvo71o": [
+            "StartEvent_04szy8h",
+            "Task_0x899gn",
+            "EndEvent_0gtkoek"
+        ]
+    },
+    "messageE": {},
+    "timeInformation": {
+        "StartEvent_04szy8h": {
+            "timerDefinitionValue": null,
+            "timerDefinitionType": null
+        }
+    },
+    "targetE": {
+        "SequenceFlow_12856fs": "EndEvent_0gtkoek",
+        "SF2": "EE1",
+        "SF1": "T1",
+        "SequenceFlow_0ru7vyn": "Task_0x899gn"
+    },
+    "name": "e053TSE",
+    "attached": {},
+    "containE": {
+        "Process_1": [
+            "SF1",
+            "SF2"
+        ],
+        "Process_1fvo71o": [
+            "SequenceFlow_0ru7vyn",
+            "SequenceFlow_12856fs"
+        ]
+    },
+    "edges": [
+        "SF1",
+        "SF2",
+        "SequenceFlow_0ru7vyn",
+        "SequenceFlow_12856fs"
+    ],
+    "messages": [],
+    "sourceE": {
+        "SequenceFlow_12856fs": "Task_0x899gn",
+        "SF2": "T1",
+        "SF1": "NSE",
+        "SequenceFlow_0ru7vyn": "StartEvent_04szy8h"
+    },
+    "nodes": [
+        "Process_1",
+        "Process_1fvo71o",
+        "NSE",
+        "T1",
+        "EE1",
+        "StartEvent_04szy8h",
+        "Task_0x899gn",
+        "EndEvent_0gtkoek"
+    ],
+    "nameN": {
+        "Task_0x899gn": "T2",
+        "T1": "T1"
+    }
+}

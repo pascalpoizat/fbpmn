@@ -1,94 +1,38 @@
 {
+    "isInterrupt": {
+        "BoundaryEvent_0qlhw6m": true,
+        "BoundaryEvent_19y0yk9": true
+    },
     "catN": {
-        "Task_1q91vog": {
-            "tag": "SendTask"
-        },
-        "EndEvent_17rlcaz": {
-            "tag": "NoneEndEvent"
-        },
-        "IntermediateThrowEvent_0neineb": {
-            "tag": "CatchMessageIntermediateEvent"
-        },
-        "ExclusiveGateway_0i09ijx": {
-            "tag": "XorGateway"
-        },
-        "IntermediateThrowEvent_12d113r": {
-            "tag": "CatchMessageIntermediateEvent"
-        },
-        "ExclusiveGateway_192ovii": {
-            "tag": "XorGateway"
-        },
-        "StartEvent_1": {
-            "tag": "NoneStartEvent"
-        },
-        "BoundaryEvent_0qlhw6m": {
-            "tag": "MessageBoundaryEvent",
-            "cancelActivity": true
-        },
-        "StartEvent_1f3jj6d": {
-            "tag": "NoneStartEvent"
-        },
-        "ExclusiveGateway_1dc5v3z": {
-            "tag": "XorGateway"
-        },
-        "SubProcess_1agd6n3": {
-            "tag": "SubProcess"
-        },
-        "TravelAgency_": {
-            "tag": "Process"
-        },
-        "EndEvent_0u6deep": {
-            "tag": "CatchMessageIntermediateEvent"
-        },
-        "Task_07u875a": {
-            "tag": "ReceiveTask"
-        },
-        "Task_1bn6n5q": {
-            "tag": "SendTask"
-        },
-        "EndEvent_055yt9k": {
-            "tag": "NoneEndEvent"
-        },
-        "EndEvent_10gqkzy": {
-            "tag": "NoneEndEvent"
-        },
-        "IntermediateThrowEvent_0b4rm53": {
-            "tag": "ThrowMessageIntermediateEvent"
-        },
-        "Customer_": {
-            "tag": "Process"
-        },
-        "BoundaryEvent_19y0yk9": {
-            "tag": "MessageBoundaryEvent",
-            "cancelActivity": true
-        },
-        "Task_002ndsu": {
-            "tag": "SendTask"
-        },
-        "StartEvent_0qomvov": {
-            "tag": "NoneStartEvent"
-        },
-        "Task_1ne4gpy": {
-            "tag": "SendTask"
-        },
-        "EndEvent_0syu44v": {
-            "tag": "NoneEndEvent"
-        },
-        "IntermediateThrowEvent_02q48nh": {
-            "tag": "ThrowMessageIntermediateEvent"
-        },
-        "EndEvent_1vkzo14": {
-            "tag": "NoneEndEvent"
-        },
-        "IntermediateThrowEvent_0xjpikb": {
-            "tag": "CatchMessageIntermediateEvent"
-        },
-        "Task_1v9s881": {
-            "tag": "SendTask"
-        },
-        "ExclusiveGateway_0wgdt1i": {
-            "tag": "XorGateway"
-        }
+        "Task_1q91vog": "SendTask",
+        "EndEvent_17rlcaz": "NoneEndEvent",
+        "IntermediateThrowEvent_0neineb": "CatchMessageIntermediateEvent",
+        "ExclusiveGateway_0i09ijx": "XorGateway",
+        "IntermediateThrowEvent_12d113r": "CatchMessageIntermediateEvent",
+        "ExclusiveGateway_192ovii": "XorGateway",
+        "StartEvent_1": "NoneStartEvent",
+        "BoundaryEvent_0qlhw6m": "MessageBoundaryEvent",
+        "StartEvent_1f3jj6d": "NoneStartEvent",
+        "ExclusiveGateway_1dc5v3z": "XorGateway",
+        "SubProcess_1agd6n3": "SubProcess",
+        "TravelAgency_": "Process",
+        "EndEvent_0u6deep": "CatchMessageIntermediateEvent",
+        "Task_07u875a": "ReceiveTask",
+        "Task_1bn6n5q": "SendTask",
+        "EndEvent_055yt9k": "NoneEndEvent",
+        "EndEvent_10gqkzy": "NoneEndEvent",
+        "IntermediateThrowEvent_0b4rm53": "ThrowMessageIntermediateEvent",
+        "Customer_": "Process",
+        "BoundaryEvent_19y0yk9": "MessageBoundaryEvent",
+        "Task_002ndsu": "SendTask",
+        "StartEvent_0qomvov": "NoneStartEvent",
+        "Task_1ne4gpy": "SendTask",
+        "EndEvent_0syu44v": "NoneEndEvent",
+        "IntermediateThrowEvent_02q48nh": "ThrowMessageIntermediateEvent",
+        "EndEvent_1vkzo14": "NoneEndEvent",
+        "IntermediateThrowEvent_0xjpikb": "CatchMessageIntermediateEvent",
+        "Task_1v9s881": "SendTask",
+        "ExclusiveGateway_0wgdt1i": "XorGateway"
     },
     "catE": {
         "SequenceFlow_1h5h7h5": "NormalSequenceFlow",
@@ -167,6 +111,7 @@
         "MessageFlow_0knd10s": "Offer",
         "MessageFlow_0joml9p": "NoMore"
     },
+    "timeInformation": {},
     "targetE": {
         "SequenceFlow_1h5h7h5": "IntermediateThrowEvent_12d113r",
         "SequenceFlow_0ybs6n8": "EndEvent_0syu44v",

@@ -1,60 +1,26 @@
 {
+    "isInterrupt": {
+        "BoundaryEvent_1g6jly9": true
+    },
     "catN": {
-        "Task_0dvwezg": {
-            "tag": "SendTask"
-        },
-        "ExclusiveGateway_1uyyba4": {
-            "tag": "AndGateway"
-        },
-        "ExclusiveGateway_04stbki": {
-            "tag": "XorGateway"
-        },
-        "StartEvent_1": {
-            "tag": "NoneStartEvent"
-        },
-        "BoundaryEvent_1g6jly9": {
-            "tag": "MessageBoundaryEvent",
-            "cancelActivity": true
-        },
-        "EndEvent_07lweo2": {
-            "tag": "NoneEndEvent"
-        },
-        "EndEvent_03g8tis": {
-            "tag": "NoneEndEvent"
-        },
-        "StartEvent_0pevvbh": {
-            "tag": "NoneStartEvent"
-        },
-        "Task_05h2dnk": {
-            "tag": "AbstractTask"
-        },
-        "ExclusiveGateway_06yyw6a": {
-            "tag": "AndGateway"
-        },
-        "Task_1rw2ter": {
-            "tag": "SendTask"
-        },
-        "P_": {
-            "tag": "Process"
-        },
-        "Task_1rjwiou": {
-            "tag": "AbstractTask"
-        },
-        "SubProcess_0ikactq": {
-            "tag": "SubProcess"
-        },
-        "Task_1kf2bvv": {
-            "tag": "ReceiveTask"
-        },
-        "StartEvent_1em4yhi": {
-            "tag": "NoneStartEvent"
-        },
-        "Q_": {
-            "tag": "Process"
-        },
-        "EndEvent_1bmsqno": {
-            "tag": "NoneEndEvent"
-        }
+        "Task_0dvwezg": "SendTask",
+        "ExclusiveGateway_1uyyba4": "AndGateway",
+        "ExclusiveGateway_04stbki": "XorGateway",
+        "StartEvent_1": "NoneStartEvent",
+        "BoundaryEvent_1g6jly9": "MessageBoundaryEvent",
+        "EndEvent_07lweo2": "NoneEndEvent",
+        "EndEvent_03g8tis": "NoneEndEvent",
+        "StartEvent_0pevvbh": "NoneStartEvent",
+        "Task_05h2dnk": "AbstractTask",
+        "ExclusiveGateway_06yyw6a": "AndGateway",
+        "Task_1rw2ter": "SendTask",
+        "P_": "Process",
+        "Task_1rjwiou": "AbstractTask",
+        "SubProcess_0ikactq": "SubProcess",
+        "Task_1kf2bvv": "ReceiveTask",
+        "StartEvent_1em4yhi": "NoneStartEvent",
+        "Q_": "Process",
+        "EndEvent_1bmsqno": "NoneEndEvent"
     },
     "catE": {
         "SequenceFlow_1uzescv": "NormalSequenceFlow",
@@ -102,6 +68,7 @@
         "MessageFlow_1arf9uv": "m1",
         "MessageFlow_0zlj6zo": "m2"
     },
+    "timeInformation": {},
     "targetE": {
         "SequenceFlow_1uzescv": "ExclusiveGateway_1uyyba4",
         "SequenceFlow_13u1qxz": "EndEvent_1bmsqno",

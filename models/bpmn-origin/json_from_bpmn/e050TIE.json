@@ -1,0 +1,55 @@
+{
+    "isInterrupt": {},
+    "catN": {
+        "StartEvent_1": "NoneStartEvent",
+        "Process_1": "Process",
+        "EndEvent_14srvev": "NoneEndEvent",
+        "IntermediateThrowEvent_1l1btga": "TimerIntermediateEvent"
+    },
+    "catE": {
+        "SequenceFlow_04ghp5z": "NormalSequenceFlow",
+        "SequenceFlow_0yeopwj": "NormalSequenceFlow"
+    },
+    "containN": {
+        "Process_1": [
+            "EndEvent_14srvev",
+            "StartEvent_1",
+            "IntermediateThrowEvent_1l1btga"
+        ]
+    },
+    "messageE": {},
+    "timeInformation": {
+        "IntermediateThrowEvent_1l1btga": {
+            "timerDefinitionValue": null,
+            "timerDefinitionType": null
+        }
+    },
+    "targetE": {
+        "SequenceFlow_04ghp5z": "EndEvent_14srvev",
+        "SequenceFlow_0yeopwj": "IntermediateThrowEvent_1l1btga"
+    },
+    "name": "e050TIE",
+    "attached": {},
+    "containE": {
+        "Process_1": [
+            "SequenceFlow_0yeopwj",
+            "SequenceFlow_04ghp5z"
+        ]
+    },
+    "edges": [
+        "SequenceFlow_0yeopwj",
+        "SequenceFlow_04ghp5z"
+    ],
+    "messages": [],
+    "sourceE": {
+        "SequenceFlow_04ghp5z": "IntermediateThrowEvent_1l1btga",
+        "SequenceFlow_0yeopwj": "StartEvent_1"
+    },
+    "nodes": [
+        "Process_1",
+        "EndEvent_14srvev",
+        "StartEvent_1",
+        "IntermediateThrowEvent_1l1btga"
+    ],
+    "nameN": {}
+}
