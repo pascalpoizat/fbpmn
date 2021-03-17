@@ -11,18 +11,15 @@ ContainRel ==
   "A_" :> { "SubProcess_0mgtdae", "StartEvent_0ayuyd2", "EndEvent_0ns8te3" }
   @@ "SubProcess_0mgtdae" :> { "EndEvent_0v9lt5i", "Task_1rt44mz", "Task_1eirt50", "Task_097548f", "ExclusiveGateway_1j1chqb", "StartEvent_1", "ExclusiveGateway_0079typ" }
 
-Node == {
-  "A_","SubProcess_0mgtdae","StartEvent_0ayuyd2","EndEvent_0ns8te3","EndEvent_0v9lt5i","Task_1rt44mz","Task_1eirt50","Task_097548f","ExclusiveGateway_1j1chqb","StartEvent_1","ExclusiveGateway_0079typ"
-}
+Node == { "A_", "SubProcess_0mgtdae", "StartEvent_0ayuyd2", "EndEvent_0ns8te3", "EndEvent_0v9lt5i", "Task_1rt44mz", "Task_1eirt50", "Task_097548f", "ExclusiveGateway_1j1chqb", "StartEvent_1", "ExclusiveGateway_0079typ" }
 
-Edge == {
-  "SequenceFlow_00aes3w","SequenceFlow_1vue23p","SequenceFlow_0z2xwql","SequenceFlow_0wto9d1","SequenceFlow_0uplc1a","SequenceFlow_01wc4ks","SequenceFlow_0b7efwa","SequenceFlow_1fuwd1z","SequenceFlow_0uzla8o"
-}
+Edge == { "SequenceFlow_00aes3w", "SequenceFlow_1vue23p", "SequenceFlow_0z2xwql", "SequenceFlow_0wto9d1", "SequenceFlow_0uplc1a", "SequenceFlow_01wc4ks", "SequenceFlow_0b7efwa", "SequenceFlow_1fuwd1z", "SequenceFlow_0uzla8o" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SequenceFlow_00aes3w" :> "SubProcess_0mgtdae"

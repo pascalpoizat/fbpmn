@@ -12,23 +12,20 @@ ContainRel ==
   "P_" :> { "StartEvent_1", "Task_05seu1l", "Task_0yk02ke", "EndEvent_1yasgxk", "ExclusiveGateway_06st2fh", "IntermediateThrowEvent_16df5b4", "Task_1lnz72e", "Task_1ypg0u2", "BoundaryEvent_1fgc3dg" }
   @@ "Q_" :> { "StartEvent_1axpofs", "Task_0k7ip70", "IntermediateThrowEvent_0yo36nb", "ExclusiveGateway_0phbzc0", "IntermediateThrowEvent_1ewiw3i", "ExclusiveGateway_14e5fg8", "IntermediateThrowEvent_0nfi6to", "EndEvent_0l9fmhf", "ExclusiveGateway_06aycf0", "IntermediateThrowEvent_1s2ehzf", "IntermediateThrowEvent_1q2mw0e" }
 
-Node == {
-  "P_","Q_","StartEvent_1","Task_05seu1l","Task_0yk02ke","EndEvent_1yasgxk","ExclusiveGateway_06st2fh","IntermediateThrowEvent_16df5b4","Task_1lnz72e","Task_1ypg0u2","BoundaryEvent_1fgc3dg","StartEvent_1axpofs","Task_0k7ip70","IntermediateThrowEvent_0yo36nb","ExclusiveGateway_0phbzc0","IntermediateThrowEvent_1ewiw3i","ExclusiveGateway_14e5fg8","IntermediateThrowEvent_0nfi6to","EndEvent_0l9fmhf","ExclusiveGateway_06aycf0","IntermediateThrowEvent_1s2ehzf","IntermediateThrowEvent_1q2mw0e"
-}
+Node == { "P_", "Q_", "StartEvent_1", "Task_05seu1l", "Task_0yk02ke", "EndEvent_1yasgxk", "ExclusiveGateway_06st2fh", "IntermediateThrowEvent_16df5b4", "Task_1lnz72e", "Task_1ypg0u2", "BoundaryEvent_1fgc3dg", "StartEvent_1axpofs", "Task_0k7ip70", "IntermediateThrowEvent_0yo36nb", "ExclusiveGateway_0phbzc0", "IntermediateThrowEvent_1ewiw3i", "ExclusiveGateway_14e5fg8", "IntermediateThrowEvent_0nfi6to", "EndEvent_0l9fmhf", "ExclusiveGateway_06aycf0", "IntermediateThrowEvent_1s2ehzf", "IntermediateThrowEvent_1q2mw0e" }
 
-Edge == {
-  "MessageFlow_0qo10kt","MessageFlow_1a8bsa8","MessageFlow_1r7fyxg","MessageFlow_091cszi","MessageFlow_1tq79cn","MessageFlow_1okf1vd","SequenceFlow_1wgoun9","SequenceFlow_0698suh","SequenceFlow_0k086s0","SequenceFlow_1dte0vc","SequenceFlow_0fplzau","SequenceFlow_0o5vg8x","SequenceFlow_1wtnl4z","SequenceFlow_0nps006","SequenceFlow_0v4m6o8","SequenceFlow_0jq12xx","SequenceFlow_0eej3d6","SequenceFlow_096ubuj","SequenceFlow_1oxapbj","SequenceFlow_0f0ojke","SequenceFlow_0k02j79","SequenceFlow_0rjtib7","SequenceFlow_1y1oo45","SequenceFlow_1xvdo11","SequenceFlow_0mgjt9y","SequenceFlow_16ovyt7"
-}
+Edge == { "MessageFlow_0qo10kt", "MessageFlow_1a8bsa8", "MessageFlow_1r7fyxg", "MessageFlow_091cszi", "MessageFlow_1tq79cn", "MessageFlow_1okf1vd", "SequenceFlow_1wgoun9", "SequenceFlow_0698suh", "SequenceFlow_0k086s0", "SequenceFlow_1dte0vc", "SequenceFlow_0fplzau", "SequenceFlow_0o5vg8x", "SequenceFlow_1wtnl4z", "SequenceFlow_0nps006", "SequenceFlow_0v4m6o8", "SequenceFlow_0jq12xx", "SequenceFlow_0eej3d6", "SequenceFlow_096ubuj", "SequenceFlow_1oxapbj", "SequenceFlow_0f0ojke", "SequenceFlow_0k02j79", "SequenceFlow_0rjtib7", "SequenceFlow_1y1oo45", "SequenceFlow_1xvdo11", "SequenceFlow_0mgjt9y", "SequenceFlow_16ovyt7" }
 
 Message == { "query", "estimate", "cancellation", "confirmation", "results", "invoice" }
 
 msgtype ==
-      "MessageFlow_0qo10kt" :> "query"
-  @@ "MessageFlow_1a8bsa8" :> "estimate"
-  @@ "MessageFlow_1r7fyxg" :> "cancellation"
-  @@ "MessageFlow_091cszi" :> "confirmation"
-  @@ "MessageFlow_1tq79cn" :> "results"
-  @@ "MessageFlow_1okf1vd" :> "invoice"
+   "MessageFlow_0qo10kt" :> "query"
+@@ "MessageFlow_1a8bsa8" :> "estimate"
+@@ "MessageFlow_1r7fyxg" :> "cancellation"
+@@ "MessageFlow_091cszi" :> "confirmation"
+@@ "MessageFlow_1tq79cn" :> "results"
+@@ "MessageFlow_1okf1vd" :> "invoice"
+
 
 source ==
    "MessageFlow_0qo10kt" :> "Task_0k7ip70"

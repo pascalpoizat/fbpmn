@@ -10,18 +10,15 @@ Interest ==
 ContainRel ==
   "A_" :> { "StartEvent_1", "ExclusiveGateway_15k9ix7", "ExclusiveGateway_1ovxz2d", "ExclusiveGateway_1dofiof", "ExclusiveGateway_1v72kao", "Task_1xwy18n", "Task_1b973ma", "Task_1bno414", "Task_1jvjnjm", "ExclusiveGateway_0wbb4kr", "ExclusiveGateway_01rg1yx", "ExclusiveGateway_1d1alzz", "ExclusiveGateway_1b6y90k", "EndEvent_0reyumw", "Task_1o166o0", "Task_0h7uj4l" }
 
-Node == {
-  "A_","StartEvent_1","ExclusiveGateway_15k9ix7","ExclusiveGateway_1ovxz2d","ExclusiveGateway_1dofiof","ExclusiveGateway_1v72kao","Task_1xwy18n","Task_1b973ma","Task_1bno414","Task_1jvjnjm","ExclusiveGateway_0wbb4kr","ExclusiveGateway_01rg1yx","ExclusiveGateway_1d1alzz","ExclusiveGateway_1b6y90k","EndEvent_0reyumw","Task_1o166o0","Task_0h7uj4l"
-}
+Node == { "A_", "StartEvent_1", "ExclusiveGateway_15k9ix7", "ExclusiveGateway_1ovxz2d", "ExclusiveGateway_1dofiof", "ExclusiveGateway_1v72kao", "Task_1xwy18n", "Task_1b973ma", "Task_1bno414", "Task_1jvjnjm", "ExclusiveGateway_0wbb4kr", "ExclusiveGateway_01rg1yx", "ExclusiveGateway_1d1alzz", "ExclusiveGateway_1b6y90k", "EndEvent_0reyumw", "Task_1o166o0", "Task_0h7uj4l" }
 
-Edge == {
-  "SequenceFlow_0n91hmc","SequenceFlow_00e481v","SequenceFlow_0h7fy2d","SequenceFlow_0xd1ing","SequenceFlow_1djolfc","SequenceFlow_0c3vv21","SequenceFlow_01dq60h","SequenceFlow_0rj7tua","SequenceFlow_14bv8dd","SequenceFlow_17yc9hp","SequenceFlow_1bofvkk","SequenceFlow_1wcsu5r","SequenceFlow_0mxxo9x","SequenceFlow_0n88gkx","SequenceFlow_1c7k30y","SequenceFlow_1fvzdhj","SequenceFlow_1kepz08","SequenceFlow_0ql8p1h","SequenceFlow_05ly3hz","SequenceFlow_0z7crkn","SequenceFlow_1si0iqd"
-}
+Edge == { "SequenceFlow_0n91hmc", "SequenceFlow_00e481v", "SequenceFlow_0h7fy2d", "SequenceFlow_0xd1ing", "SequenceFlow_1djolfc", "SequenceFlow_0c3vv21", "SequenceFlow_01dq60h", "SequenceFlow_0rj7tua", "SequenceFlow_14bv8dd", "SequenceFlow_17yc9hp", "SequenceFlow_1bofvkk", "SequenceFlow_1wcsu5r", "SequenceFlow_0mxxo9x", "SequenceFlow_0n88gkx", "SequenceFlow_1c7k30y", "SequenceFlow_1fvzdhj", "SequenceFlow_1kepz08", "SequenceFlow_0ql8p1h", "SequenceFlow_05ly3hz", "SequenceFlow_0z7crkn", "SequenceFlow_1si0iqd" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SequenceFlow_0n91hmc" :> "StartEvent_1"

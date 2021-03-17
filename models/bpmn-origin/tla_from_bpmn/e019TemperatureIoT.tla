@@ -18,28 +18,25 @@ ContainRel ==
   @@ "User_" :> { "StartEvent_0mw9dyi", "Task_09igb82", "EndEvent_19aoxjz", "Task_1x71tep" }
   @@ "WSNGateway_" :> { "ReceiveTask_1cc6gb0", "ExclusiveGateway_186ksgk", "StartEvent_0tw9hoi", "Task_0amx3qc", "ExclusiveGateway_0h8c90b", "ExclusiveGateway_0qv0dm1", "IntermediateThrowEvent_1ab6lzx", "IntermediateThrowEvent_0zn5r2p", "ExclusiveGateway_04luead", "EndEvent_0wj7yv1", "Task_0yh5jmb", "ExclusiveGateway_1mr7igy", "Task_1pc6d9t", "ExclusiveGateway_0k9b245", "Task_18tknzx", "Task_1e6rsiy", "ExclusiveGateway_03bs3t5", "ExclusiveGateway_1t6g7zz", "ExclusiveGateway_0a8yao0", "ExclusiveGateway_095m84g", "Task_03ohewl", "IntermediateThrowEvent_1cd7dmz" }
 
-Node == {
-  "User_","Thermostat_","WSNGateway_","Sensor_","Boiller_","StartEvent_0mw9dyi","Task_09igb82","EndEvent_19aoxjz","Task_1x71tep","ExclusiveGateway_0uhrdet","StartEvent_19zezl9","ExclusiveGateway_0a5libn","Task_01tkb3r","IntermediateThrowEvent_0moj9p9","ExclusiveGateway_1u3y4si","EndEvent_14513uv","IntermediateThrowEvent_1dkrxqj","Task_0ca58zk","ReceiveTask_1cc6gb0","ExclusiveGateway_186ksgk","StartEvent_0tw9hoi","Task_0amx3qc","ExclusiveGateway_0h8c90b","ExclusiveGateway_0qv0dm1","IntermediateThrowEvent_1ab6lzx","IntermediateThrowEvent_0zn5r2p","ExclusiveGateway_04luead","EndEvent_0wj7yv1","Task_0yh5jmb","ExclusiveGateway_1mr7igy","Task_1pc6d9t","ExclusiveGateway_0k9b245","Task_18tknzx","Task_1e6rsiy","ExclusiveGateway_03bs3t5","ExclusiveGateway_1t6g7zz","ExclusiveGateway_0a8yao0","ExclusiveGateway_095m84g","Task_03ohewl","IntermediateThrowEvent_1cd7dmz","ExclusiveGateway_1alxwt7","IntermediateThrowEvent_1ajpgtk","EndEvent_0joc303","ExclusiveGateway_0d9bxab","StartEvent_12o3x3s","Task_0aihuup","Task_1p5k4vg","ExclusiveGateway_1feo3um","ExclusiveGateway_0wtbkow","ExclusiveGateway_0cpdpri","IntermediateCatchEvent_1mqziug","StartEvent_0tynlqh","ExclusiveGateway_0sum07m","Task_169t347","ExclusiveGateway_19mjt5y","EndEvent_0pa5oys","Task_1e85hli","Task_1spxdy2","ExclusiveGateway_1izjr9z","IntermediateThrowEvent_12cgsc9"
-}
+Node == { "User_", "Thermostat_", "WSNGateway_", "Sensor_", "Boiller_", "StartEvent_0mw9dyi", "Task_09igb82", "EndEvent_19aoxjz", "Task_1x71tep", "ExclusiveGateway_0uhrdet", "StartEvent_19zezl9", "ExclusiveGateway_0a5libn", "Task_01tkb3r", "IntermediateThrowEvent_0moj9p9", "ExclusiveGateway_1u3y4si", "EndEvent_14513uv", "IntermediateThrowEvent_1dkrxqj", "Task_0ca58zk", "ReceiveTask_1cc6gb0", "ExclusiveGateway_186ksgk", "StartEvent_0tw9hoi", "Task_0amx3qc", "ExclusiveGateway_0h8c90b", "ExclusiveGateway_0qv0dm1", "IntermediateThrowEvent_1ab6lzx", "IntermediateThrowEvent_0zn5r2p", "ExclusiveGateway_04luead", "EndEvent_0wj7yv1", "Task_0yh5jmb", "ExclusiveGateway_1mr7igy", "Task_1pc6d9t", "ExclusiveGateway_0k9b245", "Task_18tknzx", "Task_1e6rsiy", "ExclusiveGateway_03bs3t5", "ExclusiveGateway_1t6g7zz", "ExclusiveGateway_0a8yao0", "ExclusiveGateway_095m84g", "Task_03ohewl", "IntermediateThrowEvent_1cd7dmz", "ExclusiveGateway_1alxwt7", "IntermediateThrowEvent_1ajpgtk", "EndEvent_0joc303", "ExclusiveGateway_0d9bxab", "StartEvent_12o3x3s", "Task_0aihuup", "Task_1p5k4vg", "ExclusiveGateway_1feo3um", "ExclusiveGateway_0wtbkow", "ExclusiveGateway_0cpdpri", "IntermediateCatchEvent_1mqziug", "StartEvent_0tynlqh", "ExclusiveGateway_0sum07m", "Task_169t347", "ExclusiveGateway_19mjt5y", "EndEvent_0pa5oys", "Task_1e85hli", "Task_1spxdy2", "ExclusiveGateway_1izjr9z", "IntermediateThrowEvent_12cgsc9" }
 
-Edge == {
-  "MessageFlow_18pje80","MessageFlow_1jgvn81","MessageFlow_0vinqwi","MessageFlow_0vwhu1f","MessageFlow_1bpo13k","MessageFlow_1hyly74","MessageFlow_0aje9sn","MessageFlow_1o3tyk4","MessageFlow_0nqzifu","MessageFlow_0dguqk7","MessageFlow_00ca6vp","SequenceFlow_1ngsqgy","SequenceFlow_02i1zog","SequenceFlow_1uup9ft","SequenceFlow_0mr13bl","SequenceFlow_0ilol45","SequenceFlow_1fvktk8","SequenceFlow_07vsnao","SequenceFlow_1kk1jne","SequenceFlow_0vwirsp","SequenceFlow_0wqy81u","SequenceFlow_1rpwomj","SequenceFlow_0j7d6k8","SequenceFlow_1quu0wg","SequenceFlow_14zismf","SequenceFlow_0tbx7nt","SequenceFlow_1n4vv49","SequenceFlow_1lr4cps","SequenceFlow_1017nuh","SequenceFlow_15ortkr","SequenceFlow_1pvrfjg","SequenceFlow_0yclgws","SequenceFlow_0ipzp9y","SequenceFlow_1nacukm","SequenceFlow_1w9mr57","SequenceFlow_1o0bwvr","SequenceFlow_17faiz5","SequenceFlow_07ahv22","SequenceFlow_1nnne6n","SequenceFlow_0n8zfgy","SequenceFlow_0ha4jhs","SequenceFlow_04p0en0","SequenceFlow_17eb2ri","SequenceFlow_0vmtagi","SequenceFlow_1t7zsjn","SequenceFlow_1715hka","SequenceFlow_1pvcw5e","SequenceFlow_1vmz2u9","SequenceFlow_112gnsc","SequenceFlow_0477vxz","SequenceFlow_0rdqb09","SequenceFlow_07gw8yk","SequenceFlow_0jioz8d","SequenceFlow_127z28e","SequenceFlow_1dhqk99","SequenceFlow_0v1itpk","SequenceFlow_0j98n24","SequenceFlow_15jyzqg","SequenceFlow_05ihnu4","SequenceFlow_1dtybq7","SequenceFlow_0eoboyu","SequenceFlow_0jy3w8q","SequenceFlow_0u67u7k","SequenceFlow_1plf2me","SequenceFlow_0ik719b","SequenceFlow_18i2li3","SequenceFlow_1j073vl","SequenceFlow_04ctmhl","SequenceFlow_00sw0ns","SequenceFlow_151xud0","SequenceFlow_0yf7004","SequenceFlow_1tu3a1o","SequenceFlow_0so9y7c"
-}
+Edge == { "MessageFlow_18pje80", "MessageFlow_1jgvn81", "MessageFlow_0vinqwi", "MessageFlow_0vwhu1f", "MessageFlow_1bpo13k", "MessageFlow_1hyly74", "MessageFlow_0aje9sn", "MessageFlow_1o3tyk4", "MessageFlow_0nqzifu", "MessageFlow_0dguqk7", "MessageFlow_00ca6vp", "SequenceFlow_1ngsqgy", "SequenceFlow_02i1zog", "SequenceFlow_1uup9ft", "SequenceFlow_0mr13bl", "SequenceFlow_0ilol45", "SequenceFlow_1fvktk8", "SequenceFlow_07vsnao", "SequenceFlow_1kk1jne", "SequenceFlow_0vwirsp", "SequenceFlow_0wqy81u", "SequenceFlow_1rpwomj", "SequenceFlow_0j7d6k8", "SequenceFlow_1quu0wg", "SequenceFlow_14zismf", "SequenceFlow_0tbx7nt", "SequenceFlow_1n4vv49", "SequenceFlow_1lr4cps", "SequenceFlow_1017nuh", "SequenceFlow_15ortkr", "SequenceFlow_1pvrfjg", "SequenceFlow_0yclgws", "SequenceFlow_0ipzp9y", "SequenceFlow_1nacukm", "SequenceFlow_1w9mr57", "SequenceFlow_1o0bwvr", "SequenceFlow_17faiz5", "SequenceFlow_07ahv22", "SequenceFlow_1nnne6n", "SequenceFlow_0n8zfgy", "SequenceFlow_0ha4jhs", "SequenceFlow_04p0en0", "SequenceFlow_17eb2ri", "SequenceFlow_0vmtagi", "SequenceFlow_1t7zsjn", "SequenceFlow_1715hka", "SequenceFlow_1pvcw5e", "SequenceFlow_1vmz2u9", "SequenceFlow_112gnsc", "SequenceFlow_0477vxz", "SequenceFlow_0rdqb09", "SequenceFlow_07gw8yk", "SequenceFlow_0jioz8d", "SequenceFlow_127z28e", "SequenceFlow_1dhqk99", "SequenceFlow_0v1itpk", "SequenceFlow_0j98n24", "SequenceFlow_15jyzqg", "SequenceFlow_05ihnu4", "SequenceFlow_1dtybq7", "SequenceFlow_0eoboyu", "SequenceFlow_0jy3w8q", "SequenceFlow_0u67u7k", "SequenceFlow_1plf2me", "SequenceFlow_0ik719b", "SequenceFlow_18i2li3", "SequenceFlow_1j073vl", "SequenceFlow_04ctmhl", "SequenceFlow_00sw0ns", "SequenceFlow_151xud0", "SequenceFlow_0yf7004", "SequenceFlow_1tu3a1o", "SequenceFlow_0so9y7c" }
 
 Message == { "mf1", "mf2", "mf", "mf5", "mf4", "mf10", "mf8", "mf9", "mf3", "mf7", "mf6" }
 
 msgtype ==
-      "MessageFlow_18pje80" :> "mf1"
-  @@ "MessageFlow_1jgvn81" :> "mf2"
-  @@ "MessageFlow_0vinqwi" :> "mf"
-  @@ "MessageFlow_0vwhu1f" :> "mf5"
-  @@ "MessageFlow_1bpo13k" :> "mf4"
-  @@ "MessageFlow_1hyly74" :> "mf10"
-  @@ "MessageFlow_0aje9sn" :> "mf8"
-  @@ "MessageFlow_1o3tyk4" :> "mf9"
-  @@ "MessageFlow_0nqzifu" :> "mf3"
-  @@ "MessageFlow_0dguqk7" :> "mf7"
-  @@ "MessageFlow_00ca6vp" :> "mf6"
+   "MessageFlow_18pje80" :> "mf1"
+@@ "MessageFlow_1jgvn81" :> "mf2"
+@@ "MessageFlow_0vinqwi" :> "mf"
+@@ "MessageFlow_0vwhu1f" :> "mf5"
+@@ "MessageFlow_1bpo13k" :> "mf4"
+@@ "MessageFlow_1hyly74" :> "mf10"
+@@ "MessageFlow_0aje9sn" :> "mf8"
+@@ "MessageFlow_1o3tyk4" :> "mf9"
+@@ "MessageFlow_0nqzifu" :> "mf3"
+@@ "MessageFlow_0dguqk7" :> "mf7"
+@@ "MessageFlow_00ca6vp" :> "mf6"
+
 
 source ==
    "MessageFlow_18pje80" :> "Task_09igb82"

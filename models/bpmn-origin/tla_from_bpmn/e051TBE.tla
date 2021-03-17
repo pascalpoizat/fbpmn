@@ -10,18 +10,15 @@ Interest ==
 ContainRel ==
   "Process_1" :> { "StartEvent_1", "Task_1s6tj7r", "BoundaryEvent_0r0bcez", "EndEvent_08uegvd", "EndEvent_14srvev" }
 
-Node == {
-  "Process_1","StartEvent_1","Task_1s6tj7r","BoundaryEvent_0r0bcez","EndEvent_08uegvd","EndEvent_14srvev"
-}
+Node == { "Process_1", "StartEvent_1", "Task_1s6tj7r", "BoundaryEvent_0r0bcez", "EndEvent_08uegvd", "EndEvent_14srvev" }
 
-Edge == {
-  "SequenceFlow_0yeopwj","SequenceFlow_1131nmm","SequenceFlow_1co9zfu"
-}
+Edge == { "SequenceFlow_0yeopwj", "SequenceFlow_1131nmm", "SequenceFlow_1co9zfu" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SequenceFlow_0yeopwj" :> "StartEvent_1"

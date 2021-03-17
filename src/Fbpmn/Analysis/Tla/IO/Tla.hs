@@ -85,13 +85,13 @@ genLocName :: Node -> Text
 genLocName n = [text|loc$ns|] where ns = show n
 
 encodeVarLoc :: SpaceBpmnGraph -> Text
-encodeVarLoc s = encodeMap "varloc" ns (M.fromList $ zip ns vs)
+encodeVarLoc s = encodeMap show show "varloc" ns (M.fromList $ zip ns vs)
   where
     ns = ((`nodesT` Process) . graph) s
     vs = genLocName <$> ns
 
 encodeLocVar :: SpaceBpmnGraph -> Text
-encodeLocVar s = encodeMap "locvar" vs (M.fromList $ zip vs ns)
+encodeLocVar s = encodeMap show show "locvar" vs (M.fromList $ zip vs ns)
   where
     ns = ((`nodesT` Process) . graph) s
     vs = genLocName <$> ns
@@ -118,8 +118,8 @@ encodeSStructure s =
       encodeGList "GroupLocation" groupLocations,
       encodeSLocations,
       encodeGList "SpaceEdge" sEdges,
-      encodeGMap "SpaceSource" sEdges sSourceE,
-      encodeGMap "SpaceTarget" sEdges sTargetE
+      encodeGMap show show "SpaceSource" sEdges sSourceE,
+      encodeGMap show show "SpaceTarget" sEdges sTargetE
     ]
       <*> [s]
   where
@@ -239,19 +239,19 @@ encodeBpmnGraphMsgDeclToTla g =
       <*> [g]
   where
     encodeBpmnGraphMessagesToTla = encodeGList "Message" messages
-    encodeBpmnGraphMessageTypesToTla = encodeGMap "msgtype" (`edgesT` MessageFlow) messageE
+    encodeBpmnGraphMessageTypesToTla = encodeGMap show show "msgtype" (`edgesT` MessageFlow) messageE
 
 encodeBpmnGraphCatNToTla :: BpmnGraph -> Text
-encodeBpmnGraphCatNToTla = encodeGMap "CatN" nodes catN
+encodeBpmnGraphCatNToTla = encodeGMap show nodeTypeToTLA "CatN" nodes catN
 
 encodeBpmnGraphCatEToTla :: BpmnGraph -> Text
-encodeBpmnGraphCatEToTla = encodeGMap "CatN" edges catE
+encodeBpmnGraphCatEToTla = encodeGMap show edgeTypeToTLA "CatE" edges catE
 
 encodeBpmnGraphEdgeSourceDeclToTla :: BpmnGraph -> Text
-encodeBpmnGraphEdgeSourceDeclToTla = encodeGMap "source" edges sourceE
+encodeBpmnGraphEdgeSourceDeclToTla = encodeGMap show show "source" edges sourceE
 
 encodeBpmnGraphEdgeTargetDeclToTla :: BpmnGraph -> Text
-encodeBpmnGraphEdgeTargetDeclToTla = encodeGMap "target" edges targetE
+encodeBpmnGraphEdgeTargetDeclToTla = encodeGMap show show "target" edges targetE
 
 encodeBpmnGraphPreEToTla :: BpmnGraph -> Text
 encodeBpmnGraphPreEToTla g =
@@ -324,21 +324,19 @@ encodeGList n f x = encodeList n (f x)
 encodeList :: Show a => Text -> [a] -> Text
 encodeList n xs =
   [text|
-  $n == {
-    $sxs
-  }
+  $n == { $sxs }
   |]
   where
-    sxs = T.intercalate "," $ show <$> xs
+    sxs = T.intercalate ", " $ show <$> xs
 
-encodeGMap :: (Ord b, Show a, Show b, Show c) => Text -> (a -> [b]) -> (a -> Map b c) -> a -> Text
-encodeGMap n f g x = encodeMap n (f x) (g x)
+encodeGMap :: Ord b => (b -> Text) -> (c -> Text) -> Text -> (a -> [b]) -> (a -> Map b c) -> a -> Text
+encodeGMap wa wb n f g x = encodeMap wa wb n (f x) (g x)
 
-encodeMap' :: (Ord a, Show a, Show b) => Text -> Map a b -> Text
-encodeMap' n m = encodeMap n (keys m) m
+encodeMap' :: Ord a => (a -> Text) -> (b -> Text) -> Text -> Map a b -> Text
+encodeMap' wa wb n m = encodeMap wa wb n (keys m) m
 
-encodeMap :: (Ord a, Show a, Show b) => Text -> [a] -> Map a b -> Text
-encodeMap n ks m =
+encodeMap :: Ord a => (a -> Text) -> (b -> Text) -> Text -> [a] -> Map a b -> Text
+encodeMap wa wb n ks m =
   [text|
     $n ==
     $sxs
@@ -349,8 +347,8 @@ encodeMap n ks m =
       Nothing -> ""
       Just v -> [text|$k' :> $v'|]
         where
-          v' = show v
-          k' = show k
+          v' = wb v
+          k' = wa k
 
 nodeTypeToTLA :: NodeType -> Text
 nodeTypeToTLA AbstractTask = "AbstractTask"

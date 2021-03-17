@@ -13,18 +13,15 @@ ContainRel ==
   @@ "Q_" :> { "StartEvent_0pevvbh", "EndEvent_03g8tis", "Task_0dvwezg" }
   @@ "SubProcess_0ikactq" :> { "StartEvent_1em4yhi", "Task_1kf2bvv", "EndEvent_07lweo2" }
 
-Node == {
-  "P_","Q_","StartEvent_1","ExclusiveGateway_1uyyba4","Task_1rjwiou","Task_05h2dnk","ExclusiveGateway_04stbki","SubProcess_0ikactq","ExclusiveGateway_06yyw6a","EndEvent_1bmsqno","BoundaryEvent_1g6jly9","StartEvent_1em4yhi","Task_1kf2bvv","EndEvent_07lweo2","StartEvent_0pevvbh","EndEvent_03g8tis","Task_0dvwezg"
-}
+Node == { "P_", "Q_", "StartEvent_1", "ExclusiveGateway_1uyyba4", "Task_1rjwiou", "Task_05h2dnk", "ExclusiveGateway_04stbki", "SubProcess_0ikactq", "ExclusiveGateway_06yyw6a", "EndEvent_1bmsqno", "BoundaryEvent_1g6jly9", "StartEvent_1em4yhi", "Task_1kf2bvv", "EndEvent_07lweo2", "StartEvent_0pevvbh", "EndEvent_03g8tis", "Task_0dvwezg" }
 
-Edge == {
-  "MessageFlow_1arf9uv","SequenceFlow_1uzescv","SequenceFlow_1qymta9","SequenceFlow_1t3nh6y","SequenceFlow_07f8qba","SequenceFlow_0aq5v2x","SequenceFlow_0ylruuw","SequenceFlow_13u1qxz","SequenceFlow_1wro3pq","SequenceFlow_0fh3j7y","SequenceFlow_1ofsg25","SequenceFlow_0j6nnaa","SequenceFlow_0r3bens","SequenceFlow_1gn3q83"
-}
+Edge == { "MessageFlow_1arf9uv", "SequenceFlow_1uzescv", "SequenceFlow_1qymta9", "SequenceFlow_1t3nh6y", "SequenceFlow_07f8qba", "SequenceFlow_0aq5v2x", "SequenceFlow_0ylruuw", "SequenceFlow_13u1qxz", "SequenceFlow_1wro3pq", "SequenceFlow_0fh3j7y", "SequenceFlow_1ofsg25", "SequenceFlow_0j6nnaa", "SequenceFlow_0r3bens", "SequenceFlow_1gn3q83" }
 
 Message == { "m1" }
 
 msgtype ==
-      "MessageFlow_1arf9uv" :> "m1"
+   "MessageFlow_1arf9uv" :> "m1"
+
 
 source ==
    "MessageFlow_1arf9uv" :> "Task_0dvwezg"

@@ -10,18 +10,15 @@ Interest ==
 ContainRel ==
   "Process_" :> { "exclusivegateway4", "exclusivegateway3", "validatePayment", "inclusivegateway2", "payOnDelivery", "card", "giftVoucher", "inclusivegateway1", "Payment", "selectItems", "exclusivegateway2", "signUp", "signIn", "exclusivegateway1", "startevent1", "initiateShipping", "parallelgateway1", "packageItems", "parallelgateway2", "initiateDelivery", "email", "notifyUser", "sms", "transport", "parallelgateway5", "parallelgateway6", "parallelgateway3", "parallelgateway4", "endevent1", "generateTrackingInfo", "errorendevent1" }
 
-Node == {
-  "Process_","exclusivegateway4","exclusivegateway3","validatePayment","inclusivegateway2","payOnDelivery","card","giftVoucher","inclusivegateway1","Payment","selectItems","exclusivegateway2","signUp","signIn","exclusivegateway1","startevent1","initiateShipping","parallelgateway1","packageItems","parallelgateway2","initiateDelivery","email","notifyUser","sms","transport","parallelgateway5","parallelgateway6","parallelgateway3","parallelgateway4","endevent1","generateTrackingInfo","errorendevent1"
-}
+Node == { "Process_", "exclusivegateway4", "exclusivegateway3", "validatePayment", "inclusivegateway2", "payOnDelivery", "card", "giftVoucher", "inclusivegateway1", "Payment", "selectItems", "exclusivegateway2", "signUp", "signIn", "exclusivegateway1", "startevent1", "initiateShipping", "parallelgateway1", "packageItems", "parallelgateway2", "initiateDelivery", "email", "notifyUser", "sms", "transport", "parallelgateway5", "parallelgateway6", "parallelgateway3", "parallelgateway4", "endevent1", "generateTrackingInfo", "errorendevent1" }
 
-Edge == {
-  "flow63","flow61","flow47","flow60","flow58","flow56","flow43","flow41","flow59","flow57","flow34","flow33","flow32","flow31","flow62","flow39","flow35","flow30","flow21","flow20","flow19","flow17","flow16","flow15","flow14","flow13","flow12","flow11","flow10","flow9","flow8","flow7","flow6","flow5","flow4","flow3"
-}
+Edge == { "flow63", "flow61", "flow47", "flow60", "flow58", "flow56", "flow43", "flow41", "flow59", "flow57", "flow34", "flow33", "flow32", "flow31", "flow62", "flow39", "flow35", "flow30", "flow21", "flow20", "flow19", "flow17", "flow16", "flow15", "flow14", "flow13", "flow12", "flow11", "flow10", "flow9", "flow8", "flow7", "flow6", "flow5", "flow4", "flow3" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "flow63" :> "parallelgateway4"

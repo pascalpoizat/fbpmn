@@ -10,18 +10,15 @@ Interest ==
 ContainRel ==
   "Pid" :> { "ee", "ti", "se" }
 
-Node == {
-  "Pid","ee","ti","se"
-}
+Node == { "Pid", "ee", "ti", "se" }
 
-Edge == {
-  "SequenceFlow_04jhviy","SequenceFlow_0b689qw"
-}
+Edge == { "SequenceFlow_04jhviy", "SequenceFlow_0b689qw" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SequenceFlow_04jhviy" :> "se"

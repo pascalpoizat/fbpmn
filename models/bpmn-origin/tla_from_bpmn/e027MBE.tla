@@ -14,20 +14,17 @@ ContainRel ==
   @@ "SubProcess_07e2e99" :> { "StartEvent_03bqw0j", "Task_1i35ppr", "Task_1kso3jk", "ExclusiveGateway_0hzcbkt", "ExclusiveGateway_1hukmk5", "EndEvent_0ovxd43" }
   @@ "SubProcess_0joqwjm" :> { "ExclusiveGateway_0pvsvob", "ExclusiveGateway_1vvyptg", "Task_0ouyduq", "Task_0z3cxl5", "StartEvent_0ef0xw9", "EndEvent_1whel54" }
 
-Node == {
-  "P_","Q_","SubProcess_07e2e99","StartEvent_1","EndEvent_1hytbgh","Task_1haqr79","Task_06osngf","EndEvent_112jhwq","BoundaryEvent_1q0fgiw","BoundaryEvent_1fak9ar","StartEvent_03bqw0j","Task_1i35ppr","Task_1kso3jk","ExclusiveGateway_0hzcbkt","ExclusiveGateway_1hukmk5","EndEvent_0ovxd43","SubProcess_0joqwjm","StartEvent_1jxrjjb","EndEvent_1gf9mha","BoundaryEvent_0k5p91i","ExclusiveGateway_0pvsvob","ExclusiveGateway_1vvyptg","Task_0ouyduq","Task_0z3cxl5","StartEvent_0ef0xw9","EndEvent_1whel54"
-}
+Node == { "P_", "Q_", "SubProcess_07e2e99", "StartEvent_1", "EndEvent_1hytbgh", "Task_1haqr79", "Task_06osngf", "EndEvent_112jhwq", "BoundaryEvent_1q0fgiw", "BoundaryEvent_1fak9ar", "StartEvent_03bqw0j", "Task_1i35ppr", "Task_1kso3jk", "ExclusiveGateway_0hzcbkt", "ExclusiveGateway_1hukmk5", "EndEvent_0ovxd43", "SubProcess_0joqwjm", "StartEvent_1jxrjjb", "EndEvent_1gf9mha", "BoundaryEvent_0k5p91i", "ExclusiveGateway_0pvsvob", "ExclusiveGateway_1vvyptg", "Task_0ouyduq", "Task_0z3cxl5", "StartEvent_0ef0xw9", "EndEvent_1whel54" }
 
-Edge == {
-  "MessageFlow_01dn8b3","MessageFlow_1fv5g0n","MessageFlow_01rg2pg","SequenceFlow_1tc2qre","SequenceFlow_1rnwbjb","SequenceFlow_1ag4q25","SequenceFlow_1sp2uu5","SequenceFlow_0y8q6ot","SequenceFlow_109652j","SequenceFlow_16cdiue","SequenceFlow_18dl2c1","SequenceFlow_00h8rbi","SequenceFlow_03zwnxj","SequenceFlow_0fcn4he","SequenceFlow_0e70fm8","SequenceFlow_1hqd2qa","SequenceFlow_1es2p0l","SequenceFlow_1xvizyy","SequenceFlow_06cnlpk","SequenceFlow_0axwuh9","SequenceFlow_17254s0","SequenceFlow_08qsdvs","SequenceFlow_1i24zsv","SequenceFlow_1hr9yu6"
-}
+Edge == { "MessageFlow_01dn8b3", "MessageFlow_1fv5g0n", "MessageFlow_01rg2pg", "SequenceFlow_1tc2qre", "SequenceFlow_1rnwbjb", "SequenceFlow_1ag4q25", "SequenceFlow_1sp2uu5", "SequenceFlow_0y8q6ot", "SequenceFlow_109652j", "SequenceFlow_16cdiue", "SequenceFlow_18dl2c1", "SequenceFlow_00h8rbi", "SequenceFlow_03zwnxj", "SequenceFlow_0fcn4he", "SequenceFlow_0e70fm8", "SequenceFlow_1hqd2qa", "SequenceFlow_1es2p0l", "SequenceFlow_1xvizyy", "SequenceFlow_06cnlpk", "SequenceFlow_0axwuh9", "SequenceFlow_17254s0", "SequenceFlow_08qsdvs", "SequenceFlow_1i24zsv", "SequenceFlow_1hr9yu6" }
 
 Message == { "msg1", "msg2", "msg3" }
 
 msgtype ==
-      "MessageFlow_01dn8b3" :> "msg1"
-  @@ "MessageFlow_1fv5g0n" :> "msg2"
-  @@ "MessageFlow_01rg2pg" :> "msg3"
+   "MessageFlow_01dn8b3" :> "msg1"
+@@ "MessageFlow_1fv5g0n" :> "msg2"
+@@ "MessageFlow_01rg2pg" :> "msg3"
+
 
 source ==
    "MessageFlow_01dn8b3" :> "Task_0ouyduq"

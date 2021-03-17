@@ -13,19 +13,16 @@ ContainRel ==
   @@ "Q_" :> { "StartEvent_1jxrjjb", "ExclusiveGateway_0pvsvob", "ExclusiveGateway_1vvyptg", "EndEvent_1gf9mha", "Task_0ouyduq", "Task_0z3cxl5" }
   @@ "SubProcess_07e2e99" :> { "StartEvent_03bqw0j", "Task_1i35ppr", "Task_1kso3jk", "ExclusiveGateway_0hzcbkt", "ExclusiveGateway_1hukmk5", "EndEvent_0ovxd43" }
 
-Node == {
-  "P_","Q_","Task_06osngf","EndEvent_112jhwq","SubProcess_07e2e99","StartEvent_1","EndEvent_1hytbgh","ExclusiveGateway_0ppei8i","BoundaryEvent_1q0fgiw","BoundaryEvent_1fak9ar","StartEvent_03bqw0j","Task_1i35ppr","Task_1kso3jk","ExclusiveGateway_0hzcbkt","ExclusiveGateway_1hukmk5","EndEvent_0ovxd43","StartEvent_1jxrjjb","ExclusiveGateway_0pvsvob","ExclusiveGateway_1vvyptg","EndEvent_1gf9mha","Task_0ouyduq","Task_0z3cxl5"
-}
+Node == { "P_", "Q_", "Task_06osngf", "EndEvent_112jhwq", "SubProcess_07e2e99", "StartEvent_1", "EndEvent_1hytbgh", "ExclusiveGateway_0ppei8i", "BoundaryEvent_1q0fgiw", "BoundaryEvent_1fak9ar", "StartEvent_03bqw0j", "Task_1i35ppr", "Task_1kso3jk", "ExclusiveGateway_0hzcbkt", "ExclusiveGateway_1hukmk5", "EndEvent_0ovxd43", "StartEvent_1jxrjjb", "ExclusiveGateway_0pvsvob", "ExclusiveGateway_1vvyptg", "EndEvent_1gf9mha", "Task_0ouyduq", "Task_0z3cxl5" }
 
-Edge == {
-  "MessageFlow_01dn8b3","MessageFlow_1fv5g0n","SequenceFlow_1b6hq8e","SequenceFlow_1rnwbjb","SequenceFlow_1ag4q25","SequenceFlow_1sp2uu5","SequenceFlow_0y8q6ot","SequenceFlow_109652j","SequenceFlow_16cdiue","SequenceFlow_18dl2c1","SequenceFlow_00h8rbi","SequenceFlow_03zwnxj","SequenceFlow_0fcn4he","SequenceFlow_0e70fm8","SequenceFlow_1es2p0l","SequenceFlow_0axwuh9","SequenceFlow_06cnlpk","SequenceFlow_08qsdvs","SequenceFlow_17254s0","SequenceFlow_1xvizyy"
-}
+Edge == { "MessageFlow_01dn8b3", "MessageFlow_1fv5g0n", "SequenceFlow_1b6hq8e", "SequenceFlow_1rnwbjb", "SequenceFlow_1ag4q25", "SequenceFlow_1sp2uu5", "SequenceFlow_0y8q6ot", "SequenceFlow_109652j", "SequenceFlow_16cdiue", "SequenceFlow_18dl2c1", "SequenceFlow_00h8rbi", "SequenceFlow_03zwnxj", "SequenceFlow_0fcn4he", "SequenceFlow_0e70fm8", "SequenceFlow_1es2p0l", "SequenceFlow_0axwuh9", "SequenceFlow_06cnlpk", "SequenceFlow_08qsdvs", "SequenceFlow_17254s0", "SequenceFlow_1xvizyy" }
 
 Message == { "msg1", "msg2" }
 
 msgtype ==
-      "MessageFlow_01dn8b3" :> "msg1"
-  @@ "MessageFlow_1fv5g0n" :> "msg2"
+   "MessageFlow_01dn8b3" :> "msg1"
+@@ "MessageFlow_1fv5g0n" :> "msg2"
+
 
 source ==
    "MessageFlow_01dn8b3" :> "Task_0ouyduq"

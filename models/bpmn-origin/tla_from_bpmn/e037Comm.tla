@@ -14,24 +14,21 @@ ContainRel ==
   @@ "Customer_" :> { "StartEvent_1", "Check_Offer", "Is_the_Offer_Interesting", "Reject_Offer", "Book_Travel", "Offer_Rejected", "Pay_Travel", "Booking_Confirmed", "Payment_Confirmation_Received", "Travel_Paid" }
   @@ "TravelAgency_" :> { "Offer_Cancelled", "Offer_Rejection_Received", "Status_Waiting", "Make_Travel_Offer", "Offer_Needed", "Ticket_Ordered", "Order_Ticket", "IntermediateThrowEvent_0kagqq2", "Confirm_Booking", "Booking_Received" }
 
-Node == {
-  "Customer_","TravelAgency_","Airline_","StartEvent_1","Check_Offer","Is_the_Offer_Interesting","Reject_Offer","Book_Travel","Offer_Rejected","Pay_Travel","Booking_Confirmed","Payment_Confirmation_Received","Travel_Paid","Offer_Cancelled","Offer_Rejection_Received","Status_Waiting","Make_Travel_Offer","Offer_Needed","Ticket_Ordered","Order_Ticket","IntermediateThrowEvent_0kagqq2","Confirm_Booking","Booking_Received","Ticket_Order_Received","Handle_Payment","Was_Payment_Made","Payment_Confirmed","Payment_Refused","Confirm_Payment"
-}
+Node == { "Customer_", "TravelAgency_", "Airline_", "StartEvent_1", "Check_Offer", "Is_the_Offer_Interesting", "Reject_Offer", "Book_Travel", "Offer_Rejected", "Pay_Travel", "Booking_Confirmed", "Payment_Confirmation_Received", "Travel_Paid", "Offer_Cancelled", "Offer_Rejection_Received", "Status_Waiting", "Make_Travel_Offer", "Offer_Needed", "Ticket_Ordered", "Order_Ticket", "IntermediateThrowEvent_0kagqq2", "Confirm_Booking", "Booking_Received", "Ticket_Order_Received", "Handle_Payment", "Was_Payment_Made", "Payment_Confirmed", "Payment_Refused", "Confirm_Payment" }
 
-Edge == {
-  "MessageFlow_1j3ru8z","MessageFlow_01l3u25","MessageFlow_0jtu5yc","MessageFlow_1p97q31","MessageFlow_0y2wjrm","MessageFlow_08bo5ej","MessageFlow_15n7wk4","SequenceFlow_037u61c","SequenceFlow_0dfevt9","Offer_is_not_Interesting","Offer_is_Interesting","SequenceFlow_1qo309k","SequenceFlow_1y19v10","SequenceFlow_1p9f9nn","SequenceFlow_0rbkpuc","SequenceFlow_1fm8n43","SequenceFlow_1b9yiqz","SequenceFlow_10id4f8","SequenceFlow_1wbphor","SequenceFlow_1l28um0","SequenceFlow_02xdetn","SequenceFlow_06mgtsm","SequenceFlow_0wyug2s","SequenceFlow_1bhdal8","SequenceFlow_1bxiri7","SequenceFlow_09iuwhk","SequenceFlow_1ybfy8r","Payment_Was_Made","Payment_Was_Not_Made","SequenceFlow_1di11xa"
-}
+Edge == { "MessageFlow_1j3ru8z", "MessageFlow_01l3u25", "MessageFlow_0jtu5yc", "MessageFlow_1p97q31", "MessageFlow_0y2wjrm", "MessageFlow_08bo5ej", "MessageFlow_15n7wk4", "SequenceFlow_037u61c", "SequenceFlow_0dfevt9", "Offer_is_not_Interesting", "Offer_is_Interesting", "SequenceFlow_1qo309k", "SequenceFlow_1y19v10", "SequenceFlow_1p9f9nn", "SequenceFlow_0rbkpuc", "SequenceFlow_1fm8n43", "SequenceFlow_1b9yiqz", "SequenceFlow_10id4f8", "SequenceFlow_1wbphor", "SequenceFlow_1l28um0", "SequenceFlow_02xdetn", "SequenceFlow_06mgtsm", "SequenceFlow_0wyug2s", "SequenceFlow_1bhdal8", "SequenceFlow_1bxiri7", "SequenceFlow_09iuwhk", "SequenceFlow_1ybfy8r", "Payment_Was_Made", "Payment_Was_Not_Made", "SequenceFlow_1di11xa" }
 
 Message == { "order", "offer", "travel", "rejection", "payment", "confirmation", "payment confirmation" }
 
 msgtype ==
-      "MessageFlow_1j3ru8z" :> "order"
-  @@ "MessageFlow_01l3u25" :> "offer"
-  @@ "MessageFlow_0jtu5yc" :> "travel"
-  @@ "MessageFlow_1p97q31" :> "rejection"
-  @@ "MessageFlow_0y2wjrm" :> "payment"
-  @@ "MessageFlow_08bo5ej" :> "confirmation"
-  @@ "MessageFlow_15n7wk4" :> "payment confirmation"
+   "MessageFlow_1j3ru8z" :> "order"
+@@ "MessageFlow_01l3u25" :> "offer"
+@@ "MessageFlow_0jtu5yc" :> "travel"
+@@ "MessageFlow_1p97q31" :> "rejection"
+@@ "MessageFlow_0y2wjrm" :> "payment"
+@@ "MessageFlow_08bo5ej" :> "confirmation"
+@@ "MessageFlow_15n7wk4" :> "payment confirmation"
+
 
 source ==
    "MessageFlow_1j3ru8z" :> "Order_Ticket"

@@ -14,19 +14,16 @@ ContainRel ==
   @@ "B_" :> { "B_NSE", "B_EB", "B_MICE1", "B_MICE2", "B_TIE", "B_EE1", "B_EE2", "B_EE3" }
   @@ "C_" :> { "C_NSE", "C_XOR", "C_EE2", "C_EE1", "C_T", "C_ST" }
 
-Node == {
-  "B_","C_","A_","B_NSE","B_EB","B_MICE1","B_MICE2","B_TIE","B_EE1","B_EE2","B_EE3","C_NSE","C_XOR","C_EE2","C_EE1","C_T","C_ST","A_EE2","A_T","A_NSE","A_XOR","A_EE1","A_ST"
-}
+Node == { "B_", "C_", "A_", "B_NSE", "B_EB", "B_MICE1", "B_MICE2", "B_TIE", "B_EE1", "B_EE2", "B_EE3", "C_NSE", "C_XOR", "C_EE2", "C_EE1", "C_T", "C_ST", "A_EE2", "A_T", "A_NSE", "A_XOR", "A_EE1", "A_ST" }
 
-Edge == {
-  "MessageFlow_0anis1g","MessageFlow_0mma6b7","SequenceFlow_1kqxai7","SequenceFlow_1w1q1tz","SequenceFlow_01mi0z5","SequenceFlow_0d4uo9u","SequenceFlow_1lim0ak","SequenceFlow_1ejcjun","SequenceFlow_02i9aub","SequenceFlow_0062gga","SequenceFlow_1fpdtzj","SequenceFlow_0m6s08w","SequenceFlow_1jusdil","SequenceFlow_0sz8f29","SequenceFlow_13q04ef","SequenceFlow_1jbid03","SequenceFlow_1qj818y","SequenceFlow_1lmhnxh","SequenceFlow_11z8969"
-}
+Edge == { "MessageFlow_0anis1g", "MessageFlow_0mma6b7", "SequenceFlow_1kqxai7", "SequenceFlow_1w1q1tz", "SequenceFlow_01mi0z5", "SequenceFlow_0d4uo9u", "SequenceFlow_1lim0ak", "SequenceFlow_1ejcjun", "SequenceFlow_02i9aub", "SequenceFlow_0062gga", "SequenceFlow_1fpdtzj", "SequenceFlow_0m6s08w", "SequenceFlow_1jusdil", "SequenceFlow_0sz8f29", "SequenceFlow_13q04ef", "SequenceFlow_1jbid03", "SequenceFlow_1qj818y", "SequenceFlow_1lmhnxh", "SequenceFlow_11z8969" }
 
 Message == { "m1", "m2" }
 
 msgtype ==
-      "MessageFlow_0anis1g" :> "m1"
-  @@ "MessageFlow_0mma6b7" :> "m2"
+   "MessageFlow_0anis1g" :> "m1"
+@@ "MessageFlow_0mma6b7" :> "m2"
+
 
 source ==
    "MessageFlow_0anis1g" :> "A_ST"

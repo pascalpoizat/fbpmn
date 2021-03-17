@@ -12,22 +12,19 @@ ContainRel ==
   "Customer_" :> { "Task_1v9s881", "ExclusiveGateway_192ovii", "ExclusiveGateway_0wgdt1i", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k", "EndEvent_0u6deep", "IntermediateThrowEvent_12d113r", "Task_1q91vog" }
   @@ "TravelAgency_" :> { "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "ExclusiveGateway_0i09ijx", "IntermediateThrowEvent_0xjpikb", "EndEvent_10gqkzy", "Task_1ne4gpy", "Task_002ndsu", "IntermediateThrowEvent_0neineb" }
 
-Node == {
-  "Customer_","TravelAgency_","Task_1v9s881","ExclusiveGateway_192ovii","ExclusiveGateway_0wgdt1i","StartEvent_1","Task_07u875a","EndEvent_055yt9k","EndEvent_0u6deep","IntermediateThrowEvent_12d113r","Task_1q91vog","StartEvent_1f3jj6d","ExclusiveGateway_1dc5v3z","Task_1bn6n5q","ExclusiveGateway_0i09ijx","IntermediateThrowEvent_0xjpikb","EndEvent_10gqkzy","Task_1ne4gpy","Task_002ndsu","IntermediateThrowEvent_0neineb"
-}
+Node == { "Customer_", "TravelAgency_", "Task_1v9s881", "ExclusiveGateway_192ovii", "ExclusiveGateway_0wgdt1i", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k", "EndEvent_0u6deep", "IntermediateThrowEvent_12d113r", "Task_1q91vog", "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "ExclusiveGateway_0i09ijx", "IntermediateThrowEvent_0xjpikb", "EndEvent_10gqkzy", "Task_1ne4gpy", "Task_002ndsu", "IntermediateThrowEvent_0neineb" }
 
-Edge == {
-  "MessageFlow_0knd10s","MessageFlow_1yfhhru","MessageFlow_1m551dh","MessageFlow_1goz1mt","MessageFlow_04an7oz","SequenceFlow_1uwq0b6","SequenceFlow_0b6ku63","SequenceFlow_0sfyd5z","SequenceFlow_016h32p","SequenceFlow_1rma3l8","SequenceFlow_1dptcxp","SequenceFlow_1h5h7h5","SequenceFlow_0ljbxox","SequenceFlow_1qku5do","SequenceFlow_11rxzkm","SequenceFlow_00s838q","SequenceFlow_0n80biv","SequenceFlow_1rlj8av","SequenceFlow_0rfye55","SequenceFlow_13z4ilm","SequenceFlow_0mdvaai","SequenceFlow_0b34324","SequenceFlow_1fn4lqy"
-}
+Edge == { "MessageFlow_0knd10s", "MessageFlow_1yfhhru", "MessageFlow_1m551dh", "MessageFlow_1goz1mt", "MessageFlow_04an7oz", "SequenceFlow_1uwq0b6", "SequenceFlow_0b6ku63", "SequenceFlow_0sfyd5z", "SequenceFlow_016h32p", "SequenceFlow_1rma3l8", "SequenceFlow_1dptcxp", "SequenceFlow_1h5h7h5", "SequenceFlow_0ljbxox", "SequenceFlow_1qku5do", "SequenceFlow_11rxzkm", "SequenceFlow_00s838q", "SequenceFlow_0n80biv", "SequenceFlow_1rlj8av", "SequenceFlow_0rfye55", "SequenceFlow_13z4ilm", "SequenceFlow_0mdvaai", "SequenceFlow_0b34324", "SequenceFlow_1fn4lqy" }
 
 Message == { "Offer", "Travel", "Confirmation", "Payment", "Ticket" }
 
 msgtype ==
-      "MessageFlow_0knd10s" :> "Offer"
-  @@ "MessageFlow_1yfhhru" :> "Travel"
-  @@ "MessageFlow_1m551dh" :> "Confirmation"
-  @@ "MessageFlow_1goz1mt" :> "Payment"
-  @@ "MessageFlow_04an7oz" :> "Ticket"
+   "MessageFlow_0knd10s" :> "Offer"
+@@ "MessageFlow_1yfhhru" :> "Travel"
+@@ "MessageFlow_1m551dh" :> "Confirmation"
+@@ "MessageFlow_1goz1mt" :> "Payment"
+@@ "MessageFlow_04an7oz" :> "Ticket"
+
 
 source ==
    "MessageFlow_0knd10s" :> "Task_1bn6n5q"

@@ -11,18 +11,15 @@ ContainRel ==
   "P_" :> { "StartEvent_1", "SubProcess_1glz8ii", "EndEvent_0a59w28" }
   @@ "SubProcess_1glz8ii" :> { "StartEvent_09ojxru", "StartEvent_0p1e2cq", "Task_1x5zvyz", "EndEvent_0atuxkh", "ExclusiveGateway_0vdfgj4" }
 
-Node == {
-  "P_","StartEvent_1","SubProcess_1glz8ii","EndEvent_0a59w28","StartEvent_09ojxru","StartEvent_0p1e2cq","Task_1x5zvyz","EndEvent_0atuxkh","ExclusiveGateway_0vdfgj4"
-}
+Node == { "P_", "StartEvent_1", "SubProcess_1glz8ii", "EndEvent_0a59w28", "StartEvent_09ojxru", "StartEvent_0p1e2cq", "Task_1x5zvyz", "EndEvent_0atuxkh", "ExclusiveGateway_0vdfgj4" }
 
-Edge == {
-  "SequenceFlow_12utbfs","SequenceFlow_00j4ong","SequenceFlow_19k9u87","SequenceFlow_1t5jo8c","SequenceFlow_04a621f","SequenceFlow_1uo79pd"
-}
+Edge == { "SequenceFlow_12utbfs", "SequenceFlow_00j4ong", "SequenceFlow_19k9u87", "SequenceFlow_1t5jo8c", "SequenceFlow_04a621f", "SequenceFlow_1uo79pd" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SequenceFlow_12utbfs" :> "StartEvent_1"

@@ -12,18 +12,15 @@ ContainRel ==
   "Process_1" :> { "NSE", "T1", "EE1" }
   @@ "Process_1fvo71o" :> { "StartEvent_04szy8h", "Task_0x899gn", "EndEvent_0gtkoek" }
 
-Node == {
-  "Process_1","Process_1fvo71o","NSE","T1","EE1","StartEvent_04szy8h","Task_0x899gn","EndEvent_0gtkoek"
-}
+Node == { "Process_1", "Process_1fvo71o", "NSE", "T1", "EE1", "StartEvent_04szy8h", "Task_0x899gn", "EndEvent_0gtkoek" }
 
-Edge == {
-  "SF1","SF2","SequenceFlow_0ru7vyn","SequenceFlow_12856fs"
-}
+Edge == { "SF1", "SF2", "SequenceFlow_0ru7vyn", "SequenceFlow_12856fs" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SF1" :> "NSE"

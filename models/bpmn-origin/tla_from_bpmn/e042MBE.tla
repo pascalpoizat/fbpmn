@@ -13,19 +13,16 @@ ContainRel ==
   @@ "Qid" :> { "ExclusiveGateway_0xuurqz", "EndEvent_14tvnqu", "SInfo", "ExclusiveGateway_1dkr7pq", "SInterrupt", "StartEvent_1s47y70" }
   @@ "SubProcess_0gsfmc3" :> { "StartEvent_1wbfgbp", "TA", "EndEvent_009ffjw" }
 
-Node == {
-  "Pid","Qid","SubProcess_0gsfmc3","InterruptBE","EndEvent_0rzkmq3","BoundaryEvent_0ofx7yq","NonInterruptBE","BoundaryEvent_0lkn8pc","EndEvent_086sfn7","EndEvent_08qbw2d","StartEvent_1","StartEvent_1wbfgbp","TA","EndEvent_009ffjw","ExclusiveGateway_0xuurqz","EndEvent_14tvnqu","SInfo","ExclusiveGateway_1dkr7pq","SInterrupt","StartEvent_1s47y70"
-}
+Node == { "Pid", "Qid", "SubProcess_0gsfmc3", "InterruptBE", "EndEvent_0rzkmq3", "BoundaryEvent_0ofx7yq", "NonInterruptBE", "BoundaryEvent_0lkn8pc", "EndEvent_086sfn7", "EndEvent_08qbw2d", "StartEvent_1", "StartEvent_1wbfgbp", "TA", "EndEvent_009ffjw", "ExclusiveGateway_0xuurqz", "EndEvent_14tvnqu", "SInfo", "ExclusiveGateway_1dkr7pq", "SInterrupt", "StartEvent_1s47y70" }
 
-Edge == {
-  "MessageFlow_0vpnljc","MessageFlow_12lpwl8","SequenceFlow_1hkg88d","SequenceFlow_1wjaklx","SequenceFlow_0mtfqyq","SequenceFlow_1qzgvib","SequenceFlow_1uh9c90","SequenceFlow_13lhzc9","SequenceFlow_0zcc527","SequenceFlow_0h86znt","SequenceFlow_19yqu7y","SequenceFlow_1sctg40","SequenceFlow_1tf20c8","SequenceFlow_1c63kjk","SequenceFlow_0c9btso","SequenceFlow_0v3rr2b"
-}
+Edge == { "MessageFlow_0vpnljc", "MessageFlow_12lpwl8", "SequenceFlow_1hkg88d", "SequenceFlow_1wjaklx", "SequenceFlow_0mtfqyq", "SequenceFlow_1qzgvib", "SequenceFlow_1uh9c90", "SequenceFlow_13lhzc9", "SequenceFlow_0zcc527", "SequenceFlow_0h86znt", "SequenceFlow_19yqu7y", "SequenceFlow_1sctg40", "SequenceFlow_1tf20c8", "SequenceFlow_1c63kjk", "SequenceFlow_0c9btso", "SequenceFlow_0v3rr2b" }
 
 Message == { "interrupt", "info" }
 
 msgtype ==
-      "MessageFlow_0vpnljc" :> "interrupt"
-  @@ "MessageFlow_12lpwl8" :> "info"
+   "MessageFlow_0vpnljc" :> "interrupt"
+@@ "MessageFlow_12lpwl8" :> "info"
+
 
 source ==
    "MessageFlow_0vpnljc" :> "SInterrupt"
