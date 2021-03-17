@@ -2,6 +2,7 @@ module Fbpmn.BpmnGraph.IO.Bpmn where
 
 import           Fbpmn.Helper                   ( tlift2 )
 import           Fbpmn.BpmnGraph.Model
+import           Fbpmn.BpmnGraph.SpaceModel
 import           Text.XML.Light                 ( Element(..)
                                                 , Content(..)
                                                 , QName(..)
@@ -304,6 +305,29 @@ pEdge :: [Element] -> Element -> Bool
 pEdge es e = e `oneOf` [pSF es, pMF es]
 
 {-|
+An experimental Space BPMN reading.
+-}
+sDecode :: [Content] -> Maybe SpaceBpmnGraph 
+sDecode cs = do
+  g <- decode cs
+  s <- undefined -- TODO:
+  vs <- undefined -- TODO:
+  cvs <- undefined -- TODO:
+  cfs <- undefined -- TODO:
+  co <- undefined -- TODO:
+  as <- undefined -- TODO:
+  i <- undefined -- TODO:
+  pure $ SpaceBPMNGraph
+    g
+    s
+    vs
+    cvs
+    cfs
+    co
+    as
+    i
+
+{-|
 An experimental BPMN reading.
 
 Requirements:
@@ -445,6 +469,21 @@ readFromBPMN :: FilePath -> Maybe a -> IO (Maybe BpmnGraph)
 readFromBPMN p _ = (decode . parseXML <$> BS.readFile p) `catchIOError` handler
  where
   handler :: IOError -> IO (Maybe BpmnGraph)
+  handler e
+    | isDoesNotExistError e = do
+      putTextLn "file not found"
+      pure Nothing
+    | otherwise = do
+      putTextLn "unknown error"
+      pure Nothing
+
+{-|
+Read a BPMN Graph from a BPMN file.
+-}
+readFromSBPMN :: FilePath -> Maybe a -> IO (Maybe SpaceBpmnGraph)
+readFromSBPMN p _ = (sDecode . parseXML <$> BS.readFile p) `catchIOError` handler
+ where
+  handler :: IOError -> IO (Maybe SpaceBpmnGraph)
   handler e
     | isDoesNotExistError e = do
       putTextLn "file not found"

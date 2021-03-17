@@ -23,6 +23,7 @@ source-repository head
 library
   hs-source-dirs:      src
   exposed-modules:     Fbpmn.BpmnGraph.Model
+                       Fbpmn.BpmnGraph.SpaceModel
                        Fbpmn.BpmnGraph.IO.Bpmn
                        Fbpmn.BpmnGraph.IO.Dot
                        Fbpmn.BpmnGraph.IO.Json

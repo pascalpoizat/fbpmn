@@ -8,10 +8,11 @@ import qualified Data.Set                      as S
 import qualified Data.Map.Strict               as M
                                                 ( empty )
 import           Data.Map.Strict                ( (!?)
+                                                , elems
                                                 , keys
                                                 , assocs
                                                 )
-import           Fbpmn.Helper                   ( filter' )
+import           Fbpmn.Helper                   ( filter', allKeyIn, allIn' )
 
 --
 -- Node types
@@ -296,21 +297,23 @@ outNTs g n ts = concat $ outNT g n <$> ts
 --
 isValidGraph :: BpmnGraph -> Bool
 isValidGraph g =
-  and
-    $   [ allNodesHave catN -- \forall n \in N . n \in dom(catN)
-        , allEdgesHave catE -- \forall e \in E . e \in dom(catE) 
-        , allEdgesHave sourceE -- \forall e \in E . e \in dom(sourceE) TODO: check that sourceE(e) \in N
-        , allEdgesHave targetE -- \forall e \in E . e \in dom(targetE) TODO: check that targetE(e) \in N
-        , allValidMessageFlow -- \forall m in E^{MessageFlow} . e \in dom(sourceE) /\ e \in dom(targetE)
-                              --                             /\ sourceE(e) \in N^{ST,TMIE,MEE}
-                              --                             /\ target(e) \in N^{RT,CMIE,MSE}
-                              --                             /\ e \in dom(messageE)
-                              --                             /\ messageE(e) \in messages
-        , allValidSubProcess -- \forall n \in N^{SubProcess} \union N^{Process} . n \in dom(containN) \wedge n \in dom(containE)
-        , allValidContainers -- \forall n \in dom(containN) \union dom(containE) . n \in N^{SubProcess} \union N^{Process}
-        , allValidBoundaryEvents -- \forall n \in N^{MBE,TBE} . n \in dom(isInterrupt)
-        ]
-    <*> [g]
+  and $
+    [ nodes `allKeyIn` catN, -- \forall n \in N . n \in dom(catN)
+      edges `allKeyIn` catE, -- \forall e \in E . e \in dom(catE)
+      edges `allKeyIn` sourceE, -- \forall e \in E . e \in dom(sourceE)
+      edges `allKeyIn` targetE, -- \forall e \in E . e \in dom(targetE)
+      (elems . sourceE) `allIn'` nodes, -- \forall e \in dom(sourceE) . sourceE(e) \in N
+      (elems . targetE) `allIn'` nodes, -- \forall e \in dom(targetE) . targetE(e) \in N
+      allValidMessageFlow, -- \forall m in E^{MessageFlow} . e \in dom(sourceE) /\ e \in dom(targetE)
+      --                             /\ sourceE(e) \in N^{ST,TMIE,MEE}
+      --                             /\ target(e) \in N^{RT,CMIE,MSE}
+      --                             /\ e \in dom(messageE)
+      --                             /\ messageE(e) \in messages
+      allValidSubProcess, -- \forall n \in N^{SubProcess} \union N^{Process} . n \in dom(containN) \wedge n \in dom(containE)
+      allValidContainers, -- \forall n \in dom(containN) \union dom(containE) . n \in N^{SubProcess} \union N^{Process}
+      allValidBoundaryEvents -- \forall n \in N^{MBE,TBE} . n \in dom(isInterrupt)
+    ]
+      <*> [g]
 
 isValidContainer :: BpmnGraph -> Node -> Bool
 isValidContainer g n = n `elem` nodesTs g [SubProcess, Process]
@@ -376,26 +379,6 @@ isValidMessageFlow g mf =
 allValidMessageFlow :: BpmnGraph -> Bool
 allValidMessageFlow g =
   getAll $ foldMap (All . isValidMessageFlow g) $ edgesT g MessageFlow
-
-allNodesHave :: (BpmnGraph -> Map Node b) -> BpmnGraph -> Bool
-allNodesHave = allDefF nodes
-
-allEdgesHave :: (BpmnGraph -> Map Edge b) -> BpmnGraph -> Bool
-allEdgesHave = allDefF edges
-
-allDefF :: (Ord a, Foldable t, Functor t)
-        => (BpmnGraph -> t a)
-        -> (BpmnGraph -> Map a b)
-        -> BpmnGraph
-        -> Bool
-allDefF h f g = allDef (h g) f g
-
-allDef :: (Ord a, Foldable t, Functor t)
-       => t a
-       -> (BpmnGraph -> Map a b)
-       -> BpmnGraph
-       -> Bool
-allDef xs f g = not $ any isNothing $ (m !?) <$> xs where m = f g
 
 {-|
 Fixpoint (based on sets).
