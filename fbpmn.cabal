@@ -1,6 +1,6 @@
 cabal-version:       1.24
 name:                fbpmn
-version:             0.3.4
+version:             0.3.5
 description:         formal tools for BPMN
 synopsis:            formal tools for BPMN
 homepage:            https://github.com/pascalpoizat/fbpmn
@@ -9,12 +9,12 @@ license:             Apache-2.0
 license-file:        LICENSE
 author:              Pascal Poizat
 maintainer:          pascal.poizat@gmail.com
-copyright:           2018-2019 Pascal Poizat
+copyright:           2018-2021 Pascal Poizat
 category:            Utility
 build-type:          Simple
 extra-doc-files:     README.md
                    , CHANGELOG.md
-tested-with:         GHC == 8.8.2
+tested-with:         GHC == 8.8.3
 
 source-repository head
   type:                git
