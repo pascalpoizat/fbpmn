@@ -1,0 +1,54 @@
+{
+    "isInterrupt": {},
+    "catN": {
+        "Event_0fkborc": "NoneEndEvent",
+        "StartEvent_1": "NoneStartEvent",
+        "PId": "Process",
+        "Activity_0z782bb": "AbstractTask"
+    },
+    "catE": {
+        "Flow_0llicsy": "NormalSequenceFlow",
+        "Flow_09a8um7": "NormalSequenceFlow"
+    },
+    "containN": {
+        "PId": [
+            "StartEvent_1",
+            "Event_0fkborc",
+            "Activity_0z782bb"
+        ]
+    },
+    "messageE": {},
+    "timeInformation": {},
+    "targetE": {
+        "Flow_0llicsy": "Event_0fkborc",
+        "Flow_09a8um7": "Activity_0z782bb"
+    },
+    "name": "s001SimpleMove",
+    "attached": {},
+    "containE": {
+        "PId": [
+            "Flow_09a8um7",
+            "Flow_0llicsy"
+        ]
+    },
+    "edges": [
+        "Flow_09a8um7",
+        "Flow_0llicsy"
+    ],
+    "messages": [],
+    "sourceE": {
+        "Flow_0llicsy": "Activity_0z782bb",
+        "Flow_09a8um7": "StartEvent_1"
+    },
+    "nodes": [
+        "PId",
+        "StartEvent_1",
+        "Event_0fkborc",
+        "Activity_0z782bb"
+    ],
+    "nameN": {
+        "Event_0fkborc": "stop",
+        "StartEvent_1": "start\n",
+        "Activity_0z782bb": "move to some reachable zone to plant"
+    }
+}
