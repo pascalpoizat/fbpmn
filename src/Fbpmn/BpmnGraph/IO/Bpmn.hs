@@ -1,44 +1,83 @@
+{-# LANGUAGE QuasiQuotes #-}
+
 module Fbpmn.BpmnGraph.IO.Bpmn where
 
-import           Fbpmn.Helper                   ( tlift2 )
-import           Fbpmn.BpmnGraph.Model
-import           Fbpmn.BpmnGraph.SpaceModel
-import           Text.XML.Light                 ( Element(..)
-                                                , Content(..)
-                                                , QName(..)
-                                                , cdData
-                                                , elChildren
-                                                , findAttr
-                                                , findChild
-                                                , findChildren
-                                                , filterChildren
-                                                , parseXML
-                                                , onlyElems
-                                                )
-import qualified Data.Map                      as M
-                                                ( empty
-                                                , fromList
-                                                , singleton
-                                                )
-import qualified Data.ByteString.Lazy          as BS
-                                                ( readFile )
-import           System.IO.Error                ( IOError
-                                                , catchIOError
-                                                , isDoesNotExistError
-                                                )
+import qualified Data.ByteString.Lazy as BS
+  ( readFile,
+  )
+import qualified Data.Map as M
+  ( empty,
+    fromList,
+    singleton,
+  )
+import Fbpmn.BpmnGraph.Model
+import Fbpmn.BpmnGraph.SpaceModel
+import Fbpmn.Helper (Id, eitherResult, parse, parseContainer, parseIdentifier, tlift2, (?#))
+import NeatInterpolation (text)
+import System.IO.Error
+  ( IOError,
+    catchIOError,
+    isDoesNotExistError,
+  )
+import Text.XML.Light
+  ( Content (..),
+    Element (..),
+    QName (..),
+    cdData,
+    elChildren,
+    filterChildren,
+    findAttr,
+    findChild,
+    findChildren,
+    onlyElems,
+    parseXML, ppElement
+  )
 
 --
 -- helpers for building QNames
 --
 
+-- BPMN
+
 uri :: String
 uri = "http://www.omg.org/spec/BPMN/20100524/MODEL"
+
+prefix :: String
+prefix = "bpmn"
 
 nA :: String -> QName
 nA s = QName s Nothing Nothing
 
 nE :: String -> QName
-nE s = QName s (Just uri) (Just "bpmn")
+nE s = QName s (Just uri) (Just prefix)
+
+-- Camunda
+
+camundaUri :: String
+camundaUri = "http://camunda.org/schema/1.0/bpmn"
+
+camundaPrefix :: String
+camundaPrefix = "camunda"
+
+nCA :: String -> QName
+nCA s = QName s Nothing Nothing
+
+nCE :: String -> QName
+nCE s = QName s (Just camundaUri) (Just camundaPrefix)
+
+-- Space BPMN
+
+spaceUri :: String
+spaceUri = "" -- none
+
+spacePrefix :: String
+spacePrefix = "fbpmn-space"
+
+nSA :: String -> QName
+nSA s = QName s Nothing Nothing
+
+nSE :: String -> QName
+nSE s = QName s Nothing (Just spacePrefix)
 
 --
 -- helpers to get attributes
@@ -84,16 +123,29 @@ isIdOf s e = do
   ie <- getId e
   pure (ie == s)
 
+isNameOf :: String -> Element -> Maybe Bool
+isNameOf s e = do
+  ne <- getName e
+  pure (ne == s)
+
 isIdOf' :: String -> Element -> Bool
 isIdOf' s e = fromMaybe False $ isIdOf s e
 
+isNameOf' :: String -> Element -> Bool
+isNameOf' s e = fromMaybe False $ isNameOf s e
+
 findById :: [Element] -> String -> Maybe Element
 findById es eid = do
-  ess <- nonEmpty [ e | e <- es, isIdOf' eid e ]
+  ess <- nonEmpty [e | e <- es, isIdOf' eid e]
+  Just $ head ess
+
+findByName :: [Element] -> String -> Maybe Element
+findByName es ename = do
+  ess <- nonEmpty [e | e <- es, isNameOf' ename e]
   Just $ head ess
 
 findByIds :: [Element] -> [String] -> [Element]
-findByIds es ids = [ e | e <- es, eid <- ids, isIdOf' eid e ]
+findByIds es ids = [e | e <- es, eid <- ids, isIdOf' eid e]
 
 --
 -- helpers for names vs ids
@@ -108,41 +160,51 @@ hasChildren q = not . null . findChildren q
 -- message events
 pMx :: Element -> Bool
 pMx = hasChildren (nE "messageEventDefinition")
+
 pTx :: Element -> Bool
 pTx = hasChildren (nE "terminateEventDefinition")
+
 pCx :: Element -> Bool
 pCx = hasChildren (nE "conditionExpression")
+
 pIx :: Element -> Bool
 pIx e = case findAttr (nA "cancelActivity") e of
   Just "false" -> False
-  Just _       -> True -- cancelActivity by default
-  Nothing      -> True -- cancelActivity by default
--- timer events
+  Just _ -> True -- cancelActivity by default
+  Nothing -> True -- cancelActivity by default
+  -- timer events
+
 pTimex :: Element -> Bool
 pTimex = hasChildren (nE "timerEventDefinition")
+
 pTimerDefinitionType' :: Element -> Maybe TimerDefinitionType
 pTimerDefinitionType' e = case () of
-  _ | hasChildren (nE "timeDate") e     -> Just TimeDate
+  _
+    | hasChildren (nE "timeDate") e -> Just TimeDate
     | hasChildren (nE "timeDuration") e -> Just TimeDuration
-    | hasChildren (nE "timeCycle") e    -> Just TimeCycle
-    | otherwise                         -> Nothing
+    | hasChildren (nE "timeCycle") e -> Just TimeCycle
+    | otherwise -> Nothing
+
 pTimerDefinitionValue' :: Element -> Maybe TimerValue
 pTimerDefinitionValue' e = do
   contents <- elContent <$> eval
   content1 <- listToMaybe contents
   case content1 of
     Text cdata -> Just $ cdData cdata
-    Elem _     -> Nothing
-    CRef _     -> Nothing
- where
-  eval = case () of
-    _ | hasChildren (nE "timeDate") e     -> findChild (nE "timeDate") e
-      | hasChildren (nE "timeDuration") e -> findChild (nE "timeDuration") e
-      | hasChildren (nE "timeCycle") e    -> findChild (nE "timeCycle") e
-      | otherwise                         -> Nothing
+    Elem _ -> Nothing
+    CRef _ -> Nothing
+  where
+    eval = case () of
+      _
+        | hasChildren (nE "timeDate") e -> findChild (nE "timeDate") e
+        | hasChildren (nE "timeDuration") e -> findChild (nE "timeDuration") e
+        | hasChildren (nE "timeCycle") e -> findChild (nE "timeCycle") e
+        | otherwise -> Nothing
+
 pTimerDefinitionType :: Element -> Maybe TimerDefinitionType
 pTimerDefinitionType e =
   pTimerDefinitionType' =<< findChild (nE "timerEventDefinition") e
+
 pTimerDefinitionValue :: Element -> Maybe TimerValue
 pTimerDefinitionValue e =
   pTimerDefinitionValue' =<< findChild (nE "timerEventDefinition") e
@@ -152,33 +214,43 @@ pTimerDefinitionValue e =
 -- other start events are assimilated to NSE
 pSE :: [Element] -> Element -> Bool
 pSE _ = (?=) "startEvent"
+
 pMSE :: [Element] -> Element -> Maybe NodeType
 pMSE es e = if pSE es e && pMx e then Just MessageStartEvent else Nothing
+
 pTSE :: [Element] -> Element -> Maybe NodeType
 pTSE es e =
   if pSE es e && pTimex e then Just TimerStartEvent else Nothing
+
 pNSE :: [Element] -> Element -> Maybe NodeType
-pNSE es e = if pSE es e && not (e `oneMaybeOf` [pMSE es, pTSE es])
-  then Just NoneStartEvent
-  else Nothing
+pNSE es e =
+  if pSE es e && not (e `oneMaybeOf` [pMSE es, pTSE es])
+    then Just NoneStartEvent
+    else Nothing
 
 -- intermediary events
 -- CMIE, TMIE, or (C)TIE
 -- other intermediary events are discarded
 pITE :: [Element] -> Element -> Bool
 pITE _ = (?=) "intermediateThrowEvent"
+
 pTMIE :: [Element] -> Element -> Maybe NodeType
 pTMIE es e =
   if pITE es e && pMx e then Just ThrowMessageIntermediateEvent else Nothing
+
 pICE :: [Element] -> Element -> Bool
 pICE _ = (?=) "intermediateCatchEvent"
+
 pCMIE :: [Element] -> Element -> Maybe NodeType
 pCMIE es e =
   if pICE es e && pMx e then Just CatchMessageIntermediateEvent else Nothing
+
 pCTIE :: [Element] -> Element -> Maybe NodeType
-pCTIE es e = if pICE es e && pTimex e
-  then Just TimerIntermediateEvent
-  else Nothing
+pCTIE es e =
+  if pICE es e && pTimex e
+    then Just TimerIntermediateEvent
+    else Nothing
+
 pIE :: [Element] -> Element -> Bool
 pIE es e = e `oneMaybeOf` [pTMIE es, pCMIE es, pCTIE es]
 
@@ -187,29 +259,36 @@ pIE es e = e `oneMaybeOf` [pTMIE es, pCMIE es, pCTIE es]
 -- other end events are assimilated to NEE
 pEE :: [Element] -> Element -> Bool
 pEE _ = (?=) "endEvent"
+
 pMEE :: [Element] -> Element -> Maybe NodeType
 pMEE es e = if pEE es e && pMx e then Just MessageEndEvent else Nothing
+
 pTEE :: [Element] -> Element -> Maybe NodeType
 pTEE es e = if pEE es e && pTx e then Just TerminateEndEvent else Nothing
+
 pNEE :: [Element] -> Element -> Maybe NodeType
-pNEE es e = if pEE es e && not (e `oneMaybeOf` [pMEE es, pTEE es])
-  then Just NoneEndEvent
-  else Nothing
+pNEE es e =
+  if pEE es e && not (e `oneMaybeOf` [pMEE es, pTEE es])
+    then Just NoneEndEvent
+    else Nothing
 
 -- boundary events
 -- MBE or TBE (default is interrupting, i.e., cancelActivity=true if not given)
 -- other boundary events are discarded
 pBE :: [Element] -> Element -> Bool
 pBE _ = (?=) "boundaryEvent"
+
 pMBE :: [Element] -> Element -> Maybe NodeType
 pMBE es e = if pBE es e && pMx e then Just MessageBoundaryEvent else Nothing
+
 pTBE :: [Element] -> Element -> Maybe NodeType
 pTBE es e = if pBE es e && pTimex e then Just TimerBoundaryEvent else Nothing
+
 pCancelActivity :: Element -> Bool
 pCancelActivity e = case findAttr (nA "cancelActivity") e of
   Just "false" -> False
-  Just _       -> True -- boundary events are interrupting by default
-  Nothing      -> True -- boundary events are interrupting by default
+  Just _ -> True -- boundary events are interrupting by default
+  Nothing -> True -- boundary events are interrupting by default
 
 -- time-related events
 pTE :: [Element] -> Element -> Bool
@@ -222,21 +301,25 @@ pE es e = e `oneOf` [pSE es, pIE es, pEE es, pBE es]
 -- gateways
 pAndGateway :: [Element] -> Element -> Maybe NodeType
 pAndGateway _ e = if (?=) "parallelGateway" e then Just AndGateway else Nothing
+
 pOrGateway :: [Element] -> Element -> Maybe NodeType
 pOrGateway _ e = if (?=) "inclusiveGateway" e then Just OrGateway else Nothing
+
 pEventBasedGateway :: [Element] -> Element -> Maybe NodeType
 pEventBasedGateway _ e =
   if (?=) "eventBasedGateway" e then Just EventBasedGateway else Nothing
+
 pXorGateway :: [Element] -> Element -> Maybe NodeType
 pXorGateway _ e =
   if (?=) "exclusiveGateway" e then Just XorGateway else Nothing
+
 pGateway :: [Element] -> Element -> Bool
 pGateway es e =
   e
-    `oneMaybeOf` [ pAndGateway es
-                 , pOrGateway es
-                 , pXorGateway es
-                 , pEventBasedGateway es
+    `oneMaybeOf` [ pAndGateway es,
+                   pOrGateway es,
+                   pXorGateway es,
+                   pEventBasedGateway es
                  ]
 
 -- tasks
@@ -244,32 +327,44 @@ pGateway es e =
 -- {user,service,script,manual,business rule} tasks are treated as AT
 pST :: [Element] -> Element -> Maybe NodeType
 pST _ e = if (?=) "sendTask" e then Just SendTask else Nothing
+
 pRT :: [Element] -> Element -> Maybe NodeType
 pRT _ e = if (?=) "receiveTask" e then Just ReceiveTask else Nothing
+
 pAT :: [Element] -> Element -> Bool
 pAT _ = (?=) "task"
+
 pUT :: [Element] -> Element -> Bool
 pUT _ = (?=) "userTask"
+
 pXT :: [Element] -> Element -> Bool
 pXT _ = (?=) "scriptTask"
+
 pWT :: [Element] -> Element -> Bool
 pWT _ = (?=) "serviceTask"
+
 pMT :: [Element] -> Element -> Bool
 pMT _ = (?=) "manualTask"
+
 pBT :: [Element] -> Element -> Bool
 pBT _ = (?=) "businessRuleTask"
+
 pAsAT :: [Element] -> Element -> Maybe NodeType
-pAsAT es e = if e `oneOf` ([pAT, pUT, pWT, pXT, pBT, pMT] <*> [es])
-  then Just AbstractTask
-  else Nothing
+pAsAT es e =
+  if e `oneOf` ([pAT, pUT, pWT, pXT, pBT, pMT] <*> [es])
+    then Just AbstractTask
+    else Nothing
+
 pT :: [Element] -> Element -> Bool
 pT es e = e `oneMaybeOf` [pAsAT es, pST es, pRT es]
 
 -- activities
 pSPx :: [Element] -> Element -> Bool
 pSPx _ = (?=) "subProcess"
+
 pSP :: [Element] -> Element -> Maybe NodeType
 pSP es e = if pSPx es e then Just SubProcess else Nothing
+
 pA :: [Element] -> Element -> Bool
 pA es e = e `oneOf` ([pT, pSPx] <*> [es])
 
@@ -285,137 +380,176 @@ pNode es e = e `oneOf` ([pE, pGateway, pA, pP] <*> [es])
 -- sequence flows are NSF, CSF or DSF
 pMF :: [Element] -> Element -> Bool
 pMF _ = (?=) "messageFlow"
+
 pSF :: [Element] -> Element -> Bool
 pSF _ = (?=) "sequenceFlow"
+
 pCSF :: [Element] -> Element -> Bool
 pCSF es e = pSF es e && pCx e
+
 -- for e to be a DSF it is a bit more complicated
--- 1. type of e is sequenceFlow 
+-- 1. type of e is sequenceFlow
 -- 2. e.sourceRef.default = e.id
 pDSF :: [Element] -> Element -> Bool
 pDSF es e = fromMaybe False $ do
-  sa  <- findAttr (nA "sourceRef") e
-  sn  <- findById es sa
+  sa <- findAttr (nA "sourceRef") e
+  sn <- findById es sa
   def <- findAttr (nA "default") sn
   pure $ pSF es e && isIdOf' def e
 
 pNSF :: [Element] -> Element -> Bool
 pNSF es e = pSF es e && not (e `oneOf` [pCSF es, pDSF es])
+
 pEdge :: [Element] -> Element -> Bool
 pEdge es e = e `oneOf` [pSF es, pMF es]
 
-{-|
-An experimental Space BPMN reading.
--}
-sDecode :: [Content] -> Maybe SpaceBpmnGraph 
+dump :: [Element] -> Text
+dump es = unlines $ toText . ppElement <$> es
+
+-- |
+-- An experimental Space BPMN reading.
+sDecode :: [Content] -> Either Text SpaceBpmnGraph
 sDecode cs = do
+  -- base graph can be decoded directly
   g <- decode cs
-  s <- undefined -- TODO:
-  vs <- undefined -- TODO:
-  cvs <- undefined -- TODO:
-  cfs <- undefined -- TODO:
-  co <- undefined -- TODO:
-  as <- undefined -- TODO:
-  i <- undefined -- TODO:
-  pure $ SpaceBPMNGraph
-    g
-    s
-    vs
-    cvs
-    cfs
-    co
-    as
-    i
+  -- top-level elements
+  let topElements = onlyElems cs
+  -- collaboration extension (for 1st collaboration to be found)
+  c <- listToMaybe (concatMap (findChildren (nE "collaboration")) topElements) ?# "missing collaboration"
+  cEx <- findChild (nE "extensionElements") c ?# "missing collaboration-level extension elements"
+  cCPs <- findChild (nCE "properties") cEx ?# "missing camunda:properties in bpmn:extensionElements"
+  let cExAll = elChildren cCPs
+  -- collaboration->extensionElements->*->true/name=prefix:base-locations.value
+  bs <- do
+    bsC <- findByName cExAll "base-locations" ?# "missing base locations"
+    bsRaw <- findAttr (nA "value") bsC ?# "missing value for base locations"
+    parseIdList . toText $ bsRaw
+  -- collaboration->extensionElements->*->true/name=prefix:group-locations.value
+  gs <- do
+    gsC <- findByName cExAll "group-locations" ?# "missing group locations"
+    gsRaw <- findAttr (nA "value") gsC ?# "missing value for group locations"
+    parseIdList . toText $ gsRaw
+  --
+  es <- pure [] -- TODO:
+  sEs <- pure M.empty -- TODO:
+  tEs <- pure M.empty -- TODO:
+  s <- pure $ SpaceStructure bs gs es sEs tEs
+  vs <- pure [] -- TODO:
+  cvs <- pure M.empty -- TODO:
+  cfs <- pure M.empty -- TODO:
+  co <- pure M.empty -- TODO:
+  as <- pure M.empty -- TODO:
+  initLs <- pure M.empty -- TODO:
+  initSp <- pure M.empty -- TODO:
+  i <- pure $ SpaceConfiguration initLs initSp
+  pure $
+    SpaceBPMNGraph
+      g
+      s
+      vs
+      cvs
+      cfs
+      co
+      as
+      i
 
-{-|
-An experimental BPMN reading.
+-- | Parse a list of Ids.
+-- Format is [id1, id2, ...] where ids are identifiers.
+parseIdList :: Text -> Either Text [Id]
+parseIdList t = case eitherResult $ parse (parseContainer "[" "]" "," parseIdentifier) t of
+  Left err -> Left [text|missing identifier, $se|] where se = toText err
+  Right ids -> Right ids
 
-Requirements:
-- collaboration has a name
-- message flows have a name (used as message type)
-
-Enhancements:
-- remove duplicates in cMessageTypes
--}
-decode :: [Content] -> Maybe BpmnGraph
+-- |
+-- An experimental BPMN reading.
+--
+-- Requirements:
+-- - collaboration has a name
+-- - message flows have a name (used as message type)
+--
+-- Enhancements:
+-- - remove duplicates in cMessageTypes
+decode :: [Content] -> Either Text BpmnGraph
 decode cs = do
   -- top-level elements
-  topElements      <- pure $ onlyElems cs
+  let topElements = onlyElems cs
   -- collaboration (1st one to be found)
-  c <- listToMaybe $ concatMap (findChildren (nE "collaboration")) topElements
-  cId              <- getId c
+  c <- listToMaybe (concatMap (findChildren (nE "collaboration")) topElements) ?# "missing collaboration"
+  cId <- getId c ?# "missing collaboration id"
   -- participants
-  cParticipants    <- pure $ findChildren (nE "participant") c
-  cParticipantRefs <- sequence $ findAttr (nA "processRef") <$> cParticipants
+  let cParticipants = findChildren (nE "participant") c
+  cParticipantRefs <- sequence (findAttr (nA "processRef") <$> cParticipants) ?# "missing process reference"
   -- cParticipantIds <- sequence $ getId <$> cParticipants
   -- processes
-  allProcesses     <- pure $ concatMap (findChildren (nE "process")) topElements
-  cProcesses       <- pure $ findByIds allProcesses cParticipantRefs
+  let allProcesses = concatMap (findChildren (nE "process")) topElements
+  let cProcesses = findByIds allProcesses cParticipantRefs
   -- message flows and messages
-  cMessageFlows    <- pure $ findChildren (nE "messageFlow") c
-  cMessageFlowIds  <- sequence $ getId <$> cMessageFlows
-  cMessageTypes    <- sequence . hashNub $ nameOrElseId <$> cMessageFlows
+  let cMessageFlows = findChildren (nE "messageFlow") c
+  cMessageFlowIds <- sequence (getId <$> cMessageFlows) ?# "missing id in a message flow"
+  cMessageTypes <- (sequence . hashNub $ nameOrElseId <$> cMessageFlows) ?# "missing type in a message flow"
   -- high level information (collaboration level)
-  g                <- pure $ BpmnGraph
-    (toText cId)
-    cParticipantRefs
-    cMessageFlowIds
-    (M.fromList $ ccatN <$> cParticipantRefs)
-    (M.fromList $ ccatE <$> cMessageFlowIds)
-    (M.fromList $ catMaybes $ tlift2 . bsource <$> cMessageFlows)
-    (M.fromList $ catMaybes $ tlift2 . btarget <$> cMessageFlows)
-    M.empty -- (M.fromList $ catMaybes $ tlift2 . bname <$> cParticipants)
-    M.empty
-    M.empty
-    M.empty
-    cMessageTypes
-    (M.fromList $ catMaybes $ tlift2 . bname <$> cMessageFlows)
-    M.empty
-    M.empty
+  let g =
+        BpmnGraph
+          (toText cId)
+          cParticipantRefs
+          cMessageFlowIds
+          (M.fromList $ ccatN <$> cParticipantRefs)
+          (M.fromList $ ccatE <$> cMessageFlowIds)
+          (M.fromList $ catMaybes $ tlift2 . bsource <$> cMessageFlows)
+          (M.fromList $ catMaybes $ tlift2 . btarget <$> cMessageFlows)
+          M.empty -- (M.fromList $ catMaybes $ tlift2 . bname <$> cParticipants)
+          M.empty
+          M.empty
+          M.empty
+          cMessageTypes
+          (M.fromList $ catMaybes $ tlift2 . bname <$> cMessageFlows)
+          M.empty
+          M.empty
   -- compute for participant processes
   processGraphs <- sequence $ compute <$> cProcesses
   pure $ g <> mconcat processGraphs
- where
-  ccatE :: String -> (Edge, EdgeType)
-  ccatE e = (e, MessageFlow)
-  ccatN :: String -> (Node, NodeType)
-  ccatN e = (e, Process)
+  where
+    ccatE :: String -> (Edge, EdgeType)
+    ccatE e = (e, MessageFlow)
+    ccatN :: String -> (Node, NodeType)
+    ccatN e = (e, Process)
 
-compute :: Element -> Maybe BpmnGraph
+compute :: Element -> Either Text BpmnGraph
 compute e = do
-  allElements <- pure $ elChildren e
-  pid         <- getId e
-  ns          <- pure $ filterChildren (pNode allElements) e
-  nbes        <- pure $ filterChildren (pBE allElements) e
-  ntes        <- pure $ filterChildren (pTE allElements) e
-  nids        <- sequence $ getId <$> ns
-  es          <- pure $ filterChildren (pEdge allElements) e
-  eids        <- sequence $ getId <$> es
-  sps         <- pure $ findChildren (nE "subProcess") e
-  g           <- pure $ BpmnGraph
-    ""
-    nids
-    eids
-    (M.fromList $ catMaybes $ tlift2 . bcatN allElements <$> ns)
-    (M.fromList $ catMaybes $ tlift2 . bcatE allElements <$> es)
-    (M.fromList $ catMaybes $ tlift2 . bsource <$> es)
-    (M.fromList $ catMaybes $ tlift2 . btarget <$> es)
-    (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
-    (M.singleton pid nids)
-    (M.singleton pid eids)
-    (M.fromList $ catMaybes $ tlift2 . battached <$> nbes)
-    []
-    M.empty
-    (M.fromList $ catMaybes $ tlift2 . bisInterrupting <$> nbes)
-    (M.fromList $ catMaybes $ tlift2 . btimeDefinition <$> ntes)
+  let allElements = elChildren e
+  pid <- getId e ?# "missing process identifier"
+  let ns = filterChildren (pNode allElements) e
+  let nbes = filterChildren (pBE allElements) e
+  let ntes = filterChildren (pTE allElements) e
+  nids <- sequence (getId <$> ns) ?# "missing node identifier"
+  let es = filterChildren (pEdge allElements) e
+  eids <- sequence (getId <$> es) ?# "missing edge identifier"
+  let sps = findChildren (nE "subProcess") e
+  let g =
+        BpmnGraph
+          ""
+          nids
+          eids
+          (M.fromList $ catMaybes $ tlift2 . bcatN allElements <$> ns)
+          (M.fromList $ catMaybes $ tlift2 . bcatE allElements <$> es)
+          (M.fromList $ catMaybes $ tlift2 . bsource <$> es)
+          (M.fromList $ catMaybes $ tlift2 . btarget <$> es)
+          (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
+          (M.singleton pid nids)
+          (M.singleton pid eids)
+          (M.fromList $ catMaybes $ tlift2 . battached <$> nbes)
+          []
+          M.empty
+          (M.fromList $ catMaybes $ tlift2 . bisInterrupting <$> nbes)
+          (M.fromList $ catMaybes $ tlift2 . btimeDefinition <$> ntes)
   spgs <- sequence $ compute <$> sps
   pure $ g <> mconcat spgs
 
 btimeDefinition :: Element -> (Maybe Node, Maybe TimerEventDefinition)
 btimeDefinition n = (getId n, Just $ TimerEventDefinition ttype tval)
- where
-  ttype = pTimerDefinitionType n
-  tval  = pTimerDefinitionValue n
+  where
+    ttype = pTimerDefinitionType n
+    tval = pTimerDefinitionValue n
 
 bisInterrupting :: Element -> (Maybe Node, Maybe Bool)
 bisInterrupting n = (getId n, Just $ pCancelActivity n)
@@ -434,60 +568,73 @@ bname mf = (getId mf, getName mf)
 
 bcatN :: [Element] -> Element -> (Maybe Node, Maybe NodeType)
 bcatN xs e = f e preds
- where
-  preds = [pNSE, pMSE, pTSE
-          ,pCMIE, pTMIE, pCTIE
-          ,pMBE, pTBE
-          ,pNEE, pMEE, pTEE
-          ,pAndGateway, pXorGateway, pOrGateway, pEventBasedGateway
-          ,pST, pRT, pAsAT
-          ,pSP] <*> [xs]
-  f :: Element -> [Element -> Maybe NodeType] -> (Maybe Node, Maybe NodeType)
-  f e' []      = (getId e', Nothing)
-  f e' (p : r) = if isJust res then (getId e', res) else f e' r
-    where
-      res = p e'
+  where
+    preds =
+      [ pNSE,
+        pMSE,
+        pTSE,
+        pCMIE,
+        pTMIE,
+        pCTIE,
+        pMBE,
+        pTBE,
+        pNEE,
+        pMEE,
+        pTEE,
+        pAndGateway,
+        pXorGateway,
+        pOrGateway,
+        pEventBasedGateway,
+        pST,
+        pRT,
+        pAsAT,
+        pSP
+      ]
+        <*> [xs]
+    f :: Element -> [Element -> Maybe NodeType] -> (Maybe Node, Maybe NodeType)
+    f e' [] = (getId e', Nothing)
+    f e' (p : r) = if isJust res then (getId e', res) else f e' r
+      where
+        res = p e'
 
 bcatE :: [Element] -> Element -> (Maybe Edge, Maybe EdgeType)
 bcatE xs e = f e preds
- where
-  f :: Element -> [(Element -> Bool, EdgeType)] -> (Maybe Edge, Maybe EdgeType)
-  f e' ((p, t) : r) = if p e' then (getId e', Just t) else f e' r
-  f e' []           = (getId e', Nothing)
-  -- in preds, the order is important since a DSF validates pNSF
-  preds =
-    [ (pDSF xs, DefaultSequenceFlow)
-    , (pCSF xs, ConditionalSequenceFlow)
-    , (pNSF xs, NormalSequenceFlow)
-    , (pMF xs , MessageFlow)
-    ]
+  where
+    f :: Element -> [(Element -> Bool, EdgeType)] -> (Maybe Edge, Maybe EdgeType)
+    f e' ((p, t) : r) = if p e' then (getId e', Just t) else f e' r
+    f e' [] = (getId e', Nothing)
+    -- in preds, the order is important since a DSF validates pNSF
+    preds =
+      [ (pDSF xs, DefaultSequenceFlow),
+        (pCSF xs, ConditionalSequenceFlow),
+        (pNSF xs, NormalSequenceFlow),
+        (pMF xs, MessageFlow)
+      ]
 
-{-|
-Read a BPMN Graph from a BPMN file.
--}
-readFromBPMN :: FilePath -> Maybe a -> IO (Maybe BpmnGraph)
+-- |
+-- Read a BPMN Graph from a BPMN file.
+readFromBPMN :: FilePath -> Maybe a -> IO (Either Text BpmnGraph)
 readFromBPMN p _ = (decode . parseXML <$> BS.readFile p) `catchIOError` handler
- where
-  handler :: IOError -> IO (Maybe BpmnGraph)
-  handler e
-    | isDoesNotExistError e = do
-      putTextLn "file not found"
-      pure Nothing
-    | otherwise = do
-      putTextLn "unknown error"
-      pure Nothing
+  where
+    handler :: IOError -> IO (Either Text BpmnGraph)
+    handler e
+      | isDoesNotExistError e = do
+        putTextLn "file not found"
+        pure $ Left "file not found"
+      | otherwise = do
+        putTextLn "unknown error"
+        pure $ Left "unknown error"
 
-{-|
-Read a BPMN Graph from a BPMN file.
--}
-readFromSBPMN :: FilePath -> Maybe a -> IO (Maybe SpaceBpmnGraph)
+-- |
+-- Read a BPMN Graph from a BPMN file.
+readFromSBPMN :: FilePath -> Maybe a -> IO (Either Text SpaceBpmnGraph)
 readFromSBPMN p _ = (sDecode . parseXML <$> BS.readFile p) `catchIOError` handler
- where
-  handler :: IOError -> IO (Maybe SpaceBpmnGraph)
-  handler e
-    | isDoesNotExistError e = do
-      putTextLn "file not found"
-      pure Nothing
-    | otherwise = do
-      putTextLn "unknown error"
-      pure Nothing
+  where
+    handler :: IOError -> IO (Either Text SpaceBpmnGraph)
+    handler e
+      | isDoesNotExistError e = do
+        putTextLn "file not found"
+        pure $ Left "file not found"
+      | otherwise = do
+        putTextLn "unknown error"
+        pure $ Left "unknown error"

@@ -1,12 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 module Fbpmn.Analysis.Tla.IO.Log where
 
-import           Fbpmn.Analysis.Tla.Model
-import           Data.Attoparsec.Text           (Parser, anyChar, manyTill, space, sepBy, parse, many1, eitherResult, endOfLine, decimal, char, digit, letter, string)
-import           System.IO.Error                ( IOError
-                                                , catchIOError
-                                                , isDoesNotExistError
-                                                )
+import Data.Attoparsec.Text (Parser, anyChar, endOfLine, many1, manyTill, space, string)
+import Fbpmn.Analysis.Tla.Model
+import Fbpmn.Helper (eitherResult, parse, parseContainer, parseIdentifier, parseInteger, parseString, parseTerminal)
+import System.IO.Error
+  ( IOError,
+    catchIOError,
+    isDoesNotExistError,
+  )
 
 errorLine1 :: Text
 errorLine1 = "Error: The following behavior constitutes a counter-example:"
@@ -24,28 +27,9 @@ parseStatus =
     <|> (string okLine >> return Success)
     <|> (manyTill anyChar endOfLine *> parseStatus)
 
-parseVariable :: Parser Variable
-parseVariable = do
-  _ <- many space
-  car1 <- letter <|> char '_'
-  rest <- many (letter <|> digit <|> char '_')
-  return $ [car1] <> rest
-
-parseString :: Parser String
-parseString = many space *> "\"" *> manyTill anyChar "\""
-
-parseInteger :: Parser Integer
-parseInteger = many space *> decimal
-
-parseTerminal :: Text -> Parser ()
-parseTerminal sep = do
-  _ <- many space
-  _ <- string sep
-  return ()
-
 parseMapItem :: Parser (Variable, Value)
 parseMapItem = do
-  var <- parseVariable
+  var <- parseIdentifier
   _ <- parseTerminal "|->"
   val <- parseValue
   return (var, val)
@@ -56,13 +40,6 @@ parseBagItem = do
   _ <- parseTerminal ":>"
   val <- parseValue
   return (var, val)
-
-parseContainer :: Text -> Text -> Text -> Parser a -> Parser [a]
-parseContainer beg end sep item = do
-  _ <- parseTerminal beg
-  items <- sepBy item $ parseTerminal sep
-  _ <- parseTerminal end
-  return items
 
 parseBag :: Parser [(Value, Value)]
 parseBag = parseContainer "(" ")" "@@" parseBagItem
@@ -77,18 +54,19 @@ parseSet :: Parser [Value]
 parseSet = parseContainer "{" "}" "," parseValue
 
 parseValue :: Parser Value
-parseValue = (SetValue <$> parseSet) 
-  <|> (TupleValue <$> parseTuple)
-  <|> (MapValue . fromList <$> parseMap)
-  <|> (BagValue . fromList <$> parseBag)
-  <|> (StringValue <$> parseString)
-  <|> (IntegerValue <$> parseInteger)
-  <|> (VariableValue <$> parseVariable)
+parseValue =
+  (SetValue <$> parseSet)
+    <|> (TupleValue <$> parseTuple)
+    <|> (MapValue . fromList <$> parseMap)
+    <|> (BagValue . fromList <$> parseBag)
+    <|> (StringValue <$> parseString)
+    <|> (IntegerValue <$> parseInteger)
+    <|> (VariableValue <$> parseIdentifier)
 
 parseAssignment :: Parser (Variable, Value)
 parseAssignment = do
   _ <- parseTerminal "/\\ "
-  var <- parseVariable
+  var <- parseIdentifier
   _ <- parseTerminal "="
   val <- parseValue
   return (var, val)
@@ -99,7 +77,7 @@ parseState = do
   sid <- "State " *> parseInteger <* ": "
   info <- manyTill anyChar endOfLine
   assignments <- many parseAssignment
-  return $ CounterExampleState sid info (fromList assignments) 
+  return $ CounterExampleState sid info (fromList assignments)
 
 parseLog :: Parser Log
 parseLog = do
@@ -107,34 +85,33 @@ parseLog = do
   case status of
     Success -> return $ Log "log" Nothing Success Nothing
     Failure -> do
-                states <- many1 parseState
-                return $ Log "log" Nothing Failure $ Just states
+      states <- many1 parseState
+      return $ Log "log" Nothing Failure $ Just states
 
-readLOG :: FilePath -> IO (Maybe Text)
-readLOG p = (Just . toText <$> readFile p) `catchIOError` handler
- where
+readLOG :: FilePath -> IO (Either Text Text)
+readLOG p = (Right . toText <$> readFile p) `catchIOError` handler
+  where
+    handler :: IOError -> IO (Either Text Text)
+    handler e
+      | isDoesNotExistError e = do
+        putTextLn "file not found"
+        pure $ Left "file not found"
+      | otherwise = do
+        putTextLn "unknown error"
+        pure $ Left "unknown error"
 
-  handler :: IOError -> IO (Maybe Text)
-  handler e
-    | isDoesNotExistError e = do
-      putTextLn "file not found"
-      pure Nothing
-    | otherwise = do
-      putTextLn "unknown error"
-      pure Nothing
-
-readFromLOG :: FilePath -> Maybe String -> IO (Maybe Log)
+readFromLOG :: FilePath -> Maybe String -> IO (Either Text Log)
 readFromLOG p _ = do
   contents <- readLOG p
   case contents of
-    Nothing -> pure Nothing
-    Just c  -> do
-      result <- pure $ parse parseLog c
+    Left err -> pure $ Left err
+    Right c -> do
+      let result = parse parseLog c
       case eitherResult result of
         Left issue -> do
-          putStrLn $ "parsing error: " <> issue
-          return Nothing
+          putStrLn issue
+          pure $ Left . toText $ issue
         Right (Log lid _ ls lcex) ->
-          pure $ Just (Log lid (Just model) ls lcex)
+          pure $ Right (Log lid (Just model) ls lcex)
           where
-            model = takeWhile (not . (== '.')) p <> ".bpmn"
+            model = takeWhile (/= '.') p <> ".bpmn"

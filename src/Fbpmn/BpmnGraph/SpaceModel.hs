@@ -1,40 +1,38 @@
+-- ORMULU align "="
+-- ORMULU align "::"
+
 module Fbpmn.BpmnGraph.SpaceModel where
 
 import Data.Map as M (elems, keys)
 import Data.Set as S (elems, empty, insert)
-import Fbpmn.BpmnGraph.Model (BpmnGraph, Edge, Id, Node, isValidGraph)
-import Fbpmn.Helper (allIn', allDifferent, disjoint')
+import Fbpmn.BpmnGraph.Model (BpmnGraph, Edge, Node, isValidGraph)
+import Fbpmn.Helper (Id, allDifferent, allIn', disjoint')
 
---
--- Base Locations
---
+-- | Base Locations
 type BaseLocation = Id
 
---
--- Group Locations
---
+-- | Group Locations
 type GroupLocation = Id
 
---
--- Variables
---
+-- | Variables
 type Variable = Id
 
---
--- Space Structure
---
+-- | Space Structure
 data SpaceStructure = SpaceStructure
-  { baseLocations :: [BaseLocation],
+  { -- | base locations
+    baseLocations :: [BaseLocation],
+    -- | group locations
     groupLocations :: [GroupLocation],
+    -- | edges for possible moves between (base) locations
     sEdges :: [Edge],
+    -- | sources of edges
     sSourceE :: Map Edge BaseLocation,
+    -- | targets of edges
     sTargetE :: Map Edge BaseLocation
   }
   deriving (Show)
 
---
--- Space Formula
---
+-- | Space Formula
 data SpaceFormula
   = SFTrue
   | SFVar Variable
@@ -85,54 +83,55 @@ fGroupLocations = S.elems . f' S.empty
     f' vs (SFAnd f1 f2) = f' (f' vs f1) f2
     f' vs SFReach = vs
 
---
--- Space Actions
---
+-- | Space Actions
 data SpaceAction
   = SAPass
   | SAMove SpaceFormula
   | SAUpdate Variable [GroupLocation] [GroupLocation]
   deriving (Show)
---
--- Space BPMN Graph
---
+
+-- | Space BPMN Graph
 data SpaceBpmnGraph = SpaceBPMNGraph
-  { graph :: BpmnGraph, -- base BPMN Graph
-    space :: SpaceStructure, -- space structure
-    variables :: [Variable], -- variables
-    cVariables :: Map Edge Variable, -- variables on conditional edges (vs in v : F)
-    cFormulas :: Map Edge SpaceFormula, -- formulas on conditional edges (Fs in v : F)
-    cOrdering :: Map Node [Edge], -- ordering of edges for XOR gateways
-    actions :: Map Node SpaceAction, -- actions associated to tasks
-    init :: SpaceConfiguration -- initial configuration parameters
+  { -- | base BPMN Graph
+    graph :: BpmnGraph,
+    -- | space structure
+    spacestructure :: SpaceStructure,
+    -- | variables
+    variables :: [Variable],
+    -- | variables on conditional edges (vs in v : F)
+    cVariables :: Map Edge Variable,
+    -- | formulas on conditional edges (Fs in v : F)
+    cFormulas :: Map Edge SpaceFormula,
+    -- | ordering of edges for XOR gateways
+    cOrdering :: Map Node [Edge],
+    -- | actions associated to tasks
+    actions :: Map Node SpaceAction,
+    -- | initial configuration parameters
+    init :: SpaceConfiguration
   }
   deriving (Show)
 
---
--- Initial Configuration Parameters
---
+-- | Initial Configuration Parameters
 data SpaceConfiguration = SpaceConfiguration
   { initialLocations :: Map Node BaseLocation,
     initialSpace :: Map GroupLocation [BaseLocation]
   }
   deriving (Show)
-  
---
--- Checks is a space BPMN graph is valid
--- - the underlying BPMN graph is valid
--- - the space structure is valid
--- - conditional edges are valid (variables, local and group locations)
--- - TODO: edges (all but default) outgoing from a XOR gateway are ordered
--- - TODO: actions are valid
--- Note : validations could be done in the transformer or in the target framework (TLA, ...)
---
+
+-- | Checks is a space BPMN graph is valid
+--  - the underlying BPMN graph is valid
+--  - the space structure is valid
+--  - conditional edges are valid (variables, local and group locations)
+--  - TODO: edges (all but default) outgoing from a XOR gateway are ordered
+--  - TODO: actions are valid
+--  Note : validations could be done in the transformer or in the target framework (TLA, ...)
 isValidSGraph :: SpaceBpmnGraph -> Bool
 isValidSGraph g =
   and $
-    [ isValidGraph . graph,
-      isValidSpaceStructure . space,
-      hasValidCVariables, -- checks all v in v : f on conditional edges
-      hasValidCFormulas -- checks all f in v : f on conditional edges
+    [ isValidGraph . graph, -- the BPMN graph is valid
+      isValidSpaceStructure . spacestructure, -- the space structure is valid
+      hasValidCVariables, -- variables used in conditional edges are valid
+      hasValidCFormulas -- formulas used in conditional edges are valid
     ]
       <*> [g]
 
@@ -142,8 +141,8 @@ hasValidCFormulas g =
     ( \x ->
         and $
           [ hasValidFVariables . variables,
-            hasValidBLocations . baseLocations . space,
-            hasValidGLocations . groupLocations . space
+            hasValidBLocations . baseLocations . spacestructure,
+            hasValidGLocations . groupLocations . spacestructure
           ]
             <*> [g]
             <*> [x]
@@ -151,20 +150,18 @@ hasValidCFormulas g =
     $ M.elems . cFormulas $ g
 
 hasValidFVariables :: [Variable] -> SpaceFormula -> Bool
-hasValidFVariables vs f = all (`elem` vs) $ fVariables f
+hasValidFVariables vs = all (`elem` vs) . fVariables
 
 hasValidBLocations :: [BaseLocation] -> SpaceFormula -> Bool
-hasValidBLocations vs f = all (`elem` vs) $ fBaseLocations f
+hasValidBLocations vs = all (`elem` vs) . fBaseLocations
 
 hasValidGLocations :: [GroupLocation] -> SpaceFormula -> Bool
-hasValidGLocations vs f = all (`elem` vs) $ fGroupLocations f
+hasValidGLocations vs = all (`elem` vs) . fGroupLocations
 
 hasValidCVariables :: SpaceBpmnGraph -> Bool
 hasValidCVariables g = all (`elem` variables g) $ M.elems . cVariables $ g
 
---
--- Checks if a space structure is valid
---
+-- | Checks if a space structure is valid
 isValidSpaceStructure :: SpaceStructure -> Bool
 isValidSpaceStructure s =
   and $

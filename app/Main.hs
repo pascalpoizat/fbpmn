@@ -278,23 +278,23 @@ run (Options (CLog2Json   pin pout))  = log2json False pin pout Nothing
 run (Options (CLog2Dot    pin pout))  = log2dot False pin pout Nothing
 run (Options (CLog2Html   pin pout))  = log2html False pin pout Nothing
 
-transform2 :: Text                                       -- input file suffix
-           -> Text                                       -- output file suffix
-           -> (FilePath -> Maybe String -> IO (Maybe a)) -- reader (from input file to model)
-           -> (FilePath -> Maybe String -> a -> IO ())   -- writer (from model to output file)
-           -> (a -> Bool)                                -- model validator
-           -> (a -> a)                                   -- model filtering
-           -> Bool                                       -- should validation be done?
-           -> Text                                       -- input file (without suffix)
-           -> Text                                       -- output file (without suffix)
-           -> Maybe String                               -- additional information (can be used to related to a source model)
+transform2 :: Text                                             -- input file suffix
+           -> Text                                             -- output file suffix
+           -> (FilePath -> Maybe String -> IO (Either Text a)) -- reader (from input file to model)
+           -> (FilePath -> Maybe String -> a -> IO ())         -- writer (from model to output file)
+           -> (a -> Bool)                                      -- model validator
+           -> (a -> a)                                         -- model filtering
+           -> Bool                                             -- should validation be done?
+           -> Text                                             -- input file (without suffix)
+           -> Text                                             -- output file (without suffix)
+           -> Maybe String                                     -- additional information (can be used to related to a source model)
            -> IO ()
 transform2 sourceSuffix targetSuffix mreader mwriter modelValidator modelFilter withValidation inputPath outputPath minfo
   = do
     loadres <- mreader (toString $ inputPath <> sourceSuffix) minfo
     case loadres of
-      Nothing    -> errorMessage "wrong file"
-      Just model -> if not withValidation || modelValidator model
+      Left err   -> errorMessage err
+      Right model -> if not withValidation || modelValidator model
         then do
           mwriter (toString $ outputPath <> targetSuffix)
                   minfo

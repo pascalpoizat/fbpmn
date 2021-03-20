@@ -3,11 +3,11 @@
   <bpmn:collaboration id="s002Xor1">
     <bpmn:extensionElements>
       <camunda:properties>
-        <camunda:property name="fbpmn-space:group-locations" value="[toPlant,planted,toSpray,sprayed]" />
-        <camunda:property name="fbpmn-space:base-locations" value="[f1,f2,f3,f4,f5,f6,r1,r2,b,m]" />
-        <camunda:property name="fbpmn-space:initial-space" value="{toPlant:[f1,f2,f3,f4,f5,f6], planted:[], toSpray:[], sprayed:[]}" />
-        <camunda:property name="fbpmn-space:transitions" value="[(f1,f2),(f2,f1),(f2,f3),(f3,f2),(f2,b),(b,f5),(f4,f5),(f5,f4),(f5,f6),(f6,f5),(f6,m),(m,f6),(m,f5)]" />
-        <camunda:property name="fbpmn:extensions" value="[space]" />
+        <camunda:property name="group-locations" value="[toPlant,planted,toSpray,sprayed]" />
+        <camunda:property name="base-locations" value="[f1,f2,f3,f4,f5,f6,r1,r2,b,m]" />
+        <camunda:property name="initial-space" value="{toPlant:[f1,f2,f3,f4,f5,f6], planted:[], toSpray:[], sprayed:[]}" />
+        <camunda:property name="transitions" value="[(f1,f2),(f2,f1),(f2,f3),(f3,f2),(f2,b),(b,f5),(f4,f5),(f5,f4),(f5,f6),(f6,f5),(f6,m),(m,f6),(m,f5)]" />
+        <camunda:property name="extensions" value="[space]" />
       </camunda:properties>
     </bpmn:extensionElements>
     <bpmn:participant id="P" name="P" processRef="PId" />
@@ -15,7 +15,7 @@
   <bpmn:process id="PId" name="P" isExecutable="true">
     <bpmn:extensionElements>
       <camunda:properties>
-        <camunda:property name="fbpmn-space:initial-location" value="f1" />
+        <camunda:property name="initial-location" value="f1" />
       </camunda:properties>
     </bpmn:extensionElements>
     <bpmn:startEvent id="StartEvent_1" name="start&#10;">
@@ -34,8 +34,8 @@
     <bpmn:sequenceFlow id="Flow_18ptpdh" name="there are reachable zones left to be planted (z)" sourceRef="Gateway_0bb8o1z" targetRef="Activity_0z782bb">
       <bpmn:extensionElements>
         <camunda:properties>
-          <camunda:property name="fbpmn-space:variable" value="z" />
-          <camunda:property name="fbpmn-space:condition" value="reachable &#38;&#38; toPlant" />
+          <camunda:property name="variable" value="z" />
+          <camunda:property name="condition" value="reachable &#38;&#38; toPlant" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">z : reachable &amp;&amp; toPlant</bpmn:conditionExpression>
@@ -47,7 +47,7 @@
     <bpmn:task id="Activity_0z782bb" name="move to some zone in z">
       <bpmn:extensionElements>
         <camunda:properties>
-          <camunda:property name="fbpm-space:action" value="move to z" />
+          <camunda:property name="action" value="move to z" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_18ptpdh</bpmn:incoming>
@@ -59,13 +59,13 @@
       <bpmndi:BPMNShape id="Participant_0tx4fwz_di" bpmnElement="P" isHorizontal="true">
         <dc:Bounds x="129" y="40" width="600" height="250" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0llicsy_di" bpmnElement="Flow_0llicsy">
-        <di:waypoint x="580" y="160" />
-        <di:waypoint x="642" y="160" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_09a8um7_di" bpmnElement="Flow_09a8um7">
-        <di:waypoint x="215" y="160" />
-        <di:waypoint x="265" y="160" />
+      <bpmndi:BPMNEdge id="Flow_14b309w_di" bpmnElement="Flow_14b309w">
+        <di:waypoint x="290" y="185" />
+        <di:waypoint x="290" y="230" />
+        <di:waypoint x="642" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="347" y="196" width="86" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18ptpdh_di" bpmnElement="Flow_18ptpdh">
         <di:waypoint x="315" y="160" />
@@ -74,13 +74,13 @@
           <dc:Bounds x="350" y="103" width="82" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_14b309w_di" bpmnElement="Flow_14b309w">
-        <di:waypoint x="290" y="185" />
-        <di:waypoint x="290" y="230" />
-        <di:waypoint x="642" y="230" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="347" y="196" width="86" height="27" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_0llicsy_di" bpmnElement="Flow_0llicsy">
+        <di:waypoint x="580" y="160" />
+        <di:waypoint x="642" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09a8um7_di" bpmnElement="Flow_09a8um7">
+        <di:waypoint x="215" y="160" />
+        <di:waypoint x="265" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="142" width="36" height="36" />

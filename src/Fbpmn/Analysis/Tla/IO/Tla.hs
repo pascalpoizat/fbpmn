@@ -69,7 +69,7 @@ encodeSBpmnGraphToTla g =
 encodeSExtensionToTla :: SpaceBpmnGraph -> Text
 encodeSExtensionToTla g =
   unlines $
-    [ encodeSStructure . space,
+    [ encodeSStructure . spacestructure,
       encodeGList "Var" variables,
       encodeVarLoc,
       encodeLocVar,
@@ -81,8 +81,8 @@ encodeSExtensionToTla g =
     ]
       <*> [g]
 
-genLocName :: Node -> Text
-genLocName n = [text|loc$ns|] where ns = show n
+genLocName :: Node -> String
+genLocName n = "loc" <> n
 
 encodeVarLoc :: SpaceBpmnGraph -> Text
 encodeVarLoc s = encodeMap show show "varloc" ns (M.fromList $ zip ns vs)
@@ -97,19 +97,19 @@ encodeLocVar s = encodeMap show show "locvar" vs (M.fromList $ zip vs ns)
     vs = genLocName <$> ns
 
 encodeSConditions :: SpaceBpmnGraph -> Text
-encodeSConditions g = undefined -- TODO:
+encodeSConditions g = "" -- undefined -- TODO:
 
 encodeSActions :: SpaceBpmnGraph -> Text
-encodeSActions g = undefined -- TODO:
+encodeSActions g = "" -- undefined -- TODO:
 
 encodeSEvalF :: SpaceBpmnGraph -> Text
-encodeSEvalF g = undefined -- TODO:
+encodeSEvalF g = "" -- undefined -- TODO:
 
 encodeSEvalA :: SpaceBpmnGraph -> Text
-encodeSEvalA g = undefined -- TODO:
+encodeSEvalA g = "" -- undefined -- TODO:
 
 encodeSInit :: SpaceBpmnGraph -> Text
-encodeSInit g = undefined -- TODO:
+encodeSInit g = "" -- undefined -- TODO:
 
 encodeSStructure :: SpaceStructure -> Text
 encodeSStructure s =
