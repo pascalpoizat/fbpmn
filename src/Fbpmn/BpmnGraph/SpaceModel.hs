@@ -14,6 +14,9 @@ type BaseLocation = Id
 -- | Group Locations
 type GroupLocation = Id
 
+-- | Space Edges
+type SEdge = Id
+
 -- | Variables
 type Variable = Id
 
@@ -24,11 +27,11 @@ data SpaceStructure = SpaceStructure
     -- | group locations
     groupLocations :: [GroupLocation],
     -- | edges for possible moves between (base) locations
-    sEdges :: [Edge],
+    sEdges :: [SEdge],
     -- | sources of edges
-    sSourceE :: Map Edge BaseLocation,
+    sSourceE :: Map SEdge BaseLocation,
     -- | targets of edges
-    sTargetE :: Map Edge BaseLocation
+    sTargetE :: Map SEdge BaseLocation
   }
   deriving (Show)
 

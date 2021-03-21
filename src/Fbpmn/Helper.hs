@@ -40,6 +40,12 @@ withIndex = f 0
     f _ [] = []
     f n (x : xs) = (n, x) : f (n + 1) xs
 
+-- | Builds indexes for elements of a list (using withIndex).
+withPrefixedIndex :: Text -> [a] -> [(Text, a)]
+withPrefixedIndex p xs = prefix <$> withIndex xs
+  where
+    prefix (i, v) = (p <> show i, v)
+
 -- | Given two lists, xs and ys, checks whether xs includes all elements of ys.
 includesAll :: (Eq a) => [a] -> [a] -> Bool
 includesAll xs = all (`elem` xs)

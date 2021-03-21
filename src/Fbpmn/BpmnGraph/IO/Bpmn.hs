@@ -12,8 +12,7 @@ import qualified Data.Map as M
   )
 import Fbpmn.BpmnGraph.Model
 import Fbpmn.BpmnGraph.SpaceModel
-import Fbpmn.Helper (Id, eitherResult, parse, parseContainer, parseIdentifier, tlift2, (?#))
-import NeatInterpolation (text)
+import Fbpmn.Helper (Id, eitherResult, parse, parseContainer, parseIdentifier, tlift2, (?#), Parser, parseTerminal, withPrefixedIndex)
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -406,6 +405,12 @@ pEdge es e = e `oneOf` [pSF es, pMF es]
 dump :: [Element] -> Text
 dump es = unlines $ toText . ppElement <$> es
 
+xDecode :: String -> Parser a -> [Element] -> Either Text a
+xDecode s parser elements = do
+  element <- findByName elements s ?# toText ("missing " <> s)
+  value <- findAttr (nA "value") element ?# toText ("missing value for " <> s)
+  first toText $ eitherResult $ parse parser (toText value)
+
 -- |
 -- An experimental Space BPMN reading.
 sDecode :: [Content] -> Either Text SpaceBpmnGraph
@@ -419,21 +424,19 @@ sDecode cs = do
   cEx <- findChild (nE "extensionElements") c ?# "missing collaboration-level extension elements"
   cCPs <- findChild (nCE "properties") cEx ?# "missing camunda:properties in bpmn:extensionElements"
   let cExAll = elChildren cCPs
-  -- collaboration->extensionElements->*->true/name=prefix:base-locations.value
-  bs <- do
-    bsC <- findByName cExAll "base-locations" ?# "missing base locations"
-    bsRaw <- findAttr (nA "value") bsC ?# "missing value for base locations"
-    parseIdList . toText $ bsRaw
-  -- collaboration->extensionElements->*->true/name=prefix:group-locations.value
-  gs <- do
-    gsC <- findByName cExAll "group-locations" ?# "missing group locations"
-    gsRaw <- findAttr (nA "value") gsC ?# "missing value for group locations"
-    parseIdList . toText $ gsRaw
-  --
-  es <- pure [] -- TODO:
-  sEs <- pure M.empty -- TODO:
-  tEs <- pure M.empty -- TODO:
-  s <- pure $ SpaceStructure bs gs es sEs tEs
+  -- collaboration->extensionElements->*->true/name=base-locations.value
+  bs <- xDecode "base-locations" parseIdList cExAll
+  -- collaboration->extensionElements->*->true/name=group-locations.value
+  gs <- xDecode "group-locations" parseIdList cExAll
+  -- collaboration->extensionElements->*->true/name=transitions.value
+  ts <- xDecode "transitions" parseTransition cExAll
+  let its = withPrefixedIndex "se_" ts
+  let es = toString . fst <$> its
+  let sEs = fromList $ bimap toString fst <$> its
+  let tEs = fromList $ bimap toString snd <$> its
+  -- space structure
+  let s = SpaceStructure bs gs es sEs tEs
+  -- 
   vs <- pure [] -- TODO:
   cvs <- pure M.empty -- TODO:
   cfs <- pure M.empty -- TODO:
@@ -455,10 +458,23 @@ sDecode cs = do
 
 -- | Parse a list of Ids.
 -- Format is [id1, id2, ...] where ids are identifiers.
-parseIdList :: Text -> Either Text [Id]
-parseIdList t = case eitherResult $ parse (parseContainer "[" "]" "," parseIdentifier) t of
-  Left err -> Left [text|missing identifier, $se|] where se = toText err
-  Right ids -> Right ids
+parseIdList :: Parser [Id]
+parseIdList = parseContainer "[" "]" "," parseIdentifier
+
+-- | Parse a transition.
+-- Format is [(s,t)i, ...] where si an ti are identifiers.
+parseTransition :: Parser [(Id, Id)]
+parseTransition = parseContainer "[" "]" "," parseIdCouple
+
+-- | Parse a couple of identifiers
+parseIdCouple :: Parser (Id, Id)
+parseIdCouple = do
+  _ <- parseTerminal "("
+  id1 <- parseIdentifier
+  _ <- parseTerminal ","
+  id2 <- parseIdentifier
+  _ <- parseTerminal ")"
+  return (id1, id2)
 
 -- |
 -- An experimental BPMN reading.
