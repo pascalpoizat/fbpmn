@@ -87,6 +87,22 @@ parseContainer beg end sep item = do
   _ <- parseTerminal end
   return items
 
+-- | Parse a couple (a, b)
+-- Format is (a, b).
+parseCouple :: Parser a -> Parser b -> Parser (a, b)
+parseCouple parserA parserB = do
+  _ <- parseTerminal "("
+  a <- parserA
+  _ <- parseTerminal ","
+  b <- parserB
+  _ <- parseTerminal ")"
+  return (a, b)
+
+-- | Parse a list [a]
+-- Format is [a1, a2, ...] where as are identifiers.
+parseList :: Parser a -> Parser [a]
+parseList = parseContainer "[" "]" ","
+
 -- | Parse a terminal.
 parseTerminal :: Text -> Parser ()
 parseTerminal sep = do
