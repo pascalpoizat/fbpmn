@@ -12,7 +12,7 @@ import qualified Data.Map as M
   )
 import Fbpmn.BpmnGraph.Model
 import Fbpmn.BpmnGraph.SpaceModel
-import Fbpmn.Helper (Id, eitherResult, parse, parseContainer, parseIdentifier, tlift2, (?#), Parser, parseTerminal, withPrefixedIndex)
+import Fbpmn.Helper (Id, Parser, eitherResult, parse, parseContainer, parseCouple, parseIdentifier, parseList, tlift2, withPrefixedIndex, (?#), parseTerminal)
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -29,7 +29,8 @@ import Text.XML.Light
     findChild,
     findChildren,
     onlyElems,
-    parseXML, ppElement
+    parseXML,
+    ppElement,
   )
 
 --
@@ -434,47 +435,61 @@ sDecode cs = do
   let es = toString . fst <$> its
   let sEs = fromList $ bimap toString fst <$> its
   let tEs = fromList $ bimap toString snd <$> its
-  -- space structure
-  let s = SpaceStructure bs gs es sEs tEs
-  -- 
+  -- collaboration->extensionElements->*->true/name=initial-space.value
+  initSpRaw <- xDecode "initial-space" parseIdToIdListList cExAll
+  let initSp = M.fromList initSpRaw
+  --
   vs <- pure [] -- TODO:
   cvs <- pure M.empty -- TODO:
+  cks <- pure M.empty -- TODO:
   cfs <- pure M.empty -- TODO:
   co <- pure M.empty -- TODO:
   as <- pure M.empty -- TODO:
   initLs <- pure M.empty -- TODO:
-  initSp <- pure M.empty -- TODO:
-  i <- pure $ SpaceConfiguration initLs initSp
+  -- space structure
+  let s = SpaceStructure bs gs es sEs tEs
+  -- initial configuration
+  let i = SpaceConfiguration initLs initSp
   pure $
     SpaceBPMNGraph
       g
       s
       vs
       cvs
+      cks
       cfs
       co
       as
       i
 
--- | Parse a list of Ids.
--- Format is [id1, id2, ...] where ids are identifiers.
-parseIdList :: Parser [Id]
-parseIdList = parseContainer "[" "]" "," parseIdentifier
+-- | Parse a list [(Id, [Id])] that can be used too generate a map with fromList.
+-- Format is {id1: [id11, ...], ...} where ids are identifiers
+parseIdToIdListList :: Parser [(Id, [Id])]
+parseIdToIdListList = parseContainer "{" "}" "," parseIdIdListCouple
 
--- | Parse a transition.
--- Format is [(s,t)i, ...] where si an ti are identifiers.
+-- |  Parse a transition.
+--  Format is [(s,t)i, ...] where si an ti are identifiers.
 parseTransition :: Parser [(Id, Id)]
 parseTransition = parseContainer "[" "]" "," parseIdCouple
 
--- | Parse a couple of identifiers
+-- | Parse a couple of Ids.
+-- Format is (id1, id2) where id1 and id2 are Ids.
 parseIdCouple :: Parser (Id, Id)
-parseIdCouple = do
-  _ <- parseTerminal "("
-  id1 <- parseIdentifier
-  _ <- parseTerminal ","
-  id2 <- parseIdentifier
-  _ <- parseTerminal ")"
-  return (id1, id2)
+parseIdCouple = parseCouple parseIdentifier parseIdentifier
+
+-- | Parse a list [Id]
+-- Format is [id1, id2, ...] where ids are identifiers.
+parseIdList :: Parser [Id]
+parseIdList = parseList parseIdentifier
+
+-- | Parse a couple (Id, [Id]).
+-- Format is (id1 : [id11, ...], ...)
+parseIdIdListCouple :: Parser (Id, [Id])
+parseIdIdListCouple = do
+  k <- parseIdentifier
+  _ <- parseTerminal ":"
+  v <- parseIdList
+  return (k, v)
 
 -- |
 -- An experimental BPMN reading.
