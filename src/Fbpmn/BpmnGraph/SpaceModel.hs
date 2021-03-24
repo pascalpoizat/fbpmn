@@ -35,6 +35,10 @@ data SpaceStructure = SpaceStructure
   }
   deriving (Show)
 
+-- | Kind for Space Formulas
+data FormulaKind = SFAll | SFAny
+  deriving (Show)
+
 -- | Space Formula
 data SpaceFormula
   = SFTrue
@@ -101,9 +105,11 @@ data SpaceBpmnGraph = SpaceBPMNGraph
     spacestructure :: SpaceStructure,
     -- | variables
     variables :: [Variable],
-    -- | variables on conditional edges (vs in v : F)
+    -- | variables on conditional edges (vs in v : k F)
     cVariables :: Map Edge Variable,
-    -- | formulas on conditional edges (Fs in v : F)
+    -- | kinds on conditional edges (ks in v : k F)
+    cKinds :: Map Edge FormulaKind,
+    -- | formulas on conditional edges (Fs in v : k F)
     cFormulas :: Map Edge SpaceFormula,
     -- | ordering of edges for XOR gateways
     cOrdering :: Map Node [Edge],
