@@ -124,7 +124,9 @@ data SpaceConfiguration = SpaceConfiguration
 -- | Checks is a space BPMN graph is valid
 --  - the underlying BPMN graph is valid
 --  - the space structure is valid
---  - conditional edges are valid (variables, local and group locations)
+--  - variables in conditional edges are valid
+--  - formulas in conditional edges are valid
+--  - TODO: the domain of cVariables is the graph conditional edges (same with cKinds and cFormulas)
 --  - TODO: edges (all but default) outgoing from a XOR gateway are ordered
 --  - TODO: actions are valid
 --  Note : validations could be done in the transformer or in the target framework (TLA, ...)
@@ -138,13 +140,17 @@ isValidSGraph g =
     ]
       <*> [g]
 
+-- | Checks if formulas on conditional edges are valid
+-- - variables are in the graph variables
+-- - base locations are in the space structure base locations
+-- - group locations are in the space structure group locationss 
 hasValidCFormulas :: SpaceBpmnGraph -> Bool
 hasValidCFormulas g =
   all
     ( \x ->
         and $
           [ hasValidFVariables . variables,
-            hasValidBLocations . baseLocations . spacestructure,
+            hasValidBLocations . baseLocations . spacestructure, 
             hasValidGLocations . groupLocations . spacestructure
           ]
             <*> [g]
