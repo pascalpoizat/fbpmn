@@ -530,13 +530,20 @@ decode cs = do
     ccatN :: String -> (Node, NodeType)
     ccatN e = (e, Process)
 
+-- | Computes a map from a predicate and transformation.
+-- - p is a predicate that is used to select only some elements from a context
+-- - f is a transformation of an element into a couple element id x element information
+computeMap :: Ord k => ([Element] -> Element -> Bool) -> (Element -> (Maybe k, Maybe a)) -> Element -> Map k a
+computeMap p f e = M.fromList $ catMaybes $ tlift2 . f <$> ks
+  where
+    aes = elChildren e
+    ks = filterChildren (p aes) e
+
 compute :: Element -> Either Text BpmnGraph
 compute e = do
   let allElements = elChildren e
   pid <- getId e ?# "missing process identifier"
   let ns = filterChildren (pNode allElements) e
-  let nbes = filterChildren (pBE allElements) e
-  let ntes = filterChildren (pTE allElements) e
   nids <- sequence (getId <$> ns) ?# "missing node identifier"
   let es = filterChildren (pEdge allElements) e
   eids <- sequence (getId <$> es) ?# "missing edge identifier"
@@ -544,20 +551,20 @@ compute e = do
   let g =
         BpmnGraph
           ""
-          nids
-          eids
-          (M.fromList $ catMaybes $ tlift2 . bcatN allElements <$> ns)
-          (M.fromList $ catMaybes $ tlift2 . bcatE allElements <$> es)
-          (M.fromList $ catMaybes $ tlift2 . bsource <$> es)
-          (M.fromList $ catMaybes $ tlift2 . btarget <$> es)
-          (M.fromList $ catMaybes $ tlift2 . bname <$> ns)
-          (M.singleton pid nids)
-          (M.singleton pid eids)
-          (M.fromList $ catMaybes $ tlift2 . battached <$> nbes)
-          []
-          M.empty
-          (M.fromList $ catMaybes $ tlift2 . bisInterrupting <$> nbes)
-          (M.fromList $ catMaybes $ tlift2 . btimeDefinition <$> ntes)
+          nids -- node ids
+          eids -- edge ids
+          (computeMap pNode (bcatN allElements) e) -- (n, catN(n)) for n in N
+          (computeMap pEdge (bcatE allElements) e) -- (e, catE(n)) for e in E
+          (computeMap pEdge bsource e) -- (e, sourceE(e)) for e in E
+          (computeMap pEdge btarget e) -- (e, targetE(e)) for e in E
+          (computeMap pNode bname e) -- (n, nameN(n)) for n in N
+          (M.singleton pid nids) -- (pid, containN(pid))
+          (M.singleton pid eids) --- (pid, containE(pid))
+          (computeMap pBE battached e) -- (n, attached(n)) for n in NBE
+          [] -- no message inside a (sub-)process
+          M.empty -- no message flows inside a (sub-)process
+          (computeMap pBE bisInterrupting e) -- (n, isInterrupt(n)) for n in NBE
+          (computeMap pTE btimeDefinition e) -- (n, timeInformation(n)) for n in NTE
   spgs <- sequence $ compute <$> sps
   pure $ g <> mconcat spgs
 
