@@ -266,71 +266,69 @@ parserLog2Html =
 
 -- no validation needed from BPMN since we build the graph ourselves
 run :: Options -> IO ()
-run (Options CVersion              )  = putStrLn . toString $ toolversion
-run (Options (CJson2Dot   pin pout))  = json2dot True pin pout Nothing
-run (Options (CJson2Tla   pin pout))  = json2tla True pin pout Nothing
-run (Options (CJson2Alloy pin pout))  = json2alloy True pin pout Nothing
-run (Options (CBpmn2Json  pin pout))  = bpmn2json False pin pout Nothing
-run (Options (CBpmn2Tla   pin pout))  = bpmn2tla False pin pout Nothing
-run (Options (CBpmn2Alloy pin pout))  = bpmn2alloy False pin pout Nothing
-run (Options (CSBpmn2Tla   pin pout)) = sbpmn2tla False pin pout Nothing
-run (Options (CLog2Json   pin pout))  = log2json False pin pout Nothing
-run (Options (CLog2Dot    pin pout))  = log2dot False pin pout Nothing
-run (Options (CLog2Html   pin pout))  = log2html False pin pout Nothing
+run (Options CVersion              ) = putStrLn . toString $ toolversion
+run (Options (CJson2Dot   pin pout)) = json2dot True pin pout
+run (Options (CJson2Tla   pin pout)) = json2tla True pin pout
+run (Options (CJson2Alloy pin pout)) = json2alloy True pin pout
+run (Options (CBpmn2Json  pin pout)) = bpmn2json False pin pout
+run (Options (CBpmn2Tla   pin pout)) = bpmn2tla False pin pout
+run (Options (CBpmn2Alloy pin pout)) = bpmn2alloy False pin pout
+run (Options (CSBpmn2Tla  pin pout)) = sbpmn2tla False pin pout
+run (Options (CLog2Json   pin pout)) = log2json False pin pout
+run (Options (CLog2Dot    pin pout)) = log2dot False pin pout
+run (Options (CLog2Html   pin pout)) = log2html False pin pout
 
-transform2 :: Text                                             -- input file suffix
-           -> Text                                             -- output file suffix
-           -> (FilePath -> Maybe String -> IO (Either Text a)) -- reader (from input file to model)
-           -> (FilePath -> Maybe String -> a -> IO ())         -- writer (from model to output file)
-           -> (a -> Bool)                                      -- model validator
-           -> (a -> a)                                         -- model filtering
-           -> Bool                                             -- should validation be done?
-           -> Text                                             -- input file (without suffix)
-           -> Text                                             -- output file (without suffix)
-           -> Maybe String                                     -- additional information (can be used to related to a source model)
+transform2 :: Text                             -- input file suffix
+           -> Text                             -- output file suffix
+           -> (FilePath -> IO (Either Text a)) -- reader (from input file to model)
+           -> (FilePath -> a -> IO ())         -- writer (from model to output file)
+           -> (a -> Bool)                      -- model validator
+           -> (a -> a)                         -- model filtering
+           -> Bool                             -- should validation be done?
+           -> Text                             -- input file (without suffix)
+           -> Text                             -- output file (without suffix)
            -> IO ()
-transform2 sourceSuffix targetSuffix mreader mwriter modelValidator modelFilter withValidation inputPath outputPath minfo
+transform2 sourceSuffix targetSuffix mreader mwriter modelValidator modelFilter withValidation inputPath outputPath
   = do
-    loadres <- mreader (toString $ inputPath <> sourceSuffix) minfo
+    loadres <- mreader (toString $ inputPath <> sourceSuffix)
     case loadres of
       Left err   -> errorMessage err
       Right model -> if not withValidation || modelValidator model
         then do
           mwriter (toString $ outputPath <> targetSuffix)
-                  minfo
                   (modelFilter model)
           successMessage "transformation done"
         else errorMessage "model is incorrect"
 
-json2dot :: Bool -> Text -> Text -> Maybe String -> IO ()
+json2dot :: Bool -> Text -> Text -> IO ()
 json2dot =
   transform2 jsonSuffix dotSuffix BG.readFromJSON BGD.writeToDOT isValidGraph id
 
-json2tla :: Bool -> Text -> Text -> Maybe String -> IO ()
+json2tla :: Bool -> Text -> Text -> IO ()
 json2tla =
   transform2 jsonSuffix tlaSuffix BG.readFromJSON writeToTLA isValidGraph id
 
-json2alloy :: Bool -> Text -> Text -> Maybe String -> IO ()
+json2alloy :: Bool -> Text -> Text -> IO ()
 json2alloy =
   transform2 jsonSuffix alloySuffix BG.readFromJSON writeToAlloy isValidGraph id
 
-bpmn2json :: Bool -> Text -> Text -> Maybe String -> IO ()
+bpmn2json :: Bool -> Text -> Text -> IO ()
 bpmn2json =
   transform2 bpmnSuffix jsonSuffix readFromBPMN BG.writeToJSON isValidGraph id
 
-bpmn2tla :: Bool -> Text -> Text -> Maybe String -> IO ()
+bpmn2tla :: Bool -> Text -> Text -> IO ()
 bpmn2tla =
   transform2 bpmnSuffix tlaSuffix readFromBPMN writeToTLA isValidGraph id
 
-bpmn2alloy :: Bool -> Text -> Text -> Maybe String -> IO ()
+bpmn2alloy :: Bool -> Text -> Text -> IO ()
 bpmn2alloy =
   transform2 bpmnSuffix alloySuffix readFromBPMN writeToAlloy isValidGraph id
 
-sbpmn2tla :: Bool -> Text -> Text -> Maybe String -> IO ()
+sbpmn2tla :: Bool -> Text -> Text -> IO ()
 sbpmn2tla =
   transform2 bpmnSuffix tlaSuffix readFromSBPMN writeToSTLA isValidSGraph id
 
-log2json :: Bool -> Text -> Text -> Maybe String -> IO ()
+log2json :: Bool -> Text -> Text -> IO ()
 log2json = transform2 logSuffix
                       jsonSuffix
                       readFromLOG
@@ -338,11 +336,11 @@ log2json = transform2 logSuffix
                       isValidLog
                       filterLog
 
-log2dot :: Bool -> Text -> Text -> Maybe String -> IO ()
+log2dot :: Bool -> Text -> Text -> IO ()
 log2dot =
   transform2 logSuffix dotSuffix readFromLOG TLD.writeToDOT isValidLog filterLog
 
-log2html :: Bool -> Text -> Text -> Maybe String -> IO ()
+log2html :: Bool -> Text -> Text -> IO ()
 log2html =
   transform2 logSuffix htmlSuffix readFromLOG writeToHTML isValidLog filterLog
 

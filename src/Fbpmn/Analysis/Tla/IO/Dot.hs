@@ -8,8 +8,8 @@ import qualified Data.Map.Strict               as M
                                                 ( toList )
 import qualified Data.Text                     as T
 
-writeToDOT :: FilePath -> Maybe String -> Log -> IO ()
-writeToDOT p _ = writeFile p . toString . encodeLogToDot
+writeToDOT :: FilePath -> Log -> IO ()
+writeToDOT p = writeFile p . toString . encodeLogToDot
 
 encodeLogToDot :: Log -> Text
 encodeLogToDot l =

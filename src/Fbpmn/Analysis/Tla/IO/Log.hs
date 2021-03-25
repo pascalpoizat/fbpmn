@@ -100,8 +100,8 @@ readLOG p = (Right . toText <$> readFile p) `catchIOError` handler
         putTextLn "unknown error"
         pure $ Left "unknown error"
 
-readFromLOG :: FilePath -> Maybe String -> IO (Either Text Log)
-readFromLOG p _ = do
+readFromLOG :: FilePath -> IO (Either Text Log)
+readFromLOG p = do
   contents <- readLOG p
   case contents of
     Left err -> pure $ Left err

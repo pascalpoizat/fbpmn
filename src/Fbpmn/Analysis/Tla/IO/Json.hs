@@ -33,5 +33,5 @@ readFromJSON p _ = (decode <$> BS.readFile p) `catchIOError` handler
 {-|
 Write a TLA log to a JSON file.
 -}
-writeToJSON :: FilePath -> Maybe String -> Log -> IO ()
-writeToJSON p _ = BS.writeFile p . encodePretty
+writeToJSON :: FilePath -> Log -> IO ()
+writeToJSON p = BS.writeFile p . encodePretty

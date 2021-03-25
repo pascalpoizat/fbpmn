@@ -142,8 +142,8 @@ genBool _ False = Just "False"
 {-|
 Write a BPMN Graph to an Alloy file.
 -}
-writeToAlloy :: FilePath -> Maybe a -> BpmnGraph -> IO ()
-writeToAlloy p _ = writeFile p . toString . encodeBpmnGraphToAlloy
+writeToAlloy :: FilePath -> BpmnGraph -> IO ()
+writeToAlloy p = writeFile p . toString . encodeBpmnGraphToAlloy
 
 {-|
 Transform a BPMN Graph to an Alloy specification.

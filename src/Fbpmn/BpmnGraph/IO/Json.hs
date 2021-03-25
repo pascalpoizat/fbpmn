@@ -24,8 +24,8 @@ genJSON = encodePretty
 
 -- |
 -- Read a BPMN Graph from a JSON file.
-readFromJSON :: FilePath -> Maybe a -> IO (Either Text BpmnGraph)
-readFromJSON p _ = (validate "could not load JSON" . decode <$> BS.readFile p) `catchIOError` handler
+readFromJSON :: FilePath -> IO (Either Text BpmnGraph)
+readFromJSON p = (validate "could not load JSON" . decode <$> BS.readFile p) `catchIOError` handler
   where
     handler :: IOError -> IO (Either Text BpmnGraph)
     handler e
@@ -38,5 +38,5 @@ readFromJSON p _ = (validate "could not load JSON" . decode <$> BS.readFile p) `
 
 -- |
 -- Write a BPMN Graph to a JSON file.
-writeToJSON :: FilePath -> Maybe a -> BpmnGraph -> IO ()
-writeToJSON p _ = BS.writeFile p . encodePretty
+writeToJSON :: FilePath -> BpmnGraph -> IO ()
+writeToJSON p = BS.writeFile p . encodePretty

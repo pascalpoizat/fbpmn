@@ -651,8 +651,8 @@ bcatE xs e = f e preds
 
 -- |
 -- Read a BPMN Graph from a BPMN file.
-readFromBPMN :: FilePath -> Maybe a -> IO (Either Text BpmnGraph)
-readFromBPMN p _ = (decode . parseXML <$> BS.readFile p) `catchIOError` handler
+readFromBPMN :: FilePath -> IO (Either Text BpmnGraph)
+readFromBPMN p = (decode . parseXML <$> BS.readFile p) `catchIOError` handler
   where
     handler :: IOError -> IO (Either Text BpmnGraph)
     handler e
@@ -665,8 +665,8 @@ readFromBPMN p _ = (decode . parseXML <$> BS.readFile p) `catchIOError` handler
 
 -- |
 -- Read a BPMN Graph from a BPMN file.
-readFromSBPMN :: FilePath -> Maybe a -> IO (Either Text SpaceBpmnGraph)
-readFromSBPMN p _ = (sDecode . parseXML <$> BS.readFile p) `catchIOError` handler
+readFromSBPMN :: FilePath -> IO (Either Text SpaceBpmnGraph)
+readFromSBPMN p = (sDecode . parseXML <$> BS.readFile p) `catchIOError` handler
   where
     handler :: IOError -> IO (Either Text SpaceBpmnGraph)
     handler e

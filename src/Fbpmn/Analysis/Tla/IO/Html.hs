@@ -12,8 +12,8 @@ import qualified Data.Map.Strict               as M
 Generates an HTML+JS animation for a log.
 The model file must be in the same place than the log file.
 -}
-writeToHTML :: FilePath -> Maybe String -> Log -> IO ()
-writeToHTML p _ = writeFile p . toString . encodeLogToHtml
+writeToHTML :: FilePath -> Log -> IO ()
+writeToHTML p = writeFile p . toString . encodeLogToHtml
 
 genSetup :: Log -> Text
 genSetup (Log _ _ Success _) =

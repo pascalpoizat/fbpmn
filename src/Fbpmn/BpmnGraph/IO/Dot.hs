@@ -9,8 +9,8 @@ import           Data.Map.Strict   ((!?))
 {-|
 Write a BPMN Graph to a DOT file.
 -}
-writeToDOT :: FilePath -> Maybe a -> BpmnGraph -> IO ()
-writeToDOT p _ = writeFile p . toString . encodeBpmnGraphToDot
+writeToDOT :: FilePath -> BpmnGraph -> IO ()
+writeToDOT p = writeFile p . toString . encodeBpmnGraphToDot
 
 {-|
 Transform a BPMN Graph to a TLA specification.

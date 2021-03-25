@@ -13,13 +13,13 @@ import NeatInterpolation (text)
 
 -- |
 -- Write a BPMN Graph to a TLA+ file.
-writeToTLA :: FilePath -> Maybe a -> BpmnGraph -> IO ()
-writeToTLA p _ = writeFile p . toString . encodeBpmnGraphToTla
+writeToTLA :: FilePath -> BpmnGraph -> IO ()
+writeToTLA p = writeFile p . toString . encodeBpmnGraphToTla
 
 -- |
 -- Write a Space BPMN Graph to a TLA+ file.
-writeToSTLA :: FilePath -> Maybe a -> SpaceBpmnGraph -> IO ()
-writeToSTLA p _ = writeFile p . toString . encodeSBpmnGraphToTla
+writeToSTLA :: FilePath -> SpaceBpmnGraph -> IO ()
+writeToSTLA p = writeFile p . toString . encodeSBpmnGraphToTla
 
 -- |
 -- Transform a BPMN Graph to a TLA specification.
