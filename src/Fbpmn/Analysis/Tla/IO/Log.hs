@@ -4,7 +4,7 @@ module Fbpmn.Analysis.Tla.IO.Log where
 
 import Data.Attoparsec.Text (Parser, anyChar, endOfLine, many1, manyTill, space, string)
 import Fbpmn.Analysis.Tla.Model
-import Fbpmn.Helper (eitherResult, parse, parseContainer, parseIdentifier, parseInteger, parseString, parseTerminal)
+import Fbpmn.Helper (eitherResult, parse, parseContainer, parseIdentifier, parseInteger, parseString, parseTerminal, TEither)
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -88,10 +88,10 @@ parseLog = do
       states <- many1 parseState
       return $ Log "log" Nothing Failure $ Just states
 
-readLOG :: FilePath -> IO (Either Text Text)
+readLOG :: FilePath -> IO (TEither Text)
 readLOG p = (Right . toText <$> readFile p) `catchIOError` handler
   where
-    handler :: IOError -> IO (Either Text Text)
+    handler :: IOError -> IO (TEither Text)
     handler e
       | isDoesNotExistError e = do
         putTextLn "file not found"
@@ -100,7 +100,7 @@ readLOG p = (Right . toText <$> readFile p) `catchIOError` handler
         putTextLn "unknown error"
         pure $ Left "unknown error"
 
-readFromLOG :: FilePath -> IO (Either Text Log)
+readFromLOG :: FilePath -> IO (TEither Log)
 readFromLOG p = do
   contents <- readLOG p
   case contents of

@@ -10,7 +10,7 @@ import qualified Data.Map as M
   )
 import Fbpmn.BpmnGraph.Model
 import Fbpmn.BpmnGraph.SpaceModel
-import Fbpmn.Helper (Id, Parser, eitherResult, parse, parseContainer, parseCouple, parseIdentifier, parseList, tlift2, withPrefixedIndex, (?#), parseTerminal)
+import Fbpmn.Helper (Id, Parser, TEither, eitherResult, parse, parseContainer, parseCouple, parseIdentifier, parseList, tlift2, withPrefixedIndex, (?#), parseTerminal)
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -404,7 +404,7 @@ pEdge es e = e `oneOf` [pSF es, pMF es]
 dump :: [Element] -> Text
 dump es = unlines $ toText . ppElement <$> es
 
-xDecode :: String -> Parser a -> [Element] -> Either Text a
+xDecode :: String -> Parser a -> [Element] -> TEither a
 xDecode s parser elements = do
   element <- findByName elements s ?# toText ("missing " <> s)
   value <- findAttr (nA "value") element ?# toText ("missing value for " <> s)
@@ -412,7 +412,7 @@ xDecode s parser elements = do
 
 -- |
 -- An experimental Space BPMN reading.
-decodeSBPMN :: [Content] -> Either Text SpaceBpmnGraph
+decodeSBPMN :: [Content] -> TEither SpaceBpmnGraph
 decodeSBPMN cs = do
   -- base graph can be decoded directly
   g <- decodeBPMN cs
@@ -500,7 +500,7 @@ parseIdIdListCouple = do
 --
 -- Enhancements:
 -- - remove duplicates in cMessageTypes
-decodeBPMN :: [Content] -> Either Text BpmnGraph
+decodeBPMN :: [Content] -> TEither BpmnGraph
 decodeBPMN cs = do
   -- top-level elements
   let topElements = onlyElems cs
@@ -554,7 +554,7 @@ computeMap p f e = M.fromList $ catMaybes $ tlift2 . f <$> ks
     aes = elChildren e
     ks = filterChildren (p aes) e
 
-compute :: Element -> Either Text BpmnGraph
+compute :: Element -> TEither BpmnGraph
 compute e = do
   let allElements = elChildren e
   pid <- getId e ?# "missing process identifier"
@@ -650,10 +650,10 @@ bcatE xs e = f e preds
       ]
 
 -- | Read some model of type a from an XML file given an a decoder.
-readFromXML :: ([Content] -> Either Text a) -> FilePath -> IO (Either Text a)
+readFromXML :: ([Content] -> TEither a) -> FilePath -> IO (TEither a)
 readFromXML d p = (d . parseXML <$> BS.readFile p) `catchIOError` handler
   where
-    handler :: IOError -> IO (Either Text a)
+    handler :: IOError -> IO (TEither a)
     handler e
       | isDoesNotExistError e = do
         putTextLn "file not found"

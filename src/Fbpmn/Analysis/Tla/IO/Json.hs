@@ -17,8 +17,8 @@ genJSON = encodePretty
 {-|
 Read a TLA log from a JSON file.
 -}
-readFromJSON :: FilePath -> Maybe String -> IO (Maybe Log)
-readFromJSON p _ = (decode <$> BS.readFile p) `catchIOError` handler
+readFromJSON :: FilePath -> IO (Maybe Log)
+readFromJSON p = (decode <$> BS.readFile p) `catchIOError` handler
  where
 
   handler :: IOError -> IO (Maybe Log)

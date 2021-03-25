@@ -10,7 +10,7 @@ import qualified Data.ByteString.Lazy as BS
     writeFile,
   )
 import Fbpmn.BpmnGraph.Model
-import Fbpmn.Helper (validate)
+import Fbpmn.Helper (TEither, validate)
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -24,10 +24,10 @@ genJSON = encodePretty
 
 -- |
 -- Read a BPMN Graph from a JSON file.
-readFromJSON :: FilePath -> IO (Either Text BpmnGraph)
+readFromJSON :: FilePath -> IO (TEither BpmnGraph)
 readFromJSON p = (validate "could not load JSON" . decode <$> BS.readFile p) `catchIOError` handler
   where
-    handler :: IOError -> IO (Either Text BpmnGraph)
+    handler :: IOError -> IO (TEither BpmnGraph)
     handler e
       | isDoesNotExistError e = do
         putTextLn "file not found"

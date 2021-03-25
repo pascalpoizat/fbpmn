@@ -8,6 +8,8 @@ import Data.Attoparsec.Text (Parser, anyChar, char, decimal, digit, letter, many
 import Data.Containers.ListUtils (nubOrd)
 import Data.Map.Strict (keys, (!?))
 
+type TEither = Either Text
+
 mapMap :: Ord a => (a -> Maybe b -> Maybe c) -> Map a b -> [c]
 mapMap g m = catMaybes $ mapMapElement g m <$> keys m
 
@@ -134,9 +136,9 @@ validate errorMessage m = case m of
 
 -- | Converts a maybe into an either using a possible error message.
 -- Practical to be used in infix form.
-(?#) :: Maybe b -> a -> Either a b
+(?#) :: Maybe a -> Text -> TEither a
 (?#) = flip validate
 
 -- | Transforms a list into an either with a message error if the list is empty.
-listToEither :: a -> [b] -> Either a [b]
+listToEither :: Text -> [a] -> TEither [a]
 listToEither errorMessage xs = if null xs then Left errorMessage else Right xs

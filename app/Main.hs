@@ -15,6 +15,7 @@ import qualified Fbpmn.Analysis.Tla.IO.Json    as TL
 import qualified Fbpmn.Analysis.Tla.IO.Dot     as TLD
 import           Fbpmn.Analysis.Tla.IO.Html
 import           Fbpmn.Analysis.Tla.IO.Log
+import Fbpmn.Helper (TEither)
 -- import           Fbpmn.IO.Smt
 -- import           Examples                       ( models )
 -- import           Data.Map.Strict                ( keys
@@ -280,7 +281,7 @@ run (Options (CLog2Html   pin pout)) = log2html False pin pout
 
 transform2 :: Text                             -- input file suffix
            -> Text                             -- output file suffix
-           -> (FilePath -> IO (Either Text a)) -- reader (from input file to model)
+           -> (FilePath -> IO (TEither a)) -- reader (from input file to model)
            -> (FilePath -> a -> IO ())         -- writer (from model to output file)
            -> (a -> Bool)                      -- model validator
            -> (a -> a)                         -- model filtering
