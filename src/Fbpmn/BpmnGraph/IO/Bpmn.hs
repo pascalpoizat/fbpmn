@@ -1,5 +1,3 @@
-{-# LANGUAGE QuasiQuotes #-}
-
 module Fbpmn.BpmnGraph.IO.Bpmn where
 
 import qualified Data.ByteString.Lazy as BS
@@ -420,6 +418,8 @@ sDecode cs = do
   g <- decode cs
   -- top-level elements
   let topElements = onlyElems cs
+  -- conditional edges
+  let eCs = edgesT g ConditionalSequenceFlow
   -- collaboration extension (for 1st collaboration to be found)
   c <- listToMaybe (concatMap (findChildren (nE "collaboration")) topElements) ?# "missing collaboration"
   cEx <- findChild (nE "extensionElements") c ?# "missing collaboration-level extension elements"
@@ -438,14 +438,14 @@ sDecode cs = do
   -- collaboration->extensionElements->*->true/name=initial-space.value
   initSpRaw <- xDecode "initial-space" parseIdToIdListList cExAll
   let initSp = M.fromList initSpRaw
-  --
-  vs <- pure [] -- TODO:
+  -- 
   cvs <- pure M.empty -- TODO:
   cks <- pure M.empty -- TODO:
   cfs <- pure M.empty -- TODO:
   co <- pure M.empty -- TODO:
   as <- pure M.empty -- TODO:
   initLs <- pure M.empty -- TODO:
+  vs <- pure [] -- TODO:
   -- space structure
   let s = SpaceStructure bs gs es sEs tEs
   -- initial configuration
