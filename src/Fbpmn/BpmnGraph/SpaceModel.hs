@@ -3,7 +3,7 @@
 
 module Fbpmn.BpmnGraph.SpaceModel where
 
-import Data.Map as M (elems, keys)
+import Data.Map as M (elems, keys, empty)
 import Data.Set as S (elems, empty, insert)
 import Fbpmn.BpmnGraph.Model (BpmnGraph, Edge, Node, isValidGraph)
 import Fbpmn.Helper (Id, allDifferent, allIn', disjoint')
@@ -35,6 +35,24 @@ data SpaceStructure = SpaceStructure
   }
   deriving (Show)
 
+instance Semigroup SpaceStructure where
+  (SpaceStructure bs gs se sse ste) <> (SpaceStructure bs' gs' se' sse' ste') =
+    SpaceStructure
+      (bs <> bs')
+      (gs <> gs')
+      (se <> se')
+      (sse <> sse')
+      (ste <> ste')
+
+instance Monoid SpaceStructure where
+  mempty =
+    SpaceStructure
+      []
+      []
+      []
+      M.empty
+      M.empty
+      
 -- | Kind for Space Formulas
 data FormulaKind = SFAll | SFAny
   deriving (Show)
@@ -120,12 +138,50 @@ data SpaceBpmnGraph = SpaceBpmnGraph
   }
   deriving (Show)
 
+instance Semigroup SpaceBpmnGraph where
+  (SpaceBpmnGraph g ss vs cvs cks cfs co as i) <> (SpaceBpmnGraph g' ss' vs' cvs' cks' cfs' co' as' i') =
+    SpaceBpmnGraph
+      (g <> g')
+      (ss <> ss')
+      (vs <> vs')
+      (cvs <> cvs')
+      (cks <> cks')
+      (cfs <> cfs')
+      (co <> co')
+      (as <> as')
+      (i <> i')
+
+instance Monoid SpaceBpmnGraph where
+  mempty =
+    SpaceBpmnGraph
+      mempty
+      mempty
+      []
+      M.empty
+      M.empty
+      M.empty
+      M.empty
+      M.empty
+      mempty
+
 -- | Initial Configuration Parameters
 data SpaceConfiguration = SpaceConfiguration
   { initialLocations :: Map Node BaseLocation,
     initialSpace :: Map GroupLocation [BaseLocation]
   }
   deriving (Show)
+
+instance Semigroup SpaceConfiguration where
+  (SpaceConfiguration ils iss) <> (SpaceConfiguration ils' iss') =
+    SpaceConfiguration
+      (ils <> ils')
+      (iss <> iss')
+
+instance Monoid SpaceConfiguration where
+  mempty =
+    SpaceConfiguration
+      M.empty
+      M.empty
 
 -- | Checks is a space BPMN graph is valid
 --  - the underlying BPMN graph is valid
