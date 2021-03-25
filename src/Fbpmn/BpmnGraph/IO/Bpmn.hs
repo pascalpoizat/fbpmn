@@ -451,7 +451,7 @@ decodeS cs = do
   -- initial configuration
   let i = SpaceConfiguration initLs initSp
   pure $
-    SpaceBPMNGraph
+    SpaceBpmnGraph
       g
       s
       vs

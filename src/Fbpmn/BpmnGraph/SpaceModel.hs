@@ -98,7 +98,7 @@ data SpaceAction
   deriving (Show)
 
 -- | Space BPMN Graph
-data SpaceBpmnGraph = SpaceBPMNGraph
+data SpaceBpmnGraph = SpaceBpmnGraph
   { -- | base BPMN Graph
     graph :: BpmnGraph,
     -- | space structure
