@@ -11,10 +11,18 @@ import Fbpmn.BpmnGraph.SpaceModel
 import Fbpmn.Helper
 import NeatInterpolation (text)
 
+-- | FWriter from BPMN Graph to TLA+.
+writer :: FWriter BpmnGraph
+writer = FW writeToTLA ".tla"
+
 -- |
 -- Write a BPMN Graph to a TLA+ file.
 writeToTLA :: FilePath -> BpmnGraph -> IO ()
 writeToTLA p = writeFile p . toString . encodeBpmnGraphToTla
+
+-- | FWriter from Space BPMN Graph to TLA+.
+writerS :: FWriter SpaceBpmnGraph 
+writerS = FW writeToSTLA ".tla"
 
 -- |
 -- Write a Space BPMN Graph to a TLA+ file.

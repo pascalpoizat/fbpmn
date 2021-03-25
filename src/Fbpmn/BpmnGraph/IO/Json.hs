@@ -10,7 +10,7 @@ import qualified Data.ByteString.Lazy as BS
     writeFile,
   )
 import Fbpmn.BpmnGraph.Model
-import Fbpmn.Helper (TEither, validate)
+import Fbpmn.Helper (TEither, FReader (FR), FWriter (FW), validate)
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -21,6 +21,10 @@ import System.IO.Error
 -- Generate the JSON representation for a BPMN Graph.
 genJSON :: BpmnGraph -> BS.ByteString
 genJSON = encodePretty
+
+-- | FReader from JSON to BPMN Graph.
+reader :: FReader BpmnGraph
+reader = FR readFromJSON ".json" 
 
 -- |
 -- Read a BPMN Graph from a JSON file.
@@ -35,6 +39,10 @@ readFromJSON p = (validate "could not load JSON" . decode <$> BS.readFile p) `ca
       | otherwise = do
         putTextLn "unknown error"
         pure $ Left "unknown error"
+
+-- | FWriter from BPMN Graph to JSON.
+writer :: FWriter BpmnGraph
+writer = FW writeToJSON ".json"
 
 -- |
 -- Write a BPMN Graph to a JSON file.

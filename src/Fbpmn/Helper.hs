@@ -10,6 +10,16 @@ import Data.Map.Strict (keys, (!?))
 
 type TEither = Either Text
 
+data FReader a = FR
+  { read :: FilePath -> IO (TEither a),
+    rsuffix :: Text
+  }
+
+data FWriter a = FW
+  { write :: FilePath -> a -> IO (),
+    wsuffix :: Text
+  }
+
 mapMap :: Ord a => (a -> Maybe b -> Maybe c) -> Map a b -> [c]
 mapMap g m = catMaybes $ mapMapElement g m <$> keys m
 

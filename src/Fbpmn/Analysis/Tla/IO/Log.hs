@@ -4,7 +4,7 @@ module Fbpmn.Analysis.Tla.IO.Log where
 
 import Data.Attoparsec.Text (Parser, anyChar, endOfLine, many1, manyTill, space, string)
 import Fbpmn.Analysis.Tla.Model
-import Fbpmn.Helper (eitherResult, parse, parseContainer, parseIdentifier, parseInteger, parseString, parseTerminal, TEither)
+import Fbpmn.Helper (TEither, FReader (FR), eitherResult, parse, parseContainer, parseIdentifier, parseInteger, parseString, parseTerminal)
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -99,6 +99,10 @@ readLOG p = (Right . toText <$> readFile p) `catchIOError` handler
       | otherwise = do
         putTextLn "unknown error"
         pure $ Left "unknown error"
+
+-- | FReader from TLA Log file to TLA LOG.
+reader :: FReader Log
+reader = FR readFromLOG ".log"
 
 readFromLOG :: FilePath -> IO (TEither Log)
 readFromLOG p = do

@@ -10,7 +10,7 @@ import qualified Data.Map as M
   )
 import Fbpmn.BpmnGraph.Model
 import Fbpmn.BpmnGraph.SpaceModel
-import Fbpmn.Helper (Id, Parser, TEither, eitherResult, parse, parseContainer, parseCouple, parseIdentifier, parseList, tlift2, withPrefixedIndex, (?#), parseTerminal)
+import Fbpmn.Helper (Id, Parser, TEither, eitherResult, parse, parseContainer, parseCouple, parseIdentifier, parseList, tlift2, withPrefixedIndex, (?#), parseTerminal, FReader (FR))
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -412,10 +412,10 @@ xDecode s parser elements = do
 
 -- |
 -- An experimental Space BPMN reading.
-decodeSBPMN :: [Content] -> TEither SpaceBpmnGraph
-decodeSBPMN cs = do
+decodeS :: [Content] -> TEither SpaceBpmnGraph
+decodeS cs = do
   -- base graph can be decoded directly
-  g <- decodeBPMN cs
+  g <- decode cs
   -- top-level elements
   let topElements = onlyElems cs
   -- conditional edges
@@ -500,8 +500,8 @@ parseIdIdListCouple = do
 --
 -- Enhancements:
 -- - remove duplicates in cMessageTypes
-decodeBPMN :: [Content] -> TEither BpmnGraph
-decodeBPMN cs = do
+decode :: [Content] -> TEither BpmnGraph
+decode cs = do
   -- top-level elements
   let topElements = onlyElems cs
   -- collaboration (1st one to be found)
@@ -648,6 +648,14 @@ bcatE xs e = f e preds
         (pNSF xs, NormalSequenceFlow),
         (pMF xs, MessageFlow)
       ]
+
+-- | FReader from BPMN to BPMN Graph.
+reader :: FReader BpmnGraph
+reader = FR (readFromXML decode) ".bpmn"
+
+-- | FReader from BPMN to Space BPMN Graph.
+readerS :: FReader SpaceBpmnGraph
+readerS = FR (readFromXML decodeS) ".bpmn"
 
 -- | Read some model of type a from an XML file given an a decoder.
 readFromXML :: ([Content] -> TEither a) -> FilePath -> IO (TEither a)

@@ -5,6 +5,11 @@ import           Fbpmn.BpmnGraph.Model
 import           NeatInterpolation (text)
 -- import           Data.List                      ( intercalate )
 import           Data.Map.Strict   ((!?))
+import Fbpmn.Helper (FWriter(FW))
+
+-- | FWriter from BPMN Graph to DOT.
+writer :: FWriter BpmnGraph
+writer = FW writeToDOT ".dot" 
 
 {-|
 Write a BPMN Graph to a DOT file.

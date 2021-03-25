@@ -7,6 +7,12 @@ import qualified Data.Text                     as T
 import           Data.Map.Strict                ( (!?) )
 import qualified Data.Map.Strict               as M
                                                 ( toList )
+import Fbpmn.Helper (FWriter (FW))
+
+
+-- | FWriter from TLA Log to HTML.
+writer :: FWriter Log
+writer = FW writeToHTML ".html"
 
 {-|
 Generates an HTML+JS animation for a log.

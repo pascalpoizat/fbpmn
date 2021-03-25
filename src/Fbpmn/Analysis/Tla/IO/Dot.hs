@@ -7,6 +7,11 @@ import           Data.Map.Strict                ( (!?) )
 import qualified Data.Map.Strict               as M
                                                 ( toList )
 import qualified Data.Text                     as T
+import Fbpmn.Helper (FWriter (FW))
+
+-- | FWriter from TLA Log to DOT.
+writer :: FWriter Log
+writer = FW writeToDOT ".dot"
 
 writeToDOT :: FilePath -> Log -> IO ()
 writeToDOT p = writeFile p . toString . encodeLogToDot
