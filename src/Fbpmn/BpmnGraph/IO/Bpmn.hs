@@ -412,10 +412,10 @@ xDecode s parser elements = do
 
 -- |
 -- An experimental Space BPMN reading.
-sDecode :: [Content] -> Either Text SpaceBpmnGraph
-sDecode cs = do
+decodeSBPMN :: [Content] -> Either Text SpaceBpmnGraph
+decodeSBPMN cs = do
   -- base graph can be decoded directly
-  g <- decode cs
+  g <- decodeBPMN cs
   -- top-level elements
   let topElements = onlyElems cs
   -- conditional edges
@@ -500,8 +500,8 @@ parseIdIdListCouple = do
 --
 -- Enhancements:
 -- - remove duplicates in cMessageTypes
-decode :: [Content] -> Either Text BpmnGraph
-decode cs = do
+decodeBPMN :: [Content] -> Either Text BpmnGraph
+decodeBPMN cs = do
   -- top-level elements
   let topElements = onlyElems cs
   -- collaboration (1st one to be found)
@@ -649,26 +649,11 @@ bcatE xs e = f e preds
         (pMF xs, MessageFlow)
       ]
 
--- |
--- Read a BPMN Graph from a BPMN file.
-readFromBPMN :: FilePath -> IO (Either Text BpmnGraph)
-readFromBPMN p = (decode . parseXML <$> BS.readFile p) `catchIOError` handler
+-- | Read some model of type a from an XML file given an a decoder.
+readFromXML :: ([Content] -> Either Text a) -> FilePath -> IO (Either Text a)
+readFromXML d p = (d . parseXML <$> BS.readFile p) `catchIOError` handler
   where
-    handler :: IOError -> IO (Either Text BpmnGraph)
-    handler e
-      | isDoesNotExistError e = do
-        putTextLn "file not found"
-        pure $ Left "file not found"
-      | otherwise = do
-        putTextLn "unknown error"
-        pure $ Left "unknown error"
-
--- |
--- Read a BPMN Graph from a BPMN file.
-readFromSBPMN :: FilePath -> IO (Either Text SpaceBpmnGraph)
-readFromSBPMN p = (sDecode . parseXML <$> BS.readFile p) `catchIOError` handler
-  where
-    handler :: IOError -> IO (Either Text SpaceBpmnGraph)
+    handler :: IOError -> IO (Either Text a)
     handler e
       | isDoesNotExistError e = do
         putTextLn "file not found"

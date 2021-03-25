@@ -314,19 +314,19 @@ json2alloy =
 
 bpmn2json :: Bool -> Text -> Text -> IO ()
 bpmn2json =
-  transform2 bpmnSuffix jsonSuffix readFromBPMN BG.writeToJSON isValidGraph id
+  transform2 bpmnSuffix jsonSuffix (readFromXML decodeBPMN) BG.writeToJSON isValidGraph id
 
 bpmn2tla :: Bool -> Text -> Text -> IO ()
 bpmn2tla =
-  transform2 bpmnSuffix tlaSuffix readFromBPMN writeToTLA isValidGraph id
+  transform2 bpmnSuffix tlaSuffix (readFromXML decodeBPMN) writeToTLA isValidGraph id
 
 bpmn2alloy :: Bool -> Text -> Text -> IO ()
 bpmn2alloy =
-  transform2 bpmnSuffix alloySuffix readFromBPMN writeToAlloy isValidGraph id
+  transform2 bpmnSuffix alloySuffix (readFromXML decodeBPMN) writeToAlloy isValidGraph id
 
 sbpmn2tla :: Bool -> Text -> Text -> IO ()
 sbpmn2tla =
-  transform2 bpmnSuffix tlaSuffix readFromSBPMN writeToSTLA isValidSGraph id
+  transform2 bpmnSuffix tlaSuffix (readFromXML decodeSBPMN) writeToSTLA isValidSGraph id
 
 log2json :: Bool -> Text -> Text -> IO ()
 log2json = transform2 logSuffix
