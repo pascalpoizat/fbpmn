@@ -7,6 +7,7 @@ import qualified Data.ByteString.Lazy     as BS (ByteString, readFile,
 import           Fbpmn.Analysis.Tla.Model
 import           System.IO.Error          (IOError, catchIOError,
                                            isDoesNotExistError)
+import Fbpmn.Helper (TEither, validate)
 
 {-|
 Generate the JSON representation for a TLA log.
@@ -17,18 +18,18 @@ genJSON = encodePretty
 {-|
 Read a TLA log from a JSON file.
 -}
-readFromJSON :: FilePath -> IO (Maybe Log)
-readFromJSON p = (decode <$> BS.readFile p) `catchIOError` handler
+readFromJSON :: FilePath -> IO (TEither Log)
+readFromJSON p = (validate "could not load JSON" . decode <$> BS.readFile p) `catchIOError` handler
  where
 
-  handler :: IOError -> IO (Maybe Log)
+  handler :: IOError -> IO (TEither Log)
   handler e
     | isDoesNotExistError e = do
       putTextLn "file not found"
-      pure Nothing
+      pure $ Left "file not found"
     | otherwise = do
       putTextLn "unknown error"
-      pure Nothing
+      pure $ Left "unknown error"
 
 {-|
 Write a TLA log to a JSON file.
