@@ -526,14 +526,14 @@ decode cs = do
           cMessageFlowIds
           (M.fromList $ ccatN <$> cParticipantRefs)
           (M.fromList $ ccatE <$> cMessageFlowIds)
-          (M.fromList $ catMaybes $ tlift2 . bsource <$> cMessageFlows)
-          (M.fromList $ catMaybes $ tlift2 . btarget <$> cMessageFlows)
+          (M.fromList $ catMaybes $ bisequence . bsource <$> cMessageFlows)
+          (M.fromList $ catMaybes $ bisequence . btarget <$> cMessageFlows)
           M.empty -- (M.fromList $ catMaybes $ tlift2 . bname <$> cParticipants)
           M.empty
           M.empty
           M.empty
           cMessageTypes
-          (M.fromList $ catMaybes $ tlift2 . bname <$> cMessageFlows)
+          (M.fromList $ catMaybes $ bisequence . bname <$> cMessageFlows)
           M.empty
           M.empty
   -- compute for participant processes
@@ -549,7 +549,7 @@ decode cs = do
 -- - p is a predicate that is used to select only some elements from a context
 -- - f is a transformation of an element into a couple element id x element information
 computeMap :: Ord k => ([Element] -> Element -> Bool) -> (Element -> (Maybe k, Maybe a)) -> Element -> Map k a
-computeMap p f e = M.fromList $ catMaybes $ tlift2 . f <$> ks
+computeMap p f e = M.fromList $ catMaybes $ bisequence . f <$> ks
   where
     aes = elChildren e
     ks = filterChildren (p aes) e

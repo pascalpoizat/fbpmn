@@ -29,10 +29,6 @@ mapMapElement g m k = g k (m !? k)
 filter' :: (Ord a) => [a] -> Map a b -> (Maybe b -> Bool) -> [a]
 filter' xs f p = filter p' xs where p' x = p $ f !? x
 
-tlift2 :: (Maybe a, Maybe b) -> Maybe (a, b)
-tlift2 (Just x, Just y) = Just (x, y)
-tlift2 (_, _) = Nothing
-
 -- | Checks whether all elements of a list are different.
 allDifferent :: (Ord a) => [a] -> Bool
 allDifferent xs = length xs == (length . nubOrd $ xs)
