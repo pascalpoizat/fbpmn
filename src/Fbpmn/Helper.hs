@@ -20,6 +20,9 @@ data FWriter a = FW
     wsuffix :: Text
   }
 
+appliedIsJust :: (a -> b -> Maybe c) -> (a -> b -> Bool)
+appliedIsJust f a = isJust . f a
+
 mapMap :: Ord a => (a -> Maybe b -> Maybe c) -> Map a b -> [c]
 mapMap g m = catMaybes $ mapMapElement g m <$> keys m
 

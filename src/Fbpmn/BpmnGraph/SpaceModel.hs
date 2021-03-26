@@ -7,6 +7,7 @@ import Data.Map as M (elems, keys, empty)
 import Data.Set as S (elems, empty, insert)
 import Fbpmn.BpmnGraph.Model (BpmnGraph, Edge, Node, isValidGraph)
 import Fbpmn.Helper (Id, allDifferent, allIn', disjoint')
+import Relude.Extra.Lens (Lens', lens)
 
 -- | Base Locations
 type BaseLocation = Id
@@ -134,7 +135,7 @@ data SpaceBpmnGraph = SpaceBpmnGraph
     -- | actions associated to tasks
     actions :: Map Node SpaceAction,
     -- | initial configuration parameters
-    init :: SpaceConfiguration
+    initial :: SpaceConfiguration
   }
   deriving (Show)
 
@@ -164,6 +165,18 @@ instance Monoid SpaceBpmnGraph where
       M.empty
       mempty
 
+variablesL :: Lens' SpaceBpmnGraph [Variable]
+variablesL = lens getter setter
+  where
+    getter = variables
+    setter spaceGraph newVariables = spaceGraph {variables = newVariables}
+
+initialL :: Lens' SpaceBpmnGraph SpaceConfiguration
+initialL = lens getter setter
+  where
+    getter = initial
+    setter spaceGraph newInitial = spaceGraph {initial = newInitial}
+
 -- | Initial Configuration Parameters
 data SpaceConfiguration = SpaceConfiguration
   { initialLocations :: Map Node BaseLocation,
@@ -182,6 +195,12 @@ instance Monoid SpaceConfiguration where
     SpaceConfiguration
       M.empty
       M.empty
+
+initialLocationsL :: Lens' SpaceConfiguration (Map Node BaseLocation)
+initialLocationsL = lens getter setter
+  where
+    getter = initialLocations
+    setter spaceConfiguration newInitialLocations = spaceConfiguration {initialLocations = newInitialLocations}
 
 -- | Checks is a space BPMN graph is valid
 --  - the underlying BPMN graph is valid
