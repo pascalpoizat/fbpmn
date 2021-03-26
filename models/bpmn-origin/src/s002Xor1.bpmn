@@ -35,7 +35,7 @@
         <camunda:properties>
           <camunda:property name="variable" value="z" />
           <camunda:property name="type" value="all" />
-          <camunda:property name="condition" value="reachable &#38;&#38; toPlant" />
+          <camunda:property name="formula" value="(reachable and toPlant)." />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">z : reachable &amp;&amp; toPlant</bpmn:conditionExpression>
@@ -47,7 +47,7 @@
     <bpmn:task id="Activity_0z782bb" name="move to some zone in z">
       <bpmn:extensionElements>
         <camunda:properties>
-          <camunda:property name="action" value="move to z" />
+          <camunda:property name="action" value="move to z." />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_18ptpdh</bpmn:incoming>

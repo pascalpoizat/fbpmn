@@ -6,7 +6,7 @@ import qualified Data.ByteString.Lazy as BS
 import qualified Data.Map as M
   ( empty,
     fromList,
-    singleton,
+    singleton, keys
   )
 import Fbpmn.BpmnGraph.Model
 import Fbpmn.BpmnGraph.SpaceModel
@@ -410,13 +410,16 @@ xParseWith :: Parser a -> String -> TEither a
 xParseWith p s = first toText $ eitherResult $ parse p (toText s)
 
 xFindElement :: (String -> QName) -> String -> Element -> TEither Element
-xFindElement f s parentElement = findChild (f s) parentElement ?# toText ("missing element " <> s)
+xFindElement f s parentElement = findChild (f s) parentElement ?# toText ("missing element " <> s <> " in " <> show parentElement)
+
+xFindName :: String -> Element -> TEither Element
+xFindName s parentElement = findByName (elChildren parentElement) s ?# toText ("missing element with name " <> s <> " in " <> show parentElement)
 
 xFindAttribute :: (String -> QName) -> String -> Element -> TEither String
 xFindAttribute f s element = findAttr (f s) element ?# toText ("missing attribute " <> s <> " in " <> show element)
 
 xFindElement' :: (String -> QName) -> String -> [Element] -> TEither Element
-xFindElement' f s parentElements = listToMaybe (concatMap (findChildren (f s)) parentElements) ?# toText ("missing element " <> s)
+xFindElement' f s parentElements = listToMaybe (concatMap (findChildren (f s)) parentElements) ?# toText ("missing element " <> s <> " in " <> show parentElements)
 
 xFindElements :: (String -> QName) -> String -> Element -> TEither [Element]
 xFindElements f s parentElement = Right $ findChildren (f s) parentElement
@@ -425,14 +428,27 @@ xFindElements' :: (String -> QName) -> String -> [Element] -> TEither [Element]
 xFindElements' f s parentElements = Right $ concatMap (findChildren (f s)) parentElements
 
 --
--- basic (/: for element, /. for attribute)
+-- basic (/: for element, /. for attribute, /? foor name)
 --
 
 (/:) :: TEither Element -> String -> TEither Element
 (/:) e s = e >>= xFindElement nE s
 
+(/!) :: TEither Element -> String -> TEither Element
+(/!) e s = e >>= xFindName s
+
 (/.) :: TEither Element -> String -> TEither String
 (/.) e s = e >>= xFindAttribute nA s
+
+--
+-- extension
+--
+
+(/::) :: TEither Element -> String -> TEither Element
+(/::) e s = e >>= xFindElement nCE s
+
+(/..) :: TEither Element -> String -> TEither String
+(/..) e s = e >>= xFindAttribute nCA s
 
 --
 -- working on a list of elements (* prefix)
@@ -448,9 +464,8 @@ xFindElements' f s parentElements = Right $ concatMap (findChildren (f s)) paren
 (/:*) :: TEither Element -> String -> TEither [Element]
 (/:*) e s = e >>= xFindElements nE s
 
---
--- combinations
---
+(/::*) :: TEither Element -> String -> TEither [Element]
+(/::*) e s = e >>= xFindElements nCE s
 
 (*/:*) :: TEither [Element] -> String -> TEither [Element]
 (*/:*) es s = es >>= xFindElements' nE s
@@ -461,6 +476,9 @@ xFindElements' f s parentElements = Right $ concatMap (findChildren (f s)) paren
 
 (</:) :: Element -> String -> TEither Element
 (</:) e s = pure e /: s
+
+(</!) :: Element -> String -> TEither Element
+(</!) e s = pure e /! s
 
 (</.) :: Element -> String -> TEither String
 (</.) e s = pure e /. s
@@ -473,16 +491,6 @@ xFindElements' f s parentElements = Right $ concatMap (findChildren (f s)) paren
 
 (*</:*) :: [Element] -> String -> TEither [Element]
 (*</:*) es s = pure es */:* s
-
---
--- extension (duplicate : or .)
---
-
-(/::) :: TEither Element -> String -> TEither Element
-(/::) e s = e >>= xFindElement nCE s
-
-(/..) :: TEither Element -> String -> TEither String
-(/..) e s = e >>= xFindAttribute nCA s
 
 --
 -- parsing and transformers
@@ -505,20 +513,21 @@ decodeS cs = do
   collaboration <- topElements *</: "collaboration"
   extension <- collaboration </: "extensionElements" /:: "properties"
   -- space structure
-  bs <- extension </: "base-locations" /. "value" @@ parseIdList
-  gs <- extension </: "group-locations" /. "value" @@ parseIdList
-  ts <- extension </: "transitions" /. "value" @@ parseTransition
+  bs <- extension </! "base-locations" /. "value" @@ parseIdList
+  gs <- extension </! "group-locations" /. "value" @@ parseIdList
+  ts <- extension </! "transitions" /. "value" @@ parseTransition
   let its = withPrefixedIndex "se_" ts
   let es = toString . fst <$> its
   let sEs = fromList $ bimap toString fst <$> its
   let tEs = fromList $ bimap toString snd <$> its
+  let ss = SpaceStructure bs gs es sEs tEs
   -- initial space value
-  isv <- extension </: "initial-space" /. "value" @@ parseIdToIdListList
+  isv <- extension </! "initial-space" /. "value" @@ parseIdToIdListList
   -- high level information (collaboration level)
   let collaborationSGraph =
         SpaceBpmnGraph
           graph
-          (SpaceStructure bs gs es sEs tEs)
+          ss
           []
           M.empty
           M.empty
@@ -531,25 +540,97 @@ decodeS cs = do
   processes <- topElements *</:* "process"
   participantReferences <- sequence (findAttr (nA "processRef") <$> participants) ?# "missing process reference"
   let cProcesses = findByIds processes participantReferences
-  processSGraphs <- sequence $ computeS <$> cProcesses
+  processSGraphs <- sequence $ computeS ss <$> cProcesses
   let sGraph = collaborationSGraph <> mconcat processSGraphs
-  pure $
-    sGraph
-      & (initialL . initialLocationsL) .~ computeInitialLocations sGraph
-      & variablesL .~ computeUsedVariables sGraph
-  where
-    computeInitialLocations sg = M.empty -- TODO:
-    computeUsedVariables sg = [] -- TODO:
+  pure sGraph
+  -- pure $
+  --   sGraph
+  --     & (initialL . initialLocationsL) .~ computeInitialLocations sGraph
+  --     & variablesL .~ computeUsedVariables sGraph
+  -- where
+  --   computeInitialLocations sg = M.empty -- TODO:
+  --   computeUsedVariables sg = [] -- TODO:
 
-computeS :: Element -> TEither SpaceBpmnGraph
-computeS e = do
-  let ces = computeMap pCSF f1 e
-  let ans = computeMap (appliedIsJust pAsAT) f2 e
+decodeA :: SpaceStructure -> Element -> TEither SpaceAction
+decodeA ss e = e </: "extensionElements" /:: "properties" /! "action" /. "value" @@ parseSAction ss
+
+decodeF :: SpaceStructure -> Element -> TEither (Variable, FormulaKind, SpaceFormula)
+decodeF ss e = do
+  extension <- e </: "extensionElements" /:: "properties"
+  fVariable <- extension </! "variable" /. "value"
+  fKind <- extension </! "type" /. "value" @@ parseFKind
+  fFormula <- extension </! "formula" /. "value" @@ parseSFormula ss
+  pure (fVariable, fKind, fFormula)
+
+parseSAction :: SpaceStructure -> Parser SpaceAction
+parseSAction ss = parseSAMove ss <|> parseSAUpdate ss
+
+parseSAMove :: SpaceStructure -> Parser SpaceAction
+parseSAMove ss = do
+  _ <- parseTerminal "move"
+  _ <- parseTerminal "to"
+  SAMove <$> parseSFormula ss
+
+parseSAUpdate :: SpaceStructure -> Parser SpaceAction
+parseSAUpdate _ = do
+  _ <- parseTerminal "update"
+  v <- parseIdentifier
+  _ <- parseTerminal "from"
+  l1 <- parseContainer "{" "}" "," parseIdentifier
+  _ <- parseTerminal "to"
+  l2 <- parseContainer "{" "}" "," parseIdentifier
+  return $ SAUpdate v l1 l2
+
+parseFKind :: Parser FormulaKind
+parseFKind =
+  (parseTerminal "all" >> return SFAll)
+    <|> (parseTerminal "any" >> return SFAny)
+
+-- | Parser for Space Formulas.
+-- Requires the space structure to know if an identifier is a base location, a group location, or a variable.
+-- A "." is required at the end of formulas.
+parseSFormula :: SpaceStructure -> Parser SpaceFormula
+parseSFormula s = do
+      f <- parseSFormula' s
+      _ <- parseTerminal "."
+      return f
+
+parseSFormula' :: SpaceStructure -> Parser SpaceFormula
+parseSFormula' s =
+      (parseTerminal "true" >> return SFTrue)
+  <|> (parseTerminal "reachable" >> return SFReach )
+  <|> do
+        i <- parseIdentifier
+        return $ (if i `elem` baseLocations s then SFBase else if i `elem` groupLocations s then SFGroup else SFVar) i
+  <|> do
+        _ <- parseTerminal "("
+        _ <- parseTerminal "not"
+        f <- parseSFormula' s
+        _ <- parseTerminal ")"
+        return $ SFNot f
+  <|> do
+        _ <- parseTerminal "("
+        f1 <- parseSFormula' s
+        _ <- parseTerminal "or"
+        f2 <- parseSFormula' s
+        _ <- parseTerminal ")"
+        return $ SFOr f1 f2
+  <|> do
+        _ <- parseTerminal "("
+        f1 <- parseSFormula' s
+        _ <- parseTerminal "and"
+        f2 <- parseSFormula' s
+        _ <- parseTerminal ")"
+        return $ SFAnd f1 f2
+
+computeS :: SpaceStructure -> Element -> TEither SpaceBpmnGraph
+computeS ss e = do
+  ces <- computeMap pCSF (bEdgeInfo $ decodeF ss ) e
+  as <- computeMap pAT (bNodeInfo $ decodeA ss) e
   let cvs = M.empty -- TODO:
   let cks = M.empty -- TODO:
   let cfs = M.empty -- TODO:
   let co = M.empty -- TODO:
-  let as = M.empty -- TODO:
   let graph =
         SpaceBpmnGraph
           mempty -- the graph is read at the collaboration level
@@ -562,13 +643,8 @@ computeS e = do
           as
           mempty -- the initial configuration is computed at the end
   subProcesses <- e </:* "subProcess"
-  subProcessSGraphs <- sequence $ computeS <$> subProcesses
+  subProcessSGraphs <- sequence $ computeS ss <$> subProcesses
   pure $ graph <> mconcat subProcessSGraphs
-  where
-    f1 :: Element -> (TEither Edge, TEither (Variable, FormulaKind, SpaceFormula))
-    f1 = undefined -- TODO:
-    f2 :: Element -> (TEither Node, TEither SpaceAction)
-    f2 = undefined -- TODO:
 
 -- | Parse a list [(Id, [Id])] that can be used too generate a map with fromList.
 -- Format is {id1: [id11, ...], ...} where ids are identifiers
@@ -622,6 +698,9 @@ decode cs = do
   cMessageFlows <- collaboration </:* "messageFlow"
   cMessageFlowIds <- sequence (getId <$> cMessageFlows) ?# "missing id in a message flow"
   cMessageTypes <- (sequence . hashNub $ nameOrElseId <$> cMessageFlows) ?# "missing type in a message flow"
+  messageFlowSources <- computeMap pMF (bEdgeInfo bsource) collaboration
+  messageFlowTargets <- computeMap pMF (bEdgeInfo btarget) collaboration
+  messageFlowTypes <- computeMap pMF (bEdgeInfo bname) collaboration
   -- high level information (collaboration level)
   let collaborationGraph =
         BpmnGraph
@@ -630,14 +709,14 @@ decode cs = do
           cMessageFlowIds
           (M.fromList $ ccatN <$> participantReferences)
           (M.fromList $ ccatE <$> cMessageFlowIds)
-          (computeMap pMF (bEdgeInfo bsource) collaboration)
-          (computeMap pMF (bEdgeInfo btarget) collaboration)
+          messageFlowSources
+          messageFlowTargets
           M.empty
           M.empty
           M.empty
           M.empty
           cMessageTypes
-          (computeMap pMF (bEdgeInfo bname) collaboration)
+          messageFlowTypes
           M.empty
           M.empty
   -- compute for participant processes
@@ -651,11 +730,30 @@ decode cs = do
     ccatN :: String -> (Node, NodeType)
     ccatN e = (e, Process)
 
--- | Computes a map from a predicate and transformation.
+-- | Computes a map from a predicate and transformation (signals errors).
 -- - p is a predicate that is used to select only some elements from a context
 -- - f is a transformation of an element into a couple element id x element information
-computeMap :: Ord k => ([Element] -> Element -> Bool) -> (Element -> (TEither k, TEither a)) -> Element -> Map k a
-computeMap p f e = M.fromList $ rights $ bisequence . f <$> ks
+computeMap :: Ord k => ([Element] -> Element -> Bool) -> (Element -> (TEither k, TEither a)) -> Element -> TEither (Map k a)
+computeMap p f e =
+    case ks of
+      [] -> Right M.empty -- if no elements are selected by p then OK with empty map
+      _  -> do -- else possibly KO
+              mappedKeys <- sequence $ combine . f <$> ks
+              pure $ M.fromList mappedKeys
+  where
+    ks = filterChildren (p $ elChildren e) e
+    combine :: (TEither a, TEither b) -> TEither (a, b)
+    combine (Left err1, Right _) = Left err1
+    combine (Right _, Left err2) = Left err2
+    combine (Left err1, Left err2) = Left $ err1 <> " / " <> err2
+    combine (Right a, Right b) = Right (a, b)
+
+-- | Computes a map from a predicate and transformation (does not signal errors, keeps only values that are OK).
+-- - p is a predicate that is used to select only some elements from a context
+-- - f is a transformation of an element into a couple element id x element information
+computeMap' :: Ord k => ([Element] -> Element -> Bool) -> (Element -> (TEither k, TEither a)) -> Element -> Map k a
+computeMap' p f e =
+    M.fromList $ rights $ bisequence . f <$> ks
   where
     ks = filterChildren (p $ elChildren e) e
 
@@ -667,23 +765,31 @@ compute e = do
   nids <- sequence (getId <$> ns) ?# "missing node identifier"
   let es = filterChildren (pEdge allElements) e
   eids <- sequence (getId <$> es) ?# "missing edge identifier"
+  nodeCategories <- computeMap pNode (bcatN allElements) e
+  edgeCategories <- computeMap pEdge (bcatE allElements) e
+  edgeSources <- computeMap pEdge (bEdgeInfo bsource) e
+  edgeTargets <- computeMap pEdge (bEdgeInfo btarget) e
+  let nodeNames = computeMap' pNode (bNodeInfo bname) e
+  boundaryEventAttachments <- computeMap pBE (bNodeInfo battached) e
+  boundaryEventInterrupting <- computeMap pBE (bNodeInfo bisInterrupting) e
+  timeEventInformation <- computeMap pTE (bNodeInfo btimeDefinition) e
   let graph =
         BpmnGraph
           ""
           nids -- node ids
           eids -- edge ids
-          (computeMap pNode (bcatN allElements) e) -- (n, catN(n)) for n in N
-          (computeMap pEdge (bcatE allElements) e) -- (e, catE(n)) for e in E
-          (computeMap pEdge (bEdgeInfo bsource) e) -- (e, sourceE(e)) for e in E
-          (computeMap pEdge (bEdgeInfo btarget) e) -- (e, targetE(e)) for e in E
-          (computeMap pNode (bNodeInfo bname) e) -- (n, nameN(n)) for n in N
+          nodeCategories -- (n, catN(n)) for n in N
+          edgeCategories -- (e, catE(n)) for e in E
+          edgeSources -- (e, sourceE(e)) for e in E
+          edgeTargets -- (e, targetE(e)) for e in E
+          nodeNames -- (n, nameN(n)) for n in N
           (M.singleton pid nids) -- (pid, containN(pid))
           (M.singleton pid eids) --- (pid, containE(pid))
-          (computeMap pBE (bNodeInfo battached) e) -- (n, attached(n)) for n in NBE
+          boundaryEventAttachments -- (n, attached(n)) for n in NBE
           [] -- no message inside a (sub-)process
           M.empty -- no message flows inside a (sub-)process
-          (computeMap pBE (bNodeInfo bisInterrupting) e) -- (n, isInterrupt(n)) for n in NBE
-          (computeMap pTE (bNodeInfo btimeDefinition) e) -- (n, timeInformation(n)) for n in NTE
+          boundaryEventInterrupting -- (n, isInterrupt(n)) for n in NBE
+          timeEventInformation -- (n, timeInformation(n)) for n in NTE
   subProcesses <- e </:* "subProcess"
   subProcessGraphs <- sequence $ compute <$> subProcesses
   pure $ graph <> mconcat subProcessGraphs

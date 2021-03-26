@@ -28,7 +28,7 @@
     <bpmn:task id="Activity_0z782bb" name="move to some reachable zone to plant">
       <bpmn:extensionElements>
         <camunda:properties>
-          <camunda:property name="action" value="move to (reachable and toPlant)" />
+          <camunda:property name="action" value="move to (reachable and toPlant)." />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_09a8um7</bpmn:incoming>
