@@ -7,7 +7,6 @@
         <camunda:property name="base-locations" value="[f1,f2,f3,f4,f5,f6,r1,r2,b,m]" />
         <camunda:property name="initial-space" value="{toPlant:[f1,f2,f3,f4,f5,f6], planted:[], toSpray:[], sprayed:[]}" />
         <camunda:property name="transitions" value="[(f1,f2),(f2,f1),(f2,f3),(f3,f2),(f2,b),(b,f5),(f4,f5),(f5,f4),(f5,f6),(f6,f5),(f6,m),(m,f6),(m,f5)]" />
-        <camunda:property name="extensions" value="[space]" />
       </camunda:properties>
     </bpmn:extensionElements>
     <bpmn:participant id="P" name="P" processRef="PId" />
@@ -29,7 +28,7 @@
     <bpmn:task id="Activity_0z782bb" name="move to some reachable zone to plant">
       <bpmn:extensionElements>
         <camunda:properties>
-          <camunda:property name="action" value="move to reachable &#38;&#38; toPlant" />
+          <camunda:property name="action" value="move to (reachable and toPlant)" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_09a8um7</bpmn:incoming>
