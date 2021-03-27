@@ -21,7 +21,7 @@ writeToTLA :: FilePath -> BpmnGraph -> IO ()
 writeToTLA p = writeFile p . toString . encodeBpmnGraphToTla
 
 -- | FWriter from Space BPMN Graph to TLA+.
-writerS :: FWriter SpaceBpmnGraph 
+writerS :: FWriter SpaceBpmnGraph
 writerS = FW writeToSTLA ".tla"
 
 -- |
@@ -54,7 +54,7 @@ encodeBpmnGraphToTla g =
 -- |
 -- Transform a BPMN Graph to a TLA specification.
 encodeSBpmnGraphToTla :: SpaceBpmnGraph -> Text
-encodeSBpmnGraphToTla g =
+encodeSBpmnGraphToTla s =
   unlines $
     [ encodeSBpmnGraphHeaderToTla, -- header (EXTENSION)
       encodeBpmnInterestToTla . graph, -- interest
@@ -72,10 +72,10 @@ encodeSBpmnGraphToTla g =
       encodeSExtensionToTla, -- space BPMN information (EXTENSION)
       encodeBpmnGraphFooterToTla . graph -- footer
     ]
-      <*> [g]
+      <*> [s]
 
 encodeSExtensionToTla :: SpaceBpmnGraph -> Text
-encodeSExtensionToTla g =
+encodeSExtensionToTla s =
   unlines $
     [ encodeSStructure . spacestructure,
       encodeGList "Var" variables,
@@ -87,7 +87,7 @@ encodeSExtensionToTla g =
       encodeSEvalA,
       encodeSInit
     ]
-      <*> [g]
+      <*> [s]
 
 genLocName :: Node -> String
 genLocName n = "loc" <> n
@@ -105,19 +105,24 @@ encodeLocVar s = encodeMap show show "locvar" vs (M.fromList $ zip vs ns)
     vs = genLocName <$> ns
 
 encodeSConditions :: SpaceBpmnGraph -> Text
-encodeSConditions g = "" -- undefined -- TODO:
+encodeSConditions s = "" -- undefined -- TODO:
 
 encodeSActions :: SpaceBpmnGraph -> Text
-encodeSActions g = "" -- undefined -- TODO:
+encodeSActions s = "" -- undefined -- TODO:
 
 encodeSEvalF :: SpaceBpmnGraph -> Text
-encodeSEvalF g = "" -- undefined -- TODO:
+encodeSEvalF s = "" -- undefined -- TODO:
 
 encodeSEvalA :: SpaceBpmnGraph -> Text
-encodeSEvalA g = "" -- undefined -- TODO:
+encodeSEvalA s = "" -- undefined -- TODO:
 
 encodeSInit :: SpaceBpmnGraph -> Text
-encodeSInit g = "" -- undefined -- TODO:
+encodeSInit s =
+  unlines $
+    [ encodeGMap show show "startloc" ((`nodesT` Process) . graph) (initialLocations . initial)
+    , encodeGMap show (setTla show) "startsub" (groupLocations . spacestructure) (initialSpace . initial)
+    ]
+      <*> [s]
 
 encodeSStructure :: SpaceStructure -> Text
 encodeSStructure s =
@@ -317,13 +322,16 @@ trueTla = "TRUE"
 falseTla :: Text
 falseTla = "FALSE"
 
-emptySetTla :: Text
-emptySetTla = "  [ i \\in {} |-> {}]"
+emptyMapTla :: Text
+emptyMapTla = "  [ i \\in {} |-> {}]"
+
+setTla :: (a -> Text) -> [a] -> Text
+setTla f xs = "{ " <> T.intercalate ", " (f <$> xs) <> " }"
 
 relationTla :: (a -> Text) -> [a] -> Text
 relationTla f xs =
   if null xs
-    then emptySetTla
+    then emptyMapTla
     else "   " <> T.intercalate "@@ " (f <$> xs)
 
 encodeGList :: Show b => Text -> (a -> [b]) -> a -> Text
@@ -332,10 +340,10 @@ encodeGList n f x = encodeList n (f x)
 encodeList :: Show a => Text -> [a] -> Text
 encodeList n xs =
   [text|
-  $n == { $sxs }
+  $n == $sxs
   |]
   where
-    sxs = T.intercalate ", " $ show <$> xs
+    sxs = setTla show xs
 
 encodeGMap :: Ord b => (b -> Text) -> (c -> Text) -> Text -> (a -> [b]) -> (a -> Map b c) -> a -> Text
 encodeGMap wa wb n f g x = encodeMap wa wb n (f x) (g x)

@@ -107,6 +107,15 @@ locvar ==
 
 
 
+startloc ==
+   "PId" :> "f1"
+
+startsub ==
+   "toPlant" :> { "f1", "f2", "f3", "f4", "f5", "f6" }
+@@ "planted" :> {  }
+@@ "toSpray" :> {  }
+@@ "sprayed" :> {  }
+
 
 
 WF == INSTANCE PWSWellFormed

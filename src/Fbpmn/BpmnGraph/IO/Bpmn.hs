@@ -1,3 +1,5 @@
+{-# LANGUAGE QuasiQuotes #-}
+
 module Fbpmn.BpmnGraph.IO.Bpmn where
 
 import qualified Data.ByteString.Lazy as BS
@@ -6,11 +8,11 @@ import qualified Data.ByteString.Lazy as BS
 import qualified Data.Map as M
   ( empty,
     fromList,
-    singleton, keys
+    singleton,
   )
 import Fbpmn.BpmnGraph.Model
 import Fbpmn.BpmnGraph.SpaceModel
-import Fbpmn.Helper (Id, Parser, TEither, eitherResult, parse, parseContainer, parseCouple, parseIdentifier, parseList, withPrefixedIndex, (?#), parseTerminal, FReader (FR), appliedIsJust)
+import Fbpmn.Helper (Id, Parser, TEither, parse, parseContainer, parseCouple, parseIdentifier, parseList, withPrefixedIndex, (?#), parseTerminal, FReader (FR), eitherResult)
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -30,8 +32,9 @@ import Text.XML.Light
     parseXML,
     ppElement,
   )
-
+import NeatInterpolation (text)
 import Relude.Extra.Lens ((.~))
+import Data.Attoparsec.Internal.Types (IResult(..))
 
 --
 -- helpers for building QNames
@@ -406,8 +409,10 @@ pEdge es e = e `oneOf` [pSF es, pMF es]
 dump :: [Element] -> Text
 dump es = unlines $ toText . ppElement <$> es
 
+-- | Parse a string given a parser.
+-- Whitespace is added to the string to deal with a bug with identifier parsing.
 xParseWith :: Parser a -> String -> TEither a
-xParseWith p s = first toText $ eitherResult $ parse p (toText s)
+xParseWith p s = first toText $ eitherResult $ parse p (toText $ s ++ " ")
 
 xFindElement :: (String -> QName) -> String -> Element -> TEither Element
 xFindElement f s parentElement = findChild (f s) parentElement ?# toText ("missing element " <> s <> " in " <> show parentElement)
@@ -542,14 +547,9 @@ decodeS cs = do
   let cProcesses = findByIds processes participantReferences
   processSGraphs <- sequence $ computeS ss <$> cProcesses
   let sGraph = collaborationSGraph <> mconcat processSGraphs
-  pure sGraph
-  -- pure $
-  --   sGraph
-  --     & (initialL . initialLocationsL) .~ computeInitialLocations sGraph
-  --     & variablesL .~ computeUsedVariables sGraph
-  -- where
-  --   computeInitialLocations sg = M.empty -- TODO:
-  --   computeUsedVariables sg = [] -- TODO:
+  pure $ sGraph & variablesL .~ computeUsedVariables sGraph
+  where
+    computeUsedVariables sg = [] -- TODO:
 
 decodeA :: SpaceStructure -> Element -> TEither SpaceAction
 decodeA ss e = e </: "extensionElements" /:: "properties" /! "action" /. "value" @@ parseSAction ss
@@ -590,13 +590,7 @@ parseFKind =
 -- Requires the space structure to know if an identifier is a base location, a group location, or a variable.
 -- A "." is required at the end of formulas.
 parseSFormula :: SpaceStructure -> Parser SpaceFormula
-parseSFormula s = do
-      f <- parseSFormula' s
-      _ <- parseTerminal "."
-      return f
-
-parseSFormula' :: SpaceStructure -> Parser SpaceFormula
-parseSFormula' s =
+parseSFormula s =
       (parseTerminal "true" >> return SFTrue)
   <|> (parseTerminal "reachable" >> return SFReach )
   <|> do
@@ -605,21 +599,21 @@ parseSFormula' s =
   <|> do
         _ <- parseTerminal "("
         _ <- parseTerminal "not"
-        f <- parseSFormula' s
+        f <- parseSFormula s
         _ <- parseTerminal ")"
         return $ SFNot f
   <|> do
         _ <- parseTerminal "("
-        f1 <- parseSFormula' s
+        f1 <- parseSFormula s
         _ <- parseTerminal "or"
-        f2 <- parseSFormula' s
+        f2 <- parseSFormula s
         _ <- parseTerminal ")"
         return $ SFOr f1 f2
   <|> do
         _ <- parseTerminal "("
-        f1 <- parseSFormula' s
+        f1 <- parseSFormula s
         _ <- parseTerminal "and"
-        f2 <- parseSFormula' s
+        f2 <- parseSFormula s
         _ <- parseTerminal ")"
         return $ SFAnd f1 f2
 
@@ -631,6 +625,14 @@ computeS ss e = do
   let cks = M.empty -- TODO:
   let cfs = M.empty -- TODO:
   let co = M.empty -- TODO:
+  -- initial location for processes only (not for sub processes)
+  il <- if pP [] e
+        then
+          do
+            pid <- e </. "id"
+            loc <- e </: "extensionElements" /:: "properties" /! "initial-location" /. "value" @@ parseIdentifier
+            pure $ M.singleton pid loc
+        else pure M.empty
   let graph =
         SpaceBpmnGraph
           mempty -- the graph is read at the collaboration level
@@ -641,7 +643,7 @@ computeS ss e = do
           cfs
           co
           as
-          mempty -- the initial configuration is computed at the end
+          (SpaceConfiguration il M.empty)
   subProcesses <- e </:* "subProcess"
   subProcessSGraphs <- sequence $ computeS ss <$> subProcesses
   pure $ graph <> mconcat subProcessSGraphs

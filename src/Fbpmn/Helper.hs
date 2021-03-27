@@ -4,7 +4,8 @@ module Fbpmn.Helper
   )
 where
 
-import Data.Attoparsec.Text (Parser, anyChar, char, decimal, digit, letter, manyTill, sepBy, space, string, parse, eitherResult)
+import Data.Attoparsec.Text (Parser, Result, anyChar, char, decimal, digit, letter, manyTill, sepBy, space, string, parse, parseOnly, eitherResult, endOfLine, atEnd, inClass, satisfy)
+import qualified Data.Attoparsec.Text as A (takeWhile)
 import Data.Containers.ListUtils (nubOrd)
 import Data.Map.Strict (keys, (!?))
 
@@ -125,9 +126,9 @@ parseTerminal sep = do
 parseIdentifier :: Parser Id
 parseIdentifier = do
   _ <- many space
-  car1 <- letter <|> char '_'
-  rest <- many (letter <|> digit <|> char '_')
-  return $ [car1] <> rest
+  car1 <- satisfy (inClass "A-Za-z_")
+  rest <- A.takeWhile (inClass "A-Za-z0-9_")
+  return $ [car1] <> toString rest
 
 -- |  Parse a string.
 parseString :: Parser String
