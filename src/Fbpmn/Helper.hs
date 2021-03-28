@@ -21,6 +21,15 @@ data FWriter a = FW
     wsuffix :: Text
   }
 
+ith1 :: (a, b, c) -> a
+ith1 (a, _, _) = a
+
+ith2 :: (a, b, c) -> b
+ith2 (_, b, _) = b
+
+ith3 :: (a, b, c) -> c
+ith3 (_, _, c) = c
+
 appliedIsJust :: (a -> b -> Maybe c) -> (a -> b -> Bool)
 appliedIsJust f a = isJust . f a
 

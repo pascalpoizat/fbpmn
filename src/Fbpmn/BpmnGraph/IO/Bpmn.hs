@@ -8,11 +8,11 @@ import qualified Data.ByteString.Lazy as BS
 import qualified Data.Map as M
   ( empty,
     fromList,
-    singleton,
+    singleton, map, elems
   )
 import Fbpmn.BpmnGraph.Model
 import Fbpmn.BpmnGraph.SpaceModel
-import Fbpmn.Helper (Id, Parser, TEither, parse, parseContainer, parseCouple, parseIdentifier, parseList, withPrefixedIndex, (?#), parseTerminal, FReader (FR), eitherResult)
+import Fbpmn.Helper (Id, Parser, TEither, parse, parseContainer, parseCouple, parseIdentifier, parseList, withPrefixedIndex, (?#), parseTerminal, FReader (FR), eitherResult, ith1, ith2, ith3)
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -22,6 +22,7 @@ import Text.XML.Light
   ( Content (..),
     Element (..),
     QName (..),
+    CData (..),
     cdData,
     elChildren,
     filterChildren,
@@ -30,11 +31,9 @@ import Text.XML.Light
     findChildren,
     onlyElems,
     parseXML,
-    ppElement,
+    ppElement
   )
-import NeatInterpolation (text)
 import Relude.Extra.Lens ((.~))
-import Data.Attoparsec.Internal.Types (IResult(..))
 
 --
 -- helpers for building QNames
@@ -316,6 +315,9 @@ pXorGateway :: [Element] -> Element -> Maybe NodeType
 pXorGateway _ e =
   if (?=) "exclusiveGateway" e then Just XorGateway else Nothing
 
+pXor :: [Element] -> Element -> Bool
+pXor _ = (?=) "exclusiveGateway"
+
 pGateway :: [Element] -> Element -> Bool
 pGateway es e =
   e
@@ -432,6 +434,12 @@ xFindElements f s parentElement = Right $ findChildren (f s) parentElement
 xFindElements' :: (String -> QName) -> String -> [Element] -> TEither [Element]
 xFindElements' f s parentElements = Right $ concatMap (findChildren (f s)) parentElements
 
+xFindContent :: Element -> TEither Id
+xFindContent e = case elContent e of
+  [CRef s] -> Right s
+  [Text (CData _ s _)] -> Right s
+  _ -> Left $ "needed single CRef at " <> show e
+
 --
 -- basic (/: for element, /. for attribute, /? foor name)
 --
@@ -547,9 +555,19 @@ decodeS cs = do
   let cProcesses = findByIds processes participantReferences
   processSGraphs <- sequence $ computeS ss <$> cProcesses
   let sGraph = collaborationSGraph <> mconcat processSGraphs
-  pure $ sGraph & variablesL .~ computeUsedVariables sGraph
+  pure $ sGraph & variablesL .~ ordNub (computeUsedVariables sGraph)
   where
-    computeUsedVariables sg = [] -- TODO:
+    computeUsedVariables sg =
+      ["here", "_"]
+      <> (M.elems . cVariables $ sg)
+      <> mconcat (fVariables <$> (M.elems . cFormulas $ sg))
+      <> (genLocName <$> ((`nodesT` Process) . graph $ sg))
+    genLocName p = "loc" <> p
+
+decodeCSFOrder :: Element -> TEither [Edge]
+decodeCSFOrder e = do
+  oes <- e </:* "outgoing"
+  sequence $ xFindContent <$> oes
 
 decodeA :: SpaceStructure -> Element -> TEither SpaceAction
 decodeA ss e = e </: "extensionElements" /:: "properties" /! "action" /. "value" @@ parseSAction ss
@@ -621,10 +639,7 @@ computeS :: SpaceStructure -> Element -> TEither SpaceBpmnGraph
 computeS ss e = do
   ces <- computeMap pCSF (bEdgeInfo $ decodeF ss ) e
   as <- computeMap pAT (bNodeInfo $ decodeA ss) e
-  let cvs = M.empty -- TODO:
-  let cks = M.empty -- TODO:
-  let cfs = M.empty -- TODO:
-  let co = M.empty -- TODO:
+  co <- computeMap pXor (bNodeInfo decodeCSFOrder) e
   -- initial location for processes only (not for sub processes)
   il <- if pP [] e
         then
@@ -638,9 +653,9 @@ computeS ss e = do
           mempty -- the graph is read at the collaboration level
           mempty -- the space structure is read at the collaboration level
           [] -- the variables are computed at the end
-          cvs
-          cks
-          cfs
+          (M.map ith1 ces)
+          (M.map ith2 ces)
+          (M.map ith3 ces)
           co
           as
           (SpaceConfiguration il M.empty)

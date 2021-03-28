@@ -98,7 +98,7 @@ SpaceTarget ==
 @@ "se_12" :> "f5"
 
 
-Var == {  }
+Var == { "here", "_", "z", "locPId" }
 
 varloc ==
    "PId" :> "locPId"
