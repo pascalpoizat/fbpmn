@@ -61,6 +61,7 @@ data FormulaKind = SFAll | SFAny
 -- | Space Formula
 data SpaceFormula
   = SFTrue
+  | SFHere
   | SFVar Variable
   | SFBase BaseLocation
   | SFGroup GroupLocation

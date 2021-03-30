@@ -610,6 +610,7 @@ parseFKind =
 parseSFormula :: SpaceStructure -> Parser SpaceFormula
 parseSFormula s =
       (parseTerminal "true" >> return SFTrue)
+  <|> (parseTerminal "here" >> return SFHere)
   <|> (parseTerminal "reachable" >> return SFReach )
   <|> do
         i <- parseIdentifier
