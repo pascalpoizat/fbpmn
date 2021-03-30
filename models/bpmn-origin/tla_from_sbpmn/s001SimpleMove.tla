@@ -96,6 +96,16 @@ locvar ==
    "locPId" :> "PId"
 
 
+CodeCondition == {  }
+
+
+cVar ==
+  [ i \in {} |-> {}]
+
+cKind ==
+  [ i \in {} |-> {}]
+
+
 
 
 

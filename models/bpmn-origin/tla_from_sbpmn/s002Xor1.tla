@@ -103,6 +103,18 @@ varloc ==
 locvar ==
    "locPId" :> "PId"
 
+f_Flow_18ptpdh = "f_Flow_18ptpdh"
+
+
+CodeCondition == { "f_Flow_18ptpdh\n" }
+
+
+cVar ==
+   "Flow_18ptpdh" :> "z"
+
+cKind ==
+   "Flow_18ptpdh" :> All
+
 
 
 
