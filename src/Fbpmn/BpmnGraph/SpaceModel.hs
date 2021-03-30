@@ -76,6 +76,7 @@ fVariables = S.elems . f' S.empty
   where
     f' :: Set Variable -> SpaceFormula -> Set Variable
     f' vs SFTrue = vs
+    f' vs SFHere = insert "here" vs
     f' vs (SFVar v) = insert v vs
     f' vs (SFBase _) = vs
     f' vs (SFGroup _) = vs
@@ -89,6 +90,7 @@ fBaseLocations = S.elems . f' S.empty
   where
     f' :: Set BaseLocation -> SpaceFormula -> Set BaseLocation
     f' vs SFTrue = vs
+    f' vs SFHere = vs
     f' vs (SFVar _) = vs
     f' vs (SFBase b) = insert b vs
     f' vs (SFGroup _) = vs
@@ -102,6 +104,7 @@ fGroupLocations = S.elems . f' S.empty
   where
     f' :: Set GroupLocation -> SpaceFormula -> Set GroupLocation
     f' vs SFTrue = vs
+    f' vs SFHere = vs
     f' vs (SFVar _) = vs
     f' vs (SFBase _) = vs
     f' vs (SFGroup g) = insert g vs
