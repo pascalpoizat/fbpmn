@@ -109,7 +109,11 @@ locvar ==
 f_Flow_18ptpdh = "f_Flow_18ptpdh"
 
 
-CodeCondition == { "f_Flow_18ptpdh\n" }
+CodeCondition == { f_Flow_18ptpdh
+ }
+
+def_f_Flow_18ptpdh(v,s,p) == (reach(v,p) \intersect s["toPlant"])
+
 
 
 cVar ==
@@ -120,6 +124,10 @@ cKind ==
 
 
 
+evalF(v,s,p,c) ==
+IF cCond(c) = f_Flow_18ptpdh THEN def_f_Flow_18ptpdh(v,s,p)
+
+ELSE {  }
 
 
 startloc ==

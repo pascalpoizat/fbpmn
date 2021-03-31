@@ -78,7 +78,7 @@ encodeSExtensionToTla :: SpaceBpmnGraph -> Text
 encodeSExtensionToTla s =
   unlines $
     [ encodeSStructure . spacestructure,
-      encodeGList "Var" variables,
+      encodeGList show "Var" variables,
       encodeVarLoc,
       encodeLocVar,
       encodeSConditions,
@@ -105,13 +105,82 @@ encodeLocVar s = encodeMap show show "locvar" vs (M.fromList $ zip vs ns)
     vs = genLocName <$> ns
 
 encodeSConditions :: SpaceBpmnGraph -> Text
-encodeSConditions s = "" -- undefined -- TODO:
+encodeSConditions s =
+  unlines $
+    [ encodeCSFFormula
+    , encodeCSFVar
+    , encodeCSFKind
+    ]
+      <*> [s]
+
+-- | Formula codes are generated from edge identifier which are unique.
+encodeCSFFormula :: SpaceBpmnGraph -> Text
+encodeCSFFormula s =
+  unlines $
+    [ unlines . fmap (f . genCode) -- definitions of codes for CSF conditions 
+    , encodeList toText "CodeCondition" . fmap genCode -- list of codes for CSF conditions
+    , unlines . fmap (encodeFormulaDef s) -- evaluation of formulas
+    ]
+      <*> [keys . cFormulas $ s]
+  where
+    f e = [text|$e = "$e"|]
+
+genCode :: Edge -> Text
+genCode e = [text|f_$se|] where se = toText e
+
+encodeFormulaDef :: SpaceBpmnGraph -> Edge -> Text
+encodeFormulaDef s e = [text|def_$es(v,s,p) == $def|]
+  where
+    es = genCode e
+    def = maybe falseTla encodeFormula (cFormulas s !? e)
+
+encodeFormula :: SpaceFormula -> Text
+encodeFormula SFTrue = trueTla
+encodeFormula SFHere = [text|v[varloc[p]]|]
+encodeFormula (SFVar v) = [text|v[$sv]|]
+  where sv = show v
+encodeFormula (SFBase v) = [text|{ $vs }|]
+  where vs = show v
+encodeFormula (SFGroup v) = [text|s[$vs]|]
+  where vs = show v
+encodeFormula (SFNot f) = [text|(BaseLocation - $sf)|]
+  where sf = encodeFormula f
+encodeFormula (SFOr f1 f2 ) = [text|($sf1 \union $sf2)|]
+  where
+    sf1 = encodeFormula f1
+    sf2 = encodeFormula f2
+encodeFormula (SFAnd f1 f2 ) = [text|($sf1 \intersect $sf2)|]
+  where
+    sf1 = encodeFormula f1
+    sf2 = encodeFormula f2
+encodeFormula SFReach = [text|reach(v,p)|]
+
+encodeCSFVar :: SpaceBpmnGraph -> Text
+encodeCSFVar s = encodeMap show show "cVar" (keys . cVariables $ s) (cVariables s)
+
+encodeCSFKind :: SpaceBpmnGraph -> Text
+encodeCSFKind s = encodeMap show fKindToTla "cKind" (keys . cKinds $ s) (cKinds s)
+  where
+    fKindToTla SFAll = "All"
+    fKindToTla SFAny = "Any"
 
 encodeSActions :: SpaceBpmnGraph -> Text
 encodeSActions s = "" -- undefined -- TODO:
 
 encodeSEvalF :: SpaceBpmnGraph -> Text
-encodeSEvalF s = "" -- undefined -- TODO:
+encodeSEvalF s =
+  if null es
+  then
+    [text|evalF(v,s,p,c) == $emptySetTla|]
+  else
+    [text|evalF(v,s,p,c) ==
+        $ifs
+        ELSE $emptySetTla
+    |]
+      where
+        es = keys . cFormulas $ s
+        ifs = unlines $ f <$> es
+        f e = [text|IF cCond(c) = $se THEN def_$se(v,s,p)|] where se = genCode e
 
 encodeSEvalA :: SpaceBpmnGraph -> Text
 encodeSEvalA s = "" -- undefined -- TODO:
@@ -127,10 +196,10 @@ encodeSInit s =
 encodeSStructure :: SpaceStructure -> Text
 encodeSStructure s =
   unlines $
-    [ encodeGList "BaseLocation" baseLocations,
-      encodeGList "GroupLocation" groupLocations,
+    [ encodeGList show "BaseLocation" baseLocations,
+      encodeGList show "GroupLocation" groupLocations,
       encodeSLocations,
-      encodeGList "SpaceEdge" sEdges,
+      encodeGList show "SpaceEdge" sEdges,
       encodeGMap show show "SpaceSource" sEdges sSourceE,
       encodeGMap show show "SpaceTarget" sEdges sTargetE
     ]
@@ -238,10 +307,10 @@ encodeBpmnGraphContainRelToTla g =
         sns = T.intercalate ", " $ show <$> ns
 
 encodeBpmnGraphNodeDeclToTla :: BpmnGraph -> Text
-encodeBpmnGraphNodeDeclToTla = encodeGList "Node" nodes
+encodeBpmnGraphNodeDeclToTla = encodeGList show "Node" nodes
 
 encodeBpmnGraphEdgeDeclToTla :: BpmnGraph -> Text
-encodeBpmnGraphEdgeDeclToTla = encodeGList "Edge" edges
+encodeBpmnGraphEdgeDeclToTla = encodeGList show "Edge" edges
 
 encodeBpmnGraphMsgDeclToTla :: BpmnGraph -> Text
 encodeBpmnGraphMsgDeclToTla g =
@@ -251,7 +320,7 @@ encodeBpmnGraphMsgDeclToTla g =
     ]
       <*> [g]
   where
-    encodeBpmnGraphMessagesToTla = encodeGList "Message" messages
+    encodeBpmnGraphMessagesToTla = encodeGList show "Message" messages
     encodeBpmnGraphMessageTypesToTla = encodeGMap show show "msgtype" (`edgesT` MessageFlow) messageE
 
 encodeBpmnGraphCatNToTla :: BpmnGraph -> Text
@@ -325,6 +394,9 @@ falseTla = "FALSE"
 emptyMapTla :: Text
 emptyMapTla = "  [ i \\in {} |-> {}]"
 
+emptySetTla :: Text
+emptySetTla = "{  }"
+
 setTla :: (a -> Text) -> [a] -> Text
 setTla f xs = "{ " <> T.intercalate ", " (f <$> xs) <> " }"
 
@@ -334,16 +406,16 @@ relationTla f xs =
     then emptyMapTla
     else "   " <> T.intercalate "@@ " (f <$> xs)
 
-encodeGList :: Show b => Text -> (a -> [b]) -> a -> Text
-encodeGList n f x = encodeList n (f x)
+encodeGList :: Show b => (b -> Text) -> Text -> (a -> [b]) -> a -> Text
+encodeGList wa n f x = encodeList wa n (f x)
 
-encodeList :: Show a => Text -> [a] -> Text
-encodeList n xs =
+encodeList :: Show a => (a -> Text) -> Text -> [a] -> Text
+encodeList wa n xs =
   [text|
   $n == $sxs
   |]
   where
-    sxs = setTla show xs
+    sxs = setTla wa xs
 
 encodeGMap :: Ord b => (b -> Text) -> (c -> Text) -> Text -> (a -> [b]) -> (a -> Map b c) -> a -> Text
 encodeGMap wa wb n f g x = encodeMap wa wb n (f x) (g x)
