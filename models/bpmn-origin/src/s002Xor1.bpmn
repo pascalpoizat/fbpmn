@@ -38,7 +38,7 @@
           <camunda:property name="formula" value="(reachable and toPlant)" />
         </camunda:properties>
       </bpmn:extensionElements>
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">z : reachable &amp;&amp; toPlant</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">z : all (reachable and toPlant)</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="Event_1hpd68d" name="end (in place)&#10;&#10;">
       <bpmn:incoming>Flow_14b309w</bpmn:incoming>
