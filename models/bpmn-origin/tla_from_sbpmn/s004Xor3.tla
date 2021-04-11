@@ -120,13 +120,12 @@ cVar ==
    "Flow_18ptpdh" :> "z"
 
 cKind ==
-   "Flow_18ptpdh" :> Any
+   "Flow_18ptpdh" :> Some
 
 
 
-evalF(v,s,p,c) ==
-IF cCond(c) = f_Flow_18ptpdh THEN def_f_Flow_18ptpdh(v,s,p)
-
+evalF(v,s,p,f) ==
+IF f = f_Flow_18ptpdh THEN def_f_Flow_18ptpdh(v,s,p)
 ELSE {  }
 
 

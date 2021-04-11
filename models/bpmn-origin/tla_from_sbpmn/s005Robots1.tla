@@ -148,16 +148,14 @@ cVar ==
 @@ "Flow_0j10pgk" :> "_"
 
 cKind ==
-   "Flow_0a9bfn5" :> Any
-@@ "Flow_0j10pgk" :> Any
+   "Flow_0a9bfn5" :> Some
+@@ "Flow_0j10pgk" :> Some
 
 
 
-evalF(v,s,p,c) ==
-IF cCond(c) = f_Flow_0a9bfn5 THEN def_f_Flow_0a9bfn5(v,s,p)
-
-IF cCond(c) = f_Flow_0j10pgk THEN def_f_Flow_0j10pgk(v,s,p)
-
+evalF(v,s,p,f) ==
+IF f = f_Flow_0a9bfn5 THEN def_f_Flow_0a9bfn5(v,s,p)
+ELSE IF f = f_Flow_0j10pgk THEN def_f_Flow_0j10pgk(v,s,p)
 ELSE {  }
 
 

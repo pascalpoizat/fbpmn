@@ -162,7 +162,7 @@ encodeCSFKind :: SpaceBpmnGraph -> Text
 encodeCSFKind s = encodeMap show fKindToTla "cKind" (keys . cKinds $ s) (cKinds s)
   where
     fKindToTla SFAll = "All"
-    fKindToTla SFAny = "Any"
+    fKindToTla SFAny = "Some"
 
 encodeSActions :: SpaceBpmnGraph -> Text
 encodeSActions s = "" -- undefined -- TODO:
@@ -171,16 +171,16 @@ encodeSEvalF :: SpaceBpmnGraph -> Text
 encodeSEvalF s =
   if null es
   then
-    [text|evalF(v,s,p,c) == $emptySetTla|]
+    [text|evalF(v,s,p,f) == $emptySetTla|]
   else
-    [text|evalF(v,s,p,c) ==
+    [text|evalF(v,s,p,f) ==
         $ifs
         ELSE $emptySetTla
     |]
       where
         es = keys . cFormulas $ s
-        ifs = unlines $ f <$> es
-        f e = [text|IF cCond(c) = $se THEN def_$se(v,s,p)|] where se = genCode e
+        ifs = toText $ intercalate "ELSE " $ f <$> es
+        f e = toString [text|IF f = $se THEN def_$se(v,s,p)|] where se = genCode e
 
 encodeSEvalA :: SpaceBpmnGraph -> Text
 encodeSEvalA s = "" -- undefined -- TODO:
