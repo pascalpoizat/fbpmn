@@ -63,7 +63,7 @@ BaseLocation == { "f1", "f2", "f3", "f4", "f5", "f6", "r1", "r2", "b", "m" }
 
 GroupLocation == { "toPlant", "planted", "toSpray", "sprayed" }
 
-Locations == GroupLocation \union BaseLocation
+Location == GroupLocation \union BaseLocation
 
 SpaceEdge == { "se_0", "se_1", "se_2", "se_3", "se_4", "se_5", "se_6", "se_7", "se_8", "se_9", "se_10", "se_11", "se_12" }
 
@@ -106,15 +106,23 @@ varloc ==
 locvar ==
    "locPId" :> "PId"
 
-f_Flow_18ptpdh = "f_Flow_18ptpdh"
+outgoingSpace(n) == { e \in SpaceEdge : SpaceSource[e] = n } 
 
+succSpa(n) == { SpaceTarget[e] : e \in outgoingSpace(n) } 
 
-CodeCondition == { f_Flow_18ptpdh
- }
+RECURSIVE succsNew(_, _, _)
+succsNew (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
+                              ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
+                                  IN succsNew(n, UNION{A \union {s}}, UNION{B \union UNION{succSpa(s)}}) 
 
-def_f_Flow_18ptpdh(v,s,p) == (reach(v,p) \intersect s["toPlant"])
+succsSpace == [b \in BaseLocation |-> succsNew (b, {b}, succSpa(b))]
 
+RECURSIVE nextLocs(_, _, _)
+nextLocs (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
+                              ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
+                                  IN nextLocs(n, UNION{A \union {s}}, UNION{B \union UNION{succsSpace[s]}}) 
 
+reach(v,p) == nextLocs (v[varloc[p]], {v[varloc[p]]} , succsSpace[v[varloc[p]]])
 
 cVar ==
    "Flow_18ptpdh" :> "z"
@@ -122,10 +130,17 @@ cVar ==
 cKind ==
    "Flow_18ptpdh" :> Some
 
+cCond ==
+   "Flow_18ptpdh" :> "f_Flow_18ptpdh"
+
+def_f_Flow_18ptpdh(v,s,p) == (reach(v,p) \intersect s["toPlant"])
+
+
+
 
 
 evalF(v,s,p,f) ==
-IF f = f_Flow_18ptpdh THEN def_f_Flow_18ptpdh(v,s,p)
+IF f = "f_Flow_18ptpdh" THEN def_f_Flow_18ptpdh(v,s,p)
 ELSE {  }
 
 

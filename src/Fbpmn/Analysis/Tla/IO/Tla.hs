@@ -3,8 +3,11 @@
 module Fbpmn.Analysis.Tla.IO.Tla where
 
 -- import           Data.List                      ( intercalate )
-import Data.Map.Strict (foldrWithKey, keys, (!?))
-import Data.Map.Strict as M (fromList)
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+import Data.Map.Strict (foldrWithKey, keys, (!?), mapWithKey)
+import Data.Map.Strict as M (fromList, map)
 import qualified Data.Text as T
 import Fbpmn.BpmnGraph.Model
 import Fbpmn.BpmnGraph.SpaceModel
@@ -81,6 +84,7 @@ encodeSExtensionToTla s =
       encodeGList show "Var" variables,
       encodeVarLoc,
       encodeLocVar,
+      encodeReachability,
       encodeSConditions,
       encodeSActions,
       encodeSEvalF,
@@ -104,34 +108,55 @@ encodeLocVar s = encodeMap show show "locvar" vs (M.fromList $ zip vs ns)
     ns = ((`nodesT` Process) . graph) s
     vs = genLocName <$> ns
 
+encodeReachability :: SpaceBpmnGraph -> Text
+encodeReachability _ = [text|
+  outgoingSpace(n) == { e \in SpaceEdge : SpaceSource[e] = n } 
+
+  succSpa(n) == { SpaceTarget[e] : e \in outgoingSpace(n) } 
+
+  RECURSIVE succsNew(_, _, _)
+  succsNew (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
+                                ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
+                                    IN succsNew(n, UNION{A \union {s}}, UNION{B \union UNION{succSpa(s)}}) 
+
+  succsSpace == [b \in BaseLocation |-> succsNew (b, {b}, succSpa(b))]
+
+  RECURSIVE nextLocs(_, _, _)
+  nextLocs (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
+                                ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
+                                    IN nextLocs(n, UNION{A \union {s}}, UNION{B \union UNION{succsSpace[s]}}) 
+  
+  reach(v,p) == nextLocs (v[varloc[p]], {v[varloc[p]]} , succsSpace[v[varloc[p]]])
+|]
+
 encodeSConditions :: SpaceBpmnGraph -> Text
 encodeSConditions s =
   unlines $
-    [ encodeCSFFormula
-    , encodeCSFVar
+    [ encodeCSFVar
     , encodeCSFKind
+    , encodeCSFCond
+    , encodeCSFFormula
     ]
       <*> [s]
 
--- | Formula codes are generated from edge identifier which are unique.
 encodeCSFFormula :: SpaceBpmnGraph -> Text
 encodeCSFFormula s =
   unlines $
-    [ unlines . fmap (f . genCode) -- definitions of codes for CSF conditions 
-    , encodeList toText "CodeCondition" . fmap genCode -- list of codes for CSF conditions
-    , unlines . fmap (encodeFormulaDef s) -- evaluation of formulas
+    [ -- encodeList toText "CodeCondition" . fmap genCode -- list of codes for CSF conditions TODO: move and add action formulas
+      unlines . fmap (encodeFormulaDefFromEdge s) -- evaluation of formulas
     ]
       <*> [keys . cFormulas $ s]
-  where
-    f e = [text|$e = "$e"|]
 
-genCode :: Edge -> Text
-genCode e = [text|f_$se|] where se = toText e
+genCode :: Text -> Text
+genCode e = "f_" <> e
 
-encodeFormulaDef :: SpaceBpmnGraph -> Edge -> Text
-encodeFormulaDef s e = [text|def_$es(v,s,p) == $def|]
+genF :: Edge -> SpaceFormula -> Text
+genF e _ = genCode . toText $ e
+
+encodeFormulaDefFromEdge :: SpaceBpmnGraph -> Edge -> Text
+encodeFormulaDefFromEdge s e = [text|def_$es(v,s,p) == $def|]
   where
-    es = genCode e
+    es = genCode . toText $ e
     def = maybe falseTla encodeFormula (cFormulas s !? e)
 
 encodeFormula :: SpaceFormula -> Text
@@ -164,6 +189,9 @@ encodeCSFKind s = encodeMap show fKindToTla "cKind" (keys . cKinds $ s) (cKinds 
     fKindToTla SFAll = "All"
     fKindToTla SFAny = "Some"
 
+encodeCSFCond :: SpaceBpmnGraph -> Text
+encodeCSFCond s = encodeMap show show "cCond" (keys . cFormulas $ s) (mapWithKey genF $ cFormulas s)
+        
 encodeSActions :: SpaceBpmnGraph -> Text
 encodeSActions s = "" -- undefined -- TODO:
 
@@ -180,7 +208,7 @@ encodeSEvalF s =
       where
         es = keys . cFormulas $ s
         ifs = toText $ intercalate "ELSE " $ f <$> es
-        f e = toString [text|IF f = $se THEN def_$se(v,s,p)|] where se = genCode e
+        f e = toString [text|IF f = "$se" THEN def_$se(v,s,p)|] where se = genCode . toText $ e
 
 encodeSEvalA :: SpaceBpmnGraph -> Text
 encodeSEvalA s = "" -- undefined -- TODO:
@@ -207,7 +235,7 @@ encodeSStructure s =
   where
     encodeSLocations _ =
       [text|
-      Locations == GroupLocation \union BaseLocation
+      Location == GroupLocation \union BaseLocation
       |]
 
 encodeSBpmnGraphHeaderToTla :: SpaceBpmnGraph -> Text

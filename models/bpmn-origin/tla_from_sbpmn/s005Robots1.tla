@@ -105,7 +105,7 @@ BaseLocation == { "z0", "z1", "z2" }
 
 GroupLocation == { "Z1", "Z2" }
 
-Locations == GroupLocation \union BaseLocation
+Location == GroupLocation \union BaseLocation
 
 SpaceEdge == { "se_0", "se_1" }
 
@@ -128,20 +128,23 @@ locvar ==
    "locControllerId" :> "ControllerId"
 @@ "locRobotId" :> "RobotId"
 
-f_Flow_0a9bfn5 = "f_Flow_0a9bfn5"
+outgoingSpace(n) == { e \in SpaceEdge : SpaceSource[e] = n } 
 
-f_Flow_0j10pgk = "f_Flow_0j10pgk"
+succSpa(n) == { SpaceTarget[e] : e \in outgoingSpace(n) } 
 
+RECURSIVE succsNew(_, _, _)
+succsNew (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
+                              ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
+                                  IN succsNew(n, UNION{A \union {s}}, UNION{B \union UNION{succSpa(s)}}) 
 
-CodeCondition == { f_Flow_0a9bfn5
-, f_Flow_0j10pgk
- }
+succsSpace == [b \in BaseLocation |-> succsNew (b, {b}, succSpa(b))]
 
-def_f_Flow_0a9bfn5(v,s,p) == (reach(v,p) \intersect s["Z2"])
+RECURSIVE nextLocs(_, _, _)
+nextLocs (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
+                              ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
+                                  IN nextLocs(n, UNION{A \union {s}}, UNION{B \union UNION{succsSpace[s]}}) 
 
-def_f_Flow_0j10pgk(v,s,p) == (reach(v,p) \intersect s["Z1"])
-
-
+reach(v,p) == nextLocs (v[varloc[p]], {v[varloc[p]]} , succsSpace[v[varloc[p]]])
 
 cVar ==
    "Flow_0a9bfn5" :> "_"
@@ -151,11 +154,21 @@ cKind ==
    "Flow_0a9bfn5" :> Some
 @@ "Flow_0j10pgk" :> Some
 
+cCond ==
+   "Flow_0a9bfn5" :> "f_Flow_0a9bfn5"
+@@ "Flow_0j10pgk" :> "f_Flow_0j10pgk"
+
+def_f_Flow_0a9bfn5(v,s,p) == (reach(v,p) \intersect s["Z2"])
+
+def_f_Flow_0j10pgk(v,s,p) == (reach(v,p) \intersect s["Z1"])
+
+
+
 
 
 evalF(v,s,p,f) ==
-IF f = f_Flow_0a9bfn5 THEN def_f_Flow_0a9bfn5(v,s,p)
-ELSE IF f = f_Flow_0j10pgk THEN def_f_Flow_0j10pgk(v,s,p)
+IF f = "f_Flow_0a9bfn5" THEN def_f_Flow_0a9bfn5(v,s,p)
+ELSE IF f = "f_Flow_0j10pgk" THEN def_f_Flow_0j10pgk(v,s,p)
 ELSE {  }
 
 
