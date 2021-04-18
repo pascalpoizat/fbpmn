@@ -570,7 +570,11 @@ decodeCSFOrder e = do
   sequence $ xFindContent <$> oes
 
 decodeA :: SpaceStructure -> Element -> TEither SpaceAction
-decodeA ss e = e </: "extensionElements" /:: "properties" /! "action" /. "value" @@ parseSAction ss
+decodeA ss e = do
+  let extension = e </: "extensionElements" /:: "properties" /! "action"
+  if isRight extension
+    then extension /. "value" @@ parseSAction ss
+    else pure SAPass
 
 decodeF :: SpaceStructure -> Element -> TEither (Variable, FormulaKind, SpaceFormula)
 decodeF ss e = do
