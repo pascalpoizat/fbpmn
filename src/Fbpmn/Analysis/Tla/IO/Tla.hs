@@ -99,8 +99,8 @@ encodeSExtensionToTla s =
       encodeReachability,
       encodeSConditions,
       encodeSActions,
+      encodeCodeConditions,
       encodeSEvalF,
-      encodeSEvalA,
       encodeSInit
     ]
       <*> [s]
@@ -151,13 +151,20 @@ encodeSConditions s =
     ]
       <*> [s]
 
+encodeCSFVar :: SpaceBpmnGraph -> Text
+encodeCSFVar s = encodeMap show show "cVar" (keys . cVariables $ s) (cVariables s)
+
+encodeCSFKind :: SpaceBpmnGraph -> Text
+encodeCSFKind s = encodeMap show fKindToTla "cKind" (keys . cKinds $ s) (cKinds s)
+  where
+    fKindToTla SFAll = "All"
+    fKindToTla SFAny = "Some"
+
+encodeCSFCond :: SpaceBpmnGraph -> Text
+encodeCSFCond s = encodeMap show show "cCond" (keys . cFormulas $ s) (mapWithKey genF $ identifiedCFormulas s)
+
 encodeCSFFormula :: SpaceBpmnGraph -> Text
-encodeCSFFormula s =
-  unlines $
-    [ -- encodeList toText "CodeCondition" . fmap genCode -- list of codes for CSF conditions TODO: move and add action formulas
-      unlines . fmap (encodeFormulaDefFromEdge s) -- evaluation of formulas
-    ]
-      <*> [keys . cFormulas $ s]
+encodeCSFFormula s = unlines $ encodeFormulaDefFromEdge s <$> (keys . cFormulas $ s)
 
 genCode :: Text -> Text
 genCode e = "f_" <> e
@@ -192,18 +199,6 @@ encodeFormula (SFAnd f1 f2 ) = [text|($sf1 \intersect $sf2)|]
     sf2 = encodeFormula f2
 encodeFormula SFReach = [text|reach(v,p)|]
 
-encodeCSFVar :: SpaceBpmnGraph -> Text
-encodeCSFVar s = encodeMap show show "cVar" (keys . cVariables $ s) (cVariables s)
-
-encodeCSFKind :: SpaceBpmnGraph -> Text
-encodeCSFKind s = encodeMap show fKindToTla "cKind" (keys . cKinds $ s) (cKinds s)
-  where
-    fKindToTla SFAll = "All"
-    fKindToTla SFAny = "Some"
-
-encodeCSFCond :: SpaceBpmnGraph -> Text
-encodeCSFCond s = encodeMap show show "cCond" (keys . cFormulas $ s) (mapWithKey genF $ cFormulas s)
-
 encodeSActions :: SpaceBpmnGraph -> Text
 encodeSActions s = "" -- undefined -- TODO:
 
@@ -231,8 +226,10 @@ encodeSEvalF s =
         ifs = toText $ intercalate "ELSE " $ f <$> keys idfs
         f e = toString [text|IF f = "$se" THEN def_$se(v,s,p)|] where se = genCode . toText $ e
 
-encodeSEvalA :: SpaceBpmnGraph -> Text
-encodeSEvalA s = "" -- undefined -- TODO:
+encodeCodeConditions :: SpaceBpmnGraph -> Text
+encodeCodeConditions s = encodeList show "CodeCondition" . fmap genCode $ ids
+  where
+    ids = toText <$> keys (identifiedFormulas s)
 
 encodeSInit :: SpaceBpmnGraph -> Text
 encodeSInit s =
