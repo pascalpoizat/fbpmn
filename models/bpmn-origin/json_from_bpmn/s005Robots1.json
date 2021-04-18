@@ -10,6 +10,7 @@
         "Gateway_09tktio": "EventBasedGateway",
         "RobotId": "Process",
         "Event_0913gwy": "NoneStartEvent",
+        "Activity_036473v": "AbstractTask",
         "Event_0m2ahyx": "CatchMessageIntermediateEvent",
         "Activity_1oht5l5": "AbstractTask",
         "Event_1o9zl5p": "NoneEndEvent",
@@ -27,6 +28,7 @@
         "Flow_122malt": "NormalSequenceFlow",
         "Flow_118xc7r": "DefaultSequenceFlow",
         "Flow_1ku1tkz": "NormalSequenceFlow",
+        "Flow_0ixsr65": "NormalSequenceFlow",
         "Flow_0sbmxh0": "NormalSequenceFlow",
         "Flow_1e3vt40": "NormalSequenceFlow",
         "Flow_0j10pgk": "ConditionalSequenceFlow",
@@ -50,7 +52,8 @@
             "Gateway_06tqqfq",
             "Activity_0wyc0k0",
             "Activity_1v25x1v",
-            "Event_1o9zl5p"
+            "Event_1o9zl5p",
+            "Activity_036473v"
         ]
     },
     "messageE": {
@@ -66,8 +69,9 @@
         "Flow_12l0eds": "Event_1w6u3rw",
         "Flow_1prda8c": "Event_0nzpc9u",
         "Flow_122malt": "Event_1o9zl5p",
-        "Flow_118xc7r": "Event_1o9zl5p",
+        "Flow_118xc7r": "Activity_036473v",
         "Flow_1ku1tkz": "Activity_1oht5l5",
+        "Flow_0ixsr65": "Event_1o9zl5p",
         "Flow_0sbmxh0": "Event_0mkdyfd",
         "Flow_1e3vt40": "Event_0m2ahyx",
         "Flow_0j10pgk": "Activity_0wyc0k0",
@@ -93,7 +97,8 @@
             "Flow_1a846z9",
             "Flow_122malt",
             "Flow_118xc7r",
-            "Flow_0ix38zj"
+            "Flow_0ix38zj",
+            "Flow_0ixsr65"
         ]
     },
     "edges": [
@@ -105,6 +110,7 @@
         "Flow_122malt",
         "Flow_118xc7r",
         "Flow_0ix38zj",
+        "Flow_0ixsr65",
         "Flow_12l0eds",
         "Flow_1prda8c",
         "Flow_0u8jw5x",
@@ -127,6 +133,7 @@
         "Flow_122malt": "Activity_1v25x1v",
         "Flow_118xc7r": "Gateway_06tqqfq",
         "Flow_1ku1tkz": "Event_0mkdyfd",
+        "Flow_0ixsr65": "Activity_036473v",
         "Flow_0sbmxh0": "Gateway_09tktio",
         "Flow_1e3vt40": "Gateway_09tktio",
         "Flow_0j10pgk": "Gateway_06tqqfq",
@@ -142,6 +149,7 @@
         "Activity_0wyc0k0",
         "Activity_1v25x1v",
         "Event_1o9zl5p",
+        "Activity_036473v",
         "Event_0m2ahyx",
         "Gateway_09tktio",
         "Event_0913gwy",
@@ -157,6 +165,7 @@
         "StartEvent_1": "start",
         "Activity_1v25x1v": "Order Robot to reach some Z2",
         "Event_0913gwy": "start",
+        "Activity_036473v": "shut down",
         "Activity_1oht5l5": "move to some Z2",
         "Event_1o9zl5p": "end",
         "Event_1w6u3rw": "end at some Z1",

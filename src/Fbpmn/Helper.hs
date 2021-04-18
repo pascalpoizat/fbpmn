@@ -8,6 +8,7 @@ import Data.Attoparsec.Text (Parser, Result, anyChar, char, decimal, digit, lett
 import qualified Data.Attoparsec.Text as A (takeWhile)
 import Data.Containers.ListUtils (nubOrd)
 import Data.Map.Strict (keys, (!?))
+import qualified Data.Map.Strict as M (fromList, toList)
 
 type TEither = Either Text
 
@@ -38,6 +39,17 @@ mapMap g m = catMaybes $ mapMapElement g m <$> keys m
 
 mapMapElement :: Ord a => (a -> Maybe b -> Maybe c) -> Map a b -> a -> Maybe c
 mapMapElement g m k = g k (m !? k)
+
+liftMaybe1 :: (Maybe a, b) -> Maybe (a, b)
+liftMaybe1 (Just a, b) = Just (a,b)
+liftMaybe1 (Nothing, _) = Nothing 
+
+liftMaybe2 :: (a, Maybe b) -> Maybe (a, b)
+liftMaybe2 (a, Just b) = Just (a, b)
+liftMaybe2 (_, Nothing) = Nothing
+
+mapMaybes :: Ord k => Map k (Maybe b) -> Map k b
+mapMaybes m = M.fromList . catMaybes $ liftMaybe2 <$> M.toList m 
 
 filter' :: (Ord a) => [a] -> Map a b -> (Maybe b -> Bool) -> [a]
 filter' xs f p = filter p' xs where p' x = p $ f !? x

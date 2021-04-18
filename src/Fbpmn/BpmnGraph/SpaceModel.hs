@@ -53,7 +53,7 @@ instance Monoid SpaceStructure where
       []
       M.empty
       M.empty
-      
+
 -- | Kind for Space Formulas
 data FormulaKind = SFAll | SFAny
   deriving (Show)
@@ -119,6 +119,22 @@ data SpaceAction
   | SAMove SpaceFormula
   | SAUpdate Variable [GroupLocation] [GroupLocation]
   deriving (Show)
+
+isPassSpaceAction :: SpaceAction -> Bool
+isPassSpaceAction SAPass = True
+isPassSpaceAction _ = False
+
+isMoveSpaceAction :: SpaceAction -> Bool
+isMoveSpaceAction (SAMove _) = True
+isMoveSpaceAction _ = False
+
+isUpdateSpaceAction :: SpaceAction -> Bool
+isUpdateSpaceAction SAUpdate {} = True
+isUpdateSpaceAction _ = False
+
+saSpaceFormula :: SpaceAction -> Maybe SpaceFormula
+saSpaceFormula (SAMove f) = Just f
+saSpaceFormula _ = Nothing
 
 -- | Space BPMN Graph
 data SpaceBpmnGraph = SpaceBpmnGraph
@@ -235,7 +251,7 @@ hasValidCFormulas g =
     ( \x ->
         and $
           [ hasValidFVariables . variables,
-            hasValidBLocations . baseLocations . spacestructure, 
+            hasValidBLocations . baseLocations . spacestructure,
             hasValidGLocations . groupLocations . spacestructure
           ]
             <*> [g]

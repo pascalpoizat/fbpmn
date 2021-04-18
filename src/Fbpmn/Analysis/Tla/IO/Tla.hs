@@ -6,7 +6,19 @@ module Fbpmn.Analysis.Tla.IO.Tla where
 -- import           Data.List                      ( intercalate )
 -- import           Data.List                      ( intercalate )
 -- import           Data.List                      ( intercalate )
-import Data.Map.Strict (foldrWithKey, keys, (!?), mapWithKey)
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+-- import           Data.List                      ( intercalate )
+import Data.Map.Strict (foldrWithKey, keys, (!?), mapWithKey, elems, union)
 import Data.Map.Strict as M (fromList, map)
 import qualified Data.Text as T
 import Fbpmn.BpmnGraph.Model
@@ -191,13 +203,22 @@ encodeCSFKind s = encodeMap show fKindToTla "cKind" (keys . cKinds $ s) (cKinds 
 
 encodeCSFCond :: SpaceBpmnGraph -> Text
 encodeCSFCond s = encodeMap show show "cCond" (keys . cFormulas $ s) (mapWithKey genF $ cFormulas s)
-        
+
 encodeSActions :: SpaceBpmnGraph -> Text
 encodeSActions s = "" -- undefined -- TODO:
 
+identifiedCFormulas :: SpaceBpmnGraph -> Map Id SpaceFormula
+identifiedCFormulas = cFormulas
+
+identifiedAFormulas :: SpaceBpmnGraph -> Map Id SpaceFormula
+identifiedAFormulas s = mapMaybes $ saSpaceFormula <$> actions s
+
+identifiedFormulas :: SpaceBpmnGraph -> Map Id SpaceFormula
+identifiedFormulas s = identifiedCFormulas s `union` identifiedAFormulas s
+
 encodeSEvalF :: SpaceBpmnGraph -> Text
 encodeSEvalF s =
-  if null es
+  if null $ keys idfs
   then
     [text|evalF(v,s,p,f) == $emptySetTla|]
   else
@@ -206,8 +227,8 @@ encodeSEvalF s =
         ELSE $emptySetTla
     |]
       where
-        es = keys . cFormulas $ s
-        ifs = toText $ intercalate "ELSE " $ f <$> es
+        idfs = identifiedFormulas s
+        ifs = toText $ intercalate "ELSE " $ f <$> keys idfs
         f e = toString [text|IF f = "$se" THEN def_$se(v,s,p)|] where se = genCode . toText $ e
 
 encodeSEvalA :: SpaceBpmnGraph -> Text

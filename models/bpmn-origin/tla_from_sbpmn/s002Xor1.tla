@@ -137,7 +137,8 @@ def_f_Flow_18ptpdh(v,s,p) == (reach(v,p) \intersect s["toPlant"])
 
 
 evalF(v,s,p,f) ==
-IF f = "f_Flow_18ptpdh" THEN def_f_Flow_18ptpdh(v,s,p)
+IF f = "f_Activity_0z782bb" THEN def_f_Activity_0z782bb(v,s,p)
+ELSE IF f = "f_Flow_18ptpdh" THEN def_f_Flow_18ptpdh(v,s,p)
 ELSE {  }
 
 
