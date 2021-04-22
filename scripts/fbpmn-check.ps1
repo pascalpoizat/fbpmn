@@ -24,10 +24,19 @@ $parse_stat = {
     Write-Host "     states=$states trans=$transitions depth=$depth"
 }
 
+function New-Dir {
+    param ($fullpath, $model)
+    $parent = [System.IO.Path]::GetTempPath() 
+    $guid = [guid]::NewGuid()
+    $name = $model + "." + (([string]$guid).Replace("-", "")).Substring(0, 5)
+    $dir = New-Item -ItemType Directory -Path (Join-Path $parent $name)
+    return $dir
+} 
+
 ################
 
 if ($args.Length -eq 0 -or $args.Length -gt 2) {
-    Write-Host ` (Get-ChildItem $args[0]).Basename ` '<model>' '[#workers]'
+    Write-Host ` (Get-ChildItem $PSCOMMANDPATH).Basename ` '<model>' '[#workers]' 
     exit 1
 }
 
@@ -38,16 +47,15 @@ else {
     $workers = 1
 }
 
-<#
-if (NOT which fbpmn > /dev/null) {
+if (-NOT (which fbpmn) > /dev/null) {
     Write-Host "fbpmn is not found in the PATH, please install it"
     exit 1
 }
 
-if (NOT which java > /dev/null ) {
+if (-NOT (which java) > /dev/null) {
     Write-Host "java is not found in the PATH, please install it"
     exit 1
-}#>
+}
 
 if ($env:FBPMN_HOME.Length -eq 0) {
     Write-Host "$env:FBPMN_HOME is not set"; exit 1
@@ -62,13 +70,9 @@ if (-NOT(Test-Path $env:TLA2TOOLS_HOME/tla2tools.jar)) {
     Write-Host "wrong $env:TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
 } 
 
-$fullpath = $args[0] 
+$fullpath = $args[0]
 $model = (Get-ChildItem $fullpath).Basename
-$parent = [System.IO.Path]::GetTempPath() 
-$guid = [guid]::NewGuid()
-$name = $model + "." + (([string]$guid).Replace("-", "")).Substring(0, 5)
-$dir = New-Item -ItemType Directory -Path (Join-Path $parent $name)
-#$dir = New-Item -Path  /tmp/$model.XXXXX -ItemType Directory
+$dir = New-Dir $fullpath $model
 
 if (-NOT(Test-Path $fullpath)) {
     Write-Host "$fullpath.bpmn not found."
