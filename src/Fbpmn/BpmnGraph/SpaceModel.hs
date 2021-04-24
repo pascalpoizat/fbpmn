@@ -76,7 +76,7 @@ fVariables = S.elems . f' S.empty
   where
     f' :: Set Variable -> SpaceFormula -> Set Variable
     f' vs SFTrue = vs
-    f' vs SFHere = insert "here" vs
+    f' vs SFHere = vs
     f' vs (SFVar v) = insert v vs
     f' vs (SFBase _) = vs
     f' vs (SFGroup _) = vs
