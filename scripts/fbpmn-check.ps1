@@ -33,6 +33,16 @@ function New-Dir {
     return $dir
 } 
 
+function Get-Worker {
+    param($a , $b)
+    if ($a -eq 2 ) {
+        return $b
+    }
+    else {
+        return 1
+    }
+}
+
 ################
 
 if ($args.Length -eq 0 -or $args.Length -gt 2) {
@@ -40,18 +50,12 @@ if ($args.Length -eq 0 -or $args.Length -gt 2) {
     exit 1
 }
 
-if ($args.Length -eq 2 ) {
-    $workers = $args[1]
-}
-else {
-    $workers = 1
-}
+$workers = Get-Worker $args.Length $args[1]
 
 if (-NOT (which fbpmn) > /dev/null) {
     Write-Host "fbpmn is not found in the PATH, please install it"
     exit 1
 }
-
 if (-NOT (which java) > /dev/null) {
     Write-Host "java is not found in the PATH, please install it"
     exit 1
@@ -71,13 +75,14 @@ if (-NOT(Test-Path $env:TLA2TOOLS_HOME/tla2tools.jar)) {
 } 
 
 $fullpath = $args[0]
-$model = (Get-ChildItem $fullpath).Basename
-$dir = New-Dir $fullpath $model
 
 if (-NOT(Test-Path $fullpath)) {
-    Write-Host "$fullpath.bpmn not found."
+    Write-Host "$fullpath not found."
     exit 1
 }
+
+$model = (Get-ChildItem $fullpath).Basename
+$dir = New-Dir $fullpath $model
 
 Write-Host "Working in $dir with $workers worker(s)"
 
