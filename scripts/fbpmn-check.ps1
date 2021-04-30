@@ -52,11 +52,11 @@ if ($args.Length -eq 0 -or $args.Length -gt 2) {
 
 $workers = Get-Worker $args.Length $args[1]
 
-if (-NOT (which fbpmn) > /dev/null) {
+if (-NOT (which fbpmn)) {
     Write-Host "fbpmn is not found in the PATH, please install it"
     exit 1
 }
-if (-NOT (which java) > /dev/null) {
+if (-NOT (which java)) {
     Write-Host "java is not found in the PATH, please install it"
     exit 1
 }
@@ -88,7 +88,10 @@ Write-Host "Working in $dir with $workers worker(s)"
 
 # TransfoRemove-Item the BPMN model into TLA
 Copy-Item $fullpath $dir
-if (Test-Path "$fullpath.constraint") { Copy-Item "$fullpath.constraint" $dir }
+$fullpath = (Get-Item $fullpath).DirectoryName + "/" + (Get-Item $fullpath).BaseName
+if (Test-Path "$fullpath.constraint") { 
+    Copy-Item -Path "$fullpath.constraint" $dir 
+}
 Set-Location $dir
 fbpmn bpmn2tla $model $model
 
@@ -106,7 +109,7 @@ Copy-Item $env:FBPMN_HOME/theories/tla/Configs $dir -Recurse -Force
 # First, use StatsBPMN to print some infoRemove-Itemation on the size of the BPMN model.
 Copy-Item $env:FBPMN_HOME/theories/tla/StatsBPMN.cfg -Force
 (Get-Content $env:FBPMN_HOME/theories/tla/StatsBPMN.tla) -Replace ("INSTANCE.*$", "INSTANCE $model") > StatsBPMN.tla
-& $runtlc "$dir/StatsBPMN.tla" | Select-String "Processes="
+& $runtlc "$dir/StatsBPMN.tla" | Select-String "Processes=" -NoEmphasis
 Remove-Item states -Recurse -Force
 
 # For each configuration Config/*cfg (property to check) and each network Config/Network,
