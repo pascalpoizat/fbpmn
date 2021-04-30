@@ -6,8 +6,7 @@ BeforeAll {
 
     function F {
         param ($expected, $observed)
-        if ([string](Get-Content $expected | Select-Object -Skip 2) -eq [string](Get-Content $observed | Select-Object -Skip 2)) {
-            #| Select-Object -Skip 3 | Select-Object -SkipLast 1)
+        if ([string](Get-Content $expected | Select-Object -Skip 2) -eq [string](Get-Content $observed | Select-Object -Skip 3 | Select-Object -SkipLast 1)) {
             return $true
         } 
         return $false
@@ -76,13 +75,18 @@ Describe 'fbpmn-check' {
     Context "Compare with expected" {
         It "V1" {
             $r = 0
-            $f_bpmn = Get-ChildItem -Path "$env:FBPMN_HOME/models/bpmn-origin/src" -Name -Include e001*.bpmn
-            #charger les fichiers dont le nom est dans le fichier de config
+            $f_bpmn = New-Object System.Collections.Generic.List[string]  
+            $f = Get-Content ("fbpmn-private/scripts/tests/config-files.json") | ConvertFrom-Json                                      
+            foreach ($g in $f.psobject.properties.name) {
+                if ($f."$g") { 
+                    $f_bpmn.Add([string]$g) 
+                }
+            }
             $model
             foreach ($f in $f_bpmn) {
                 $fullpath = "$env:FBPMN_HOME/models/bpmn-origin/src/$f"
                 $model = (Get-ChildItem -Path $fullpath).BaseName
-                fbpmn-check $fullpath 2 *> "/tmp/$model.observed" 
+                fbpmn-check.ps1 $fullpath 2 *> "/tmp/$model.observed" 
                 if (-NOT(F "$env:FBPMN_HOME/models/bpmn-origin/expected/$model.expected" "/tmp/$model.observed")) {
                     $r++
                 } 
