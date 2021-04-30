@@ -1,6 +1,20 @@
+#!/usr/bin/env pwsh
+
+
 BeforeAll { 
     . fbpmn-private/scripts/fbpmn-check.ps1
+
+    function F {
+        param ($expected, $observed)
+        if ([string](Get-Content $expected | Select-Object -Skip 2) -eq [string](Get-Content $observed | Select-Object -Skip 2)) {
+            #| Select-Object -Skip 3 | Select-Object -SkipLast 1)
+            return $true
+        } 
+        return $false
+    }
 }
+
+
 
 Describe 'fbpmn-check' {
     Context "Usage" {
@@ -10,10 +24,12 @@ Describe 'fbpmn-check' {
                 $LASTEXITCODE | Should -Be 1
             } 
             It 'No args -> workers = 1' {
-                Get-Worker | Should -Be 1
+                fbpmn-check.ps1 $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 
+                $workers | Should -Be 1
             } 
             It 'Correct args.Length -> workers = args[1]' {
-                Get-Worker 2 3 | Should -Be 3
+                fbpmn-check.ps1 $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2 3 
+                $workers | Should -Be 3
             } 
         }
         Context "commands java and fbpmn" {
@@ -57,37 +73,27 @@ Describe 'fbpmn-check' {
             }
         }
     }
-    Context "TLA généré" {
-        It "TLA généré" { 'pour chaque f dans $FBPMN_HOME/models/src/bpmn_origin/x_f.bpmn'
-            $r = 0    
-            $path = "$env:FBPMN_HOME/models/bpmn-origin/src/"   
-            $f_bpmn = Get-ChildItem -Path $path -Name -Include e*.bpmn -Exclude eX*.bpmn
+    Context "Compare with expected" {
+        It "V1" {
+            $r = 0
+            $f_bpmn = Get-ChildItem -Path "$env:FBPMN_HOME/models/bpmn-origin/src" -Name -Include e001*.bpmn
+            #charger les fichiers dont le nom est dans le fichier de config
+            $model
             foreach ($f in $f_bpmn) {
-                $fullpath = $path + $f
-                fbpmn-check.ps1 $fullpath 2
-            }
-            Set-Location .. 
-            $f_temp = Get-ChildItem -Name -Include e*.tla -Recurse
-            $f_tla = Get-ChildItem -Path $env:FBPMN_HOME/models/bpmn-origin/tla_from_bpmn -Name -Include e*.tla -Exclude eX*.tla
-            
-            for ($i = 0 ; $i -le ($f_tla.Length - 1); $i++ ) {
-                $name = $f_tla[$i]
-                if ([string](Get-Content $f_temp[$i]) -ne [string](Get-Content "$env:FBPMN_HOME/models/bpmn-origin/tla_from_bpmn/$name")) { $r++ } 
+                $fullpath = "$env:FBPMN_HOME/models/bpmn-origin/src/$f"
+                $model = (Get-ChildItem -Path $fullpath).BaseName
+                fbpmn-check $fullpath 2 *> "/tmp/$model.observed" 
+                if (-NOT(F "$env:FBPMN_HOME/models/bpmn-origin/expected/$model.expected" "/tmp/$model.observed")) {
+                    $r++
+                } 
             }
             $r | Should -Be 0
-            Remove-Item e*.* -Recurse -Force
-        } 
-    }
-    Context "Proprieties" {
-        
+        }
     }
     Context "Test-Path failed" {
         It "BPMN don't exists" {
             fbpmn-check.ps1 $FBPMN_HOME/models/bpmn-origin/src/idontexist.bpmn 2  
             $LASTEXITCODE | Should -Be 1
-        }
-        It "bpmn2tla" {
-
         }
     }
 }
