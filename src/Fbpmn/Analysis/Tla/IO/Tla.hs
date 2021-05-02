@@ -147,7 +147,7 @@ encodeReachability g = unlines
 
 encodeReachabilityDefs :: Text
 encodeReachabilityDefs = [text|
-  reachFrom(b) = UNION {x \in b : Reachable[x]}
+  reachFrom(b) == UNION {Reachable[x] : x \in b}
 |]
 
 -- encodeReachability _ = [text|
