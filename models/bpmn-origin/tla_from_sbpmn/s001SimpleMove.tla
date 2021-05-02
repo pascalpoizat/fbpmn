@@ -95,23 +95,20 @@ varloc ==
 locvar ==
    "locPId" :> "PId"
 
-outgoingSpace(n) == { e \in SpaceEdge : SpaceSource[e] = n } 
+Reachable ==
+   "f1" :> { "b", "f1", "f2", "f3", "f4", "f5", "f6", "m" }
+@@ "f2" :> { "b", "f1", "f2", "f3", "f4", "f5", "f6", "m" }
+@@ "f3" :> { "b", "f1", "f2", "f3", "f4", "f5", "f6", "m" }
+@@ "f4" :> { "f4", "f5", "f6", "m" }
+@@ "f5" :> { "f4", "f5", "f6", "m" }
+@@ "f6" :> { "f4", "f5", "f6", "m" }
+@@ "r1" :> { "r1" }
+@@ "r2" :> { "r2" }
+@@ "b" :> { "b", "f4", "f5", "f6", "m" }
+@@ "m" :> { "f4", "f5", "f6", "m" }
 
-succSpa(n) == { SpaceTarget[e] : e \in outgoingSpace(n) } 
+reachFrom(b) = UNION {x \in b : Reachable[x]}
 
-RECURSIVE succsNew(_, _, _)
-succsNew (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
-                              ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
-                                  IN succsNew(n, UNION{A \union {s}}, UNION{B \union UNION{succSpa(s)}}) 
-
-succsSpace == [b \in BaseLocation |-> succsNew (b, {b}, succSpa(b))]
-
-RECURSIVE nextLocs(_, _, _)
-nextLocs (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
-                              ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
-                                  IN nextLocs(n, UNION{A \union {s}}, UNION{B \union UNION{succsSpace[s]}}) 
-
-reach(v,p) == nextLocs (v[varloc[p]], {v[varloc[p]]} , succsSpace[v[varloc[p]]])
 
 cVar ==
   [ i \in {} |-> {}]

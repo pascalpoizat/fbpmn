@@ -132,23 +132,13 @@ locvar ==
    "locControllerId" :> "ControllerId"
 @@ "locRobotId" :> "RobotId"
 
-outgoingSpace(n) == { e \in SpaceEdge : SpaceSource[e] = n } 
+Reachable ==
+   "z0" :> { "z0", "z1", "z2" }
+@@ "z1" :> { "z1" }
+@@ "z2" :> { "z2" }
 
-succSpa(n) == { SpaceTarget[e] : e \in outgoingSpace(n) } 
+reachFrom(b) = UNION {x \in b : Reachable[x]}
 
-RECURSIVE succsNew(_, _, _)
-succsNew (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
-                              ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
-                                  IN succsNew(n, UNION{A \union {s}}, UNION{B \union UNION{succSpa(s)}}) 
-
-succsSpace == [b \in BaseLocation |-> succsNew (b, {b}, succSpa(b))]
-
-RECURSIVE nextLocs(_, _, _)
-nextLocs (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
-                              ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
-                                  IN nextLocs(n, UNION{A \union {s}}, UNION{B \union UNION{succsSpace[s]}}) 
-
-reach(v,p) == nextLocs (v[varloc[p]], {v[varloc[p]]} , succsSpace[v[varloc[p]]])
 
 cVar ==
    "Flow_0a9bfn5" :> "_"
@@ -162,9 +152,9 @@ cCond ==
    "Flow_0a9bfn5" :> "f_Flow_0a9bfn5"
 @@ "Flow_0j10pgk" :> "f_Flow_0j10pgk"
 
-def_f_Flow_0a9bfn5(v,s,p) == (reach(v,p) \intersect s["Z2"])
+def_f_Flow_0a9bfn5(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["Z2"])
 
-def_f_Flow_0j10pgk(v,s,p) == (reach(v,p) \intersect s["Z1"])
+def_f_Flow_0j10pgk(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["Z1"])
 
 
 

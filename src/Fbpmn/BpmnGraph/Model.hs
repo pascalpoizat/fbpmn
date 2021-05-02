@@ -13,10 +13,7 @@ import Data.Map.Strict
 import qualified Data.Map.Strict as M
   ( empty,
   )
-import qualified Data.Set as S
-  ( fromList,
-  )
-import Fbpmn.Helper (Id, allIn', allKeyIn', filter')
+import Fbpmn.Helper (Id, allIn', allKeyIn', filter', listFixpoint)
 
 --
 -- Node types
@@ -399,16 +396,6 @@ allValidMessageFlow :: BpmnGraph -> Bool
 allValidMessageFlow g =
   getAll $ foldMap (All . isValidMessageFlow g) $ edgesT g MessageFlow
 
--- |
--- Fixpoint (based on sets).
--- Stops upon set equality, i.e. will stop if @f [1,2] = [2,1]@
-fixpoint :: (Ord a) => ([a] -> [a]) -> [a] -> [a]
-fixpoint f xs
-  | S.fromList xs == S.fromList xs' = xs
-  | otherwise = fixpoint f xs'
-  where
-    xs' = (toList . S.fromList) $ f xs
-
 predecessorEdges :: BpmnGraph -> Edge -> [Edge]
 predecessorEdges g e = case sourceE g !? e of
   Nothing -> []
@@ -418,7 +405,7 @@ predecessorEdgesSuchThat :: BpmnGraph -> (Edge -> Bool) -> Edge -> [Edge]
 predecessorEdgesSuchThat g p e = filter p $ predecessorEdges g e
 
 preE :: BpmnGraph -> Node -> Edge -> [Edge]
-preE g n e = fixpoint step $ predecessorEdgesSuchThat g p e
+preE g n e = listFixpoint step $ predecessorEdgesSuchThat g p e
   where
     p x = case (catE g !? x, targetE g !? x) of
       (_, Nothing) -> False -- if we cannot find the target for the predecessor we fail

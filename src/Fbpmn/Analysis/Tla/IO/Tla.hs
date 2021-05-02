@@ -18,13 +18,15 @@ module Fbpmn.Analysis.Tla.IO.Tla where
 -- import           Data.List                      ( intercalate )
 -- import           Data.List                      ( intercalate )
 -- import           Data.List                      ( intercalate )
-import Data.Map.Strict (foldrWithKey, keys, (!?), mapWithKey, elems, union)
-import Data.Map.Strict as M (fromList, map)
+import Data.Map.Strict (foldrWithKey, keys, (!?), mapWithKey, union)
+import Data.Map.Strict as M (fromList)
 import qualified Data.Text as T
 import Fbpmn.BpmnGraph.Model
 import Fbpmn.BpmnGraph.SpaceModel
 import Fbpmn.Helper
 import NeatInterpolation (text)
+import Data.Containers.ListUtils (nubOrd)
+import Data.Set (singleton)
 
 -- | FWriter from BPMN Graph to TLA+.
 writer :: FWriter BpmnGraph
@@ -120,26 +122,55 @@ encodeLocVar s = encodeMap show show "locvar" vs (M.fromList $ zip vs ns)
     ns = ((`nodesT` Process) . graph) s
     vs = genLocName <$> ns
 
+-- TODO: optimize
 encodeReachability :: SpaceBpmnGraph -> Text
-encodeReachability _ = [text|
-  outgoingSpace(n) == { e \in SpaceEdge : SpaceSource[e] = n } 
+encodeReachability g = unlines
+    [ encodeMap show (setTla show) "Reachable" (locs g) (computeReachabilityMap g)
+    , encodeReachabilityDefs
+    ]
+  where
+    computeReachabilityMap :: SpaceBpmnGraph -> Map BaseLocation [BaseLocation]
+    computeReachabilityMap gr = M.fromList $ reach (spacestructure gr) <$> locs gr
+    reach :: SpaceStructure -> BaseLocation -> (BaseLocation, [BaseLocation])
+    reach s l = (l, listFixpoint (f s) [l])
+    f :: SpaceStructure -> [BaseLocation] -> [BaseLocation]
+    f s ls = nubOrd $ ls ++ concatMap (neighbours s) ls
+    -- f :: SpaceStructure -> [BaseLocation] -> [BaseLocation] -> [BaseLocation]
+    -- f _ [] rs = rs
+    -- f s (b:bs) rs = f s bs' rs'
+    --     where
+    --       ns = neighbours s b -- neighbours of b, i.e., all n such that b -> n
+    --       ns' = filter (`elem` (b:rs)) ns -- remove b and already treated locations, i.e., ns - {b} - rs
+    --       bs' = nubOrd $ bs ++ ns'
+    --       rs' = b:rs
+    locs = baseLocations . spacestructure
 
-  succSpa(n) == { SpaceTarget[e] : e \in outgoingSpace(n) } 
-
-  RECURSIVE succsNew(_, _, _)
-  succsNew (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
-                                ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
-                                    IN succsNew(n, UNION{A \union {s}}, UNION{B \union UNION{succSpa(s)}}) 
-
-  succsSpace == [b \in BaseLocation |-> succsNew (b, {b}, succSpa(b))]
-
-  RECURSIVE nextLocs(_, _, _)
-  nextLocs (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
-                                ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
-                                    IN nextLocs(n, UNION{A \union {s}}, UNION{B \union UNION{succsSpace[s]}}) 
-  
-  reach(v,p) == nextLocs (v[varloc[p]], {v[varloc[p]]} , succsSpace[v[varloc[p]]])
+encodeReachabilityDefs :: Text
+encodeReachabilityDefs = [text|
+  reachFrom(b) = UNION {x \in b : Reachable[x]}
 |]
+
+-- encodeReachability _ = [text|
+--   outgoingSpace(n) == { e \in SpaceEdge : SpaceSource[e] = n } 
+
+--   succSpa(n) == { SpaceTarget[e] : e \in outgoingSpace(n) } 
+
+--   RECURSIVE succsNew(_, _, _)
+--   succsNew (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
+--                                 ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
+--                                     IN succsNew(n, UNION{A \union {s}}, UNION{B \union UNION{succSpa(s)}}) 
+
+--   succsSpace == [b \in BaseLocation |-> succsNew (b, {b}, succSpa(b))]
+
+--   RECURSIVE nextLocs(_, _, _)
+--   nextLocs (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
+--                                 ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
+--                                     IN nextLocs(n, UNION{A \union {s}}, UNION{B \union UNION{succsSpace[s]}}) 
+
+--   reach(v,p) == nextLocs (v[varloc[p]], {v[varloc[p]]} , succsSpace[v[varloc[p]]])
+
+--   reachFrom(v,p,x) == nextLocs (v[x], {v[x]} , succsSpace[v[x]])
+-- |]
 
 encodeSConditions :: SpaceBpmnGraph -> Text
 encodeSConditions s =
@@ -197,7 +228,9 @@ encodeFormula (SFAnd f1 f2 ) = [text|($sf1 \intersect $sf2)|]
   where
     sf1 = encodeFormula f1
     sf2 = encodeFormula f2
-encodeFormula SFReach = [text|reach(v,p)|]
+encodeFormula SFReach = [text|reachFrom(v[varloc[p]])|]
+encodeFormula (SFReachFrom x) = [text|reachFrom(v[$xs])|]
+  where xs = show x
 
 encodeSActions :: SpaceBpmnGraph -> Text
 encodeSActions s = "" -- undefined -- TODO:

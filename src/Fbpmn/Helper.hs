@@ -8,6 +8,7 @@ import Data.Attoparsec.Text (Parser, Result, anyChar, char, decimal, digit, lett
 import qualified Data.Attoparsec.Text as A (takeWhile)
 import Data.Containers.ListUtils (nubOrd)
 import Data.Map.Strict (keys, (!?))
+import qualified Data.Set as S (fromList)
 import qualified Data.Map.Strict as M (fromList, toList)
 
 type TEither = Either Text
@@ -173,3 +174,21 @@ validate errorMessage m = case m of
 -- | Transforms a list into an either with a message error if the list is empty.
 listToEither :: Text -> [a] -> TEither [a]
 listToEither errorMessage xs = if null xs then Left errorMessage else Right xs
+
+-- | Fixpoint computation for Sets.
+setFixpoint :: (Eq a) => (Set a -> Set a) -> Set a -> Set a
+setFixpoint f s
+  | s == s' = s
+  | otherwise = f s'
+  where
+    s' = f s
+
+-- |
+-- Fixpoint computation for Lists (based on sets).
+-- Stops upon set equality, i.e. will stop if @f [1,2] = [2,1]@
+listFixpoint :: (Ord a) => ([a] -> [a]) -> [a] -> [a]
+listFixpoint f xs
+  | S.fromList xs == S.fromList xs' = xs
+  | otherwise = listFixpoint f xs'
+  where
+    xs' = (toList . S.fromList) $ f xs

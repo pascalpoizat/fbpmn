@@ -617,6 +617,9 @@ parseSFormula s =
   <|> (parseTerminal "here" >> return SFHere)
   <|> (parseTerminal "reachable" >> return SFReach )
   <|> do
+        _ <- parseTerminal "reachable-from"
+        SFReachFrom <$> parseIdentifier
+  <|> do
         i <- parseIdentifier
         return $ (if i `elem` baseLocations s then SFBase else if i `elem` groupLocations s then SFGroup else SFVar) i
   <|> do

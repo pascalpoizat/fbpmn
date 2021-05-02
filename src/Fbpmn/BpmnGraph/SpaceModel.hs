@@ -3,7 +3,7 @@
 
 module Fbpmn.BpmnGraph.SpaceModel where
 
-import Data.Map as M (elems, keys, empty)
+import Data.Map as M (elems, keys, empty, lookup)
 import Data.Set as S (elems, empty, insert)
 import Fbpmn.BpmnGraph.Model (BpmnGraph, Edge, Node, isValidGraph)
 import Fbpmn.Helper (Id, allDifferent, allIn', disjoint')
@@ -69,6 +69,7 @@ data SpaceFormula
   | SFOr SpaceFormula SpaceFormula
   | SFAnd SpaceFormula SpaceFormula
   | SFReach
+  | SFReachFrom Variable
   deriving (Show)
 
 fVariables :: SpaceFormula -> [Variable]
@@ -84,6 +85,7 @@ fVariables = S.elems . f' S.empty
     f' vs (SFOr f1 f2) = f' (f' vs f1) f2
     f' vs (SFAnd f1 f2) = f' (f' vs f1) f2
     f' vs SFReach = vs
+    f' vs (SFReachFrom v) = insert v vs
 
 fBaseLocations :: SpaceFormula -> [BaseLocation]
 fBaseLocations = S.elems . f' S.empty
@@ -98,6 +100,7 @@ fBaseLocations = S.elems . f' S.empty
     f' vs (SFOr f1 f2) = f' (f' vs f1) f2
     f' vs (SFAnd f1 f2) = f' (f' vs f1) f2
     f' vs SFReach = vs
+    f' vs (SFReachFrom _) = vs
 
 fGroupLocations :: SpaceFormula -> [GroupLocation]
 fGroupLocations = S.elems . f' S.empty
@@ -112,6 +115,7 @@ fGroupLocations = S.elems . f' S.empty
     f' vs (SFOr f1 f2) = f' (f' vs f1) f2
     f' vs (SFAnd f1 f2) = f' (f' vs f1) f2
     f' vs SFReach = vs
+    f' vs (SFReachFrom _) = vs
 
 -- | Space Actions
 data SpaceAction
@@ -284,3 +288,22 @@ isValidSpaceStructure s =
       (M.elems . sTargetE) `allIn'` baseLocations -- targets of edges are baseLocations
     ]
       <*> [s]
+
+-- | Computes the couple (source, target) for an edge.
+edgeAsPair :: SpaceStructure -> SEdge -> Maybe (BaseLocation, BaseLocation)
+edgeAsPair s e = bisequence (source, target)
+  where
+    source = lookup e $ sSourceE s
+    target = lookup e $ sTargetE s
+
+-- | Computes the edges of a space structure as couples (source, target).
+edgesAsPairs :: SpaceStructure -> [(BaseLocation, BaseLocation)]
+edgesAsPairs s = catMaybes $ edgeAsPair s <$> sEdges s
+
+-- | Computes the direct neighbours of a base location.
+neighbours :: SpaceStructure -> BaseLocation -> [BaseLocation]
+neighbours s l = map snd . filter (\x -> fst x == l) $ edgesAsPairs s
+
+-- | Computes a map with location |-> its neighbours.
+neighbourMap :: SpaceStructure -> Map BaseLocation [BaseLocation]
+neighbourMap s = fromList $ (\b -> (b, neighbours s b)) <$> baseLocations s
