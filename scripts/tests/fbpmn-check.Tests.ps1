@@ -4,11 +4,31 @@
 BeforeAll { 
     . fbpmn-private/scripts/fbpmn-check.ps1
     
-    function F {
+    function F1 {
         param ($expected, $observed)
-        if ([string](Get-Content $expected | Select-Object -Skip 2 | Select-String "states" -NotMatch) -eq [string](Get-Content $observed | Select-Object -Skip 3 | Select-Object -SkipLast 1 | Select-String "states" -NotMatch)) {
+        if ([string](Get-Content $expected | Select-Object -Skip 2) -eq [string](Get-Content $observed | Select-Object -Skip 3 | Select-Object -SkipLast 1)) {
             return $true
         } 
+        return $false
+    }
+
+    function F2 {
+        param ($model, $expected, $observed)
+        $json_expected = Get-Content $expected | ConvertFrom-Json
+        $Network = $json_expected.$model.psobject.properties.name 
+        $Prop = $json_expected.$model.($Network[0]).psobject.properties.name 
+        $Result = $json_expected.$model.($Network[0]).($Prop[0]).psobject.properties.name
+        $json_observed = Get-Content $observed | ConvertFrom-Json
+        
+        for ($i = 0 ; $i -le (($json_expected.$model.psobject.properties.name).count - 1) ; $i++ ) {
+            for ($j = 0 ; $j -le (($json_expected.$model.($Network[$i]).psobject.properties.name).count - 1) ; $j++) {
+                for ($k = 0 ; $k -le (($json_expected.$model.($Network[$i]).($Prop[$j]).psobject.properties.name).count - 1) ; $k++) {
+                    if ($json_observed.$model.($Network[$i]).($Prop[$j].($Result[$k])) -eq $json_expected.$model.($Network[$i]).($Prop[$j].($Result[$k]))) {
+                        return $true
+                    }
+                }
+            }
+        }
         return $false
     }
 }
@@ -61,7 +81,7 @@ Describe 'fbpmn-check' {
             }
             It 'Wrong FBPMN_HOME' {
                 $OLD_FBPMN_HOME = $env:FBPMN_HOME
-                $env:FBPMN_HOME = '' #associer un directory qui n'est pas FBPMN_HOME
+                $env:FBPMN_HOME = '/home/malinvaud/Documents/L3' #associer un directory qui n'est pas FBPMN_HOME
                 fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
                 $LASTEXITCODE | Should -Be 1
                 $env:FBPMN_HOME = $OLD_FBPMN_HOME
@@ -75,18 +95,18 @@ Describe 'fbpmn-check' {
             }
             It 'Wrong TLA2TOOLS_HOME ' {
                 $OLD_TLA2TOOLS_HOME = $env:TLA2TOOLS_HOME
-                $env:TLA2TOOLS_HOME = '' #associer un directory qui n'est pas TLA2TOOLS_HOME
+                $env:TLA2TOOLS_HOME = '/home/malinvaud/Documents/L3' #associer un directory qui n'est pas TLA2TOOLS_HOME
                 fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
                 $LASTEXITCODE | Should -Be 1
                 $env:TLA2TOOLS_HOME = $OLD_TLA2TOOLS_HOME
             }
         }
     }
-    <#Context "Compare with expected" {
-        It "V1" {
+    Context "Compare with expected" {
+        <#It "V1" {
             $r = 0
             $f_bpmn = New-Object System.Collections.Generic.List[string]  
-            $f = Get-Content ("fbpmn-private/scripts/tests/config-files.json") | ConvertFrom-Json                                      
+            $f = Get-Content ("$env:FBPMN_HOME/scripts/tests/config-files.json") | ConvertFrom-Json                                      
             foreach ($g in $f.psobject.properties.name) {
                 if ($f."$g") { 
                     $f_bpmn.Add([string]$g) 
@@ -96,51 +116,34 @@ Describe 'fbpmn-check' {
             foreach ($f in $f_bpmn) {
                 $fullpath = "$env:FBPMN_HOME/models/bpmn-origin/src/$f"
                 $model = (Get-ChildItem -Path $fullpath).BaseName
-                fbpmn-check.ps1 $fullpath 2 *> "/tmp/$model.observed" 
-                if (-NOT(F "$env:FBPMN_HOME/models/bpmn-origin/expected/$model.expected" "/tmp/$model.observed")) {
+                fbpmn-check.ps1 $fullpath 1 *> "/tmp/$model.observed" 
+                if (-NOT(F1 "$env:FBPMN_HOME/models/bpmn-origin/expected/$model.expected" "/tmp/$model.observed")) {
                     $r++
                 } 
             }
             $r | Should -Be 0
-        }
+        }#>
         It "V2" { 
             $r = 0
-            #exécuter fbpmn-check.ps1 sur tous les modèles
-            #$path = "$env:FBPMN_HOME/models/bpmn-origin/src/"   
-            #$f_bpmn = Get-ChildItem -Path $path -Name -Include e00*.bpmn -Exclude eX*.bpmn
-            foreach ($f in $f_bpmn) {
-                $fullpath = $path + $f
-                fbpmn-check $fullpath 2
-            }
-            #récupérer tous les fichiers json produits par fbpmn-check.ps1
-            Set-Location /tmp
-            #exécuter fbpmn-check sur tous les modèles
-            foreach ($f in $f_bpmn) {
-                $fullpath = $path + $f
-                fbpmn-check.ps1 $fullpath 2
-            }
-            #récupérer tous les fichiers json produits par fbpmn-check
-            $file_json = Get-ChildItem -Name -Include e*.json -Recurse
-
-            $first_for_sample = Get-Content $file_json[0] | ConvertFrom-Json
-            $Network = $first_for_sample.psobject.properties.name #tableau de network
-            $Prop = $first_for_sample.($Network[0]).psobject.properties.name #tableau de proprieties
-            #Convert from json et comparer pour chaque network et chaque prop
-            for ($i = 0 ; $i -le ($file_json.Length - 1); $i++ ) {
-                $from_json_ps1 = Get-Content ($file_json[$i]) | ConvertFrom-Json
-                #$from_json_sh = Get-Content ($file_json_sh[$i + ($file_json.Length / 2) + 1]) | ConvertFrom-Json
-                for ($j = 0 ; $j -le (($from_json_ps1.psobject.properties.name).count - 1) ; $j++ ) {
-                    for ($k = 0 ; $k -le (($from_json_ps1.($Network[$j]).psobject.properties.name).count - 1) ; $k++) {
-                        if (-NOT($from_json_ps1.($Network[$j]).($Prop[$k]) -eq $true )) {
-                            #$from_json_sh.($Network[$j]).($Prop[$k]))) {
-                            $r++ 
-                        }
-                    }
+            $f_bpmn = New-Object System.Collections.Generic.List[string]  
+            $f = Get-Content ("$env:FBPMN_HOME/scripts/tests/config-files.json") | ConvertFrom-Json                                      
+            foreach ($g in $f.psobject.properties.name) {
+                if ($f."$g") { 
+                    $f_bpmn.Add([string]$g) 
                 }
+            }
+            foreach ($f in $f_bpmn) {
+                $fullpath = "$env:FBPMN_HOME/models/bpmn-origin/src/$f"
+                $model = (Get-ChildItem -Path $fullpath).BaseName
+                #fbpmn-check.ps1 $fullpath
+                if (-NOT(F2 $model "$env:FBPMN_HOME/models/bpmn-origin/expected/$model.json" "/tmp/$model.9e281/$model.json")) {
+                    $r++
+                    Write-Host $model
+                } 
             }
             $r | Should -Be 0
         }
-    }#>
+    }
     Context "Test-Path failed" {
         It "BPMN don't exists" {
             fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/idontexist.bpmn 2  
