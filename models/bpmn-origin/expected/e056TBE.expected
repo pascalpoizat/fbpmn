@@ -1,11 +1,11 @@
-Working in /tmp/e056TBE.XsqXn with 3 worker(s)
+Working in /tmp/e056TBE.87F9V with 1 worker(s)
 [92mtransformation done[0m
 <<"Processes=", 2, "Nodes=", 20, "Gateway=", 4, "SF=", 16, "MF=", 2>>
 ---------- Network01Bag ----------
 [X] Prop01Type
      states=4403 trans=15324 depth=46
 [ ] Prop02Safe
-     states= trans= depth=7
+     states= trans= depth=5
 [ ] Prop03Sound
      states=4403 trans=15324 depth=
 [X] Prop04MsgSound
@@ -14,7 +14,7 @@ Working in /tmp/e056TBE.XsqXn with 3 worker(s)
 [X] Prop01Type
      states=4755 trans=16292 depth=46
 [ ] Prop02Safe
-     states= trans= depth=8
+     states= trans= depth=5
 [ ] Prop03Sound
      states=4755 trans=16292 depth=
 [ ] Prop04MsgSound
@@ -23,7 +23,7 @@ Working in /tmp/e056TBE.XsqXn with 3 worker(s)
 [X] Prop01Type
      states=4827 trans=16355 depth=46
 [ ] Prop02Safe
-     states= trans= depth=7
+     states= trans= depth=5
 [ ] Prop03Sound
      states=4827 trans=16355 depth=
 [ ] Prop04MsgSound
@@ -32,7 +32,7 @@ Working in /tmp/e056TBE.XsqXn with 3 worker(s)
 [X] Prop01Type
      states=4755 trans=16292 depth=46
 [ ] Prop02Safe
-     states= trans= depth=7
+     states= trans= depth=5
 [ ] Prop03Sound
      states=4755 trans=16292 depth=
 [ ] Prop04MsgSound
@@ -41,7 +41,7 @@ Working in /tmp/e056TBE.XsqXn with 3 worker(s)
 [X] Prop01Type
      states=4755 trans=16292 depth=46
 [ ] Prop02Safe
-     states= trans= depth=8
+     states= trans= depth=5
 [ ] Prop03Sound
      states=4755 trans=16292 depth=
 [ ] Prop04MsgSound
@@ -50,7 +50,7 @@ Working in /tmp/e056TBE.XsqXn with 3 worker(s)
 [X] Prop01Type
      states=4755 trans=16292 depth=46
 [ ] Prop02Safe
-     states= trans= depth=7
+     states= trans= depth=5
 [ ] Prop03Sound
      states=4755 trans=16292 depth=
 [ ] Prop04MsgSound
@@ -59,7 +59,7 @@ Working in /tmp/e056TBE.XsqXn with 3 worker(s)
 [X] Prop01Type
      states=2801 trans=9179 depth=46
 [ ] Prop02Safe
-     states= trans= depth=7
+     states= trans= depth=5
 [ ] Prop03Sound
      states=2801 trans=9179 depth=
 [X] Prop04MsgSound

@@ -1,11 +1,11 @@
-Working in /tmp/e023MBE.sAO67 with 3 worker(s)
+Working in /tmp/e023MBE.Gi03b with 1 worker(s)
 [92mtransformation done[0m
 <<"Processes=", 2, "Nodes=", 21, "Gateway=", 4, "SF=", 17, "MF=", 2>>
 ---------- Network01Bag ----------
 [X] Prop01Type
      states=702 trans=1999 depth=25
 [ ] Prop02Safe
-     states= trans= depth=12
+     states= trans= depth=11
 [ ] Prop03Sound
      states=702 trans=1999 depth=
 [X] Prop04MsgSound
@@ -14,7 +14,7 @@ Working in /tmp/e023MBE.sAO67 with 3 worker(s)
 [X] Prop01Type
      states=702 trans=1999 depth=25
 [ ] Prop02Safe
-     states= trans= depth=12
+     states= trans= depth=11
 [ ] Prop03Sound
      states=702 trans=1999 depth=
 [X] Prop04MsgSound
@@ -23,7 +23,7 @@ Working in /tmp/e023MBE.sAO67 with 3 worker(s)
 [X] Prop01Type
      states=702 trans=1999 depth=25
 [ ] Prop02Safe
-     states= trans= depth=13
+     states= trans= depth=11
 [ ] Prop03Sound
      states=702 trans=1999 depth=
 [X] Prop04MsgSound
@@ -32,7 +32,7 @@ Working in /tmp/e023MBE.sAO67 with 3 worker(s)
 [X] Prop01Type
      states=702 trans=1999 depth=25
 [ ] Prop02Safe
-     states= trans= depth=12
+     states= trans= depth=11
 [ ] Prop03Sound
      states=702 trans=1999 depth=
 [X] Prop04MsgSound
@@ -41,7 +41,7 @@ Working in /tmp/e023MBE.sAO67 with 3 worker(s)
 [X] Prop01Type
      states=702 trans=1999 depth=25
 [ ] Prop02Safe
-     states= trans= depth=13
+     states= trans= depth=11
 [ ] Prop03Sound
      states=702 trans=1999 depth=
 [X] Prop04MsgSound
@@ -50,7 +50,7 @@ Working in /tmp/e023MBE.sAO67 with 3 worker(s)
 [X] Prop01Type
      states=702 trans=1999 depth=25
 [ ] Prop02Safe
-     states= trans= depth=13
+     states= trans= depth=11
 [ ] Prop03Sound
      states=702 trans=1999 depth=
 [X] Prop04MsgSound
@@ -59,7 +59,7 @@ Working in /tmp/e023MBE.sAO67 with 3 worker(s)
 [X] Prop01Type
      states=702 trans=1999 depth=25
 [ ] Prop02Safe
-     states= trans= depth=12
+     states= trans= depth=11
 [ ] Prop03Sound
      states=702 trans=1999 depth=
 [X] Prop04MsgSound
