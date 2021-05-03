@@ -63,13 +63,13 @@
         "value": false,
         "states": "1030",
         "trans": "2695",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "1030",
         "trans": "2695",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,

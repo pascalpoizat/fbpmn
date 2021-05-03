@@ -11,13 +11,13 @@
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -37,13 +37,13 @@
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -63,13 +63,13 @@
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -89,13 +89,13 @@
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -115,13 +115,13 @@
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -141,13 +141,13 @@
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -167,13 +167,13 @@
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "15",
         "trans": "23",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,

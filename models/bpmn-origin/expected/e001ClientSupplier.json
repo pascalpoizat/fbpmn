@@ -11,13 +11,13 @@
         "value": false,
         "states": "85",
         "trans": "161",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "85",
         "trans": "161",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -37,13 +37,13 @@
         "value": false,
         "states": "85",
         "trans": "161",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "85",
         "trans": "161",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -63,13 +63,13 @@
         "value": false,
         "states": "77",
         "trans": "147",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "77",
         "trans": "147",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -89,13 +89,13 @@
         "value": false,
         "states": "85",
         "trans": "161",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "85",
         "trans": "161",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -115,13 +115,13 @@
         "value": false,
         "states": "85",
         "trans": "161",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "85",
         "trans": "161",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -167,13 +167,13 @@
         "value": false,
         "states": "85",
         "trans": "161",
-        "depth": ""
+        "depth": null
       },
       "Prop03Sound": {
         "value": false,
         "states": "85",
         "trans": "161",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,

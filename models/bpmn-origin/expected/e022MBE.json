@@ -17,7 +17,7 @@
         "value": false,
         "states": "375",
         "trans": "848",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -43,7 +43,7 @@
         "value": false,
         "states": "375",
         "trans": "848",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -69,7 +69,7 @@
         "value": false,
         "states": "375",
         "trans": "848",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -95,7 +95,7 @@
         "value": false,
         "states": "375",
         "trans": "848",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -121,7 +121,7 @@
         "value": false,
         "states": "375",
         "trans": "848",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -145,9 +145,9 @@
       },
       "Prop03Sound": {
         "value": false,
-        "states": "",
-        "trans": "",
-        "depth": ""
+        "states": null,
+        "trans": null,
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
@@ -173,7 +173,7 @@
         "value": false,
         "states": "375",
         "trans": "848",
-        "depth": ""
+        "depth": null
       },
       "Prop01Type": {
         "value": true,
