@@ -26,7 +26,6 @@ import Fbpmn.BpmnGraph.SpaceModel
 import Fbpmn.Helper
 import NeatInterpolation (text)
 import Data.Containers.ListUtils (nubOrd)
-import Data.Set (singleton)
 
 -- | FWriter from BPMN Graph to TLA+.
 writer :: FWriter BpmnGraph
@@ -173,29 +172,59 @@ encodeReachabilityDefs = [text|
 -- |]
 
 encodeSConditions :: SpaceBpmnGraph -> Text
-encodeSConditions s =
+encodeSConditions g =
   unlines $
     [ encodeCSFVar
     , encodeCSFKind
     , encodeCSFCond
     , encodeCSFFormula
     ]
-      <*> [s]
+      <*> [g]
+
+encodeSActions :: SpaceBpmnGraph -> Text
+encodeSActions g =
+  unlines $
+    [ encodeAKind,
+      encodeAUpdateVar,
+      encodeAUpdateGMinus,
+      encodeAUpdateGPlus,
+      encodeAFormula
+    ]
+      <*> [g]
 
 encodeCSFVar :: SpaceBpmnGraph -> Text
-encodeCSFVar s = encodeMap show show "cVar" (keys . cVariables $ s) (cVariables s)
+encodeCSFVar g = encodeMap show show "cVar" (keys . cVariables $ g) (cVariables g)
 
 encodeCSFKind :: SpaceBpmnGraph -> Text
-encodeCSFKind s = encodeMap show fKindToTla "cKind" (keys . cKinds $ s) (cKinds s)
+encodeCSFKind g = encodeMap show fKindToTla "cKind" (keys . cKinds $ g) (cKinds g)
   where
     fKindToTla SFAll = "All"
     fKindToTla SFAny = "Some"
 
-encodeCSFCond :: SpaceBpmnGraph -> Text
-encodeCSFCond s = encodeMap show show "cCond" (keys . cFormulas $ s) (mapWithKey genF $ identifiedCFormulas s)
-
 encodeCSFFormula :: SpaceBpmnGraph -> Text
-encodeCSFFormula s = unlines $ encodeFormulaDefFromEdge s <$> (keys . cFormulas $ s)
+encodeCSFFormula g = unlines $ encodeEdgeFormulaDef g <$> (keys . cFormulas $ g)
+
+encodeAKind :: SpaceBpmnGraph -> Text
+encodeAKind g = encodeMap show fKindToTla "aKind" (keys . actions $ g) (actions g)
+  where
+    fKindToTla SAPass = "Pass"
+    fKindToTla SAMove {} = "Move"
+    fKindToTla SAUpdate {} = "Update"
+
+encodeAUpdateVar :: SpaceBpmnGraph -> Text
+encodeAUpdateVar g = "" -- undefined -- TODO:
+
+encodeAUpdateGMinus :: SpaceBpmnGraph -> Text
+encodeAUpdateGMinus g = "" -- undefined -- TODO:
+
+encodeAUpdateGPlus :: SpaceBpmnGraph -> Text
+encodeAUpdateGPlus g = "" -- undefined -- TODO:
+
+encodeAFormula :: SpaceBpmnGraph -> Text
+encodeAFormula g = unlines $ encodeActionFormulaDef g <$> (keys . actions $ g)
+
+encodeCSFCond :: SpaceBpmnGraph -> Text
+encodeCSFCond g = encodeMap show show "cCond" (keys . cFormulas $ g) (mapWithKey genF $ identifiedCFormulas g)
 
 genCode :: Text -> Text
 genCode e = "f_" <> e
@@ -203,11 +232,14 @@ genCode e = "f_" <> e
 genF :: Edge -> SpaceFormula -> Text
 genF e _ = genCode . toText $ e
 
-encodeFormulaDefFromEdge :: SpaceBpmnGraph -> Edge -> Text
-encodeFormulaDefFromEdge s e = [text|def_$es(v,s,p) == $def|]
+encodeEdgeFormulaDef :: SpaceBpmnGraph -> Edge -> Text
+encodeEdgeFormulaDef g e = [text|def_$es(v,s,p) == $def|]
   where
     es = genCode . toText $ e
-    def = maybe falseTla encodeFormula (cFormulas s !? e)
+    def = maybe falseTla encodeFormula (cFormulas g !? e)
+
+encodeActionFormulaDef :: SpaceBpmnGraph -> Node -> Text
+encodeActionFormulaDef g n = "" -- undefined -- TODO:
 
 encodeFormula :: SpaceFormula -> Text
 encodeFormula SFTrue = trueTla
@@ -231,9 +263,6 @@ encodeFormula (SFAnd f1 f2 ) = [text|($sf1 \intersect $sf2)|]
 encodeFormula SFReach = [text|reachFrom(v[varloc[p]])|]
 encodeFormula (SFReachFrom x) = [text|reachFrom(v[$xs])|]
   where xs = show x
-
-encodeSActions :: SpaceBpmnGraph -> Text
-encodeSActions s = "" -- undefined -- TODO:
 
 identifiedCFormulas :: SpaceBpmnGraph -> Map Id SpaceFormula
 identifiedCFormulas = cFormulas

@@ -137,7 +137,7 @@ Reachable ==
 @@ "z1" :> { "z1" }
 @@ "z2" :> { "z2" }
 
-reachFrom(b) = UNION {x \in b : Reachable[x]}
+reachFrom(b) == UNION {Reachable[x] : x \in b}
 
 
 cVar ==
@@ -155,6 +155,18 @@ cCond ==
 def_f_Flow_0a9bfn5(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["Z2"])
 
 def_f_Flow_0j10pgk(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["Z1"])
+
+
+
+aKind ==
+   "Activity_036473v" :> Pass
+@@ "Activity_0cl1ijx" :> Move
+@@ "Activity_1oht5l5" :> Move
+
+
+
+
+
 
 
 

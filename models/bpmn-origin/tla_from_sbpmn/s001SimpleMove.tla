@@ -107,7 +107,7 @@ Reachable ==
 @@ "b" :> { "b", "f4", "f5", "f6", "m" }
 @@ "m" :> { "f4", "f5", "f6", "m" }
 
-reachFrom(b) = UNION {x \in b : Reachable[x]}
+reachFrom(b) == UNION {Reachable[x] : x \in b}
 
 
 cVar ==
@@ -118,6 +118,14 @@ cKind ==
 
 cCond ==
   [ i \in {} |-> {}]
+
+
+
+aKind ==
+   "Activity_0z782bb" :> Move
+
+
+
 
 
 

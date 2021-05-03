@@ -248,7 +248,7 @@ Reachable ==
 @@ "b" :> { "b", "f4", "f5", "f6", "m" }
 @@ "m" :> { "f4", "f5", "f6", "m" }
 
-reachFrom(b) = UNION {x \in b : Reachable[x]}
+reachFrom(b) == UNION {Reachable[x] : x \in b}
 
 
 cVar ==
@@ -271,6 +271,26 @@ def_f_Flow_0q7wp3m(v,s,p) == (v["znc"] \intersect reachFrom(v[varloc[p]]))
 def_f_Flow_10neqt1(v,s,p) == s["toPlant"]
 
 def_f_Flow_1skh2ra(v,s,p) == ({ "base" } \intersect reachFrom(v[varloc[p]]))
+
+
+
+aKind ==
+   "Activity_00galsb" :> Move
+@@ "Activity_01kew4w" :> Pass
+@@ "Activity_04y084u" :> Pass
+@@ "Activity_0c215j4" :> Pass
+@@ "Activity_0c5l85e" :> Pass
+@@ "Activity_0qbls7q" :> Update
+@@ "Activity_1xs44yy" :> Move
+
+
+
+
+
+
+
+
+
 
 
 

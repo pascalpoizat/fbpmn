@@ -118,7 +118,7 @@ Reachable ==
 @@ "b" :> { "b", "f4", "f5", "f6", "m" }
 @@ "m" :> { "f4", "f5", "f6", "m" }
 
-reachFrom(b) = UNION {x \in b : Reachable[x]}
+reachFrom(b) == UNION {Reachable[x] : x \in b}
 
 
 cVar ==
@@ -131,6 +131,16 @@ cCond ==
    "Flow_18ptpdh" :> "f_Flow_18ptpdh"
 
 def_f_Flow_18ptpdh(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["toPlant"])
+
+
+
+aKind ==
+   "Activity_0z782bb" :> Move
+@@ "Activity_11g6ot8" :> Update
+
+
+
+
 
 
 
