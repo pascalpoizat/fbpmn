@@ -138,8 +138,14 @@ aKind ==
    "Activity_0z782bb" :> Move
 @@ "Activity_11g6ot8" :> Update
 
+aUpdateVar ==
+   "Activity_11g6ot8" :> "z"
 
+aUpdateVar ==
+   "Activity_11g6ot8" :> { "toPlant" }
 
+aUpdateVar ==
+   "Activity_11g6ot8" :> { "planted", "toSpray" }
 
 
 

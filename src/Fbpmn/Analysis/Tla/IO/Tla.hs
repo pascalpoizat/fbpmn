@@ -212,13 +212,25 @@ encodeAKind g = encodeMap show fKindToTla "aKind" (keys . actions $ g) (actions 
     fKindToTla SAUpdate {} = "Update"
 
 encodeAUpdateVar :: SpaceBpmnGraph -> Text
-encodeAUpdateVar g = "" -- undefined -- TODO:
+encodeAUpdateVar g = encodeMap show f "aUpdateVar" (keys . filterValue isUpdateSpaceAction . actions $ g) (actions g)
+  where
+    f SAPass = ""
+    f SAMove {} = ""
+    f (SAUpdate v _ _ ) = show v
 
 encodeAUpdateGMinus :: SpaceBpmnGraph -> Text
-encodeAUpdateGMinus g = "" -- undefined -- TODO:
+encodeAUpdateGMinus g = encodeMap show f "aUpdateVar" (keys . filterValue isUpdateSpaceAction . actions $ g) (actions g)
+  where
+    f SAPass = ""
+    f SAMove {} = ""
+    f (SAUpdate _ gm _ ) = setTla show gm
 
 encodeAUpdateGPlus :: SpaceBpmnGraph -> Text
-encodeAUpdateGPlus g = "" -- undefined -- TODO:
+encodeAUpdateGPlus g = encodeMap show f "aUpdateVar" (keys . filterValue isUpdateSpaceAction . actions $ g) (actions g)
+  where
+    f SAPass = ""
+    f SAMove {} = ""
+    f (SAUpdate _ _ gp ) = setTla show gp
 
 encodeAFormula :: SpaceBpmnGraph -> Text
 encodeAFormula g = unlines $ encodeActionFormulaDef g <$> (keys . actions $ g)

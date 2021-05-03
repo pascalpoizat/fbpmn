@@ -43,17 +43,23 @@ mapMapElement g m k = g k (m !? k)
 
 liftMaybe1 :: (Maybe a, b) -> Maybe (a, b)
 liftMaybe1 (Just a, b) = Just (a,b)
-liftMaybe1 (Nothing, _) = Nothing 
+liftMaybe1 (Nothing, _) = Nothing
 
 liftMaybe2 :: (a, Maybe b) -> Maybe (a, b)
 liftMaybe2 (a, Just b) = Just (a, b)
 liftMaybe2 (_, Nothing) = Nothing
 
 mapMaybes :: Ord k => Map k (Maybe b) -> Map k b
-mapMaybes m = M.fromList . catMaybes $ liftMaybe2 <$> M.toList m 
+mapMaybes m = M.fromList . catMaybes $ liftMaybe2 <$> M.toList m
 
 filter' :: (Ord a) => [a] -> Map a b -> (Maybe b -> Bool) -> [a]
 filter' xs f p = filter p' xs where p' x = p $ f !? x
+
+filterKey :: Ord a => (a -> Bool) -> Map a b -> Map a b
+filterKey p m = M.fromList $ filter (p . fst) $ M.toList m
+
+filterValue :: Ord a => (b -> Bool) -> Map a b -> Map a b
+filterValue p m = M.fromList $ filter (p . snd) $ M.toList m
 
 -- | Checks whether all elements of a list are different.
 allDifferent :: (Ord a) => [a] -> Bool

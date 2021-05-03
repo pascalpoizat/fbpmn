@@ -124,8 +124,14 @@ cCond ==
 aKind ==
    "Activity_0z782bb" :> Move
 
+aUpdateVar ==
+  [ i \in {} |-> {}]
 
+aUpdateVar ==
+  [ i \in {} |-> {}]
 
+aUpdateVar ==
+  [ i \in {} |-> {}]
 
 
 
