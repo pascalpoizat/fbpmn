@@ -11,7 +11,7 @@ $runtlc = {
 ################
 
 $parse_stat = {
-    param($a = "", $b = "")
+    param($a = "", $b = "", $c = @{})
     if ($a -match '(\d*) states generated') {
         $transitions = $matches[1] 
     }
@@ -22,6 +22,9 @@ $parse_stat = {
         $depth = $matches[1] 
     }
     Write-Host "     states=$states trans=$transitions depth=$depth"
+    $c.Add("states", $states)
+    $c.Add("trans", $transitions)
+    $c.Add("depth", $depth)
 }
 
 function New-Dir {
@@ -116,11 +119,15 @@ Remove-Item states -Recurse -Force
 # build the files Network.tla and model.cfg
 $file_network = Get-ChildItem -Path Configs -Name -Include Network*.tla 
 $file_cfg = Get-ChildItem -Path Configs -Name -Include Prop*.cfg 
+$modele = @{} #
+$comms = @{} #
 foreach ($network in $file_network) {
+    $props = @{}
     $networkname = (Get-ChildItem Configs/$network).Basename
     Copy-Item Configs/$network Network.tla
     Write-Host "---------- $networkname ----------"
     foreach ($cfg in $file_cfg) {
+        $result = @{} #
         $cfgname = (Get-ChildItem Configs/$cfg).Basename
         $log = "$model.$networkname.$cfgname.log"
         Copy-Item Configs/$cfg "$model.cfg"
@@ -135,16 +142,22 @@ foreach ($network in $file_network) {
         else {
             if (Select-String -Quiet "No error has been found" -Path $log) {
                 Write-Host "[X] $cfgname"
+                $result.Add("value", $true)
             }
             else {
                 Write-Host "[ ] $cfgname"
+                $result.Add("value", $false)
             }
             $stat1 = Select-String "^[0-9]* states generated.*0 states left on queue" -Path $log
             $stat2 = Select-String "The depth of the complete state graph" -Path $log
-            & $parse_stat "$stat1" "$stat2"
+            & $parse_stat "$stat1" "$stat2" $result 
         }
+        $props.Add("$cfgname", $result)
     }
+    $comms.Add("$networkname", $props) #
 }
+$modele.Add("$model", $comms)
+$modele | ConvertTo-Json -Depth 5 | Out-File "$model.json" #
 
 Write-Host "done."
 
