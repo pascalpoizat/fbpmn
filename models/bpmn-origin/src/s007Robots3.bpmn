@@ -410,9 +410,6 @@ to { planted, toWater }</bpmn:text>
       <bpmndi:BPMNShape id="Activity_1jcadcm_di" bpmnElement="Activity_1jcadcm" isExpanded="true">
         <dc:Bounds x="400" y="400" width="555" height="350" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0gsvwwp_di" bpmnElement="TextAnnotation_0gsvwwp" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
-        <dc:Bounds x="800" y="670" width="135" height="54" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0099ioz_di" bpmnElement="Flow_0099ioz">
         <di:waypoint x="742" y="620" />
         <di:waypoint x="705" y="620" />
@@ -490,6 +487,9 @@ to { planted, toWater }</bpmn:text>
       <bpmndi:BPMNShape id="TextAnnotation_1oaamw2_di" bpmnElement="TextAnnotation_1oaamw2" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
         <dc:Bounds x="650" y="430" width="115" height="40" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0gsvwwp_di" bpmnElement="TextAnnotation_0gsvwwp" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
+        <dc:Bounds x="800" y="670" width="135" height="54" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1k7stxl_di" bpmnElement="Event_1k7stxl">
         <dc:Bounds x="1392" y="482" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -533,10 +533,12 @@ to { planted, toWater }</bpmn:text>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1q3i58t_di" bpmnElement="Flow_1q3i58t">
-        <di:waypoint x="955" y="287" />
-        <di:waypoint x="955" y="482" />
+        <di:waypoint x="963" y="282" />
+        <di:waypoint x="980" y="310" />
+        <di:waypoint x="980" y="440" />
+        <di:waypoint x="962" y="484" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="991" y="362" width="68" height="14" />
+          <dc:Bounds x="986" y="363" width="68" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_05gqmpv_di" bpmnElement="Flow_05gqmpv">
