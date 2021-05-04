@@ -135,16 +135,16 @@ def_f_Flow_18ptpdh(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["toPlant"])
 
 
 aKind ==
-   "Activity_0z782bb" :> Move
-@@ "Activity_11g6ot8" :> Update
+   "Activity_0z782bb" :> ACT_MOVE
+@@ "Activity_11g6ot8" :> ACT_UPDATE
 
 aUpdateVar ==
    "Activity_11g6ot8" :> "here"
 
-aUpdateVar ==
+aUpdateGMinus ==
    "Activity_11g6ot8" :> { "toPlant" }
 
-aUpdateVar ==
+aUpdateGPlus ==
    "Activity_11g6ot8" :> { "planted", "toSpray" }
 
 

@@ -207,9 +207,9 @@ encodeCSFFormula g = unlines $ encodeEdgeFormulaDef g <$> (keys . cFormulas $ g)
 encodeAKind :: SpaceBpmnGraph -> Text
 encodeAKind g = encodeMap show fKindToTla "aKind" (keys . actions $ g) (actions g)
   where
-    fKindToTla SAPass = "Pass"
-    fKindToTla SAMove {} = "Move"
-    fKindToTla SAUpdate {} = "Update"
+    fKindToTla SAPass = "ACT_PASS"
+    fKindToTla SAMove {} = "ACT_MOVE"
+    fKindToTla SAUpdate {} = "ACT_UPDATE"
 
 encodeAUpdateVar :: SpaceBpmnGraph -> Text
 encodeAUpdateVar g = encodeMap show f "aUpdateVar" (keys . filterValue isUpdateSpaceAction . actions $ g) (actions g)
@@ -219,14 +219,14 @@ encodeAUpdateVar g = encodeMap show f "aUpdateVar" (keys . filterValue isUpdateS
     f (SAUpdate v _ _ ) = show v
 
 encodeAUpdateGMinus :: SpaceBpmnGraph -> Text
-encodeAUpdateGMinus g = encodeMap show f "aUpdateVar" (keys . filterValue isUpdateSpaceAction . actions $ g) (actions g)
+encodeAUpdateGMinus g = encodeMap show f "aUpdateGMinus" (keys . filterValue isUpdateSpaceAction . actions $ g) (actions g)
   where
     f SAPass = ""
     f SAMove {} = ""
     f (SAUpdate _ gm _ ) = setTla show gm
 
 encodeAUpdateGPlus :: SpaceBpmnGraph -> Text
-encodeAUpdateGPlus g = encodeMap show f "aUpdateVar" (keys . filterValue isUpdateSpaceAction . actions $ g) (actions g)
+encodeAUpdateGPlus g = encodeMap show f "aUpdateGPlus" (keys . filterValue isUpdateSpaceAction . actions $ g) (actions g)
   where
     f SAPass = ""
     f SAMove {} = ""

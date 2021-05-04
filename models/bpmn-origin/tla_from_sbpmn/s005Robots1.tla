@@ -159,17 +159,17 @@ def_f_Flow_0j10pgk(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["Z1"])
 
 
 aKind ==
-   "Activity_036473v" :> Pass
-@@ "Activity_0cl1ijx" :> Move
-@@ "Activity_1oht5l5" :> Move
+   "Activity_036473v" :> ACT_PASS
+@@ "Activity_0cl1ijx" :> ACT_MOVE
+@@ "Activity_1oht5l5" :> ACT_MOVE
 
 aUpdateVar ==
   [ i \in {} |-> {}]
 
-aUpdateVar ==
+aUpdateGMinus ==
   [ i \in {} |-> {}]
 
-aUpdateVar ==
+aUpdateGPlus ==
   [ i \in {} |-> {}]
 
 

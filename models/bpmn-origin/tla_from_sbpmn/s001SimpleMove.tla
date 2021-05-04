@@ -122,15 +122,15 @@ cCond ==
 
 
 aKind ==
-   "Activity_0z782bb" :> Move
+   "Activity_0z782bb" :> ACT_MOVE
 
 aUpdateVar ==
   [ i \in {} |-> {}]
 
-aUpdateVar ==
+aUpdateGMinus ==
   [ i \in {} |-> {}]
 
-aUpdateVar ==
+aUpdateGPlus ==
   [ i \in {} |-> {}]
 
 

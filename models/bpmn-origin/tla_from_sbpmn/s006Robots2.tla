@@ -275,21 +275,21 @@ def_f_Flow_1skh2ra(v,s,p) == ({ "base" } \intersect reachFrom(v[varloc[p]]))
 
 
 aKind ==
-   "Activity_00galsb" :> Move
-@@ "Activity_01kew4w" :> Pass
-@@ "Activity_04y084u" :> Pass
-@@ "Activity_0c215j4" :> Pass
-@@ "Activity_0c5l85e" :> Pass
-@@ "Activity_0qbls7q" :> Update
-@@ "Activity_1xs44yy" :> Move
+   "Activity_00galsb" :> ACT_MOVE
+@@ "Activity_01kew4w" :> ACT_PASS
+@@ "Activity_04y084u" :> ACT_PASS
+@@ "Activity_0c215j4" :> ACT_PASS
+@@ "Activity_0c5l85e" :> ACT_PASS
+@@ "Activity_0qbls7q" :> ACT_UPDATE
+@@ "Activity_1xs44yy" :> ACT_MOVE
 
 aUpdateVar ==
    "Activity_0qbls7q" :> "znc"
 
-aUpdateVar ==
+aUpdateGMinus ==
    "Activity_0qbls7q" :> { "toPlant" }
 
-aUpdateVar ==
+aUpdateGPlus ==
    "Activity_0qbls7q" :> { "planted", "toWater" }
 
 
