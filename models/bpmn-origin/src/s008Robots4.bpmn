@@ -106,6 +106,9 @@
       <bpmn:sequenceFlow id="Flow_0gh7btl" sourceRef="Event_1pwlc9i" targetRef="Gateway_0ok6126" />
       <bpmn:sequenceFlow id="Flow_00b7crz" sourceRef="Gateway_0ok6126" targetRef="Event_0gwjxex" />
       <bpmn:sequenceFlow id="Flow_0lbxlpn" sourceRef="Event_0gwjxex" targetRef="Event_1i5je9n" />
+      <bpmn:textAnnotation id="TextAnnotation_1wgxqyu">
+        <bpmn:text>znc : any toPlant</bpmn:text>
+      </bpmn:textAnnotation>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="Flow_01xnorx" sourceRef="Event_1ac2z2i" targetRef="Gateway_1ub2ltv" />
     <bpmn:sequenceFlow id="Flow_12fakd2" sourceRef="Gateway_1ub2ltv" targetRef="Activity_0xuomcr" />
@@ -113,10 +116,10 @@
     <bpmn:subProcess id="Activity_0m6r7aa" name="sprayer control">
       <bpmn:incoming>Flow_1rbt7hr</bpmn:incoming>
       <bpmn:outgoing>Flow_0q0qopg</bpmn:outgoing>
-      <bpmn:startEvent id="Event_1agw4ay" name="start&#10;planter control">
+      <bpmn:startEvent id="Event_1agw4ay" name="start&#10;sprayer control">
         <bpmn:outgoing>Flow_0g038fl</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:intermediateThrowEvent id="Event_14i96pr" name="activate planter">
+      <bpmn:intermediateThrowEvent id="Event_14i96pr" name="activate sprayer">
         <bpmn:incoming>Flow_0g038fl</bpmn:incoming>
         <bpmn:outgoing>Flow_0p1txzr</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_0ap79ui" />
@@ -127,7 +130,7 @@
         <bpmn:outgoing>Flow_143f8dn</bpmn:outgoing>
         <bpmn:outgoing>Flow_104cjar</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:sendTask id="Activity_0byesng" name="direct planter">
+      <bpmn:sendTask id="Activity_0byesng" name="direct sprayer">
         <bpmn:incoming>Flow_143f8dn</bpmn:incoming>
         <bpmn:outgoing>Flow_1sf54qd</bpmn:outgoing>
       </bpmn:sendTask>
@@ -136,12 +139,12 @@
         <bpmn:outgoing>Flow_1qn4k7o</bpmn:outgoing>
         <bpmn:outgoing>Flow_0mxan7e</bpmn:outgoing>
       </bpmn:eventBasedGateway>
-      <bpmn:intermediateCatchEvent id="Event_1os5ssu" name="receive&#10;planter&#10;acknowledgement">
+      <bpmn:intermediateCatchEvent id="Event_1os5ssu" name="receive&#10;sprayer&#10;acknowledgement">
         <bpmn:incoming>Flow_0mxan7e</bpmn:incoming>
         <bpmn:outgoing>Flow_1pb2ee9</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_1c22txm" />
       </bpmn:intermediateCatchEvent>
-      <bpmn:intermediateCatchEvent id="Event_164f6ag" name="receive&#10;planter&#10;problem">
+      <bpmn:intermediateCatchEvent id="Event_164f6ag" name="receive&#10;sprayer&#10;problem">
         <bpmn:incoming>Flow_1qn4k7o</bpmn:incoming>
         <bpmn:outgoing>Flow_0d4ra5x</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_140f09t" />
@@ -151,23 +154,23 @@
         <bpmn:incoming>Flow_0d4ra5x</bpmn:incoming>
         <bpmn:outgoing>Flow_14e42wb</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:intermediateThrowEvent id="Event_0vgg0ba" name="deactivate planter">
+      <bpmn:intermediateThrowEvent id="Event_0vgg0ba" name="deactivate sprayer">
         <bpmn:incoming>Flow_14e42wb</bpmn:incoming>
         <bpmn:outgoing>Flow_1p21xfx</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_0dh8imv" />
       </bpmn:intermediateThrowEvent>
-      <bpmn:endEvent id="Event_0ze20ps" name="end&#10;planter control">
+      <bpmn:endEvent id="Event_0ze20ps" name="end&#10;sprayer control">
         <bpmn:incoming>Flow_1p21xfx</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_0g038fl" sourceRef="Event_1agw4ay" targetRef="Event_14i96pr" />
       <bpmn:sequenceFlow id="Flow_0p1txzr" sourceRef="Event_14i96pr" targetRef="Gateway_1m7b2rp" />
       <bpmn:sequenceFlow id="Flow_1pb2ee9" sourceRef="Event_1os5ssu" targetRef="Gateway_1m7b2rp" />
-      <bpmn:sequenceFlow id="Flow_143f8dn" name="there is some&#10;zone znc&#10;without crops" sourceRef="Gateway_1m7b2rp" targetRef="Activity_0byesng">
+      <bpmn:sequenceFlow id="Flow_143f8dn" name="there is some&#10;zone znw&#10;without water" sourceRef="Gateway_1m7b2rp" targetRef="Activity_0byesng">
         <bpmn:extensionElements>
           <camunda:properties>
-            <camunda:property name="variable" value="znc" />
+            <camunda:property name="variable" value="znw" />
             <camunda:property name="type" value="any" />
-            <camunda:property name="formula" value="toPlant" />
+            <camunda:property name="formula" value="toWater" />
           </camunda:properties>
         </bpmn:extensionElements>
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">zmc : any toPlant</bpmn:conditionExpression>
@@ -179,6 +182,9 @@
       <bpmn:sequenceFlow id="Flow_0d4ra5x" sourceRef="Event_164f6ag" targetRef="Gateway_0ehzoat" />
       <bpmn:sequenceFlow id="Flow_14e42wb" sourceRef="Gateway_0ehzoat" targetRef="Event_0vgg0ba" />
       <bpmn:sequenceFlow id="Flow_1p21xfx" sourceRef="Event_0vgg0ba" targetRef="Event_0ze20ps" />
+      <bpmn:textAnnotation id="TextAnnotation_1knwrm0">
+        <bpmn:text>znw : any toWater</bpmn:text>
+      </bpmn:textAnnotation>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="Flow_10ytow4" sourceRef="Gateway_0ki8tki" targetRef="Event_1bkshv0" />
     <bpmn:sequenceFlow id="Flow_0p2qd4k" sourceRef="Activity_0xuomcr" targetRef="Gateway_0ki8tki" />
@@ -556,6 +562,9 @@ to { watered }</bpmn:text>
       <bpmndi:BPMNShape id="Activity_0xuomcr_di" bpmnElement="Activity_0xuomcr" isExpanded="true">
         <dc:Bounds x="220" y="980" width="1280" height="310" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1wgxqyu_di" bpmnElement="TextAnnotation_1wgxqyu" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
+        <dc:Bounds x="430" y="1040" width="115" height="30" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1maux1g_di" bpmnElement="Flow_1maux1g">
         <di:waypoint x="278" y="1120" />
         <di:waypoint x="312" y="1120" />
@@ -663,6 +672,9 @@ to { watered }</bpmn:text>
       <bpmndi:BPMNShape id="Activity_0m6r7aa_di" bpmnElement="Activity_0m6r7aa" isExpanded="true">
         <dc:Bounds x="220" y="570" width="1280" height="310" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1knwrm0_di" bpmnElement="TextAnnotation_1knwrm0" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
+        <dc:Bounds x="430" y="630" width="115" height="30" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0g038fl_di" bpmnElement="Flow_0g038fl">
         <di:waypoint x="278" y="710" />
         <di:waypoint x="312" y="710" />
@@ -686,8 +698,8 @@ to { watered }</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_104cjar_di" bpmnElement="Flow_104cjar" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
         <di:waypoint x="410" y="735" />
-        <di:waypoint x="410" y="820" />
-        <di:waypoint x="920" y="820" />
+        <di:waypoint x="410" y="840" />
+        <di:waypoint x="920" y="840" />
         <di:waypoint x="920" y="785" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1sf54qd_di" bpmnElement="Flow_1sf54qd">
@@ -719,13 +731,13 @@ to { watered }</bpmn:text>
       <bpmndi:BPMNShape id="Event_1agw4ay_di" bpmnElement="Event_1agw4ay">
         <dc:Bounds x="242" y="692" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="226" y="735" width="70" height="27" />
+          <dc:Bounds x="225" y="656" width="73" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_14i96pr_di" bpmnElement="Event_14i96pr" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="312" y="692" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="292" y="738" width="75" height="14" />
+          <dc:Bounds x="291" y="738" width="78" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1m7b2rp_di" bpmnElement="Gateway_1m7b2rp" isMarkerVisible="true" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
@@ -755,13 +767,13 @@ to { watered }</bpmn:text>
       <bpmndi:BPMNShape id="Event_0vgg0ba_di" bpmnElement="Event_0vgg0ba">
         <dc:Bounds x="982" y="742" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="956" y="723" width="87" height="14" />
+          <dc:Bounds x="974" y="776" width="51" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0ze20ps_di" bpmnElement="Event_0ze20ps">
         <dc:Bounds x="1442" y="742" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1426" y="785" width="70" height="27" />
+          <dc:Bounds x="1425" y="785" width="73" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Participant_1q6fdqd_di" bpmnElement="Planter" isHorizontal="true">
