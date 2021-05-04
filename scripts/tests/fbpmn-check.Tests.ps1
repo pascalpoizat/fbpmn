@@ -23,13 +23,13 @@ BeforeAll {
         for ($i = 0 ; $i -le (($json_expected.$model.psobject.properties.name).count - 1) ; $i++ ) {
             for ($j = 0 ; $j -le (($json_expected.$model.($Network[$i]).psobject.properties.name).count - 1) ; $j++) {
                 for ($k = 0 ; $k -le (($json_expected.$model.($Network[$i]).($Prop[$j]).psobject.properties.name).count - 1) ; $k++) {
-                    if ($json_observed.$model.($Network[$i]).($Prop[$j].($Result[$k])) -eq $json_expected.$model.($Network[$i]).($Prop[$j].($Result[$k]))) {
-                        return $true
+                    if (-NOT($json_observed.$model.($Network[$i]).($Prop[$j]).($Result[$k]) -eq $json_expected.$model.($Network[$i]).($Prop[$j]).($Result[$k]))) {
+                        return $false
                     }
                 }
             }
         }
-        return $false
+        return $true    
     }
 }
 
@@ -135,10 +135,9 @@ Describe 'fbpmn-check' {
             foreach ($f in $f_bpmn) {
                 $fullpath = "$env:FBPMN_HOME/models/bpmn-origin/src/$f"
                 $model = (Get-ChildItem -Path $fullpath).BaseName
-                #fbpmn-check.ps1 $fullpath
-                if (-NOT(F2 $model "$env:FBPMN_HOME/models/bpmn-origin/expected/$model.json" "/tmp/$model.9e281/$model.json")) {
-                    $r++
-                    Write-Host $model
+                fbpmn-check.ps1 $fullpath *> WHERE 
+                if (-NOT(F2 $model "$env:FBPMN_HOME/models/bpmn-origin/expected/$model.json" "$model.json")) {
+                    $r++                    
                 } 
             }
             $r | Should -Be 0
