@@ -420,7 +420,7 @@ cVar ==
    "Flow_0jot9v9" :> "_"
 @@ "Flow_0q7wp3m" :> "_"
 @@ "Flow_10neqt1" :> "znc"
-@@ "Flow_143f8dn" :> "znc"
+@@ "Flow_143f8dn" :> "znw"
 @@ "Flow_15sulbd" :> "_"
 @@ "Flow_1skh2ra" :> "_"
 
@@ -446,7 +446,7 @@ def_f_Flow_0q7wp3m(v,s,p) == (v["znc"] \intersect reachFrom(v[varloc[p]]))
 
 def_f_Flow_10neqt1(v,s,p) == s["toPlant"]
 
-def_f_Flow_143f8dn(v,s,p) == s["toPlant"]
+def_f_Flow_143f8dn(v,s,p) == s["toWater"]
 
 def_f_Flow_15sulbd(v,s,p) == (v["znw"] \intersect reachFrom(v[varloc[p]]))
 
@@ -479,6 +479,12 @@ aUpdateGMinus ==
 aUpdateGPlus ==
    "Activity_01kew4w" :> { "planted", "toWater" }
 @@ "Activity_196ygfc" :> { "watered" }
+
+aCond ==
+   "Activity_00galsb" :> "f_Activity_00galsb"
+@@ "Activity_03ue3iv" :> "f_Activity_03ue3iv"
+@@ "Activity_0plaha5" :> "f_Activity_0plaha5"
+@@ "Activity_1xs44yy" :> "f_Activity_1xs44yy"
 
 
 

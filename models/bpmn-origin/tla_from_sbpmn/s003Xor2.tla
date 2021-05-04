@@ -147,6 +147,9 @@ aUpdateGMinus ==
 aUpdateGPlus ==
    "Activity_11g6ot8" :> { "planted", "toSpray" }
 
+aCond ==
+   "Activity_0z782bb" :> "f_Activity_0z782bb"
+
 
 
 

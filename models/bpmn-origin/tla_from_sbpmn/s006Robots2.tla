@@ -292,6 +292,10 @@ aUpdateGMinus ==
 aUpdateGPlus ==
    "Activity_0qbls7q" :> { "planted", "toWater" }
 
+aCond ==
+   "Activity_00galsb" :> "f_Activity_00galsb"
+@@ "Activity_1xs44yy" :> "f_Activity_1xs44yy"
+
 
 
 

@@ -172,6 +172,10 @@ aUpdateGMinus ==
 aUpdateGPlus ==
   [ i \in {} |-> {}]
 
+aCond ==
+   "Activity_0cl1ijx" :> "f_Activity_0cl1ijx"
+@@ "Activity_1oht5l5" :> "f_Activity_1oht5l5"
+
 
 
 

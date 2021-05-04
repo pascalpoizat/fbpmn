@@ -174,10 +174,10 @@ encodeReachabilityDefs = [text|
 encodeSConditions :: SpaceBpmnGraph -> Text
 encodeSConditions g =
   unlines $
-    [ encodeCSFVar
-    , encodeCSFKind
-    , encodeCSFCond
-    , encodeCSFFormula
+    [ encodeCSFVar,
+      encodeCSFKind,
+      encodeCSFCond,
+      encodeCSFFormula
     ]
       <*> [g]
 
@@ -188,6 +188,7 @@ encodeSActions g =
       encodeAUpdateVar,
       encodeAUpdateGMinus,
       encodeAUpdateGPlus,
+      encodeACond,
       encodeAFormula
     ]
       <*> [g]
@@ -235,8 +236,16 @@ encodeAUpdateGPlus g = encodeMap show f "aUpdateGPlus" (keys . filterValue isUpd
 encodeAFormula :: SpaceBpmnGraph -> Text
 encodeAFormula g = unlines $ encodeActionFormulaDef g <$> (keys . actions $ g)
 
+encodeCond :: Text -> (SpaceBpmnGraph -> [Id]) -> (SpaceBpmnGraph -> Map Id SpaceFormula) -> SpaceBpmnGraph -> Text
+encodeCond t k f g = encodeMap show show t (k g) (mapWithKey genF $ f g)
+
 encodeCSFCond :: SpaceBpmnGraph -> Text
-encodeCSFCond g = encodeMap show show "cCond" (keys . cFormulas $ g) (mapWithKey genF $ identifiedCFormulas g)
+-- encodeCSFCond g = encodeMap show show "cCond" (keys . cFormulas $ g) (mapWithKey genF $ identifiedCFormulas g)
+encodeCSFCond = encodeCond "cCond" (keys . cFormulas) identifiedCFormulas
+
+encodeACond :: SpaceBpmnGraph -> Text
+-- encodeACond g = encodeMap show show "aCond" (keys . filterValue isMoveSpaceAction . actions $ g) (mapWithKey genF $ identifiedAFormulas g)
+encodeACond = encodeCond "aCond" (keys . filterValue isMoveSpaceAction . actions) identifiedAFormulas
 
 genCode :: Text -> Text
 genCode e = "f_" <> e
