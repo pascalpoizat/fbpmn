@@ -486,17 +486,13 @@ aCond ==
 @@ "Activity_0plaha5" :> "f_Activity_0plaha5"
 @@ "Activity_1xs44yy" :> "f_Activity_1xs44yy"
 
+def_f_Activity_00galsb(v,s,p) == { "base" }
 
+def_f_Activity_03ue3iv(v,s,p) == v["znw"]
 
+def_f_Activity_0plaha5(v,s,p) == { "base" }
 
-
-
-
-
-
-
-
-
+def_f_Activity_1xs44yy(v,s,p) == v["znc"]
 
 
 

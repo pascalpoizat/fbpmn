@@ -296,12 +296,9 @@ aCond ==
    "Activity_00galsb" :> "f_Activity_00galsb"
 @@ "Activity_1xs44yy" :> "f_Activity_1xs44yy"
 
+def_f_Activity_00galsb(v,s,p) == { "base" }
 
-
-
-
-
-
+def_f_Activity_1xs44yy(v,s,p) == v["znc"]
 
 
 

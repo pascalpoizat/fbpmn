@@ -234,7 +234,7 @@ encodeAUpdateGPlus g = encodeMap show f "aUpdateGPlus" (keys . filterValue isUpd
     f (SAUpdate _ _ gp ) = setTla show gp
 
 encodeAFormula :: SpaceBpmnGraph -> Text
-encodeAFormula g = unlines $ encodeActionFormulaDef g <$> (keys . actions $ g)
+encodeAFormula g = unlines $ encodeActionFormulaDef g <$> (keys . filterValue isMoveSpaceAction . actions $ g)
 
 encodeCond :: Text -> (SpaceBpmnGraph -> [Id]) -> (SpaceBpmnGraph -> Map Id SpaceFormula) -> SpaceBpmnGraph -> Text
 encodeCond t k f g = encodeMap show show t (k g) (mapWithKey genF $ f g)
@@ -260,7 +260,10 @@ encodeEdgeFormulaDef g e = [text|def_$es(v,s,p) == $def|]
     def = maybe falseTla encodeFormula (cFormulas g !? e)
 
 encodeActionFormulaDef :: SpaceBpmnGraph -> Node -> Text
-encodeActionFormulaDef g n = "" -- undefined -- TODO:
+encodeActionFormulaDef g n = [text|def_$ns(v,s,p) == $def|]
+  where
+    ns = genCode . toText $ n
+    def = maybe falseTla encodeFormula (saSpaceFormula =<< actions g !? n)
 
 encodeFormula :: SpaceFormula -> Text
 encodeFormula SFTrue = trueTla

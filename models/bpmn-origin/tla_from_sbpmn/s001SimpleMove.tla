@@ -136,6 +136,7 @@ aUpdateGPlus ==
 aCond ==
    "Activity_0z782bb" :> "f_Activity_0z782bb"
 
+def_f_Activity_0z782bb(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["toPlant"])
 
 
 

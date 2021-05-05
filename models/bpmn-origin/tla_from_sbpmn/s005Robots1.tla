@@ -176,8 +176,9 @@ aCond ==
    "Activity_0cl1ijx" :> "f_Activity_0cl1ijx"
 @@ "Activity_1oht5l5" :> "f_Activity_1oht5l5"
 
+def_f_Activity_0cl1ijx(v,s,p) == s["Z1"]
 
-
+def_f_Activity_1oht5l5(v,s,p) == s["Z2"]
 
 
 
