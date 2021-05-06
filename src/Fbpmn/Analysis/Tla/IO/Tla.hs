@@ -177,7 +177,8 @@ encodeSConditions g =
     [ encodeCSFVar,
       encodeCSFKind,
       encodeCSFCond,
-      encodeCSFFormula
+      encodeCSFFormula,
+      encodeOrdering
     ]
       <*> [g]
 
@@ -246,6 +247,12 @@ encodeCSFCond = encodeCond "cCond" (keys . cFormulas) identifiedCFormulas
 encodeACond :: SpaceBpmnGraph -> Text
 -- encodeACond g = encodeMap show show "aCond" (keys . filterValue isMoveSpaceAction . actions $ g) (mapWithKey genF $ identifiedAFormulas g)
 encodeACond = encodeCond "aCond" (keys . filterValue isMoveSpaceAction . actions) identifiedAFormulas
+
+encodeOrdering :: SpaceBpmnGraph -> Text
+encodeOrdering _ = [text|
+  orderingSet == { }
+  order(a,b) == <<a,b>> \in orderingSet
+|]
 
 genCode :: Text -> Text
 genCode e = "f_" <> e

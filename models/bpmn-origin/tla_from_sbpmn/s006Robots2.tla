@@ -273,6 +273,9 @@ def_f_Flow_10neqt1(v,s,p) == s["toPlant"]
 def_f_Flow_1skh2ra(v,s,p) == ({ "base" } \intersect reachFrom(v[varloc[p]]))
 
 
+orderingSet == { }
+order(a,b) == <<a,b>> \in orderingSet
+
 
 aKind ==
    "Activity_00galsb" :> ACT_MOVE

@@ -133,6 +133,9 @@ cCond ==
 def_f_Flow_18ptpdh(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["toPlant"])
 
 
+orderingSet == { }
+order(a,b) == <<a,b>> \in orderingSet
+
 
 aKind ==
    "Activity_0z782bb" :> ACT_MOVE

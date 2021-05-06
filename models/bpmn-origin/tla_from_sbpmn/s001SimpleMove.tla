@@ -120,6 +120,9 @@ cCond ==
   [ i \in {} |-> {}]
 
 
+orderingSet == { }
+order(a,b) == <<a,b>> \in orderingSet
+
 
 aKind ==
    "Activity_0z782bb" :> ACT_MOVE

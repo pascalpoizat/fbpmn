@@ -453,6 +453,9 @@ def_f_Flow_15sulbd(v,s,p) == (v["znw"] \intersect reachFrom(v[varloc[p]]))
 def_f_Flow_1skh2ra(v,s,p) == ({ "base" } \intersect reachFrom(v[varloc[p]]))
 
 
+orderingSet == { }
+order(a,b) == <<a,b>> \in orderingSet
+
 
 aKind ==
    "Activity_00galsb" :> ACT_MOVE

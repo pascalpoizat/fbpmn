@@ -157,6 +157,9 @@ def_f_Flow_0a9bfn5(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["Z2"])
 def_f_Flow_0j10pgk(v,s,p) == (reachFrom(v[varloc[p]]) \intersect s["Z1"])
 
 
+orderingSet == { }
+order(a,b) == <<a,b>> \in orderingSet
+
 
 aKind ==
    "Activity_036473v" :> ACT_PASS
