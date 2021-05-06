@@ -386,7 +386,7 @@ encodeBpmnGraphFooterToTla _ =
   ConstraintEdge == TRUE \* none
   Constraint == TRUE     \* none
   INSTANCE PWSConstraints
-  
+  INSTANCE UserProperties
   INSTANCE PWSSemantics
 
   ================================================================

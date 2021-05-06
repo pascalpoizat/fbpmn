@@ -79,30 +79,5 @@ evalUpdate(n,v,s) == /\ UnchangedSigma(v)
 evalAction(n,v,s) ==  IF aKind[n] = ACT_MOVE THEN evalMove(n,v,s)
                       ELSE IF aKind[n] = ACT_UPDATE THEN evalUpdate(n,v,s)
                       ELSE UnchangedSpace(v,s)
-                         
-             (* space supprime \* FIXME: remove
-
-incomingSpace(n) == { e \in SpaceEdge : SpaceTarget[e] = n }
-outgoingSpace(n) == { e \in SpaceEdge : SpaceSource[e] = n }
-
-succSpace(n) == { SpaceTarget[e] : e \in outgoingSpace(n) } 
-
-RECURSIVE succsNew(_, _, _)
-(*  
-n : noeud de type base location 
-A : ensemble de noeuds qu'on cherche leur successeurs
-B : resultat : ensemble de tous les successeur  *)
-succsNew (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
-                              ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
-                                   IN succsNew(n, UNION{A \union {s}}, UNION{B \union UNION{succSpace(s)}}) 
-
-succsSpaceV2 == [b \in BaseLocation |-> succsNew (b, {b}, succs(b))    ]
-
-(* ZP == {ZTP, ZS, F1, F2 } , ZTP = {ZtS, F3, F2}, ZtS = {F1} \union {{succs (i)} /\ succs (i) \notin A : i \in A} *) 
-RECURSIVE contenuloc(_, _, _, _)
-contenuloc(s,l,G, B) == { IF G  = {} THEN UNION{B}
-                        ELSE LET x == CHOOSE x \in UNION{G\BaseLocation} : TRUE
-                                   IN contenuloc(s,l, UNION{UNION{G\{x}} \union UNION {s[x]\BaseLocation}}, UNION{B \union UNION {s[x] \intersect BaseLocation}}) }
-LOCS == contenuloc(startsub,"ZTP",{"ZTP"}, {})   *)
 
 ================================================================

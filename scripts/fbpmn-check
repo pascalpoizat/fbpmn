@@ -76,6 +76,7 @@ fi
 
 # Copy verification files
 cp $FBPMN_HOME/theories/tla/PWS*.tla $FBPMN_HOME/theories/tla/Network*.tla .
+cp $FBPMN_HOME/theories/tla/UserProperties.tla .
 cp -rf $FBPMN_HOME/theories/tla/Configs .
 
 # First, use StatsBPMN to print some information on the size of the BPMN model.
