@@ -21,7 +21,7 @@ TypeInvariant ==
   /\ edgemarks \in [ Edge -> Nat ]
   /\ nodemarks \in [ Node -> Nat ]
   /\ Network!TypeInvariant
-  /\ sigma \in [ Var -> {SUBSET BaseLocation} ]
+  /\ sigma \in [ Var -> SUBSET BaseLocation ]
   /\ subs \in [ GroupLocation -> SUBSET Location]
 
 (* ---- conditions ---- *)
