@@ -4,20 +4,25 @@ EXTENDS Naturals, PWSTypes, PWSDefs, FiniteSets
 CONSTANT Constraint
 
 VARIABLES
-  edgemarks,
-  nodemarks,
-  net
+  edgemarks, (* me *)
+  nodemarks, (* mn *)
+  net,       (* net *)
+  sigma,     (* sigma *) 
+  subs       (* subs *)
 
-var == <<nodemarks, edgemarks, net>>
+var == <<nodemarks, edgemarks, net, subs, sigma>>
 
 LOCAL Network == INSTANCE Network
 
 NoReEnter == TRUE
+SpaceBPMN == TRUE
 
 TypeInvariant ==
   /\ edgemarks \in [ Edge -> Nat ]
   /\ nodemarks \in [ Node -> Nat ]
   /\ Network!TypeInvariant
+  /\ sigma \in [ Var -> {SUBSET BaseLocation} ]
+  /\ subs \in [ GroupLocation -> SUBSET Location]
 
 (* ---- conditions ---- *)
 
@@ -44,6 +49,7 @@ LOCAL noneortimerstart_complete(n) ==
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
   
 nonestart_complete(n) ==
   /\ CatN[n] = NoneStartEvent
@@ -71,6 +77,7 @@ messagestart_complete(n) ==
      /\ n \in ContainRel[p]
      /\ nodemarks[p] = 0  \* No multi-instance
      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
+  /\ UnchangedSpace(sigma,subs)
 
 (* ---- none end event, terminate end event ---- *)
 
@@ -81,6 +88,7 @@ noneend_start(n) ==
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
 
 terminateend_start(n) == \* Terminate End Event clears all token in the process/subprocess (except for the n node).
   /\ CatN[n] = TerminateEndEvent
@@ -96,6 +104,7 @@ terminateend_start(n) == \* Terminate End Event clears all token in the process/
                              ELSE IF nn \in includedNodes THEN 0
                              ELSE nodemarks[nn] ]
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
 
 (* ---- message end event ---- *)
 
@@ -106,6 +115,7 @@ messageend_start(n) ==
      /\ Network!send(ProcessOf(n), ProcessOf(target[e2]), msgtype[e2])
      /\ edgemarks' = [ edgemarks EXCEPT ![e1] = @ - 1, ![e2] = @ + 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
+  /\ UnchangedSpace(sigma,subs)
 
 (* ---- TMIE / CMIE ---- *)
 
@@ -120,6 +130,7 @@ tmie_start(n) ==
                            ELSE IF ee = eout THEN edgemarks[ee] + 1
                            ELSE edgemarks[ee] ]
       /\ UNCHANGED nodemarks
+  /\ UnchangedSpace(sigma,subs)
 
 cmie_start(n) ==
   /\ CatN[n] = CatchMessageIntermediateEvent
@@ -132,6 +143,7 @@ cmie_start(n) ==
                         ELSE IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                         ELSE edgemarks[e] ]
      /\ UNCHANGED nodemarks
+  /\ UnchangedSpace(sigma,subs)
 
 (* ---- timer intermediate event ---- *)
 
@@ -144,6 +156,7 @@ tie_start(n) ==
                       ELSE edgemarks[e] ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
 
 (* ---- message boundary event ---- *)
 
@@ -202,6 +215,7 @@ mbe_start(n) ==
   /\ \/ mbe_start_subprocess_interrupting(n)
      \/ mbe_start_subprocess_noninterrupting(n)
      \/ mbe_start_other(n)
+  /\ UnchangedSpace(sigma,subs)
 
 (* ---- timer boundary event ---- *)
 
@@ -251,6 +265,7 @@ tbe_start(n) ==
      \/ tbe_start_subprocess_noninterrupting(n)
      \/ tbe_start_other(n)
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
 
 ----------------------------------------------------------------
 
@@ -262,15 +277,43 @@ LOCAL xor_complete_out(n,eout) ==
        /\ edgemarks' = [ edgemarks EXCEPT ![ein] = @ - 1, ![eout] = @ + 1 ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
+  /\ UnchangedSubs(subs)
 
-xor_complete(n) ==
+xor_complete_nospace(n) ==
   /\ CatN[n] = ExclusiveOr
   /\ \E eout \in outtype(SeqFlowType, n) : \* eout may be Conditional or Default
-         xor_complete_out(n, eout)
+         /\ xor_complete_out(n, eout)
+  /\  UnchangedSigma(sigma)  
+       
+xor_complete_space(n) ==
+  /\ CatN[n] = ExclusiveOr
+  /\ \/ \E cout \in outtype({ ConditionalSeqFlow }, n) : \* cout is Conditional 
+           /\ evalF(sigma, subs, ProcessOf(n), cCond[cout])  # {}
+           /\ \A nout \in outtype({ ConditionalSeqFlow }, n)\{cout} :
+                \/ order(nout,cout) = TRUE  \* nout < cout
+                    /\ evalF(sigma, subs, ProcessOf(n),cCond[nout])  = {} 
+                \/  order(nout,cout) = FALSE  
+           /\  xor_complete_out(n, cout)
+           /\ sigma' = [ v \in Var |->
+                      IF  (v = cVar[cout] /\ cVar[cout] # "_") THEN
+                        IF (cKind[cout] = All) THEN  evalF(sigma, subs, ProcessOf(n), cCond[cout])
+                        ELSE {CHOOSE valeur \in evalF(sigma, subs, ProcessOf(n), cCond[cout]) : TRUE}
+                      ELSE sigma[v] ]
+     \/ /\ \A out \in outtype({ ConditionalSeqFlow }, n) :  \* all form of conditional edge are emplty 
+             evalF(sigma, subs, ProcessOf(n), cCond[out])  = {}
+        /\ \/ \E nout  \in outtype({ NormalSeqFlow }, n) :
+                    xor_complete_out(n, nout)        
+           \/ \E dout  \in outtype({ DefaultSeqFlow }, n) :
+                    xor_complete_out(n, dout)
+        /\  UnchangedSigma(sigma)  
 
+xor_complete(n) ==
+    IF SpaceBPMN THEN xor_complete_space(n)
+                 ELSE xor_complete_nospace(n)
+            
 LOCAL xor_fairness(n) ==
    Cardinality(outtype(SeqFlowType, n)) > 1 =>
-   \A eout \in outtype(SeqFlowType, n) : SF_var(xor_complete_out(n,eout))
+   \A eout \in outtype(SeqFlowType, n) : SF_var(UNCHANGED sigma /\ xor_complete_out(n,eout))
 
 (* ---- Parallel / AND ---- *)
 
@@ -283,6 +326,7 @@ parallel_complete(n) ==
                       ELSE edgemarks[e] ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
 
 (* ---- Inclusive Or / OR ---- *)
 
@@ -301,15 +345,59 @@ LOCAL or_complete_outs(n, eouts) ==
                                    ELSE edgemarks[e] ]
         /\ UNCHANGED nodemarks
         /\ Network!unchanged
+        /\ UnchangedSubs(subs)
 
-or_complete(n) ==
+or_complete_nospace(n) ==
   /\ CatN[n] = InclusiveOr
+  /\ UnchangedSigma(sigma)  
   /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : or_complete_outs(n, eouts)
      \/ \E eout \in outtype({ DefaultSeqFlow }, n) : or_complete_outs(n, {eout})
 
+or_complete_space(n) ==
+  /\ CatN[n] = InclusiveOr
+  /\ \/   LET InPlus == { e \in intype(SeqFlowType, n) : edgemarks[e] >= 1 } IN
+          LET InMinus == { e \in intype(SeqFlowType, n) : edgemarks[e] = 0 } IN
+          LET ignoredpreedges == UNION { PreEdges(n,e) : e \in InPlus } IN
+          LET ignoredprenodes == UNION { PreNodes(n,e) : e \in InPlus } IN
+            /\ InPlus # {}     
+            /\ \A ezero \in InMinus : /\ \A ee \in (PreEdges(n, ezero) \ ignoredpreedges) : edgemarks[ee] = 0
+                                      /\ \A nn \in (PreNodes(n, ezero) \ ignoredprenodes) : nodemarks[nn] = 0
+            /\ \E eouts \in SUBSET outtype({ConditionalSeqFlow}, n) : \* NormalSeqFlow 
+                /\ eouts # {}
+                /\ \A out \in eouts: evalF(sigma, subs, ProcessOf(n), cCond[out])  # {} 
+                    /\ \A nout \in outtype({ ConditionalSeqFlow }, n)\{out} :
+                        \/ order(nout,out) = TRUE  \* nout < cout
+                            /\ evalF(sigma, subs, ProcessOf(n),cCond[nout])  = {} 
+                        \/  order(nout,out) = FALSE  
+                /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                                   IF e \in InPlus THEN edgemarks[e] - 1
+                                   ELSE IF e \in eouts THEN edgemarks[e] + 1
+                                   ELSE edgemarks[e] ]
+                 /\ sigma' = [ v \in Var |->
+                      \E cout \in eouts : v = cVar[cout]  
+                            /\ LET val == evalF(sigma, subs, ProcessOf(n), cCond[cout]) IN 
+                                 IF (v # "_") THEN 
+                                    IF cKind[cout] = All THEN val
+                                    ELSE { CHOOSE valeur \in val : TRUE }
+                                 ELSE sigma[v] ]
+            /\ UNCHANGED nodemarks
+            /\ Network!unchanged
+            /\ UnchangedSubs(subs)
+  /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow }, n) : or_complete_outs(n, eouts)
+           /\ UnchangedSigma(sigma)            
+     \/ /\ \A out \in outtype({ ConditionalSeqFlow }, n) :  \* all form of conditional edge are emplty 
+             evalF(sigma, subs, ProcessOf(n), cCond[out])  = {}
+        /\ \E dout  \in outtype({ DefaultSeqFlow }, n) :
+                    or_complete_outs(n, {dout})
+        /\  UnchangedSigma(sigma)      
+
+or_complete(n) ==
+    IF SpaceBPMN THEN or_complete_space(n)
+                 ELSE or_complete_nospace(n)
+
 LOCAL or_fairness(n) == \* fairness is also applied on DefaultSeqFlow
    Cardinality(outtype(SeqFlowType, n)) > 1 =>
-     \A eout \in  outtype(SeqFlowType, n) : SF_var(or_complete_outs(n, {eout}))
+     \A eout \in  outtype(SeqFlowType, n) : SF_var(UNCHANGED sigma /\ or_complete_outs(n, {eout}))
 
 (* ---- Event Based / EXOR ---- *)
 
@@ -321,6 +409,7 @@ LOCAL eventbased_complete_out(n, eout) ==
       /\ edgemarks' = [ edgemarks EXCEPT ![ein] = @ - 1, ![eout] = @ + 1 ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
 
 eventbased_complete(n) ==
   /\ CatN[n] = EventBased
@@ -342,8 +431,9 @@ abstract_start(n) ==
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
   /\ Network!unchanged
-
-abstract_complete(n) ==
+  /\ UnchangedSpace(sigma,subs)
+                 
+abstract_complete_nospace(n)   ==              
   /\ CatN[n] = AbstractTask
   /\ nodemarks[n] >= 1
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
@@ -351,6 +441,21 @@ abstract_complete(n) ==
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
+
+abstract_complete_space(n)   ==              
+  /\ CatN[n] = AbstractTask
+  /\ nodemarks[n] >= 1
+  /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
+  /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                      IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
+                      ELSE edgemarks[e] ]
+  /\ Network!unchanged
+  /\ evalAction (n,sigma, subs)
+
+abstract_complete(n) ==
+    IF SpaceBPMN THEN abstract_complete_space(n)
+                 ELSE abstract_complete_nospace(n)
 
 (* ---- send task ---- *)
 
@@ -362,6 +467,7 @@ send_start(n) ==
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
 
 send_complete(n) ==
   /\ CatN[n] = SendTask
@@ -373,6 +479,7 @@ send_complete(n) ==
                            IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                            ELSE IF ee = e THEN edgemarks[ee] + 1
                            ELSE edgemarks[ee] ]
+  /\ UnchangedSpace(sigma,subs)
 
 (* ---- receive task ---- *)
 
@@ -384,6 +491,7 @@ receive_start(n) ==
      /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
 
 receive_complete(n) ==
   /\ CatN[n] = ReceiveTask
@@ -396,6 +504,7 @@ receive_complete(n) ==
                           ELSE IF ee = e THEN edgemarks[ee] - 1
                           ELSE edgemarks[ee] ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
+  /\ UnchangedSpace(sigma,subs)
 
 (* ---- SubProcess ---- *)
 
@@ -410,6 +519,7 @@ subprocess_start(n) ==
                        ELSE IF nn \in ContainRel[n] /\ CatN[nn] \in StartEventType THEN nodemarks[nn] + 1
                        ELSE nodemarks[nn] ]
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
 
 subprocess_complete(n) ==
   /\ CatN[n] = SubProcess
@@ -427,6 +537,7 @@ subprocess_complete(n) ==
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
   /\ Network!unchanged
+  /\ UnchangedSpace(sigma,subs)
 
 (* ---- Top level Process ---- *)
 
@@ -464,6 +575,10 @@ Init ==
                      ELSE 0 ]
   /\ edgemarks = [ e \in Edge |-> 0 ]
   /\ Network!init
+  /\ subs = startsub
+  /\ sigma = [ v \in Var |->
+                    IF (\E p \in Processes : varloc[p] = v) THEN {startloc[locvar[v]]}                   
+                    ELSE {}]
 
 Fairness_Next == \A n \in Node : WF_var(step(n))
 
