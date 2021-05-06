@@ -41,4 +41,13 @@ SeqFlowType == { NormalSeqFlow, ConditionalSeqFlow, DefaultSeqFlow }
 MessageFlowType == { MessageFlow }
 EdgeType == SeqFlowType \union MessageFlowType
 
+(* space BPMN *)
+ACT_MOVE == "Move"
+ACT_UPDATE == "Update" 
+ACT_PASS == "Pass"
+Some == "Some"
+All == "All"
+TypeAction == {ACT_MOVE, ACT_UPDATE, ACT_PASS}
+TypeCondition == {Some, All}
+
 ================================================================
