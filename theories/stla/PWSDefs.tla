@@ -1,7 +1,7 @@
 ---------------- MODULE PWSDefs ----------------
 EXTENDS PWSTypes
 
-CONSTANT Node, Edge, Message,
+CONSTANT Node, Edge, Message
 CONSTANT source, target, CatN, CatE, msgtype, ContainRel (* = R *)
 CONSTANT PreEdges(_,_), PreNodes(_,_), BoundaryEvent, Interest
 
