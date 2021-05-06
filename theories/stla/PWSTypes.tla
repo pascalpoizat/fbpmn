@@ -49,5 +49,6 @@ Some == "Some"
 All == "All"
 TypeAction == {ACT_MOVE, ACT_UPDATE, ACT_PASS}
 TypeCondition == {Some, All}
+(* end space BPMN *)
 
 ================================================================
