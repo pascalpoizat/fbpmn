@@ -3,17 +3,24 @@
 
 BeforeAll { 
     . fbpmn-private/scripts/fbpmn-check.ps1
-    
-    function F1 {
-        param ($expected, $observed)
-        if ([string](Get-Content $expected | Select-Object -Skip 2) -eq [string](Get-Content $observed | Select-Object -Skip 3 | Select-Object -SkipLast 1)) {
-            return $true
-        } 
-        return $false
+    function Replace {
+        param($path)
+        $OLD_PATH = $env:PATH
+        $env:PATH = $env:PATH -replace ($path, ":")
+        fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e001ClientSupplier.bpmn 2
+        $LASTEXITCODE | Should -Be 1
+        $env:PATH = $OLD_PATH
     }
-
-    function F2 {
-        param ($model, $expected, $observed)
+    function Write-Logs {
+        param($i, $j, $k)
+        Write-Host $model $json_expected.$model.($Network[$i]).($Prop[$j]).value
+        Write-Host $Network[$i] . $Prop[$j]
+        Write-Host "observed:" $json_observed.$model.($Network[$i]).($Prop[$j])
+        Write-Host "expected:" $json_expected.$model.($Network[$i]).($Prop[$j])
+        Write-Host ""
+    }
+    function Compare-JSON {
+        param ($model, $expected, $observed, $strong = $false)
         $json_expected = Get-Content $expected | ConvertFrom-Json
         $Network = $json_expected.$model.psobject.properties.name 
         $Prop = $json_expected.$model.($Network[0]).psobject.properties.name 
@@ -21,109 +28,103 @@ BeforeAll {
         $json_observed = Get-Content $observed | ConvertFrom-Json
         
         for ($i = 0 ; $i -le (($json_expected.$model.psobject.properties.name).count - 1) ; $i++ ) {
+            #for every network
             for ($j = 0 ; $j -le (($json_expected.$model.($Network[$i]).psobject.properties.name).count - 1) ; $j++) {
-                for ($k = 0 ; $k -le (($json_expected.$model.($Network[$i]).($Prop[$j]).psobject.properties.name).count - 1) ; $k++) {
-                    if (-NOT($json_observed.$model.($Network[$i]).($Prop[$j]).($Result[$k]) -eq $json_expected.$model.($Network[$i]).($Prop[$j]).($Result[$k]))) {
-                        return $false
+                #for every props
+                if ($json_observed.$model.($Network[$i]).($Prop[$j]).value -eq $json_expected.$model.($Network[$i]).($Prop[$j]).value) {
+                    # prop full or not for both instances
+                    if ($json_observed.$model.($Network[$i]).($Prop[$j]).value -eq $true) {
+                        #égalité parfaite quand Prop est remplie
+                        for ($k = 0 ; $k -le (($json_expected.$model.($Network[$i]).($Prop[$j]).psobject.properties.name).count - 1) ; $k++) {
+                            if (-NOT($json_observed.$model.($Network[$i]).($Prop[$j]).($Result[$k]) -eq $json_expected.$model.($Network[$i]).($Prop[$j]).($Result[$k]))) {
+                                Write-Logs $i $j $k 
+                                if ($strong) {
+                                    return $false
+                                }
+                            }
+                        }
                     }
+                    else {
+                        #égalité partielle quand Prop n'est pas remplie
+                        if ((-NOT($json_observed.$model.($Network[$i]).($Prop[$j]).trans -eq $json_expected.$model.($Network[$i]).($Prop[$j]).trans)) -or (-NOT($json_observed.$model.($Network[$i]).($Prop[$j]).states -eq $json_expected.$model.($Network[$i]).($Prop[$j]).states))) {
+                            Write-Logs $i $j $k  
+                        }
+                    }
+                }
+                else {
+                    return $false
                 }
             }
         }
-        return $true    
+        return $true
     }
 }
-
-
 
 Describe 'fbpmn-check' {
     Context "Usage" {
         Context "workers" {
             It 'Good exit for wrong args.Length' {
-                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2 3 
+                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e001ClientSupplier.bpmn 2 3 
                 $LASTEXITCODE | Should -Be 1
             } 
             It 'No args -> workers = 1' {
-                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn *> /tmp/e033MBE.out
-                $a = Select-String "Working in" -Path /tmp/e033MBE.out -NoEmphasis 
+                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e001ClientSupplier.bpmn 1 *> /tmp/e001ClientSupplier.out
+                $a = Select-String "Working in" -Path /tmp/e001ClientSupplier.out -NoEmphasis 
                 $a -match "with (\d)"
                 $matches[1] | Should -Be 1
             } 
             It 'Correct args.Length -> workers = args[1]' {
-                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 3 *> /tmp/e033MBE.out2
-                $a = Select-String "Working in" -Path /tmp/e033MBE.out2 -NoEmphasis 
+                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e001ClientSupplier.bpmn 3 *> /tmp/e001ClientSupplier.out
+                $a = Select-String "Working in" -Path /tmp/e001ClientSupplier.out -NoEmphasis 
                 $a -match "with (\d)"
                 $matches[1] | Should -Be 3 
             } 
         }
         Context "commands java and fbpmn" {
             It 'java not found' {
-                $OLD_PATH = $env:PATH
-                $env:PATH = $env:PATH -replace (":/usr/bin:", ":")
-                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
-                $LASTEXITCODE | Should -Be 1
-                $env:PATH = $OLD_PATH
+                Replace ":/usr/bin:"
             }
             It 'fbpmn not found' {
-                $OLD_PATH = $env:PATH
-                $env:PATH = $env:PATH -replace (":/home/malinvaud/fbpmn-0.3.4-linux.x86_64:", ":")
-                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
-                $LASTEXITCODE | Should -Be 1
-                $env:PATH = $OLD_PATH 
+                Replace ":/home/malinvaud/fbpmn-0.3.4-linux.x86_64:"
             }
         }
         Context "env:variables" {
-            It 'FBPMN_HOME not set' {
+            BeforeEach {
                 $OLD_FBPMN_HOME = $env:FBPMN_HOME
+                $OLD_TLA2TOOLS_HOME = $env:TLA2TOOLS_HOME
+            }
+            It 'FBPMN_HOME not set' {
                 $env:FBPMN_HOME = ''
-                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e001ClientSupplier.bpmn 2
                 $LASTEXITCODE | Should -Be 1
-                $env:FBPMN_HOME = $OLD_FBPMN_HOME
             }
             It 'Wrong FBPMN_HOME' {
-                $OLD_FBPMN_HOME = $env:FBPMN_HOME
-                $env:FBPMN_HOME = '/home/malinvaud/Documents/L3' #associer un directory qui n'est pas FBPMN_HOME
-                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+                $dir = New-Item -ItemType Directory -Path /home/malinvaud/temp1
+                $env:FBPMN_HOME = $dir
+                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e001ClientSupplier.bpmn 2
                 $LASTEXITCODE | Should -Be 1
-                $env:FBPMN_HOME = $OLD_FBPMN_HOME
+                Remove-Item -Path $dir 
             }
             It 'TLA2TOOLS_HOME not set' {
-                $OLD_TLA2TOOLS_HOME = $env:TLA2TOOLS_HOME
                 $env:TLA2TOOLS_HOME = ''
-                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e001ClientSupplier.bpmn 2
                 $LASTEXITCODE | Should -Be 1
-                $env:TLA2TOOLS_HOME = $OLD_TLA2TOOLS_HOME
             }
             It 'Wrong TLA2TOOLS_HOME ' {
-                $OLD_TLA2TOOLS_HOME = $env:TLA2TOOLS_HOME
-                $env:TLA2TOOLS_HOME = '/home/malinvaud/Documents/L3' #associer un directory qui n'est pas TLA2TOOLS_HOME
-                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+                $dir = New-Item -ItemType Directory -Path /home/malinvaud/temp2 
+                $env:TLA2TOOLS_HOME = $dir
+                fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/e001ClientSupplier.bpmn 2
                 $LASTEXITCODE | Should -Be 1
+                Remove-Item -Path $dir 
+            }
+            AfterEach {
+                $env:FBPMN_HOME = $OLD_FBPMN_HOME
                 $env:TLA2TOOLS_HOME = $OLD_TLA2TOOLS_HOME
             }
         }
     }
-    Context "Compare with expected" {
-        <#It "V1" {
-            $r = 0
-            $f_bpmn = New-Object System.Collections.Generic.List[string]  
-            $f = Get-Content ("$env:FBPMN_HOME/scripts/tests/config-files.json") | ConvertFrom-Json                                      
-            foreach ($g in $f.psobject.properties.name) {
-                if ($f."$g") { 
-                    $f_bpmn.Add([string]$g) 
-                }
-            }
-            $model
-            foreach ($f in $f_bpmn) {
-                $fullpath = "$env:FBPMN_HOME/models/bpmn-origin/src/$f"
-                $model = (Get-ChildItem -Path $fullpath).BaseName
-                fbpmn-check.ps1 $fullpath 1 *> "/tmp/$model.observed" 
-                if (-NOT(F1 "$env:FBPMN_HOME/models/bpmn-origin/expected/$model.expected" "/tmp/$model.observed")) {
-                    $r++
-                } 
-            }
-            $r | Should -Be 0
-        }#>
-        It "V2" { 
+    Context "Compare observed with expected" {
+        It "Differentiated JSON tests" { 
             $r = 0
             $f_bpmn = New-Object System.Collections.Generic.List[string]  
             $f = Get-Content ("$env:FBPMN_HOME/scripts/tests/config-files.json") | ConvertFrom-Json                                      
@@ -135,8 +136,8 @@ Describe 'fbpmn-check' {
             foreach ($f in $f_bpmn) {
                 $fullpath = "$env:FBPMN_HOME/models/bpmn-origin/src/$f"
                 $model = (Get-ChildItem -Path $fullpath).BaseName
-                fbpmn-check.ps1 $fullpath *> WHERE 
-                if (-NOT(F2 $model "$env:FBPMN_HOME/models/bpmn-origin/expected/$model.json" "$model.json")) {
+                fbpmn-check.ps1 $fullpath *> $null
+                if (-NOT(Compare-JSON $model "$env:FBPMN_HOME/models/bpmn-origin/expected/$model.json" "$model.json" $true)) {
                     $r++                    
                 } 
             }
@@ -145,8 +146,14 @@ Describe 'fbpmn-check' {
     }
     Context "Test-Path failed" {
         It "BPMN don't exists" {
-            fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/idontexist.bpmn 2  
+            fbpmn-check.ps1 $env:FBPMN_HOME/models/bpmn-origin/src/dontexist.bpmn 2  
             $LASTEXITCODE | Should -Be 1
         }
     }
 }
+
+AfterAll {
+    Set-Location ..
+    Get-ChildItem /tmp -Filter e0*.* | Remove-Item -Recurse 
+}
+
