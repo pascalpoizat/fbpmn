@@ -1,18 +1,16 @@
 #!/usr/bin/env pwsh
  
 $logs = Get-ChildItem -Name -Include *.log 
-if ($args.Length -eq 0 -or $args.Length -gt 1) {
-    Write-Host 'fbpmn-logs2* <html | dot | json>' 
-    exit 1
-}
-if ($args[0] -eq "html") {
-    $to = "log2html"
-}
-if ($args[0] -eq "dot") {
-    $to = "log2dot"
-}
-if ($args[0] -eq "json") {
-    $to = "log2json"
+if ($args.Length -eq 1) {
+    if ($args[0] -eq "html") {
+        $to = "log2html"
+    }
+    if ($args[0] -eq "dot") {
+        $to = "log2dot"
+    }
+    if ($args[0] -eq "json") {
+        $to = "log2json"
+    }
 }
 else {
     Write-Host 'fbpmn-logs2* <html | dot | json>' 
