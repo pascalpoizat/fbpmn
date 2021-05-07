@@ -68,13 +68,13 @@ if ($env:FBPMN_HOME.Length -eq 0) {
     Write-Host "FBPMN_HOME is not set"; exit 1
 }
 if (-NOT(Test-Path $env:FBPMN_HOME/theories/tla)) {
-    Write-Host "wrong $env:FBPMN_HOME (theories/tla not found)"; exit 1
+    Write-Host "wrong FBPMN_HOME (theories/tla not found)"; exit 1
 } 
 if ($env:TLA2TOOLS_HOME.Length -eq 0 ) {
     Write-Host "TLA2TOOLS_HOME is no set"; exit 1
 }
 if (-NOT(Test-Path $env:TLA2TOOLS_HOME/tla2tools.jar)) {
-    Write-Host "wrong $env:TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
+    Write-Host "wrong TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
 } 
 
 $fullpath = $args[0]
