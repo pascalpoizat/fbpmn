@@ -73,7 +73,7 @@ Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Or
 3. generate interactive counter example exploration pages for all `fbpmn-check` analysis log files
 
 	```sh
-	❯ (cd /tmp/e033MBE.T07y4; fbpmn-logs2html)
+	❯ (cd /tmp/e033MBE.T07y4; fbpmn-logs2* html)
 	transformation done
 	transformation done
 	transformation done
@@ -326,25 +326,24 @@ State 13: <Action line 156, col 1 to line 156, col 21 of module e033MBE>
 
 To generate versions of the counter-examples that are **easier to analyse** you can use:
 
-- `fbpmn log2json` to get a JSON version of the counter-example
+- `fbpmn logs2* json` to get a JSON version of the counter-example
 
 	```sh
-	❯ fbpmn log2json /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
+	❯ fbpmn logs2* json /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
 	transformation done
 	```
 
-- `fbpmn log2dot` to get a graph version of the counter example in the format of the `dot` command ([see here](https://graphviz.org)) and then use this command to generate PDF or PNG images.
+- `fbpmn logs2* dot` to get a graph version of the counter example in the format of the `dot` command ([see here](https://graphviz.org)) and then use this command to generate PDF or PNG images.
 
 	```sh
-	❯ fbpmn log2dot /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
+	❯ fbpmn logs2* dot /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
 	transformation done
-	❯ dot -Tpdf -o /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound.pdf /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound.dot
 	```
 	
-- `fbpmn log2html` to generate an interactive counter example exploration page (use the &leftarrow;/&rightarrow; keys to navigate between states of the counter example, in combination with the `Shift`key to go the the start/end of the counter example).
+- `fbpmn logs2* html` to generate an interactive counter example exploration page (use the &leftarrow;/&rightarrow; keys to navigate between states of the counter example, in combination with the `Shift`key to go the the start/end of the counter example).
 
 	```sh
-	❯ fbpmn log2html /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
+	❯ fbpmn logs2* html /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
 	transformation done
 	```
 
@@ -359,13 +358,11 @@ The first parameter of the three commands is the source `.log` file and the seco
 In all three cases, the counter-examples are filtered of the markings that are null.
 
 To perform these transformations **for all `.log` files contained in the current directory**,
-we provide you with three scripts (in the `scripts` directory of the source distribution):
-`fbpmn-logs2json`,
-`fbpmn-logs2dot`, and 
-`fbpmn-logs2html`.
+we provide you with a script (in the `scripts` directory of the source distribution):
+`fbpmn-logs2*` which must be followed by the extension you want (`json`/`dot`/`html`)
 
 ```sh
-❯ (cd /tmp/e033MBE.T07y4; fbpmn-logs2html)
+❯ (cd /tmp/e033MBE.T07y4; fbpmn-logs2* html)
 transformation done
 transformation done
 transformation done
