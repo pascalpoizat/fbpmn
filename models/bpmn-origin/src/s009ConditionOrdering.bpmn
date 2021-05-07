@@ -17,7 +17,7 @@
         <camunda:property name="initial-location" value="f1" />
       </camunda:properties>
     </bpmn:extensionElements>
-    <bpmn:endEvent id="Event_0fkborc" name="end (in f2)&#10;&#10;">
+    <bpmn:endEvent id="endF2" name="end (in f2)&#10;&#10;">
       <bpmn:incoming>Flow_1bc6u3c</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_09a8um7" sourceRef="StartEvent_1" targetRef="xor" />
@@ -31,11 +31,11 @@
       </bpmn:extensionElements>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">_: any ((f2 and toPlant) and reachable)</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="default_flow" name="else" sourceRef="xor" targetRef="Event_1hpd68d" />
-    <bpmn:endEvent id="Event_1hpd68d" name="end (in place)&#10;&#10;">
+    <bpmn:sequenceFlow id="default_flow" name="else" sourceRef="xor" targetRef="endInPlace" />
+    <bpmn:endEvent id="endInPlace" name="end (in place)&#10;&#10;">
       <bpmn:incoming>default_flow</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:endEvent id="Event_0xfz0n8" name="end (in f3)">
+    <bpmn:endEvent id="endF3" name="end (in f3)">
       <bpmn:incoming>Flow_1ddop94</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:exclusiveGateway id="xor" default="default_flow">
@@ -66,7 +66,7 @@
       <bpmn:incoming>flow_to_f2</bpmn:incoming>
       <bpmn:outgoing>Flow_1bc6u3c</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id="Flow_1bc6u3c" sourceRef="Activity_071wli2" targetRef="Event_0fkborc" />
+    <bpmn:sequenceFlow id="Flow_1bc6u3c" sourceRef="Activity_071wli2" targetRef="endF2" />
     <bpmn:task id="Activity_18vh6pp" name="move to f3">
       <bpmn:extensionElements>
         <camunda:properties>
@@ -76,7 +76,7 @@
       <bpmn:incoming>flow_to_f3</bpmn:incoming>
       <bpmn:outgoing>Flow_1ddop94</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id="Flow_1ddop94" sourceRef="Activity_18vh6pp" targetRef="Event_0xfz0n8" />
+    <bpmn:sequenceFlow id="Flow_1ddop94" sourceRef="Activity_18vh6pp" targetRef="endF3" />
     <bpmn:textAnnotation id="TextAnnotation_1ue3kul">
       <bpmn:text>&lt;bpmn:outgoing&gt;flow_to_f2&lt;/bpmn:outgoing&gt;
 &lt;bpmn:outgoing&gt;default_flow&lt;/bpmn:outgoing&gt;
@@ -127,19 +127,19 @@
         <di:waypoint x="580" y="260" />
         <di:waypoint x="642" y="260" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Event_0fkborc_di" bpmnElement="Event_0fkborc">
+      <bpmndi:BPMNShape id="Event_0fkborc_di" bpmnElement="endF2">
         <dc:Bounds x="642" y="142" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="637" y="185" width="50" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1hpd68d_di" bpmnElement="Event_1hpd68d">
+      <bpmndi:BPMNShape id="Event_1hpd68d_di" bpmnElement="endInPlace">
         <dc:Bounds x="642" y="332" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="626" y="380" width="67" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0xfz0n8_di" bpmnElement="Event_0xfz0n8">
+      <bpmndi:BPMNShape id="Event_0xfz0n8_di" bpmnElement="endF3">
         <dc:Bounds x="642" y="242" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="635" y="285" width="50" height="14" />

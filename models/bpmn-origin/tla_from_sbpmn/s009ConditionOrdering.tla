@@ -8,9 +8,9 @@ Interest ==
   "PId" :> {  }
 
 ContainRel ==
-  "PId" :> { "Event_0fkborc", "Event_1hpd68d", "Event_0xfz0n8", "xor", "StartEvent_1", "Activity_071wli2", "Activity_18vh6pp" }
+  "PId" :> { "endF2", "endInPlace", "endF3", "xor", "StartEvent_1", "Activity_071wli2", "Activity_18vh6pp" }
 
-Node == { "PId", "Event_0fkborc", "Event_1hpd68d", "Event_0xfz0n8", "xor", "StartEvent_1", "Activity_071wli2", "Activity_18vh6pp" }
+Node == { "PId", "endF2", "endInPlace", "endF3", "xor", "StartEvent_1", "Activity_071wli2", "Activity_18vh6pp" }
 
 Edge == { "Flow_09a8um7", "flow_to_f2", "default_flow", "flow_to_f3", "Flow_1bc6u3c", "Flow_1ddop94" }
 
@@ -31,16 +31,16 @@ source ==
 target ==
    "Flow_09a8um7" :> "xor"
 @@ "flow_to_f2" :> "Activity_071wli2"
-@@ "default_flow" :> "Event_1hpd68d"
+@@ "default_flow" :> "endInPlace"
 @@ "flow_to_f3" :> "Activity_18vh6pp"
-@@ "Flow_1bc6u3c" :> "Event_0fkborc"
-@@ "Flow_1ddop94" :> "Event_0xfz0n8"
+@@ "Flow_1bc6u3c" :> "endF2"
+@@ "Flow_1ddop94" :> "endF3"
 
 CatN ==
    "PId" :> Process
-@@ "Event_0fkborc" :> NoneEndEvent
-@@ "Event_1hpd68d" :> NoneEndEvent
-@@ "Event_0xfz0n8" :> NoneEndEvent
+@@ "endF2" :> NoneEndEvent
+@@ "endInPlace" :> NoneEndEvent
+@@ "endF3" :> NoneEndEvent
 @@ "xor" :> ExclusiveOr
 @@ "StartEvent_1" :> NoneStartEvent
 @@ "Activity_071wli2" :> AbstractTask
