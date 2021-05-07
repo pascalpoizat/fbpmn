@@ -21,15 +21,15 @@
       <bpmn:incoming>Flow_1bc6u3c</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_09a8um7" sourceRef="StartEvent_1" targetRef="xor" />
-    <bpmn:sequenceFlow id="flow_to_f2" name="_: any ((f2 and toPlant) and reacheable)" sourceRef="xor" targetRef="Activity_071wli2">
+    <bpmn:sequenceFlow id="flow_to_f2" name="_: any ((f2 and toPlant) and reachable)" sourceRef="xor" targetRef="Activity_071wli2">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="variable" value="_" />
           <camunda:property name="type" value="any" />
-          <camunda:property name="formula" value="((f2 and toPlant) and reacheable)" />
+          <camunda:property name="formula" value="((f2 and toPlant) and reachable)" />
         </camunda:properties>
       </bpmn:extensionElements>
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">_: any ((f2 and toPlant) and reacheable)</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">_: any ((f2 and toPlant) and reachable)</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="default_flow" name="else" sourceRef="xor" targetRef="Event_1hpd68d" />
     <bpmn:endEvent id="Event_1hpd68d" name="end (in place)&#10;&#10;">
@@ -47,15 +47,15 @@
     <bpmn:startEvent id="StartEvent_1" name="start (in f1)&#10;">
       <bpmn:outgoing>Flow_09a8um7</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="flow_to_f3" name="_: any ((f3 and toPlant) and reacheable)" sourceRef="xor" targetRef="Activity_18vh6pp">
+    <bpmn:sequenceFlow id="flow_to_f3" name="_: any ((f3 and toPlant) and reachable)" sourceRef="xor" targetRef="Activity_18vh6pp">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="variable" value="_" />
           <camunda:property name="type" value="any" />
-          <camunda:property name="formula" value="((f3 and toPlant) and reacheable)" />
+          <camunda:property name="formula" value="((f3 and toPlant) and reachable)" />
         </camunda:properties>
       </bpmn:extensionElements>
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">_: any ((f3 and toPlant) and reacheable)</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">_: any ((f3 and toPlant) and reachable)</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:task id="Activity_071wli2" name="move to f2">
       <bpmn:extensionElements>

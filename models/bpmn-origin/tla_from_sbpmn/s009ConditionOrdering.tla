@@ -103,7 +103,7 @@ SpaceTarget ==
 @@ "se_12" :> "f5"
 
 
-Var == { "here", "_", "reacheable", "locPId" }
+Var == { "here", "_", "locPId" }
 
 varloc ==
    "PId" :> "locPId"
@@ -138,9 +138,9 @@ cCond ==
    "flow_to_f2" :> "f_flow_to_f2"
 @@ "flow_to_f3" :> "f_flow_to_f3"
 
-def_f_flow_to_f2(v,s,p) == (({ "f2" } \intersect s["toPlant"]) \intersect v["reacheable"])
+def_f_flow_to_f2(v,s,p) == (({ "f2" } \intersect s["toPlant"]) \intersect reachFrom(v[varloc[p]]))
 
-def_f_flow_to_f3(v,s,p) == (({ "f3" } \intersect s["toPlant"]) \intersect v["reacheable"])
+def_f_flow_to_f3(v,s,p) == (({ "f3" } \intersect s["toPlant"]) \intersect reachFrom(v[varloc[p]]))
 
 
 orderingSet == { }
