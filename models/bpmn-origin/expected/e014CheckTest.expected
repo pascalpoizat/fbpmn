@@ -1,0 +1,67 @@
+Working in /tmp/e014CheckTest.mquhy with 1 worker(s)
+[92mtransformation done[0m
+<<"Processes=", 1, "Nodes=", 7, "Gateway=", 1, "SF=", 5, "MF=", 0>>
+---------- Network01Bag ----------
+[X] Prop01Type
+     states=10 trans=10 depth=6
+[X] Prop02Safe
+     states=10 trans=10 depth=6
+[X] Prop03Sound
+     states=10 trans=10 depth=6
+[X] Prop04MsgSound
+     states=10 trans=10 depth=6
+---------- Network02FifoPair ----------
+[X] Prop01Type
+     states=10 trans=10 depth=6
+[X] Prop02Safe
+     states=10 trans=10 depth=6
+[X] Prop03Sound
+     states=10 trans=10 depth=6
+[X] Prop04MsgSound
+     states=10 trans=10 depth=6
+---------- Network03Causal ----------
+[X] Prop01Type
+     states=10 trans=10 depth=6
+[X] Prop02Safe
+     states=10 trans=10 depth=6
+[X] Prop03Sound
+     states=10 trans=10 depth=6
+[X] Prop04MsgSound
+     states=10 trans=10 depth=6
+---------- Network04Inbox ----------
+[X] Prop01Type
+     states=10 trans=10 depth=6
+[X] Prop02Safe
+     states=10 trans=10 depth=6
+[X] Prop03Sound
+     states=10 trans=10 depth=6
+[X] Prop04MsgSound
+     states=10 trans=10 depth=6
+---------- Network05Outbox ----------
+[X] Prop01Type
+     states=10 trans=10 depth=6
+[X] Prop02Safe
+     states=10 trans=10 depth=6
+[X] Prop03Sound
+     states=10 trans=10 depth=6
+[X] Prop04MsgSound
+     states=10 trans=10 depth=6
+---------- Network06Fifo ----------
+[X] Prop01Type
+     states=10 trans=10 depth=6
+[X] Prop02Safe
+     states=10 trans=10 depth=6
+[X] Prop03Sound
+     states=10 trans=10 depth=6
+[X] Prop04MsgSound
+     states=10 trans=10 depth=6
+---------- Network07RSC ----------
+[X] Prop01Type
+     states=10 trans=10 depth=6
+[X] Prop02Safe
+     states=10 trans=10 depth=6
+[X] Prop03Sound
+     states=10 trans=10 depth=6
+[X] Prop04MsgSound
+     states=10 trans=10 depth=6
+done.

@@ -1,0 +1,186 @@
+{
+  "e009CheckTest": {
+    "Network02FifoPair": {
+      "Prop02Safe": {
+        "value": false,
+        "states": null,
+        "trans": null,
+        "depth": "9"
+      },
+      "Prop04MsgSound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop03Sound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop01Type": {
+        "value": true,
+        "states": "170",
+        "trans": "395",
+        "depth": "19"
+      }
+    },
+    "Network03Causal": {
+      "Prop02Safe": {
+        "value": false,
+        "states": null,
+        "trans": null,
+        "depth": "9"
+      },
+      "Prop04MsgSound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop03Sound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop01Type": {
+        "value": true,
+        "states": "170",
+        "trans": "395",
+        "depth": "19"
+      }
+    },
+    "Network07RSC": {
+      "Prop02Safe": {
+        "value": false,
+        "states": null,
+        "trans": null,
+        "depth": "9"
+      },
+      "Prop04MsgSound": {
+        "value": false,
+        "states": "161",
+        "trans": "374",
+        "depth": null
+      },
+      "Prop03Sound": {
+        "value": false,
+        "states": "161",
+        "trans": "374",
+        "depth": null
+      },
+      "Prop01Type": {
+        "value": true,
+        "states": "161",
+        "trans": "374",
+        "depth": "19"
+      }
+    },
+    "Network05Outbox": {
+      "Prop02Safe": {
+        "value": false,
+        "states": null,
+        "trans": null,
+        "depth": "9"
+      },
+      "Prop04MsgSound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop03Sound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop01Type": {
+        "value": true,
+        "states": "170",
+        "trans": "395",
+        "depth": "19"
+      }
+    },
+    "Network04Inbox": {
+      "Prop02Safe": {
+        "value": false,
+        "states": null,
+        "trans": null,
+        "depth": "9"
+      },
+      "Prop04MsgSound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop03Sound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop01Type": {
+        "value": true,
+        "states": "170",
+        "trans": "395",
+        "depth": "19"
+      }
+    },
+    "Network01Bag": {
+      "Prop02Safe": {
+        "value": false,
+        "states": null,
+        "trans": null,
+        "depth": "9"
+      },
+      "Prop04MsgSound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop03Sound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop01Type": {
+        "value": true,
+        "states": "170",
+        "trans": "395",
+        "depth": "19"
+      }
+    },
+    "Network06Fifo": {
+      "Prop02Safe": {
+        "value": false,
+        "states": null,
+        "trans": null,
+        "depth": "9"
+      },
+      "Prop04MsgSound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop03Sound": {
+        "value": false,
+        "states": "170",
+        "trans": "395",
+        "depth": null
+      },
+      "Prop01Type": {
+        "value": true,
+        "states": "170",
+        "trans": "395",
+        "depth": "19"
+      }
+    }
+  }
+}

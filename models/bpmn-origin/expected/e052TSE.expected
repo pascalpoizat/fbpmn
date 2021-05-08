@@ -1,0 +1,67 @@
+Working in /tmp/e052TSE.svXtL with 1 worker(s)
+[92mtransformation done[0m
+<<"Processes=", 1, "Nodes=", 4, "Gateway=", 0, "SF=", 2, "MF=", 0>>
+---------- Network01Bag ----------
+[X] Prop01Type
+     states=5 trans=5 depth=5
+[X] Prop02Safe
+     states=5 trans=5 depth=5
+[X] Prop03Sound
+     states=5 trans=5 depth=5
+[X] Prop04MsgSound
+     states=5 trans=5 depth=5
+---------- Network02FifoPair ----------
+[X] Prop01Type
+     states=5 trans=5 depth=5
+[X] Prop02Safe
+     states=5 trans=5 depth=5
+[X] Prop03Sound
+     states=5 trans=5 depth=5
+[X] Prop04MsgSound
+     states=5 trans=5 depth=5
+---------- Network03Causal ----------
+[X] Prop01Type
+     states=5 trans=5 depth=5
+[X] Prop02Safe
+     states=5 trans=5 depth=5
+[X] Prop03Sound
+     states=5 trans=5 depth=5
+[X] Prop04MsgSound
+     states=5 trans=5 depth=5
+---------- Network04Inbox ----------
+[X] Prop01Type
+     states=5 trans=5 depth=5
+[X] Prop02Safe
+     states=5 trans=5 depth=5
+[X] Prop03Sound
+     states=5 trans=5 depth=5
+[X] Prop04MsgSound
+     states=5 trans=5 depth=5
+---------- Network05Outbox ----------
+[X] Prop01Type
+     states=5 trans=5 depth=5
+[X] Prop02Safe
+     states=5 trans=5 depth=5
+[X] Prop03Sound
+     states=5 trans=5 depth=5
+[X] Prop04MsgSound
+     states=5 trans=5 depth=5
+---------- Network06Fifo ----------
+[X] Prop01Type
+     states=5 trans=5 depth=5
+[X] Prop02Safe
+     states=5 trans=5 depth=5
+[X] Prop03Sound
+     states=5 trans=5 depth=5
+[X] Prop04MsgSound
+     states=5 trans=5 depth=5
+---------- Network07RSC ----------
+[X] Prop01Type
+     states=5 trans=5 depth=5
+[X] Prop02Safe
+     states=5 trans=5 depth=5
+[X] Prop03Sound
+     states=5 trans=5 depth=5
+[X] Prop04MsgSound
+     states=5 trans=5 depth=5
+done.

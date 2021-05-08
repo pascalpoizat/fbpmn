@@ -1,0 +1,67 @@
+Working in /tmp/e015CheckTest.cKelI with 1 worker(s)
+[92mtransformation done[0m
+<<"Processes=", 2, "Nodes=", 14, "Gateway=", 2, "SF=", 10, "MF=", 2>>
+---------- Network01Bag ----------
+[X] Prop01Type
+     states=68 trans=117 depth=11
+[X] Prop02Safe
+     states=68 trans=117 depth=11
+[ ] Prop03Sound
+     states=68 trans=117 depth=
+[ ] Prop04MsgSound
+     states=68 trans=117 depth=
+---------- Network02FifoPair ----------
+[X] Prop01Type
+     states=68 trans=117 depth=11
+[X] Prop02Safe
+     states=68 trans=117 depth=11
+[ ] Prop03Sound
+     states=68 trans=117 depth=
+[ ] Prop04MsgSound
+     states=68 trans=117 depth=
+---------- Network03Causal ----------
+[X] Prop01Type
+     states=68 trans=117 depth=11
+[X] Prop02Safe
+     states=68 trans=117 depth=11
+[ ] Prop03Sound
+     states=68 trans=117 depth=
+[ ] Prop04MsgSound
+     states=68 trans=117 depth=
+---------- Network04Inbox ----------
+[X] Prop01Type
+     states=68 trans=117 depth=11
+[X] Prop02Safe
+     states=68 trans=117 depth=11
+[ ] Prop03Sound
+     states=68 trans=117 depth=
+[ ] Prop04MsgSound
+     states=68 trans=117 depth=
+---------- Network05Outbox ----------
+[X] Prop01Type
+     states=68 trans=117 depth=11
+[X] Prop02Safe
+     states=68 trans=117 depth=11
+[ ] Prop03Sound
+     states=68 trans=117 depth=
+[ ] Prop04MsgSound
+     states=68 trans=117 depth=
+---------- Network06Fifo ----------
+[X] Prop01Type
+     states=68 trans=117 depth=11
+[X] Prop02Safe
+     states=68 trans=117 depth=11
+[ ] Prop03Sound
+     states=68 trans=117 depth=
+[ ] Prop04MsgSound
+     states=68 trans=117 depth=
+---------- Network07RSC ----------
+[X] Prop01Type
+     states=68 trans=117 depth=11
+[X] Prop02Safe
+     states=68 trans=117 depth=11
+[ ] Prop03Sound
+     states=68 trans=117 depth=
+[ ] Prop04MsgSound
+     states=68 trans=117 depth=
+done.

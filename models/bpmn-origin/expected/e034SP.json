@@ -1,0 +1,11 @@
+{
+  "e034SP": {
+    "Network02FifoPair": {},
+    "Network03Causal": {},
+    "Network07RSC": {},
+    "Network05Outbox": {},
+    "Network04Inbox": {},
+    "Network01Bag": {},
+    "Network06Fifo": {}
+  }
+}

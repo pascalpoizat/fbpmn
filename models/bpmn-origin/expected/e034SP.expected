@@ -1,0 +1,39 @@
+Working in /tmp/e034SP.SsHZm with 1 worker(s)
+[92mtransformation done[0m
+<<"Processes=", 1, "Nodes=", 9, "Gateway=", 1, "SF=", 6, "MF=", 0>>
+---------- Network01Bag ----------
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+---------- Network02FifoPair ----------
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+---------- Network03Causal ----------
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+---------- Network04Inbox ----------
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+---------- Network05Outbox ----------
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+---------- Network06Fifo ----------
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+---------- Network07RSC ----------
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+  ! PANIC: bad model (assume failed)
+done.

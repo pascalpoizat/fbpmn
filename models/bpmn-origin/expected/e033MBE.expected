@@ -1,0 +1,67 @@
+Working in /tmp/e033MBE.T7ocx with 1 worker(s)
+[92mtransformation done[0m
+<<"Processes=", 2, "Nodes=", 22, "Gateway=", 4, "SF=", 20, "MF=", 6>>
+---------- Network01Bag ----------
+[X] Prop01Type
+     states=101 trans=169 depth=23
+[X] Prop02Safe
+     states=101 trans=169 depth=23
+[ ] Prop03Sound
+     states=101 trans=169 depth=
+[X] Prop04MsgSound
+     states=101 trans=169 depth=23
+---------- Network02FifoPair ----------
+[X] Prop01Type
+     states=101 trans=169 depth=23
+[X] Prop02Safe
+     states=101 trans=169 depth=23
+[ ] Prop03Sound
+     states=101 trans=169 depth=
+[X] Prop04MsgSound
+     states=101 trans=169 depth=23
+---------- Network03Causal ----------
+[X] Prop01Type
+     states=105 trans=173 depth=23
+[X] Prop02Safe
+     states=105 trans=173 depth=23
+[ ] Prop03Sound
+     states=105 trans=173 depth=
+[X] Prop04MsgSound
+     states=105 trans=173 depth=23
+---------- Network04Inbox ----------
+[X] Prop01Type
+     states=101 trans=169 depth=23
+[X] Prop02Safe
+     states=101 trans=169 depth=23
+[ ] Prop03Sound
+     states=101 trans=169 depth=
+[X] Prop04MsgSound
+     states=101 trans=169 depth=23
+---------- Network05Outbox ----------
+[X] Prop01Type
+     states=101 trans=169 depth=23
+[X] Prop02Safe
+     states=101 trans=169 depth=23
+[ ] Prop03Sound
+     states=101 trans=169 depth=
+[X] Prop04MsgSound
+     states=101 trans=169 depth=23
+---------- Network06Fifo ----------
+[X] Prop01Type
+     states=120 trans=194 depth=23
+[X] Prop02Safe
+     states=120 trans=194 depth=23
+[ ] Prop03Sound
+     states=120 trans=194 depth=
+[ ] Prop04MsgSound
+     states=120 trans=194 depth=
+---------- Network07RSC ----------
+[X] Prop01Type
+     states=60 trans=92 depth=20
+[X] Prop02Safe
+     states=60 trans=92 depth=20
+[ ] Prop03Sound
+     states=60 trans=92 depth=
+[ ] Prop04MsgSound
+     states=60 trans=92 depth=
+done.

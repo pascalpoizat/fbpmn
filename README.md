@@ -41,9 +41,15 @@ for seven different communication semantics:
 
 **New properties and communication semantics can be easily taken into account** (see Sect. 5, *Extending the verification*).
 
+A Web Application version of `fbpmn` (that unfortunately may be some versions late from the command-line version) is available from [here](http://vacs.enseeiht.fr/bpmn/).
+
 ### References
 
-Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Order Logic Semantics for Communication-Parametric BPMN Collaborations**. In: *17th International Conference on Business Process Management (BPM)*, Springer, 2019.
+- Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A Direct Formal Semantics for BPMN Time-Related Constructs.** In: *16th International Conference on Evaluation of Novel Approaches to Software Engineering (ENASE)*, 2021.
+
+- Sara Houhou, Souheib Baarir, Pascal Poizat, Philippe Quéinnec, and Laïd Kahloul. **A First-Order Logic Verification Framework for Communication-Parametric and Time-Aware BPMN Collaborations**. *Information Systems*, 2021. 
+
+- Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Order Logic Semantics for Communication-Parametric BPMN Collaborations**. In: *17th International Conference on Business Process Management (BPM)*, Springer, 2019.
 
 ### TL;DR for the impatient
 
@@ -59,13 +65,13 @@ Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Or
 	<<"Processes=", 2, "Nodes=", 22, "Gateway=", 4, "SF=", 20, "MF=", 6>>
 	---------- Network01Bag ----------
 	[X] Prop01Type
-	     states=102 trans=170 depth=24
+	     states=101 trans=169 depth=23
 	[X] Prop02Safe
-	     states=102 trans=170 depth=24
+	     states=101 trans=169 depth=23
 	[ ] Prop03Sound
-	     states=102 trans=170 depth=
+	     states=101 trans=169 depth=
 	[X] Prop04MsgSound
-	     states=102 trans=170 depth=24
+	     states=101 trans=169 depth=23
 	[... other communication semantics ...]
 	done.
 	```
@@ -73,7 +79,7 @@ Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Or
 3. generate interactive counter example exploration pages for all `fbpmn-check` analysis log files
 
 	```sh
-	❯ (cd /tmp/e033MBE.T07y4; fbpmn-logs2html)
+	❯ (cd /tmp/e033MBE.T07y4; fbpmn-log-transform html)
 	transformation done
 	transformation done
 	transformation done
@@ -111,6 +117,8 @@ To verify your BPMN models, you will need:
 - 1.1. A Java SE Development Kit, get it [here](https://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
 - 1.2. The TLA+ tools, get `tla2tools.jar` [here](https://github.com/tlaplus/tlaplus/releases).
+
+- 1.3. The task-based command-line shell and scripting language Powershell, get it [here](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.1)
 	
 :warning: `fbpmn` is known to be working with:
 
@@ -176,7 +184,7 @@ Please then put this directory in your `PATH` environment variable.
 
 ## 4. BPMN models
 
-`fbpmn` is able to deal with **collaborations** either in BPMN or in its own JSON format (see Sect. 7, below). Please note that you can also deal with a standalone **process model** (workflow) as soon as you put it in a standalone pool lane (see some examples of this [here](models/bpmn-origin/src)).
+`fbpmn` is able to deal with **collaborations** either in BPMN or in its own JSON format (see Sect. 7, below). Please note that you can also deal with a standalone **process model** (workflow) as long as you put it in a standalone pool lane (see some examples of this [here](models/bpmn-origin/src)).
 
 ### BPMN format
 
@@ -198,7 +206,7 @@ Verification requires that:
 - `FBPMN_HOME` is set to the place where the `fbpmn` sources have been installed (see Sect. 2).
 - `TLA2TOOLS_HOME` is set to the place where `tla2tools.jar` is installed (see Sect. 1).
 - `fbpmn` is found on the command `PATH` (see Sect. 3a/3b).
-- (**optional, available for Linux and OSX only**) `fbpmn-check` and `fbpmn-logs2*` (from the `scripts` directory of the source distribution) are found on the command `PATH`.<br/> 
+- `fbpmn-check` and `fbpmn-log-transform` (from the `scripts` directory of the source distribution) are found on the command `PATH`.
 
 ### Principles
 
@@ -215,7 +223,7 @@ In the sequel, we will use the model in Fig. 3.
 ![BPMN example.](e033MBE.png)
 *Figure 3: example collaboration model (`e033MBE.bpmn`).*
 
-**For Linux and OSX users**, we provide you with a `fbpmn-check` script (in the `scripts` directory of the source distribution) that does the two steps described in Fig. 2 for you and performs verification for each possible communication model.
+We provide you with a `fbpmn-check` script (in the `scripts` directory of the source distribution) that does the two steps described in Fig. 2 for you and performs verification for each possible communication model.
 
 ```sh
 ❯ fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
@@ -224,85 +232,91 @@ transformation done
 <<"Processes=", 2, "Nodes=", 22, "Gateway=", 4, "SF=", 20, "MF=", 6>>
 ---------- Network01Bag ----------
 [X] Prop01Type
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 [X] Prop02Safe
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 [ ] Prop03Sound
-     states=102 trans=170 depth=
+     states=101 trans=169 depth=
 [X] Prop04MsgSound
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 ---------- Network02FifoPair ----------
 [X] Prop01Type
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 [X] Prop02Safe
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 [ ] Prop03Sound
-     states=102 trans=170 depth=
+     states=101 trans=169 depth=
 [X] Prop04MsgSound
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
+---------- Network03Causal ----------
+[X] Prop01Type
+     states=105 trans=173 depth=23
+[X] Prop02Safe
+     states=105 trans=173 depth=23
+[ ] Prop03Sound
+     states=105 trans=173 depth=
+[X] Prop04MsgSound
+     states=105 trans=173 depth=23
 ---------- Network04Inbox ----------
 [X] Prop01Type
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 [X] Prop02Safe
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 [ ] Prop03Sound
-     states=102 trans=170 depth=
+     states=101 trans=169 depth=
 [X] Prop04MsgSound
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 ---------- Network05Outbox ----------
 [X] Prop01Type
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 [X] Prop02Safe
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 [ ] Prop03Sound
-     states=102 trans=170 depth=
+     states=101 trans=169 depth=
 [X] Prop04MsgSound
-     states=102 trans=170 depth=24
+     states=101 trans=169 depth=23
 ---------- Network06Fifo ----------
 [X] Prop01Type
-     states=121 trans=195 depth=24
+     states=120 trans=194 depth=23
 [X] Prop02Safe
-     states=121 trans=195 depth=24
+     states=120 trans=194 depth=23
 [ ] Prop03Sound
-     states=121 trans=195 depth=
+     states=120 trans=194 depth=
 [ ] Prop04MsgSound
-     states=121 trans=195 depth=
+     states=120 trans=194 depth=
 ---------- Network07RSC ----------
 [X] Prop01Type
-     states=61 trans=93 depth=21
+     states=60 trans=92 depth=20
 [X] Prop02Safe
-     states=61 trans=93 depth=21
+     states=60 trans=92 depth=20
 [ ] Prop03Sound
-     states=61 trans=93 depth=
+     states=60 trans=92 depth=
 [ ] Prop04MsgSound
-     states=61 trans=93 depth=
+     states=60 trans=92 depth=
 done.
+
 ```
 
-**For Windows users**
-
-*We are working on providing support for Windows users too.*
+Verification for a single communication model and choosing the properties of interest is also possible but requires some more commands to run (mostly copying files and launching Java, as can be seen in `fbpmn-check`). *We are working on an extension of `fbpm-check` with options to help there.*
 
 ### Analysing counter-examples
 
 When a model is analysed, counter-examples are generated for each property that does not yield.
 
-**For Linux and OSX users**, using `fbpmn-check`, the counter examples are in `.log` files that are generated in the directory of analysis, e.g., in `/tmp/e033MBE.T07y4` in the example above.
+Using `fbpmn-check`, the counter examples are in `.log` files that are generated in the directory of analysis, e.g., in `/tmp/e033MBE.T07y4` in the example above.
 
 ```sh
 ❯ (cd /tmp/e033MBE.T07y4; ls *.log)
-e033MBE.Network01Bag.Prop01Type.log          e033MBE.Network05Outbox.Prop01Type.log
-e033MBE.Network01Bag.Prop02Safe.log          e033MBE.Network05Outbox.Prop02Safe.log
-e033MBE.Network01Bag.Prop03Sound.log         e033MBE.Network05Outbox.Prop03Sound.log
-e033MBE.Network01Bag.Prop04MsgSound.log      e033MBE.Network05Outbox.Prop04MsgSound.log
-e033MBE.Network02FifoPair.Prop01Type.log     e033MBE.Network06Fifo.Prop01Type.log
-e033MBE.Network02FifoPair.Prop02Safe.log     e033MBE.Network06Fifo.Prop02Safe.log
-e033MBE.Network02FifoPair.Prop03Sound.log    e033MBE.Network06Fifo.Prop03Sound.log
-e033MBE.Network02FifoPair.Prop04MsgSound.log e033MBE.Network06Fifo.Prop04MsgSound.log
-e033MBE.Network04Inbox.Prop01Type.log        e033MBE.Network07RSC.Prop01Type.log
-e033MBE.Network04Inbox.Prop02Safe.log        e033MBE.Network07RSC.Prop02Safe.log
-e033MBE.Network04Inbox.Prop03Sound.log       e033MBE.Network07RSC.Prop03Sound.log
-e033MBE.Network04Inbox.Prop04MsgSound.log    e033MBE.Network07RSC.Prop04MsgSound.log
+e033MBE.Network01Bag.Prop01Type.log          e033MBE.Network03Causal.Prop03Sound.log      e033MBE.Network06Fifo.Prop01Type.log
+e033MBE.Network01Bag.Prop02Safe.log          e033MBE.Network03Causal.Prop04MsgSound.log   e033MBE.Network06Fifo.Prop02Safe.log
+e033MBE.Network01Bag.Prop03Sound.log         e033MBE.Network04Inbox.Prop01Type.log        e033MBE.Network06Fifo.Prop03Sound.log
+e033MBE.Network01Bag.Prop04MsgSound.log      e033MBE.Network04Inbox.Prop02Safe.log        e033MBE.Network06Fifo.Prop04MsgSound.log
+e033MBE.Network02FifoPair.Prop01Type.log     e033MBE.Network04Inbox.Prop03Sound.log       e033MBE.Network07RSC.Prop01Type.log
+e033MBE.Network02FifoPair.Prop02Safe.log     e033MBE.Network04Inbox.Prop04MsgSound.log    e033MBE.Network07RSC.Prop02Safe.log
+e033MBE.Network02FifoPair.Prop03Sound.log    e033MBE.Network05Outbox.Prop01Type.log       e033MBE.Network07RSC.Prop03Sound.log
+e033MBE.Network02FifoPair.Prop04MsgSound.log e033MBE.Network05Outbox.Prop02Safe.log       e033MBE.Network07RSC.Prop04MsgSound.log
+e033MBE.Network03Causal.Prop01Type.log       e033MBE.Network05Outbox.Prop03Sound.log
+e033MBE.Network03Causal.Prop02Safe.log       e033MBE.Network05Outbox.Prop04MsgSound.log
 ``` 
 
 These files include information about the computation time and the counter-examples themselves in a verbose mode.
@@ -330,7 +344,6 @@ To generate versions of the counter-examples that are **easier to analyse** you 
 	```sh
 	❯ fbpmn log2dot /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
 	transformation done
-	❯ dot -Tpdf -o /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound.pdf /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound.dot
 	```
 	
 - `fbpmn log2html` to generate an interactive counter example exploration page (use the &leftarrow;/&rightarrow; keys to navigate between states of the counter example, in combination with the `Shift`key to go the the start/end of the counter example).
@@ -346,27 +359,20 @@ To generate versions of the counter-examples that are **easier to analyse** you 
 
 	*Figure 4: last state of the animation of the counter example for soundness of the model in Fig. 4 with network unordered semantics.*
 	
-The first parameter of the three commands is the source `.log` file and the second one is the target `.json`/`.dot`/`.html` file (no sufixes in both cases, `fbpmn` adds them given the type of the read/generated file).
+The first parameter of the three commands is the source `.log` file and the second one is the target `.json`/`.dot`/`.html` file (no suffixes in both cases, `fbpmn` adds them given the type of the read/generated file).
 
 In all three cases, the counter-examples are filtered of the markings that are null.
 
 To perform these transformations **for all `.log` files contained in the current directory**,
-we provide you with three scripts (in the `scripts` directory of the source distribution):
-`fbpmn-logs2json`,
-`fbpmn-logs2dot`, and 
-`fbpmn-logs2html`.
+we provide you with a `fbpmn-log-transform` script (in the `scripts` directory of the source distribution) for which you can precise the kind of files to generate (`json`/`dot`/`html`).
 
 ```sh
-❯ (cd /tmp/e033MBE.T07y4; fbpmn-logs2html)
+❯ (cd /tmp/e033MBE.T07y4; fbpmn-log-transform html)
 transformation done
 transformation done
 transformation done
 [...]
 ```
-
-**For Windows users**
-
-*We are working on providing support for Windows users too.*
 
 ### Verification constraints
 
@@ -426,7 +432,7 @@ To get help with `fbpmn`, run `fbpmn -h`.
 
 ```sh
 ❯ fbpmn -h
-0.3.0
+0.3.5
 
 Usage: fbpmn COMMAND
   formal transformations for BPMN models
@@ -439,8 +445,10 @@ Available commands:
   repl                     launches the REPL
   json2dot                 transforms a collaboration from JSON to DOT
   json2tla                 transforms a collaboration from JSON to TLA+
+  json2alloy               transforms a collaboration from JSON to Alloy
   bpmn2json                transforms a collaboration from BPMN to JSON
   bpmn2tla                 transforms a collaboration from BPMN to TLA+
+  bpmn2alloy               transforms a collaboration from BPMN to Alloy
   log2json                 transforms a TLA+ log from LOG to JSON
   log2dot                  transforms a TLA+ log from LOG to DOT
   log2html                 transforms a TLA+ log from LOG to HTML

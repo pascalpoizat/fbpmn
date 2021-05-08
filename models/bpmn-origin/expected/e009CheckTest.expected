@@ -1,0 +1,67 @@
+Working in /tmp/e009CheckTest.HtQIR with 1 worker(s)
+[92mtransformation done[0m
+<<"Processes=", 2, "Nodes=", 12, "Gateway=", 2, "SF=", 9, "MF=", 1>>
+---------- Network01Bag ----------
+[X] Prop01Type
+     states=170 trans=395 depth=19
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=170 trans=395 depth=
+[ ] Prop04MsgSound
+     states=170 trans=395 depth=
+---------- Network02FifoPair ----------
+[X] Prop01Type
+     states=170 trans=395 depth=19
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=170 trans=395 depth=
+[ ] Prop04MsgSound
+     states=170 trans=395 depth=
+---------- Network03Causal ----------
+[X] Prop01Type
+     states=170 trans=395 depth=19
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=170 trans=395 depth=
+[ ] Prop04MsgSound
+     states=170 trans=395 depth=
+---------- Network04Inbox ----------
+[X] Prop01Type
+     states=170 trans=395 depth=19
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=170 trans=395 depth=
+[ ] Prop04MsgSound
+     states=170 trans=395 depth=
+---------- Network05Outbox ----------
+[X] Prop01Type
+     states=170 trans=395 depth=19
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=170 trans=395 depth=
+[ ] Prop04MsgSound
+     states=170 trans=395 depth=
+---------- Network06Fifo ----------
+[X] Prop01Type
+     states=170 trans=395 depth=19
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=170 trans=395 depth=
+[ ] Prop04MsgSound
+     states=170 trans=395 depth=
+---------- Network07RSC ----------
+[X] Prop01Type
+     states=161 trans=374 depth=19
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=161 trans=374 depth=
+[ ] Prop04MsgSound
+     states=161 trans=374 depth=
+done.

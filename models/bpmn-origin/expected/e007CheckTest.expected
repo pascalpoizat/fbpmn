@@ -1,0 +1,67 @@
+Working in /tmp/e007CheckTest.NwpfY with 1 worker(s)
+[92mtransformation done[0m
+<<"Processes=", 1, "Nodes=", 8, "Gateway=", 2, "SF=", 7, "MF=", 0>>
+---------- Network01Bag ----------
+[X] Prop01Type
+     states=44 trans=73 depth=15
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=44 trans=73 depth=
+[ ] Prop04MsgSound
+     states=44 trans=73 depth=
+---------- Network02FifoPair ----------
+[X] Prop01Type
+     states=44 trans=73 depth=15
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=44 trans=73 depth=
+[ ] Prop04MsgSound
+     states=44 trans=73 depth=
+---------- Network03Causal ----------
+[X] Prop01Type
+     states=44 trans=73 depth=15
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=44 trans=73 depth=
+[ ] Prop04MsgSound
+     states=44 trans=73 depth=
+---------- Network04Inbox ----------
+[X] Prop01Type
+     states=44 trans=73 depth=15
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=44 trans=73 depth=
+[ ] Prop04MsgSound
+     states=44 trans=73 depth=
+---------- Network05Outbox ----------
+[X] Prop01Type
+     states=44 trans=73 depth=15
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=44 trans=73 depth=
+[ ] Prop04MsgSound
+     states=44 trans=73 depth=
+---------- Network06Fifo ----------
+[X] Prop01Type
+     states=44 trans=73 depth=15
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=44 trans=73 depth=
+[ ] Prop04MsgSound
+     states=44 trans=73 depth=
+---------- Network07RSC ----------
+[X] Prop01Type
+     states=44 trans=73 depth=15
+[ ] Prop02Safe
+     states= trans= depth=9
+[ ] Prop03Sound
+     states=44 trans=73 depth=
+[ ] Prop04MsgSound
+     states=44 trans=73 depth=
+done.

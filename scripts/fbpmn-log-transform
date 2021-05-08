@@ -1,0 +1,25 @@
+#!/usr/bin/env pwsh
+ 
+$logs = Get-ChildItem -Name -Include *.log 
+if ($args.Length -eq 1) {
+    if ($args[0] -eq "html") {
+        $to = "log2html"
+    }
+    if ($args[0] -eq "dot") {
+        $to = "log2dot"
+    }
+    if ($args[0] -eq "json") {
+        $to = "log2json"
+    }
+}
+else {
+    Write-Host 'fbpmn-log-transform <html | dot | json>' 
+    exit 1
+}
+foreach ($f in $logs) {
+    $ff = $f -Replace ".log", ""
+    fbpmn $to $ff $ff
+    if ($args[0] -eq "dot") {
+        dot -Tpdf -o "$ff.pdf" "$ff.dot"; 
+    }
+}

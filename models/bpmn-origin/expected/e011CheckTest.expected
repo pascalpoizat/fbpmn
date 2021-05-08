@@ -1,0 +1,67 @@
+Working in /tmp/e011CheckTest.PKR94 with 1 worker(s)
+[92mtransformation done[0m
+<<"Processes=", 2, "Nodes=", 15, "Gateway=", 2, "SF=", 11, "MF=", 1>>
+---------- Network01Bag ----------
+[X] Prop01Type
+     states=100 trans=209 depth=21
+[ ] Prop02Safe
+     states= trans= depth=11
+[X] Prop03Sound
+     states=100 trans=209 depth=21
+[X] Prop04MsgSound
+     states=100 trans=209 depth=21
+---------- Network02FifoPair ----------
+[X] Prop01Type
+     states=100 trans=209 depth=21
+[ ] Prop02Safe
+     states= trans= depth=11
+[X] Prop03Sound
+     states=100 trans=209 depth=21
+[X] Prop04MsgSound
+     states=100 trans=209 depth=21
+---------- Network03Causal ----------
+[X] Prop01Type
+     states=100 trans=209 depth=21
+[ ] Prop02Safe
+     states= trans= depth=11
+[X] Prop03Sound
+     states=100 trans=209 depth=21
+[X] Prop04MsgSound
+     states=100 trans=209 depth=21
+---------- Network04Inbox ----------
+[X] Prop01Type
+     states=100 trans=209 depth=21
+[ ] Prop02Safe
+     states= trans= depth=11
+[X] Prop03Sound
+     states=100 trans=209 depth=21
+[X] Prop04MsgSound
+     states=100 trans=209 depth=21
+---------- Network05Outbox ----------
+[X] Prop01Type
+     states=100 trans=209 depth=21
+[ ] Prop02Safe
+     states= trans= depth=11
+[X] Prop03Sound
+     states=100 trans=209 depth=21
+[X] Prop04MsgSound
+     states=100 trans=209 depth=21
+---------- Network06Fifo ----------
+[X] Prop01Type
+     states=100 trans=209 depth=21
+[ ] Prop02Safe
+     states= trans= depth=11
+[X] Prop03Sound
+     states=100 trans=209 depth=21
+[X] Prop04MsgSound
+     states=100 trans=209 depth=21
+---------- Network07RSC ----------
+[X] Prop01Type
+     states=100 trans=209 depth=21
+[ ] Prop02Safe
+     states= trans= depth=11
+[X] Prop03Sound
+     states=100 trans=209 depth=21
+[X] Prop04MsgSound
+     states=100 trans=209 depth=21
+done.
