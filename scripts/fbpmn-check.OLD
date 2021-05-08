@@ -1,0 +1,116 @@
+#!/bin/sh
+
+# For each configuration Config/Prop*cfg (property to check) and each
+# network Config/Network*, run tlc and analyse the results.
+
+# runtlc="java -classpath /opt/tla --add-modules java.activation tlc2.TLC -deadlock"
+runtlc="java -XX:+UseParallelGC -classpath $TLA2TOOLS_HOME/tla2tools.jar tlc2.TLC -deadlock"
+
+################
+
+parse_stat()
+{
+  transitions=`expr "$1" : '\([0-9]*\) states generated'`
+  states=`expr "$1" : '.*, \([0-9]*\) distinct states found'`
+  depth=`expr "$2" : 'The depth of the complete state graph search is \([0-9]*\)'`
+  echo "     states=$states trans=$transitions depth=$depth"
+}
+
+################
+
+if [ $# -eq 0 ] || [ $# -gt 2 ]; then
+  echo `basename $0` '<model>' '[#workers]'
+  exit 1
+fi
+
+if [ $# -eq 2 ]; then
+    workers=$2
+else
+    workers=1
+fi
+
+if ! which fbpmn > /dev/null; then
+  echo "fbpmn is not found in the PATH, please install it"
+  exit 1
+fi
+
+if ! which java > /dev/null; then
+  echo "java is not found in the PATH, please install it"
+  exit 1
+fi
+
+if [ -z $FBPMN_HOME ]; then
+        echo FBPMN_HOME is not set; exit 1
+fi
+if [ ! -d $FBPMN_HOME/theories/tla ]; then
+        echo "wrong FBPMN_HOME (theories/tla not found)"; exit 1
+fi
+if [ -z $TLA2TOOLS_HOME ]; then
+        echo TLA2TOOLS_HOME is no set; exit 1
+fi
+if [ ! -f $TLA2TOOLS_HOME/tla2tools.jar ]; then
+        echo "wrong TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
+fi
+
+fullpath="${1%.bpmn}"  # just strip extension if necessary
+model=`basename $fullpath`
+dir=`mktemp -d /tmp/$model.XXXXX`
+
+if [ ! -f $fullpath.bpmn ]; then
+    echo "$fullpath.bpmn not found."
+    exit 1
+fi
+
+echo "Working in $dir with $workers worker(s)"
+
+# Transform the BPMN model into TLA
+cp $fullpath.bpmn $dir
+if [ -f $fullpath.constraint ]; then cp $fullpath.constraint $dir; fi
+cd $dir
+fbpmn bpmn2tla $model $model
+
+if [ ! -f $model.tla ]; then
+    echo "model transformation failed"
+    exit 1
+fi
+
+# Copy verification files
+cp $FBPMN_HOME/theories/tla/PWS*.tla $FBPMN_HOME/theories/tla/Network*.tla .
+cp -rf $FBPMN_HOME/theories/tla/Configs .
+
+# First, use StatsBPMN to print some information on the size of the BPMN model.
+cp -f $FBPMN_HOME/theories/tla/StatsBPMN.cfg .
+sed -e "s/INSTANCE.*$/INSTANCE $model/g"  $FBPMN_HOME/theories/tla/StatsBPMN.tla >StatsBPMN.tla
+$runtlc StatsBPMN |grep 'Processes='
+rm -rf states
+
+# For each configuration Config/*cfg (property to check) and each network Config/Network,
+# build the files Network.tla and model.cfg
+for network in Configs/Network*.tla; do
+    networkname=`basename $network .tla`
+    cp $network Network.tla
+    echo "---------- $networkname ----------"
+    for cfg in Configs/Prop*.cfg; do
+        cfgname=`basename $cfg .cfg`
+        log=$model.$networkname.$cfgname.log
+        cp $cfg $model.cfg
+        if [ -f $model.constraint ]; then cat $model.constraint >> $model.cfg; fi
+        $runtlc $model -workers $workers > $log
+        rm -rf states
+        if grep -q "Error: Assumption.*is false" $log; then
+            echo "  ! PANIC: bad model (assume failed)"
+        else
+            if grep -q "No error has been found" $log; then
+               echo "[X] $cfgname"
+            else
+               echo "[ ] $cfgname"
+            fi
+            stat1=`grep "^[0-9]* states generated.*0 states left on queue" $log`
+            stat2=`grep "The depth of the complete state graph" $log`
+            parse_stat "$stat1" "$stat2"
+        fi
+    done
+done
+
+echo "done."
+

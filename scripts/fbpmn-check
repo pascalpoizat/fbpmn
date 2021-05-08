@@ -1,116 +1,163 @@
-#!/bin/sh
+#!/usr/bin/env pwsh
 
 # For each configuration Config/Prop*cfg (property to check) and each
 # network Config/Network*, run tlc and analyse the results.
 
 # runtlc="java -classpath /opt/tla --add-modules java.activation tlc2.TLC -deadlock"
-runtlc="java -XX:+UseParallelGC -classpath $TLA2TOOLS_HOME/tla2tools.jar tlc2.TLC -deadlock"
-
+$runtlc = { 
+    param($a = "", $b = 1)
+    java -XX:+UseParallelGC -classpath $env:TLA2TOOLS_HOME/tla2tools.jar tlc2.TLC -deadlock $a -workers $b
+}
 ################
 
-parse_stat()
-{
-  transitions=`expr "$1" : '\([0-9]*\) states generated'`
-  states=`expr "$1" : '.*, \([0-9]*\) distinct states found'`
-  depth=`expr "$2" : 'The depth of the complete state graph search is \([0-9]*\)'`
-  echo "     states=$states trans=$transitions depth=$depth"
+$parse_stat = {
+    param($a = "", $b = "", $c = @{})
+    if ($a -match '(\d*) states generated') {
+        $transitions = $matches[1] 
+    }
+    if ($a -match '(\d*) distinct states found') {
+        $states = $matches[1] 
+    }
+    if ($b -match 'The depth of the complete state graph search is (\d*)') {
+        $depth = $matches[1] 
+    }
+    Write-Host "     states=$states trans=$transitions depth=$depth"
+    $c.Add("states", $states)
+    $c.Add("trans", $transitions)
+    $c.Add("depth", $depth)
+}
+
+function New-Dir {
+    param ($fullpath, $model)
+    $parent = [System.IO.Path]::GetTempPath() 
+    $guid = [guid]::NewGuid()
+    $name = $model + "." + (([string]$guid).Replace("-", "")).Substring(0, 5)
+    $dir = New-Item -ItemType Directory -Path (Join-Path $parent $name)
+    return $dir
+} 
+
+function Get-Worker {
+    param($a , $b)
+    if ($a -eq 2 ) {
+        return $b
+    }
+    else {
+        return 1
+    }
 }
 
 ################
 
-if [ $# -eq 0 ] || [ $# -gt 2 ]; then
-  echo `basename $0` '<model>' '[#workers]'
-  exit 1
-fi
-
-if [ $# -eq 2 ]; then
-    workers=$2
-else
-    workers=1
-fi
-
-if ! which fbpmn > /dev/null; then
-  echo "fbpmn is not found in the PATH, please install it"
-  exit 1
-fi
-
-if ! which java > /dev/null; then
-  echo "java is not found in the PATH, please install it"
-  exit 1
-fi
-
-if [ -z $FBPMN_HOME ]; then
-        echo FBPMN_HOME is not set; exit 1
-fi
-if [ ! -d $FBPMN_HOME/theories/tla ]; then
-        echo "wrong FBPMN_HOME (theories/tla not found)"; exit 1
-fi
-if [ -z $TLA2TOOLS_HOME ]; then
-        echo TLA2TOOLS_HOME is no set; exit 1
-fi
-if [ ! -f $TLA2TOOLS_HOME/tla2tools.jar ]; then
-        echo "wrong TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
-fi
-
-fullpath="${1%.bpmn}"  # just strip extension if necessary
-model=`basename $fullpath`
-dir=`mktemp -d /tmp/$model.XXXXX`
-
-if [ ! -f $fullpath.bpmn ]; then
-    echo "$fullpath.bpmn not found."
+if ($args.Length -eq 0 -or $args.Length -gt 2) {
+    Write-Host ` (Get-ChildItem $PSCOMMANDPATH).Basename ` '<model>' '[#workers]' 
     exit 1
-fi
+}
 
-echo "Working in $dir with $workers worker(s)"
+$workers = Get-Worker $args.Length $args[1]
 
-# Transform the BPMN model into TLA
-cp $fullpath.bpmn $dir
-if [ -f $fullpath.constraint ]; then cp $fullpath.constraint $dir; fi
-cd $dir
+if (-NOT (which fbpmn)) {
+    Write-Host "fbpmn is not found in the PATH, please install it"
+    exit 1
+}
+if (-NOT (which java)) {
+    Write-Host "java is not found in the PATH, please install it"
+    exit 1
+}
+
+if ($env:FBPMN_HOME.Length -eq 0) {
+    Write-Host "FBPMN_HOME is not set"; exit 1
+}
+if (-NOT(Test-Path $env:FBPMN_HOME/theories/tla)) {
+    Write-Host "wrong FBPMN_HOME (theories/tla not found)"; exit 1
+} 
+if ($env:TLA2TOOLS_HOME.Length -eq 0 ) {
+    Write-Host "TLA2TOOLS_HOME is no set"; exit 1
+}
+if (-NOT(Test-Path $env:TLA2TOOLS_HOME/tla2tools.jar)) {
+    Write-Host "wrong TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
+} 
+
+$fullpath = $args[0]
+
+if (-NOT(Test-Path $fullpath)) {
+    Write-Host "$fullpath not found."
+    exit 1
+}
+
+$model = (Get-ChildItem $fullpath).Basename
+$dir = New-Dir $fullpath $model
+
+Write-Host "Working in $dir with $workers worker(s)"
+
+# TransfoRemove-Item the BPMN model into TLA
+Copy-Item $fullpath $dir
+$fullpath = (Get-Item $fullpath).DirectoryName + "/" + (Get-Item $fullpath).BaseName
+if (Test-Path "$fullpath.constraint") { 
+    Copy-Item -Path "$fullpath.constraint" $dir 
+}
+Set-Location $dir
 fbpmn bpmn2tla $model $model
 
-if [ ! -f $model.tla ]; then
-    echo "model transformation failed"
+if (-NOT(Test-Path "$model.tla")) {
+    Write-Host "model transfoRemove-Itemation failed"
     exit 1
-fi
+}
 
 # Copy verification files
-cp $FBPMN_HOME/theories/tla/PWS*.tla $FBPMN_HOME/theories/tla/Network*.tla .
-cp -rf $FBPMN_HOME/theories/tla/Configs .
+Copy-Item (Get-ChildItem $env:FBPMN_HOME/theories/tla -Filter PWS*.tla) $dir -Recurse -Force
+Copy-Item (Get-ChildItem $env:FBPMN_HOME/theories/tla -Filter Network*.tla) $dir -Recurse -Force
+Copy-Item $env:FBPMN_HOME/theories/tla/Configs $dir -Recurse -Force
 
-# First, use StatsBPMN to print some information on the size of the BPMN model.
-cp -f $FBPMN_HOME/theories/tla/StatsBPMN.cfg .
-sed -e "s/INSTANCE.*$/INSTANCE $model/g"  $FBPMN_HOME/theories/tla/StatsBPMN.tla >StatsBPMN.tla
-$runtlc StatsBPMN |grep 'Processes='
-rm -rf states
+
+# First, use StatsBPMN to print some infoRemove-Itemation on the size of the BPMN model.
+Copy-Item $env:FBPMN_HOME/theories/tla/StatsBPMN.cfg -Force
+(Get-Content $env:FBPMN_HOME/theories/tla/StatsBPMN.tla) -Replace ("INSTANCE.*$", "INSTANCE $model") > StatsBPMN.tla
+& $runtlc "$dir/StatsBPMN.tla" | Select-String "Processes=" -NoEmphasis
+Remove-Item states -Recurse -Force
 
 # For each configuration Config/*cfg (property to check) and each network Config/Network,
 # build the files Network.tla and model.cfg
-for network in Configs/Network*.tla; do
-    networkname=`basename $network .tla`
-    cp $network Network.tla
-    echo "---------- $networkname ----------"
-    for cfg in Configs/Prop*.cfg; do
-        cfgname=`basename $cfg .cfg`
-        log=$model.$networkname.$cfgname.log
-        cp $cfg $model.cfg
-        if [ -f $model.constraint ]; then cat $model.constraint >> $model.cfg; fi
-        $runtlc $model -workers $workers > $log
-        rm -rf states
-        if grep -q "Error: Assumption.*is false" $log; then
-            echo "  ! PANIC: bad model (assume failed)"
-        else
-            if grep -q "No error has been found" $log; then
-               echo "[X] $cfgname"
-            else
-               echo "[ ] $cfgname"
-            fi
-            stat1=`grep "^[0-9]* states generated.*0 states left on queue" $log`
-            stat2=`grep "The depth of the complete state graph" $log`
-            parse_stat "$stat1" "$stat2"
-        fi
-    done
-done
+$file_network = Get-ChildItem -Path Configs -Name -Include Network*.tla 
+$file_cfg = Get-ChildItem -Path Configs -Name -Include Prop*.cfg 
+$modele = @{} #
+$comms = @{} #
+foreach ($network in $file_network) {
+    $props = @{}
+    $networkname = (Get-ChildItem Configs/$network).Basename
+    Copy-Item Configs/$network Network.tla
+    Write-Host "---------- $networkname ----------"
+    foreach ($cfg in $file_cfg) {
+        $result = @{} #
+        $cfgname = (Get-ChildItem Configs/$cfg).Basename
+        $log = "$model.$networkname.$cfgname.log"
+        Copy-Item Configs/$cfg "$model.cfg"
+        if (Test-Path "$model.constraint") { 
+            Get-Content "$model.constraint" >> "$model.cfg"; 
+        }
+        & $runtlc $model $workers > $log
+        Remove-Item states -Recurse -Force
+        if (Select-String -Quiet "Error: Assumption.*is false" -Path $log) {
+            Write-Host "  ! PANIC: bad model (assume failed)"
+        }
+        else {
+            if (Select-String -Quiet "No error has been found" -Path $log) {
+                Write-Host "[X] $cfgname"
+                $result.Add("value", $true)
+            }
+            else {
+                Write-Host "[ ] $cfgname"
+                $result.Add("value", $false)
+            }
+            $stat1 = Select-String "^[0-9]* states generated.*0 states left on queue" -Path $log
+            $stat2 = Select-String "The depth of the complete state graph" -Path $log
+            & $parse_stat "$stat1" "$stat2" $result 
+        }
+        $props.Add("$cfgname", $result)
+    }
+    $comms.Add("$networkname", $props) #
+}
+$modele.Add("$model", $comms)
+$modele | ConvertTo-Json -Depth 5 | Out-File "$model.json" #
 
-echo "done."
+Write-Host "done."
 

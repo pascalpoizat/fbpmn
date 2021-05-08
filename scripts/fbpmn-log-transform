@@ -13,7 +13,7 @@ if ($args.Length -eq 1) {
     }
 }
 else {
-    Write-Host 'fbpmn-logs2* <html | dot | json>' 
+    Write-Host 'fbpmn-log-transform <html | dot | json>' 
     exit 1
 }
 foreach ($f in $logs) {
