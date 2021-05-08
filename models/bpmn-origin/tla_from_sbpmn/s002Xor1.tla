@@ -8,9 +8,9 @@ Interest ==
   "PId" :> {  }
 
 ContainRel ==
-  "PId" :> { "StartEvent_1", "Event_0fkborc", "Gateway_0bb8o1z", "Event_1hpd68d", "Activity_0z782bb" }
+  "PId" :> { "StartEvent_1", "end_moved", "Gateway_0bb8o1z", "end_in_place", "Activity_0z782bb" }
 
-Node == { "PId", "StartEvent_1", "Event_0fkborc", "Gateway_0bb8o1z", "Event_1hpd68d", "Activity_0z782bb" }
+Node == { "PId", "StartEvent_1", "end_moved", "Gateway_0bb8o1z", "end_in_place", "Activity_0z782bb" }
 
 Edge == { "Flow_09a8um7", "Flow_0llicsy", "Flow_18ptpdh", "Flow_14b309w" }
 
@@ -28,16 +28,16 @@ source ==
 
 target ==
    "Flow_09a8um7" :> "Gateway_0bb8o1z"
-@@ "Flow_0llicsy" :> "Event_0fkborc"
+@@ "Flow_0llicsy" :> "end_moved"
 @@ "Flow_18ptpdh" :> "Activity_0z782bb"
-@@ "Flow_14b309w" :> "Event_1hpd68d"
+@@ "Flow_14b309w" :> "end_in_place"
 
 CatN ==
    "PId" :> Process
 @@ "StartEvent_1" :> NoneStartEvent
-@@ "Event_0fkborc" :> NoneEndEvent
+@@ "end_moved" :> NoneEndEvent
 @@ "Gateway_0bb8o1z" :> ExclusiveOr
-@@ "Event_1hpd68d" :> NoneEndEvent
+@@ "end_in_place" :> NoneEndEvent
 @@ "Activity_0z782bb" :> AbstractTask
 
 CatE ==

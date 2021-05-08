@@ -57,10 +57,10 @@
     </bpmn:task>
     <bpmn:sequenceFlow id="Flow_0ipe2sk" sourceRef="Activity_0z782bb" targetRef="Activity_11g6ot8" />
     <bpmn:sequenceFlow id="Flow_0evvsn6" sourceRef="Activity_11g6ot8" targetRef="Gateway_0bb8o1z" />
-    <bpmn:endEvent id="Event_01pf838" name="end">
+    <bpmn:endEvent id="end" name="end">
       <bpmn:incoming>Flow_11sy0ae</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_11sy0ae" name="there are no such zones&#10;" sourceRef="Gateway_0bb8o1z" targetRef="Event_01pf838" />
+    <bpmn:sequenceFlow id="Flow_11sy0ae" name="there are no such zones&#10;" sourceRef="Gateway_0bb8o1z" targetRef="end" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="s003Xor2">
@@ -111,7 +111,7 @@
       <bpmndi:BPMNShape id="Activity_11g6ot8_di" bpmnElement="Activity_11g6ot8">
         <dc:Bounds x="620" y="120" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_01pf838_di" bpmnElement="Event_01pf838">
+      <bpmndi:BPMNShape id="Event_01pf838_di" bpmnElement="end">
         <dc:Bounds x="652" y="242" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="661" y="285" width="19" height="14" />

@@ -64,12 +64,20 @@ UnchangedSubs(s) == s' = s \* FIXME: use UNCHANGED
 
 UnchangedSpace(v,s) == /\ UnchangedSigma(v) \* FIXME: use UNCHANGED
                        /\ UnchangedSubs(s) \* FIXME: use UNCHANGED
-                       
+
+(* v1 *)
+(*
 evalMove(n,v,s) ==  /\ UnchangedSubs(s)
                     /\ LET newPos == evalF(v,s,ProcessOf(n), aCond[n]) IN 
                           IF newPos#{} THEN v' = [v EXCEPT ![varloc[ProcessOf(n)]] = {CHOOSE x \in newPos : TRUE }] 
                            ELSE UnchangedSigma(v)
-                
+*)
+    
+(* v2 *)
+evalMove(n,v,s) ==  /\ UnchangedSubs(s)
+                    /\ LET newPos == evalF(v,s,ProcessOf(n), aCond[n]) IN 
+                            \E x \in newPos :  v' = [v EXCEPT ![varloc[ProcessOf(n)]] = {x}] 
+
 evalUpdate(n,v,s) == /\ UnchangedSigma(v)
                     /\ s' = [x \in GroupLocation |-> 
                     IF (x \in aUpdateGMinus[n]) THEN s[x]\v[aUpdateVar[n]]

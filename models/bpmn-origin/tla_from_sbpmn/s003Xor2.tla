@@ -8,9 +8,9 @@ Interest ==
   "PId" :> {  }
 
 ContainRel ==
-  "PId" :> { "StartEvent_1", "Gateway_0bb8o1z", "Activity_0z782bb", "Activity_11g6ot8", "Event_01pf838" }
+  "PId" :> { "StartEvent_1", "Gateway_0bb8o1z", "Activity_0z782bb", "Activity_11g6ot8", "end" }
 
-Node == { "PId", "StartEvent_1", "Gateway_0bb8o1z", "Activity_0z782bb", "Activity_11g6ot8", "Event_01pf838" }
+Node == { "PId", "StartEvent_1", "Gateway_0bb8o1z", "Activity_0z782bb", "Activity_11g6ot8", "end" }
 
 Edge == { "Flow_09a8um7", "Flow_18ptpdh", "Flow_0ipe2sk", "Flow_0evvsn6", "Flow_11sy0ae" }
 
@@ -32,7 +32,7 @@ target ==
 @@ "Flow_18ptpdh" :> "Activity_0z782bb"
 @@ "Flow_0ipe2sk" :> "Activity_11g6ot8"
 @@ "Flow_0evvsn6" :> "Gateway_0bb8o1z"
-@@ "Flow_11sy0ae" :> "Event_01pf838"
+@@ "Flow_11sy0ae" :> "end"
 
 CatN ==
    "PId" :> Process
@@ -40,7 +40,7 @@ CatN ==
 @@ "Gateway_0bb8o1z" :> ExclusiveOr
 @@ "Activity_0z782bb" :> AbstractTask
 @@ "Activity_11g6ot8" :> AbstractTask
-@@ "Event_01pf838" :> NoneEndEvent
+@@ "end" :> NoneEndEvent
 
 CatE ==
    "Flow_09a8um7" :> NormalSeqFlow
