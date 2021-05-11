@@ -1,6 +1,6 @@
 # fbpmn
 
-[![Build status](https://secure.travis-ci.org/pascalpoizat/fbpmn.svg)](https://travis-ci.org/pascalpoizat/fbpmn)
+[![Build status](https://travis-ci.com/pascalpoizat/fbpmn.svg?branch=master)](https://travis-ci.com/github/pascalpoizat/fbpmn)
 [![Windows build status](https://ci.appveyor.com/api/projects/status/github/pascalpoizat/fbpmn?branch=master&svg=true)](https://ci.appveyor.com/project/pascalpoizat/fbpmn)
 [![Apache-2.0 license](https://img.shields.io/github/license/pascalpoizat/veca-haskell.svg)](LICENSE)
 [![Version](https://img.shields.io/github/tag/pascalpoizat/fbpmn.svg)](fbpmn.cabal)
@@ -19,6 +19,21 @@
 -->
 
 **formal tools for BPMN**
+
+----
+
+**NEW: sBPMN (BPMN extension for spatial information) is now supported.**
+
+To use it:
+
+- install `fbpmn` as explained below
+- in addition to steps *1. -- 5.* below, ensure `sfbpmn-check` from the `scripts/` directory is found on your command `PATH`
+- design your model (`M.bpmn`), user definitions (`M.userdefs`, optional), user specific properties (`M.userprops`, optional), and boundedness constraints (`M.constraint`, optional); see models with ids `s0xx` in the `models/bpmn-origin/src` for examples
+- verify your model with `sfbpmn-check M.bpmn cores` (the script will check if the optional files are there or not, `cores` is the number of cores to uses) 
+
+For the time being, `sfbpmn-check` is only available under Linux and MacOS (a PowerShell script is in preparation). For **Windows** you will have to copy files by hand and run `fbpmn sbpmn2tla`, TLC (see the `runtlc` definition in `sfbpmn-check`), and `fbpmn log2html` yourself.
+
+----
 
 `fbpmn` supports the verification of business processes (workflows and collaborations) properties:
 
@@ -156,11 +171,11 @@ Please then set the `FBPMN_HOME` environment variable to the place where the fbp
 export FBPMN_HOME=/Somewhere/On/Your/Disk/fbpmn
 ```
 
-You may typically add such a command in your shell configuration file, e.g., `~/.bashrc` or `~/.zshenv` under **Linux** and **OSX**.
+You may typically add such a command in your shell configuration file, e.g., `~/.bashrc` or `~/.zshenv` under **Linux** and **MacOS**.
 
 ## 3a. Getting a pre-built `fbpmn` binary
 
-**Linux** and **OSX** binaries of stable versions of `fbpmn` are built using the continous integration server and are available [here](https://github.com/pascalpoizat/fbpmn/releases).
+**Linux** and **MacOS** binaries of stable versions of `fbpmn` are built using the continous integration server and are available [here](https://github.com/pascalpoizat/fbpmn/releases).
 
 *We are working on having binaries automatically built for Windows.*
 
