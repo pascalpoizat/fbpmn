@@ -1,0 +1,14 @@
+---------------- MODULE UserProperties ----------------
+
+EXTENDS Naturals
+
+VARIABLES nodemarks, edgemarks, net, sigma, subs
+CONSTANT varloc
+
+\* add your properties below:
+
+User1 == <> [] ( nodemarks["PlanterEndInBase"] >= 1 )
+
+User2 == <> [] ( subs["toPlant"] = {} )
+
+================================================================
