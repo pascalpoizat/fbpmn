@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_1rhjooo" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
-  <bpmn:collaboration id="s009ConditionOrdering">
+  <bpmn:collaboration id="s010ConditionOrdering">
     <bpmn:extensionElements>
       <camunda:properties>
         <camunda:property name="group-locations" value="[toPlant,planted,toSpray,sprayed]" />
@@ -85,13 +85,25 @@
     <bpmn:association id="Association_1y8wzef" sourceRef="xor" targetRef="TextAnnotation_1ue3kul" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="s009ConditionOrdering">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="s010ConditionOrdering">
       <bpmndi:BPMNShape id="Participant_0tx4fwz_di" bpmnElement="P" isHorizontal="true">
         <dc:Bounds x="129" y="40" width="600" height="390" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1ue3kul_di" bpmnElement="TextAnnotation_1ue3kul">
-        <dc:Bounds x="170" y="50" width="360" height="54" />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1ddop94_di" bpmnElement="Flow_1ddop94">
+        <di:waypoint x="580" y="260" />
+        <di:waypoint x="642" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bc6u3c_di" bpmnElement="Flow_1bc6u3c">
+        <di:waypoint x="580" y="160" />
+        <di:waypoint x="642" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eua9ff_di" bpmnElement="flow_to_f3" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <di:waypoint x="315" y="260" />
+        <di:waypoint x="480" y="260" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="338" y="215" width="71" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_14b309w_di" bpmnElement="default_flow" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
         <di:waypoint x="290" y="285" />
         <di:waypoint x="290" y="350" />
@@ -111,21 +123,6 @@
       <bpmndi:BPMNEdge id="Flow_09a8um7_di" bpmnElement="Flow_09a8um7">
         <di:waypoint x="215" y="260" />
         <di:waypoint x="265" y="260" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1eua9ff_di" bpmnElement="flow_to_f3" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
-        <di:waypoint x="315" y="260" />
-        <di:waypoint x="480" y="260" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="338" y="215" width="71" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1bc6u3c_di" bpmnElement="Flow_1bc6u3c">
-        <di:waypoint x="580" y="160" />
-        <di:waypoint x="642" y="160" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1ddop94_di" bpmnElement="Flow_1ddop94">
-        <di:waypoint x="580" y="260" />
-        <di:waypoint x="642" y="260" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_0fkborc_di" bpmnElement="endF2">
         <dc:Bounds x="642" y="142" width="36" height="36" />
@@ -159,6 +156,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_18vh6pp_di" bpmnElement="Activity_18vh6pp" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
         <dc:Bounds x="480" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1ue3kul_di" bpmnElement="TextAnnotation_1ue3kul">
+        <dc:Bounds x="170" y="50" width="360" height="54" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1y8wzef_di" bpmnElement="Association_1y8wzef">
         <di:waypoint x="283" y="242" />
