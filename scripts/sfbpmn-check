@@ -20,9 +20,9 @@ parse_stat()
   transitions=`expr "$1" : '\([0-9]*\) states generated'`
   states=`expr "$1" : '.*, \([0-9]*\) distinct states found'`
   depth=`expr "$2" : 'The depth of the complete state graph search is \([0-9]*\)'`
-  time=`expr "$3" : 'Finished in \([0-9]*\)s at .*'`
+  time=`expr "$3" : 'Finished in \(.*\) at .*'`
   echo "states=$states trans=$transitions depth=$depth"
-  echo "time=$time s"
+  echo "time=$time"
 }
 
 ################
@@ -103,8 +103,7 @@ networkname=`basename $network .tla`
 cp $network Network.tla
 cfg="configuration.cfg"
 basecfg="configuration_base.cfg"
-log=$model.$networkname.all.log
-logname=`basename $log`
+log=$model.log
 
 # Copy user defined files
 if [ -f $model.userdefs ]; then cp -f $model.userdefs UserProperties.tla; fi
@@ -129,12 +128,12 @@ else
     else
         echo
         echo "[ ] model $model does not veryfy some properties"
-        echo "log file and counter example is in $log"
-        fbpmn log2html $logname $logname
+        echo "log file is in $log and counter example is in $model.html"
+        fbpmn log2html $model $model
     fi
     stat1=`grep "^[0-9]* states generated.*0 states left on queue" $log`
     stat2=`grep "The depth of the complete state graph" $log`
-    stat3=`grep "^Finished in [0-9]*s at" $log`
+    stat3=`grep -E "^Finished in ([0-9]*min )?[0-9]*s at" $log`
     echo
     parse_stat "$stat1" "$stat2" "$stat3"
 fi
