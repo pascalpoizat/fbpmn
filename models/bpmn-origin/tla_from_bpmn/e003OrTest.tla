@@ -10,18 +10,15 @@ Interest ==
 ContainRel ==
   "Process_" :> { "AT1", "Or1", "Xor1", "AT3", "AT2", "Xor2", "Or2", "Xor3", "AT4", "AT5", "NEE", "NSE", "Xor0" }
 
-Node == {
-  "Process_","AT1","Or1","Xor1","AT3","AT2","Xor2","Or2","Xor3","AT4","AT5","NEE","NSE","Xor0"
-}
+Node == { "Process_", "AT1", "Or1", "Xor1", "AT3", "AT2", "Xor2", "Or2", "Xor3", "AT4", "AT5", "NEE", "NSE", "Xor0" }
 
-Edge == {
-  "e15","e1","e14","e13","e12","e11","e10","e5","e9","e8","e7","e6","e4","e3","e2","e0"
-}
+Edge == { "e15", "e1", "e14", "e13", "e12", "e11", "e10", "e5", "e9", "e8", "e7", "e6", "e4", "e3", "e2", "e0" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "e15" :> "Or1"
@@ -114,7 +111,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

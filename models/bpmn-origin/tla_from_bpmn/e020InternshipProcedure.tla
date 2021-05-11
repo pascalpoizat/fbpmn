@@ -16,25 +16,22 @@ ContainRel ==
   @@ "InternshipOffice_" :> { "IntermediateCatchEvent_180guhd", "IntermediateCatchEvent_0oxyhte", "ExclusiveGateway_025el3u", "ReceiveTask_146lfh4", "EndEvent_0zeqiic", "StartEvent_0y07koo", "EventBasedGateway_1d92ix7" }
   @@ "Student_" :> { "StartEvent_0efqept", "ExclusiveGateway_1pvytgl", "ExclusiveGateway_10r796g", "Task_05rcgao", "Task_12w7z0s", "Task_0kueqty", "Task_16mub7w", "Task_0y40xht", "EndEvent_131pwct" }
 
-Node == {
-  "Student_","Company_","InternshipOffice_","InternshipDelegate_","StartEvent_0efqept","ExclusiveGateway_1pvytgl","ExclusiveGateway_10r796g","Task_05rcgao","Task_12w7z0s","Task_0kueqty","Task_16mub7w","Task_0y40xht","EndEvent_131pwct","Task_1ukgtgd","Task_0k3desy","EndEvent_0g8hfyq","Task_0z00tzq","Task_1awa0vf","Task_13r7bmt","Task_10ik9d4","Task_06e9es5","Task_0zi619x","ExclusiveGateway_1ojvmkc","Task_16a1dy1","Task_0ieueaf","StartEvent_1wgj96l","ExclusiveGateway_1wor220","IntermediateCatchEvent_180guhd","IntermediateCatchEvent_0oxyhte","ExclusiveGateway_025el3u","ReceiveTask_146lfh4","EndEvent_0zeqiic","StartEvent_0y07koo","EventBasedGateway_1d92ix7","StartEvent_0sg8ueb","SendTask_0bu2egl","ReceiveTask_1eiaojy","EndEvent_0r34c4w","SendTask_1sfy3aq"
-}
+Node == { "Student_", "Company_", "InternshipOffice_", "InternshipDelegate_", "StartEvent_0efqept", "ExclusiveGateway_1pvytgl", "ExclusiveGateway_10r796g", "Task_05rcgao", "Task_12w7z0s", "Task_0kueqty", "Task_16mub7w", "Task_0y40xht", "EndEvent_131pwct", "Task_1ukgtgd", "Task_0k3desy", "EndEvent_0g8hfyq", "Task_0z00tzq", "Task_1awa0vf", "Task_13r7bmt", "Task_10ik9d4", "Task_06e9es5", "Task_0zi619x", "ExclusiveGateway_1ojvmkc", "Task_16a1dy1", "Task_0ieueaf", "StartEvent_1wgj96l", "ExclusiveGateway_1wor220", "IntermediateCatchEvent_180guhd", "IntermediateCatchEvent_0oxyhte", "ExclusiveGateway_025el3u", "ReceiveTask_146lfh4", "EndEvent_0zeqiic", "StartEvent_0y07koo", "EventBasedGateway_1d92ix7", "StartEvent_0sg8ueb", "SendTask_0bu2egl", "ReceiveTask_1eiaojy", "EndEvent_0r34c4w", "SendTask_1sfy3aq" }
 
-Edge == {
-  "MessageFlow_1r2202w","MessageFlow_0vajuh0","MessageFlow_1exti3v","MessageFlow_0whwr08","MessageFlow_1uu4df2","MessageFlow_0qzpag3","MessageFlow_0n79ikw","MessageFlow_0n7crx1","SequenceFlow_19jde9o","SequenceFlow_07e105b","SequenceFlow_1nsmz5l","SequenceFlow_1a0w8i4","SequenceFlow_1hv2qod","SequenceFlow_04fa4c4","SequenceFlow_0epxxie","SequenceFlow_1716tm6","SequenceFlow_1e21rh4","SequenceFlow_0nlul5d","SequenceFlow_0oaajbr","SequenceFlow_1v26cki","SequenceFlow_0bferc8","SequenceFlow_0rqes4b","SequenceFlow_19fg7gc","SequenceFlow_0upqxnz","SequenceFlow_0tbrrh9","SequenceFlow_0ye9pwd","SequenceFlow_007i0gb","SequenceFlow_036yd4w","SequenceFlow_1wxr7td","SequenceFlow_1hrqezf","SequenceFlow_12e7qby","SequenceFlow_09fa10u","SequenceFlow_0cxrm8j","SequenceFlow_0lkr4ww","SequenceFlow_1h50tfu","SequenceFlow_1nxvmw1","SequenceFlow_0f1t7q4","SequenceFlow_1ssp09f","SequenceFlow_07c1y6g","SequenceFlow_0woxsim","SequenceFlow_1ifwhto","SequenceFlow_0ol0c8s"
-}
+Edge == { "MessageFlow_1r2202w", "MessageFlow_0vajuh0", "MessageFlow_1exti3v", "MessageFlow_0whwr08", "MessageFlow_1uu4df2", "MessageFlow_0qzpag3", "MessageFlow_0n79ikw", "MessageFlow_0n7crx1", "SequenceFlow_19jde9o", "SequenceFlow_07e105b", "SequenceFlow_1nsmz5l", "SequenceFlow_1a0w8i4", "SequenceFlow_1hv2qod", "SequenceFlow_04fa4c4", "SequenceFlow_0epxxie", "SequenceFlow_1716tm6", "SequenceFlow_1e21rh4", "SequenceFlow_0nlul5d", "SequenceFlow_0oaajbr", "SequenceFlow_1v26cki", "SequenceFlow_0bferc8", "SequenceFlow_0rqes4b", "SequenceFlow_19fg7gc", "SequenceFlow_0upqxnz", "SequenceFlow_0tbrrh9", "SequenceFlow_0ye9pwd", "SequenceFlow_007i0gb", "SequenceFlow_036yd4w", "SequenceFlow_1wxr7td", "SequenceFlow_1hrqezf", "SequenceFlow_12e7qby", "SequenceFlow_09fa10u", "SequenceFlow_0cxrm8j", "SequenceFlow_0lkr4ww", "SequenceFlow_1h50tfu", "SequenceFlow_1nxvmw1", "SequenceFlow_0f1t7q4", "SequenceFlow_1ssp09f", "SequenceFlow_07c1y6g", "SequenceFlow_0woxsim", "SequenceFlow_1ifwhto", "SequenceFlow_0ol0c8s" }
 
 Message == { "agreement", "termination notification", "internship completion", "documentation", "login", "registration", "proposal", "access" }
 
 msgtype ==
-      "MessageFlow_1r2202w" :> "agreement"
-  @@ "MessageFlow_0vajuh0" :> "termination notification"
-  @@ "MessageFlow_1exti3v" :> "internship completion"
-  @@ "MessageFlow_0whwr08" :> "documentation"
-  @@ "MessageFlow_1uu4df2" :> "login"
-  @@ "MessageFlow_0qzpag3" :> "registration"
-  @@ "MessageFlow_0n79ikw" :> "proposal"
-  @@ "MessageFlow_0n7crx1" :> "access"
+   "MessageFlow_1r2202w" :> "agreement"
+@@ "MessageFlow_0vajuh0" :> "termination notification"
+@@ "MessageFlow_1exti3v" :> "internship completion"
+@@ "MessageFlow_0whwr08" :> "documentation"
+@@ "MessageFlow_1uu4df2" :> "login"
+@@ "MessageFlow_0qzpag3" :> "registration"
+@@ "MessageFlow_0n79ikw" :> "proposal"
+@@ "MessageFlow_0n7crx1" :> "access"
+
 
 source ==
    "MessageFlow_1r2202w" :> "Task_0kueqty"
@@ -227,7 +224,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

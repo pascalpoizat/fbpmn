@@ -10,18 +10,15 @@ Interest ==
 ContainRel ==
   "Process_" :> { "StartEvent_1", "ExclusiveGateway_1gus05a", "Task_1c559zv", "Task_1cbrss1", "EndEvent_198u4gq", "EndEvent_1e5c16l" }
 
-Node == {
-  "Process_","StartEvent_1","ExclusiveGateway_1gus05a","Task_1c559zv","Task_1cbrss1","EndEvent_198u4gq","EndEvent_1e5c16l"
-}
+Node == { "Process_", "StartEvent_1", "ExclusiveGateway_1gus05a", "Task_1c559zv", "Task_1cbrss1", "EndEvent_198u4gq", "EndEvent_1e5c16l" }
 
-Edge == {
-  "SequenceFlow_1bot7ik","SequenceFlow_1t3w3h5","SequenceFlow_13vrdzd","SequenceFlow_08o2r31","SequenceFlow_0cvzouu"
-}
+Edge == { "SequenceFlow_1bot7ik", "SequenceFlow_1t3w3h5", "SequenceFlow_13vrdzd", "SequenceFlow_08o2r31", "SequenceFlow_0cvzouu" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SequenceFlow_1bot7ik" :> "StartEvent_1"
@@ -71,7 +68,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

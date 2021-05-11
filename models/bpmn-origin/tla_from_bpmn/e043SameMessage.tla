@@ -12,21 +12,18 @@ ContainRel ==
   "Pid" :> { "StartEvent_1", "Task_1640yub", "Task_1yxycrc", "EndEvent_15dkjc7", "Task_125lbbu", "Task_0rim1ab" }
   @@ "Qid" :> { "StartEvent_131stvt", "SendTask_1ukbqce", "ReceiveTask_12v7zb0", "EndEvent_0z166lz", "Task_1dr6jww", "Task_1jdqb88" }
 
-Node == {
-  "Pid","Qid","StartEvent_1","Task_1640yub","Task_1yxycrc","EndEvent_15dkjc7","Task_125lbbu","Task_0rim1ab","StartEvent_131stvt","SendTask_1ukbqce","ReceiveTask_12v7zb0","EndEvent_0z166lz","Task_1dr6jww","Task_1jdqb88"
-}
+Node == { "Pid", "Qid", "StartEvent_1", "Task_1640yub", "Task_1yxycrc", "EndEvent_15dkjc7", "Task_125lbbu", "Task_0rim1ab", "StartEvent_131stvt", "SendTask_1ukbqce", "ReceiveTask_12v7zb0", "EndEvent_0z166lz", "Task_1dr6jww", "Task_1jdqb88" }
 
-Edge == {
-  "MessageFlow_08078h0","MessageFlow_0ethk5r","MessageFlow_1sbztdc","MessageFlow_1i8pa9a","SequenceFlow_1e8j5gg","SequenceFlow_0ul5cp9","SequenceFlow_1gr5udw","SequenceFlow_0x0ua9p","SequenceFlow_136ue2u","SequenceFlow_1kr124p","SequenceFlow_1ajd21l","SequenceFlow_1u8e5ni","SequenceFlow_0ww2wl4","SequenceFlow_19mve9z"
-}
+Edge == { "MessageFlow_08078h0", "MessageFlow_0ethk5r", "MessageFlow_1sbztdc", "MessageFlow_1i8pa9a", "SequenceFlow_1e8j5gg", "SequenceFlow_0ul5cp9", "SequenceFlow_1gr5udw", "SequenceFlow_0x0ua9p", "SequenceFlow_136ue2u", "SequenceFlow_1kr124p", "SequenceFlow_1ajd21l", "SequenceFlow_1u8e5ni", "SequenceFlow_0ww2wl4", "SequenceFlow_19mve9z" }
 
 Message == { "Info" }
 
 msgtype ==
-      "MessageFlow_08078h0" :> "Info"
-  @@ "MessageFlow_0ethk5r" :> "Info"
-  @@ "MessageFlow_1sbztdc" :> "Info"
-  @@ "MessageFlow_1i8pa9a" :> "Info"
+   "MessageFlow_08078h0" :> "Info"
+@@ "MessageFlow_0ethk5r" :> "Info"
+@@ "MessageFlow_1sbztdc" :> "Info"
+@@ "MessageFlow_1i8pa9a" :> "Info"
+
 
 source ==
    "MessageFlow_08078h0" :> "Task_1640yub"
@@ -110,7 +107,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

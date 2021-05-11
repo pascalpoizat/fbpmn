@@ -11,18 +11,15 @@ ContainRel ==
   "Pid" :> { "sp", "se", "ee2", "t2", "ee1", "t3", "be" }
   @@ "sp" :> { "t1", "StartEvent_0y9n6er", "eeSP" }
 
-Node == {
-  "Pid","sp","se","ee2","t2","ee1","t3","be","t1","StartEvent_0y9n6er","eeSP"
-}
+Node == { "Pid", "sp", "se", "ee2", "t2", "ee1", "t3", "be", "t1", "StartEvent_0y9n6er", "eeSP" }
 
-Edge == {
-  "SequenceFlow_1351e66","SequenceFlow_069yln3","SequenceFlow_0210zve","SequenceFlow_0lpe900","SequenceFlow_1ckj6jx","SequenceFlow_18ve5j0","SequenceFlow_0xvib5s"
-}
+Edge == { "SequenceFlow_1351e66", "SequenceFlow_069yln3", "SequenceFlow_0210zve", "SequenceFlow_0lpe900", "SequenceFlow_1ckj6jx", "SequenceFlow_18ve5j0", "SequenceFlow_0xvib5s" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SequenceFlow_1351e66" :> "se"
@@ -82,7 +79,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

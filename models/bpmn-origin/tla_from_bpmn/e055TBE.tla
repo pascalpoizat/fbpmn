@@ -11,18 +11,15 @@ ContainRel ==
   "Process_1" :> { "SubProcess_0h2vtyo", "BoundaryEvent_02b1vw4", "StartEvent_1", "EndEvent_111i3i3" }
   @@ "SubProcess_0h2vtyo" :> { "StartEvent_0hi510e", "Task_0mfb6xu", "Task_0m7n5xk" }
 
-Node == {
-  "Process_1","SubProcess_0h2vtyo","BoundaryEvent_02b1vw4","StartEvent_1","EndEvent_111i3i3","StartEvent_0hi510e","Task_0mfb6xu","Task_0m7n5xk"
-}
+Node == { "Process_1", "SubProcess_0h2vtyo", "BoundaryEvent_02b1vw4", "StartEvent_1", "EndEvent_111i3i3", "StartEvent_0hi510e", "Task_0mfb6xu", "Task_0m7n5xk" }
 
-Edge == {
-  "SequenceFlow_1tuej2e","SequenceFlow_05shv4u","SequenceFlow_1y9pakp","SequenceFlow_19ibfph","SequenceFlow_038z5pz"
-}
+Edge == { "SequenceFlow_1tuej2e", "SequenceFlow_05shv4u", "SequenceFlow_1y9pakp", "SequenceFlow_19ibfph", "SequenceFlow_038z5pz" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SequenceFlow_1tuej2e" :> "BoundaryEvent_02b1vw4"
@@ -73,7 +70,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

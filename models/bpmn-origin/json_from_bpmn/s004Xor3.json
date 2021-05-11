@@ -1,0 +1,76 @@
+{
+    "isInterrupt": {},
+    "catN": {
+        "StartEvent_1": "NoneStartEvent",
+        "Event_01pf838": "NoneEndEvent",
+        "PId": "Process",
+        "Activity_0z782bb": "AbstractTask",
+        "Activity_11g6ot8": "AbstractTask",
+        "Gateway_0bb8o1z": "XorGateway"
+    },
+    "catE": {
+        "Flow_18ptpdh": "ConditionalSequenceFlow",
+        "Flow_0evvsn6": "NormalSequenceFlow",
+        "Flow_11sy0ae": "DefaultSequenceFlow",
+        "Flow_09a8um7": "NormalSequenceFlow",
+        "Flow_0ipe2sk": "NormalSequenceFlow"
+    },
+    "containN": {
+        "PId": [
+            "StartEvent_1",
+            "Gateway_0bb8o1z",
+            "Activity_0z782bb",
+            "Activity_11g6ot8",
+            "Event_01pf838"
+        ]
+    },
+    "messageE": {},
+    "timeInformation": {},
+    "targetE": {
+        "Flow_18ptpdh": "Activity_0z782bb",
+        "Flow_0evvsn6": "Gateway_0bb8o1z",
+        "Flow_11sy0ae": "Event_01pf838",
+        "Flow_09a8um7": "Gateway_0bb8o1z",
+        "Flow_0ipe2sk": "Activity_11g6ot8"
+    },
+    "name": "s004Xor3",
+    "attached": {},
+    "containE": {
+        "PId": [
+            "Flow_09a8um7",
+            "Flow_18ptpdh",
+            "Flow_0ipe2sk",
+            "Flow_0evvsn6",
+            "Flow_11sy0ae"
+        ]
+    },
+    "edges": [
+        "Flow_09a8um7",
+        "Flow_18ptpdh",
+        "Flow_0ipe2sk",
+        "Flow_0evvsn6",
+        "Flow_11sy0ae"
+    ],
+    "messages": [],
+    "sourceE": {
+        "Flow_18ptpdh": "Gateway_0bb8o1z",
+        "Flow_0evvsn6": "Activity_11g6ot8",
+        "Flow_11sy0ae": "Gateway_0bb8o1z",
+        "Flow_09a8um7": "StartEvent_1",
+        "Flow_0ipe2sk": "Activity_0z782bb"
+    },
+    "nodes": [
+        "PId",
+        "StartEvent_1",
+        "Gateway_0bb8o1z",
+        "Activity_0z782bb",
+        "Activity_11g6ot8",
+        "Event_01pf838"
+    ],
+    "nameN": {
+        "StartEvent_1": "start\n",
+        "Event_01pf838": "end",
+        "Activity_0z782bb": "move to z",
+        "Activity_11g6ot8": "plant z and mark it to be sprayed"
+    }
+}

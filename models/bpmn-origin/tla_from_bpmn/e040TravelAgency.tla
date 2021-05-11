@@ -14,24 +14,21 @@ ContainRel ==
   @@ "SubProcess_1agd6n3" :> { "StartEvent_0qomvov", "IntermediateThrowEvent_0xjpikb", "IntermediateThrowEvent_0neineb", "Task_002ndsu", "Task_1ne4gpy", "EndEvent_1vkzo14" }
   @@ "TravelAgency_" :> { "BoundaryEvent_19y0yk9", "EndEvent_17rlcaz", "EndEvent_10gqkzy", "SubProcess_1agd6n3", "Activity_0re3cuj", "StartEvent_1f3jj6d", "BoundaryEvent_0j1yvnw", "IntermediateThrowEvent_0b4rm53" }
 
-Node == {
-  "Customer_","TravelAgency_","Task_1v9s881","ExclusiveGateway_192ovii","ExclusiveGateway_0wgdt1i","StartEvent_1","Task_07u875a","EndEvent_055yt9k","EndEvent_0u6deep","IntermediateThrowEvent_12d113r","Task_1q91vog","BoundaryEvent_0qlhw6m","EndEvent_0syu44v","IntermediateThrowEvent_02q48nh","BoundaryEvent_19y0yk9","EndEvent_17rlcaz","EndEvent_10gqkzy","SubProcess_1agd6n3","Activity_0re3cuj","StartEvent_1f3jj6d","BoundaryEvent_0j1yvnw","IntermediateThrowEvent_0b4rm53","StartEvent_0qomvov","IntermediateThrowEvent_0xjpikb","IntermediateThrowEvent_0neineb","Task_002ndsu","Task_1ne4gpy","EndEvent_1vkzo14","Event_0e98cce","ExclusiveGateway_1dc5v3z","Task_1bn6n5q"
-}
+Node == { "Customer_", "TravelAgency_", "Task_1v9s881", "ExclusiveGateway_192ovii", "ExclusiveGateway_0wgdt1i", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k", "EndEvent_0u6deep", "IntermediateThrowEvent_12d113r", "Task_1q91vog", "BoundaryEvent_0qlhw6m", "EndEvent_0syu44v", "IntermediateThrowEvent_02q48nh", "BoundaryEvent_19y0yk9", "EndEvent_17rlcaz", "EndEvent_10gqkzy", "SubProcess_1agd6n3", "Activity_0re3cuj", "StartEvent_1f3jj6d", "BoundaryEvent_0j1yvnw", "IntermediateThrowEvent_0b4rm53", "StartEvent_0qomvov", "IntermediateThrowEvent_0xjpikb", "IntermediateThrowEvent_0neineb", "Task_002ndsu", "Task_1ne4gpy", "EndEvent_1vkzo14", "Event_0e98cce", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q" }
 
-Edge == {
-  "MessageFlow_0knd10s","MessageFlow_1yfhhru","MessageFlow_1m551dh","MessageFlow_1goz1mt","MessageFlow_04an7oz","MessageFlow_18qwt5e","Flow_03c8rm0","SequenceFlow_1uwq0b6","SequenceFlow_0b6ku63","SequenceFlow_0sfyd5z","SequenceFlow_016h32p","SequenceFlow_1rma3l8","SequenceFlow_1dptcxp","SequenceFlow_1h5h7h5","SequenceFlow_0ljbxox","SequenceFlow_1qku5do","SequenceFlow_1pk6qce","SequenceFlow_0ybs6n8","SequenceFlow_1yvkisw","SequenceFlow_1oyuvjd","Flow_136sol6","Flow_0y4msh1","Flow_1n9oaui","SequenceFlow_17r8ru7","SequenceFlow_1j6r6o5","SequenceFlow_0bejayl","SequenceFlow_0ot5p93","SequenceFlow_023db5j","Flow_0ugr6x2","Flow_11b0t0o","Flow_14ugxng"
-}
+Edge == { "MessageFlow_0knd10s", "MessageFlow_1yfhhru", "MessageFlow_1m551dh", "MessageFlow_1goz1mt", "MessageFlow_04an7oz", "MessageFlow_18qwt5e", "Flow_03c8rm0", "SequenceFlow_1uwq0b6", "SequenceFlow_0b6ku63", "SequenceFlow_0sfyd5z", "SequenceFlow_016h32p", "SequenceFlow_1rma3l8", "SequenceFlow_1dptcxp", "SequenceFlow_1h5h7h5", "SequenceFlow_0ljbxox", "SequenceFlow_1qku5do", "SequenceFlow_1pk6qce", "SequenceFlow_0ybs6n8", "SequenceFlow_1yvkisw", "SequenceFlow_1oyuvjd", "Flow_136sol6", "Flow_0y4msh1", "Flow_1n9oaui", "SequenceFlow_17r8ru7", "SequenceFlow_1j6r6o5", "SequenceFlow_0bejayl", "SequenceFlow_0ot5p93", "SequenceFlow_023db5j", "Flow_0ugr6x2", "Flow_11b0t0o", "Flow_14ugxng" }
 
 Message == { "Offer", "Travel", "Confirmation", "Payment", "Ticket", "Abort", "NoMore" }
 
 msgtype ==
-      "MessageFlow_0knd10s" :> "Offer"
-  @@ "MessageFlow_1yfhhru" :> "Travel"
-  @@ "MessageFlow_1m551dh" :> "Confirmation"
-  @@ "MessageFlow_1goz1mt" :> "Payment"
-  @@ "MessageFlow_04an7oz" :> "Ticket"
-  @@ "MessageFlow_18qwt5e" :> "Abort"
-  @@ "Flow_03c8rm0" :> "NoMore"
+   "MessageFlow_0knd10s" :> "Offer"
+@@ "MessageFlow_1yfhhru" :> "Travel"
+@@ "MessageFlow_1m551dh" :> "Confirmation"
+@@ "MessageFlow_1goz1mt" :> "Payment"
+@@ "MessageFlow_04an7oz" :> "Ticket"
+@@ "MessageFlow_18qwt5e" :> "Abort"
+@@ "Flow_03c8rm0" :> "NoMore"
+
 
 source ==
    "MessageFlow_0knd10s" :> "Task_1bn6n5q"
@@ -185,7 +182,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

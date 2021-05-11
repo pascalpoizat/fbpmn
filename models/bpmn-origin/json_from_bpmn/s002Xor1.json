@@ -1,0 +1,71 @@
+{
+    "isInterrupt": {},
+    "catN": {
+        "Event_1hpd68d": "NoneEndEvent",
+        "Event_0fkborc": "NoneEndEvent",
+        "StartEvent_1": "NoneStartEvent",
+        "PId": "Process",
+        "Activity_0z782bb": "AbstractTask",
+        "Gateway_0bb8o1z": "XorGateway"
+    },
+    "catE": {
+        "Flow_18ptpdh": "ConditionalSequenceFlow",
+        "Flow_14b309w": "DefaultSequenceFlow",
+        "Flow_0llicsy": "NormalSequenceFlow",
+        "Flow_09a8um7": "NormalSequenceFlow"
+    },
+    "containN": {
+        "PId": [
+            "StartEvent_1",
+            "Event_0fkborc",
+            "Gateway_0bb8o1z",
+            "Event_1hpd68d",
+            "Activity_0z782bb"
+        ]
+    },
+    "messageE": {},
+    "timeInformation": {},
+    "targetE": {
+        "Flow_18ptpdh": "Activity_0z782bb",
+        "Flow_14b309w": "Event_1hpd68d",
+        "Flow_0llicsy": "Event_0fkborc",
+        "Flow_09a8um7": "Gateway_0bb8o1z"
+    },
+    "name": "s002Xor1",
+    "attached": {},
+    "containE": {
+        "PId": [
+            "Flow_09a8um7",
+            "Flow_0llicsy",
+            "Flow_18ptpdh",
+            "Flow_14b309w"
+        ]
+    },
+    "edges": [
+        "Flow_09a8um7",
+        "Flow_0llicsy",
+        "Flow_18ptpdh",
+        "Flow_14b309w"
+    ],
+    "messages": [],
+    "sourceE": {
+        "Flow_18ptpdh": "Gateway_0bb8o1z",
+        "Flow_14b309w": "Gateway_0bb8o1z",
+        "Flow_0llicsy": "Activity_0z782bb",
+        "Flow_09a8um7": "StartEvent_1"
+    },
+    "nodes": [
+        "PId",
+        "StartEvent_1",
+        "Event_0fkborc",
+        "Gateway_0bb8o1z",
+        "Event_1hpd68d",
+        "Activity_0z782bb"
+    ],
+    "nameN": {
+        "Event_1hpd68d": "end (in place)\n\n",
+        "Event_0fkborc": "end (moved)\n\n",
+        "StartEvent_1": "start\n",
+        "Activity_0z782bb": "move to some zone in z"
+    }
+}

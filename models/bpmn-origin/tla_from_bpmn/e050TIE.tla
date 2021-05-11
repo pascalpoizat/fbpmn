@@ -10,18 +10,15 @@ Interest ==
 ContainRel ==
   "Process_1" :> { "EndEvent_14srvev", "StartEvent_1", "IntermediateThrowEvent_1l1btga" }
 
-Node == {
-  "Process_1","EndEvent_14srvev","StartEvent_1","IntermediateThrowEvent_1l1btga"
-}
+Node == { "Process_1", "EndEvent_14srvev", "StartEvent_1", "IntermediateThrowEvent_1l1btga" }
 
-Edge == {
-  "SequenceFlow_0yeopwj","SequenceFlow_04ghp5z"
-}
+Edge == { "SequenceFlow_0yeopwj", "SequenceFlow_04ghp5z" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SequenceFlow_0yeopwj" :> "StartEvent_1"
@@ -59,7 +56,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if ! which fbpmn &> /dev/null; then
+  echo "fbpmn is not found in the PATH, please install it"
+  exit 1
+fi
+
+for f in `ls src/s*.bpmn`
+do
+  ff=`basename $f`
+  g=${ff%.bpmn}
+  b="src/$g"
+  t="tla_from_sbpmn/$g"
+  echo "tranforming $f"
+  fbpmn sbpmn2tla $b $t
+done
+

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_1rhjooo" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:collaboration id="s004Xor3">
+    <bpmn:extensionElements>
+      <camunda:properties>
+        <camunda:property name="group-locations" value="[toPlant,planted,toSpray,sprayed]" />
+        <camunda:property name="base-locations" value="[f1,f2,f3,f4,f5,f6,r1,r2,b,m]" />
+        <camunda:property name="initial-space" value="{toPlant:[f1,f2,f3,f4,f5,f6], planted:[], toSpray:[], sprayed:[]}" />
+        <camunda:property name="transitions" value="[(f1,f2),(f2,f1),(f2,f3),(f3,f2),(f2,b),(b,f5),(f4,f5),(f5,f4),(f5,f6),(f6,f5),(f6,m),(m,f6),(m,f5)]" />
+      </camunda:properties>
+    </bpmn:extensionElements>
+    <bpmn:participant id="P" name="P" processRef="PId" />
+  </bpmn:collaboration>
+  <bpmn:process id="PId" name="P" isExecutable="true">
+    <bpmn:extensionElements>
+      <camunda:properties>
+        <camunda:property name="initial-location" value="f1" />
+      </camunda:properties>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="StartEvent_1" name="start&#10;">
+      <bpmn:outgoing>Flow_09a8um7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_09a8um7" sourceRef="StartEvent_1" targetRef="Gateway_0bb8o1z" />
+    <bpmn:exclusiveGateway id="Gateway_0bb8o1z" default="Flow_11sy0ae">
+      <bpmn:incoming>Flow_09a8um7</bpmn:incoming>
+      <bpmn:incoming>Flow_0evvsn6</bpmn:incoming>
+      <bpmn:outgoing>Flow_18ptpdh</bpmn:outgoing>
+      <bpmn:outgoing>Flow_11sy0ae</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_18ptpdh" name="there are still zones to be planted" sourceRef="Gateway_0bb8o1z" targetRef="Activity_0z782bb">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="variable" value="z" />
+          <camunda:property name="type" value="any" />
+          <camunda:property name="formula" value="(reachable and toPlant)" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">z : any (reachable and toPlant)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="Activity_0z782bb" name="move to z">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="action" value="move to z" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_18ptpdh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ipe2sk</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_11g6ot8" name="plant z and mark it to be sprayed">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="action" value="update z from {toPlant} to {planted, toSpray}" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ipe2sk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0evvsn6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0ipe2sk" sourceRef="Activity_0z782bb" targetRef="Activity_11g6ot8" />
+    <bpmn:sequenceFlow id="Flow_0evvsn6" sourceRef="Activity_11g6ot8" targetRef="Gateway_0bb8o1z" />
+    <bpmn:endEvent id="PlanterEndInBase" name="end">
+      <bpmn:incoming>Flow_11sy0ae</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_11sy0ae" name="there are no such zones&#10;" sourceRef="Gateway_0bb8o1z" targetRef="PlanterEndInBase" />
+    <bpmn:textAnnotation id="TextAnnotation_10s4mug">
+      <bpmn:text>z : any
+reachable and toPlant</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0ib4t73">
+      <bpmn:text>update z
+from {toPlant}
+to {planted, toSpray}</bpmn:text>
+    </bpmn:textAnnotation>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="s004Xor3">
+      <bpmndi:BPMNShape id="Participant_0tx4fwz_di" bpmnElement="P" isHorizontal="true">
+        <dc:Bounds x="129" y="40" width="711" height="280" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_10s4mug_di" bpmnElement="TextAnnotation_10s4mug" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
+        <dc:Bounds x="390" y="100" width="115" height="53" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0ib4t73_di" bpmnElement="TextAnnotation_0ib4t73" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
+        <dc:Bounds x="680" y="60" width="140" height="53" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_11sy0ae_di" bpmnElement="Flow_11sy0ae" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <di:waypoint x="290" y="185" />
+        <di:waypoint x="290" y="260" />
+        <di:waypoint x="652" y="260" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="307" y="230" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0evvsn6_di" bpmnElement="Flow_0evvsn6">
+        <di:waypoint x="670" y="120" />
+        <di:waypoint x="670" y="60" />
+        <di:waypoint x="290" y="60" />
+        <di:waypoint x="290" y="135" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ipe2sk_di" bpmnElement="Flow_0ipe2sk">
+        <di:waypoint x="580" y="160" />
+        <di:waypoint x="620" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18ptpdh_di" bpmnElement="Flow_18ptpdh" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <di:waypoint x="315" y="160" />
+        <di:waypoint x="480" y="160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="318" y="120" width="63" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09a8um7_di" bpmnElement="Flow_09a8um7">
+        <di:waypoint x="215" y="160" />
+        <di:waypoint x="265" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="187" y="185" width="22" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0bb8o1z_di" bpmnElement="Gateway_0bb8o1z" isMarkerVisible="true" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="265" y="135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_053b3ly_di" bpmnElement="Activity_0z782bb" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="480" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11g6ot8_di" bpmnElement="Activity_11g6ot8" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="620" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01pf838_di" bpmnElement="PlanterEndInBase">
+        <dc:Bounds x="652" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="661" y="285" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

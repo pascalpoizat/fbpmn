@@ -12,22 +12,19 @@ ContainRel ==
   "Customer_" :> { "IntermediateThrowEvent_12d113r", "Task_1q91vog", "EndEvent_0u6deep", "Task_1v9s881", "ExclusiveGateway_192ovii", "ExclusiveGateway_0wgdt1i", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k" }
   @@ "TravelAgency_" :> { "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "ExclusiveGateway_0i09ijx", "IntermediateThrowEvent_0xjpikb", "Task_1ne4gpy", "EndEvent_10gqkzy", "IntermediateThrowEvent_0neineb", "Task_002ndsu" }
 
-Node == {
-  "Customer_","TravelAgency_","IntermediateThrowEvent_12d113r","Task_1q91vog","EndEvent_0u6deep","Task_1v9s881","ExclusiveGateway_192ovii","ExclusiveGateway_0wgdt1i","StartEvent_1","Task_07u875a","EndEvent_055yt9k","StartEvent_1f3jj6d","ExclusiveGateway_1dc5v3z","Task_1bn6n5q","ExclusiveGateway_0i09ijx","IntermediateThrowEvent_0xjpikb","Task_1ne4gpy","EndEvent_10gqkzy","IntermediateThrowEvent_0neineb","Task_002ndsu"
-}
+Node == { "Customer_", "TravelAgency_", "IntermediateThrowEvent_12d113r", "Task_1q91vog", "EndEvent_0u6deep", "Task_1v9s881", "ExclusiveGateway_192ovii", "ExclusiveGateway_0wgdt1i", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k", "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "ExclusiveGateway_0i09ijx", "IntermediateThrowEvent_0xjpikb", "Task_1ne4gpy", "EndEvent_10gqkzy", "IntermediateThrowEvent_0neineb", "Task_002ndsu" }
 
-Edge == {
-  "MessageFlow_0knd10s","MessageFlow_1yfhhru","MessageFlow_1m551dh","MessageFlow_1goz1mt","MessageFlow_04an7oz","SequenceFlow_1h086yg","SequenceFlow_00r0rkx","SequenceFlow_03104wi","SequenceFlow_0bgaa0c","SequenceFlow_1uwq0b6","SequenceFlow_0b6ku63","SequenceFlow_0sfyd5z","SequenceFlow_016h32p","SequenceFlow_1rma3l8","SequenceFlow_1fn4lqy","SequenceFlow_0b34324","SequenceFlow_0mdvaai","SequenceFlow_13z4ilm","SequenceFlow_0rfye55","SequenceFlow_0bztvlk","SequenceFlow_1d2k55z","SequenceFlow_09i1nd5","SequenceFlow_05p1rba"
-}
+Edge == { "MessageFlow_0knd10s", "MessageFlow_1yfhhru", "MessageFlow_1m551dh", "MessageFlow_1goz1mt", "MessageFlow_04an7oz", "SequenceFlow_1h086yg", "SequenceFlow_00r0rkx", "SequenceFlow_03104wi", "SequenceFlow_0bgaa0c", "SequenceFlow_1uwq0b6", "SequenceFlow_0b6ku63", "SequenceFlow_0sfyd5z", "SequenceFlow_016h32p", "SequenceFlow_1rma3l8", "SequenceFlow_1fn4lqy", "SequenceFlow_0b34324", "SequenceFlow_0mdvaai", "SequenceFlow_13z4ilm", "SequenceFlow_0rfye55", "SequenceFlow_0bztvlk", "SequenceFlow_1d2k55z", "SequenceFlow_09i1nd5", "SequenceFlow_05p1rba" }
 
 Message == { "Offer", "Travel", "Confirmation", "Payment", "Ticket" }
 
 msgtype ==
-      "MessageFlow_0knd10s" :> "Offer"
-  @@ "MessageFlow_1yfhhru" :> "Travel"
-  @@ "MessageFlow_1m551dh" :> "Confirmation"
-  @@ "MessageFlow_1goz1mt" :> "Payment"
-  @@ "MessageFlow_04an7oz" :> "Ticket"
+   "MessageFlow_0knd10s" :> "Offer"
+@@ "MessageFlow_1yfhhru" :> "Travel"
+@@ "MessageFlow_1m551dh" :> "Confirmation"
+@@ "MessageFlow_1goz1mt" :> "Payment"
+@@ "MessageFlow_04an7oz" :> "Ticket"
+
 
 source ==
    "MessageFlow_0knd10s" :> "Task_1bn6n5q"
@@ -144,7 +141,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

@@ -14,7 +14,7 @@ category:            Utility
 build-type:          Simple
 extra-doc-files:     README.md
                    , CHANGELOG.md
-tested-with:         GHC == 8.8.2
+tested-with:         GHC == 8.8.3
 
 source-repository head
   type:                git
@@ -23,6 +23,7 @@ source-repository head
 library
   hs-source-dirs:      src
   exposed-modules:     Fbpmn.BpmnGraph.Model
+                       Fbpmn.BpmnGraph.SpaceModel
                        Fbpmn.BpmnGraph.IO.Bpmn
                        Fbpmn.BpmnGraph.IO.Dot
                        Fbpmn.BpmnGraph.IO.Json

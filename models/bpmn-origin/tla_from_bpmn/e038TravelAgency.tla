@@ -13,24 +13,21 @@ ContainRel ==
   @@ "SubProcess_1agd6n3" :> { "StartEvent_0qomvov", "IntermediateThrowEvent_0xjpikb", "IntermediateThrowEvent_0neineb", "Task_002ndsu", "Task_1ne4gpy", "EndEvent_1vkzo14" }
   @@ "TravelAgency_" :> { "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "ExclusiveGateway_0i09ijx", "SubProcess_1agd6n3", "IntermediateThrowEvent_0b4rm53", "EndEvent_10gqkzy", "BoundaryEvent_19y0yk9", "EndEvent_17rlcaz" }
 
-Node == {
-  "Customer_","TravelAgency_","Task_1v9s881","ExclusiveGateway_192ovii","ExclusiveGateway_0wgdt1i","StartEvent_1","Task_07u875a","EndEvent_055yt9k","EndEvent_0u6deep","IntermediateThrowEvent_12d113r","Task_1q91vog","BoundaryEvent_0qlhw6m","EndEvent_0syu44v","IntermediateThrowEvent_02q48nh","StartEvent_1f3jj6d","ExclusiveGateway_1dc5v3z","Task_1bn6n5q","ExclusiveGateway_0i09ijx","SubProcess_1agd6n3","IntermediateThrowEvent_0b4rm53","EndEvent_10gqkzy","BoundaryEvent_19y0yk9","EndEvent_17rlcaz","StartEvent_0qomvov","IntermediateThrowEvent_0xjpikb","IntermediateThrowEvent_0neineb","Task_002ndsu","Task_1ne4gpy","EndEvent_1vkzo14"
-}
+Node == { "Customer_", "TravelAgency_", "Task_1v9s881", "ExclusiveGateway_192ovii", "ExclusiveGateway_0wgdt1i", "StartEvent_1", "Task_07u875a", "EndEvent_055yt9k", "EndEvent_0u6deep", "IntermediateThrowEvent_12d113r", "Task_1q91vog", "BoundaryEvent_0qlhw6m", "EndEvent_0syu44v", "IntermediateThrowEvent_02q48nh", "StartEvent_1f3jj6d", "ExclusiveGateway_1dc5v3z", "Task_1bn6n5q", "ExclusiveGateway_0i09ijx", "SubProcess_1agd6n3", "IntermediateThrowEvent_0b4rm53", "EndEvent_10gqkzy", "BoundaryEvent_19y0yk9", "EndEvent_17rlcaz", "StartEvent_0qomvov", "IntermediateThrowEvent_0xjpikb", "IntermediateThrowEvent_0neineb", "Task_002ndsu", "Task_1ne4gpy", "EndEvent_1vkzo14" }
 
-Edge == {
-  "MessageFlow_0knd10s","MessageFlow_1yfhhru","MessageFlow_1m551dh","MessageFlow_1goz1mt","MessageFlow_04an7oz","MessageFlow_0joml9p","MessageFlow_18qwt5e","SequenceFlow_1uwq0b6","SequenceFlow_0b6ku63","SequenceFlow_0sfyd5z","SequenceFlow_016h32p","SequenceFlow_1rma3l8","SequenceFlow_1dptcxp","SequenceFlow_1h5h7h5","SequenceFlow_0ljbxox","SequenceFlow_1qku5do","SequenceFlow_1pk6qce","SequenceFlow_0ybs6n8","SequenceFlow_1fn4lqy","SequenceFlow_0b34324","SequenceFlow_0mdvaai","SequenceFlow_13z4ilm","SequenceFlow_0rfye55","SequenceFlow_0yhi6sc","SequenceFlow_1yvkisw","SequenceFlow_1oyuvjd","SequenceFlow_17r8ru7","SequenceFlow_1j6r6o5","SequenceFlow_0bejayl","SequenceFlow_0ot5p93","SequenceFlow_023db5j"
-}
+Edge == { "MessageFlow_0knd10s", "MessageFlow_1yfhhru", "MessageFlow_1m551dh", "MessageFlow_1goz1mt", "MessageFlow_04an7oz", "MessageFlow_0joml9p", "MessageFlow_18qwt5e", "SequenceFlow_1uwq0b6", "SequenceFlow_0b6ku63", "SequenceFlow_0sfyd5z", "SequenceFlow_016h32p", "SequenceFlow_1rma3l8", "SequenceFlow_1dptcxp", "SequenceFlow_1h5h7h5", "SequenceFlow_0ljbxox", "SequenceFlow_1qku5do", "SequenceFlow_1pk6qce", "SequenceFlow_0ybs6n8", "SequenceFlow_1fn4lqy", "SequenceFlow_0b34324", "SequenceFlow_0mdvaai", "SequenceFlow_13z4ilm", "SequenceFlow_0rfye55", "SequenceFlow_0yhi6sc", "SequenceFlow_1yvkisw", "SequenceFlow_1oyuvjd", "SequenceFlow_17r8ru7", "SequenceFlow_1j6r6o5", "SequenceFlow_0bejayl", "SequenceFlow_0ot5p93", "SequenceFlow_023db5j" }
 
 Message == { "Offer", "Travel", "Confirmation", "Payment", "Ticket", "NoMore", "Abort" }
 
 msgtype ==
-      "MessageFlow_0knd10s" :> "Offer"
-  @@ "MessageFlow_1yfhhru" :> "Travel"
-  @@ "MessageFlow_1m551dh" :> "Confirmation"
-  @@ "MessageFlow_1goz1mt" :> "Payment"
-  @@ "MessageFlow_04an7oz" :> "Ticket"
-  @@ "MessageFlow_0joml9p" :> "NoMore"
-  @@ "MessageFlow_18qwt5e" :> "Abort"
+   "MessageFlow_0knd10s" :> "Offer"
+@@ "MessageFlow_1yfhhru" :> "Travel"
+@@ "MessageFlow_1m551dh" :> "Confirmation"
+@@ "MessageFlow_1goz1mt" :> "Payment"
+@@ "MessageFlow_04an7oz" :> "Ticket"
+@@ "MessageFlow_0joml9p" :> "NoMore"
+@@ "MessageFlow_18qwt5e" :> "Abort"
+
 
 source ==
    "MessageFlow_0knd10s" :> "Task_1bn6n5q"
@@ -181,7 +178,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

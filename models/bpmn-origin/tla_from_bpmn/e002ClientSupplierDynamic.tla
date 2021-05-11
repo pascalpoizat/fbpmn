@@ -12,20 +12,17 @@ ContainRel ==
   "Client_" :> { "cStart", "cSendCommand", "cEnd", "cReceiveInvoice", "cReceiveGoods", "cStoreRequest" }
   @@ "Supplier_" :> { "sShipCommand", "sSendInvoice", "sInvoiceManagement", "sPrepareCommand", "sEnd", "sStart", "sPar1", "sPar2" }
 
-Node == {
-  "Supplier_","Client_","sShipCommand","sSendInvoice","sInvoiceManagement","sPrepareCommand","sEnd","sStart","sPar1","sPar2","cStart","cSendCommand","cEnd","cReceiveInvoice","cReceiveGoods","cStoreRequest"
-}
+Node == { "Supplier_", "Client_", "sShipCommand", "sSendInvoice", "sInvoiceManagement", "sPrepareCommand", "sEnd", "sStart", "sPar1", "sPar2", "cStart", "cSendCommand", "cEnd", "cReceiveInvoice", "cReceiveGoods", "cStoreRequest" }
 
-Edge == {
-  "mf1","mf3","mf2","sE1","sE2","sE3","sE4","sE5","sE6","sE7","sE8","cE1","cE2","cE3","cE4","cE5"
-}
+Edge == { "mf1", "mf3", "mf2", "sE1", "sE2", "sE3", "sE4", "sE5", "sE6", "sE7", "sE8", "cE1", "cE2", "cE3", "cE4", "cE5" }
 
 Message == { "command", "goods", "invoice" }
 
 msgtype ==
-      "mf1" :> "command"
-  @@ "mf3" :> "goods"
-  @@ "mf2" :> "invoice"
+   "mf1" :> "command"
+@@ "mf3" :> "goods"
+@@ "mf2" :> "invoice"
+
 
 source ==
    "mf1" :> "cSendCommand"
@@ -117,7 +114,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

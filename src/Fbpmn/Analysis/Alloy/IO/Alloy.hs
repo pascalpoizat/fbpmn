@@ -16,6 +16,7 @@ import           Data.Attoparsec.Text           ( Parser
                                                 , option
                                                 , maybeResult
                                                 )
+import Fbpmn.Helper (FWriter (FW))
 
 -- Time-related elements
 --
@@ -139,11 +140,15 @@ genBool :: TR () Bool
 genBool _ True  = Just "True"
 genBool _ False = Just "False"
 
+-- | FWriter from BPMN Graph to Alloy.
+writer :: FWriter BpmnGraph
+writer = FW writeToAlloy ".als"
+
 {-|
 Write a BPMN Graph to an Alloy file.
 -}
-writeToAlloy :: FilePath -> Maybe a -> BpmnGraph -> IO ()
-writeToAlloy p _ = writeFile p . toString . encodeBpmnGraphToAlloy
+writeToAlloy :: FilePath -> BpmnGraph -> IO ()
+writeToAlloy p = writeFile p . toString . encodeBpmnGraphToAlloy
 
 {-|
 Transform a BPMN Graph to an Alloy specification.

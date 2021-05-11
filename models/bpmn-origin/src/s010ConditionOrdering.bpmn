@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_1rhjooo" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:collaboration id="s010ConditionOrdering">
+    <bpmn:extensionElements>
+      <camunda:properties>
+        <camunda:property name="group-locations" value="[toPlant,planted,toSpray,sprayed]" />
+        <camunda:property name="base-locations" value="[f1,f2,f3,f4,f5,f6,r1,r2,b,m]" />
+        <camunda:property name="initial-space" value="{toPlant:[f1,f2,f3,f4,f5,f6], planted:[], toSpray:[], sprayed:[]}" />
+        <camunda:property name="transitions" value="[(f1,f2),(f2,f1),(f2,f3),(f3,f2),(f2,b),(b,f5),(f4,f5),(f5,f4),(f5,f6),(f6,f5),(f6,m),(m,f6),(m,f5)]" />
+      </camunda:properties>
+    </bpmn:extensionElements>
+    <bpmn:participant id="P" name="P" processRef="PId" />
+  </bpmn:collaboration>
+  <bpmn:process id="PId" name="P" isExecutable="true">
+    <bpmn:extensionElements>
+      <camunda:properties>
+        <camunda:property name="initial-location" value="f1" />
+      </camunda:properties>
+    </bpmn:extensionElements>
+    <bpmn:endEvent id="endF2" name="end (in f2)&#10;&#10;">
+      <bpmn:incoming>Flow_1bc6u3c</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_09a8um7" sourceRef="StartEvent_1" targetRef="xor" />
+    <bpmn:sequenceFlow id="flow_to_f2" name="_: any ((f2 and toPlant) and reachable)" sourceRef="xor" targetRef="Activity_071wli2">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="variable" value="_" />
+          <camunda:property name="type" value="any" />
+          <camunda:property name="formula" value="((f2 and toPlant) and reachable)" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">_: any ((f2 and toPlant) and reachable)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="default_flow" name="else" sourceRef="xor" targetRef="endInPlace" />
+    <bpmn:endEvent id="endInPlace" name="end (in place)&#10;&#10;">
+      <bpmn:incoming>default_flow</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="endF3" name="end (in f3)">
+      <bpmn:incoming>Flow_1ddop94</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="xor" default="default_flow">
+      <bpmn:incoming>Flow_09a8um7</bpmn:incoming>
+      <bpmn:outgoing>flow_to_f2</bpmn:outgoing>
+      <bpmn:outgoing>default_flow</bpmn:outgoing>
+      <bpmn:outgoing>flow_to_f3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:startEvent id="StartEvent_1" name="start (in f1)&#10;">
+      <bpmn:outgoing>Flow_09a8um7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="flow_to_f3" name="_: any ((f3 and toPlant) and reachable)" sourceRef="xor" targetRef="Activity_18vh6pp">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="variable" value="_" />
+          <camunda:property name="type" value="any" />
+          <camunda:property name="formula" value="((f3 and toPlant) and reachable)" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">_: any ((f3 and toPlant) and reachable)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="Activity_071wli2" name="move to f2">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="action" value="move to f2" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_to_f2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bc6u3c</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1bc6u3c" sourceRef="Activity_071wli2" targetRef="endF2" />
+    <bpmn:task id="Activity_18vh6pp" name="move to f3">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="action" value="move to f3" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_to_f3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ddop94</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1ddop94" sourceRef="Activity_18vh6pp" targetRef="endF3" />
+    <bpmn:textAnnotation id="TextAnnotation_1ue3kul">
+      <bpmn:text>&lt;bpmn:outgoing&gt;flow_to_f2&lt;/bpmn:outgoing&gt;
+&lt;bpmn:outgoing&gt;default_flow&lt;/bpmn:outgoing&gt;
+&lt;bpmn:outgoing&gt;flow_to_f3&lt;/bpmn:outgoing&gt;</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1y8wzef" sourceRef="xor" targetRef="TextAnnotation_1ue3kul" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="s010ConditionOrdering">
+      <bpmndi:BPMNShape id="Participant_0tx4fwz_di" bpmnElement="P" isHorizontal="true">
+        <dc:Bounds x="129" y="40" width="600" height="390" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1ddop94_di" bpmnElement="Flow_1ddop94">
+        <di:waypoint x="580" y="260" />
+        <di:waypoint x="642" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bc6u3c_di" bpmnElement="Flow_1bc6u3c">
+        <di:waypoint x="580" y="160" />
+        <di:waypoint x="642" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eua9ff_di" bpmnElement="flow_to_f3" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <di:waypoint x="315" y="260" />
+        <di:waypoint x="480" y="260" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="338" y="215" width="71" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14b309w_di" bpmnElement="default_flow" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <di:waypoint x="290" y="285" />
+        <di:waypoint x="290" y="350" />
+        <di:waypoint x="642" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="385" y="333" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18ptpdh_di" bpmnElement="flow_to_f2" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <di:waypoint x="290" y="235" />
+        <di:waypoint x="290" y="160" />
+        <di:waypoint x="480" y="160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="335" y="110" width="71" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09a8um7_di" bpmnElement="Flow_09a8um7">
+        <di:waypoint x="215" y="260" />
+        <di:waypoint x="265" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0fkborc_di" bpmnElement="endF2">
+        <dc:Bounds x="642" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="637" y="185" width="50" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hpd68d_di" bpmnElement="endInPlace">
+        <dc:Bounds x="642" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="626" y="380" width="67" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0xfz0n8_di" bpmnElement="endF3">
+        <dc:Bounds x="642" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="635" y="285" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0bb8o1z_di" bpmnElement="xor" isMarkerVisible="true" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="265" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="172" y="285" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_071wli2_di" bpmnElement="Activity_071wli2" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="480" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18vh6pp_di" bpmnElement="Activity_18vh6pp" bioc:stroke="rgb(67, 160, 71)" bioc:fill="rgb(200, 230, 201)">
+        <dc:Bounds x="480" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1ue3kul_di" bpmnElement="TextAnnotation_1ue3kul">
+        <dc:Bounds x="170" y="50" width="360" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1y8wzef_di" bpmnElement="Association_1y8wzef">
+        <di:waypoint x="283" y="242" />
+        <di:waypoint x="234" y="104" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

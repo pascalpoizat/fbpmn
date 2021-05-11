@@ -106,6 +106,7 @@ if (-NOT(Test-Path "$model.tla")) {
 # Copy verification files
 Copy-Item (Get-ChildItem $env:FBPMN_HOME/theories/tla -Filter PWS*.tla) $dir -Recurse -Force
 Copy-Item (Get-ChildItem $env:FBPMN_HOME/theories/tla -Filter Network*.tla) $dir -Recurse -Force
+Copy-Item $env:FBPMN_HOME/theories/tla/UserProperties.tla $dir -Force
 Copy-Item $env:FBPMN_HOME/theories/tla/Configs $dir -Recurse -Force
 
 

@@ -13,18 +13,15 @@ ContainRel ==
   @@ "B_" :> { "EndEvent_1s2d234", "StartEvent_13qwxem", "ReceiveTask_0tuz5r7" }
   @@ "SP" :> { "EndEvent_0v9lt5i", "Task_1eirt50", "Task_097548f", "ExclusiveGateway_1j1chqb", "StartEvent_1", "ExclusiveGateway_0079typ", "Task_1rt44mz" }
 
-Node == {
-  "A_","B_","SP","StartEvent_0ayuyd2","EndEvent_0ns8te3","EndEvent_0v9lt5i","Task_1eirt50","Task_097548f","ExclusiveGateway_1j1chqb","StartEvent_1","ExclusiveGateway_0079typ","Task_1rt44mz","EndEvent_1s2d234","StartEvent_13qwxem","ReceiveTask_0tuz5r7"
-}
+Node == { "A_", "B_", "SP", "StartEvent_0ayuyd2", "EndEvent_0ns8te3", "EndEvent_0v9lt5i", "Task_1eirt50", "Task_097548f", "ExclusiveGateway_1j1chqb", "StartEvent_1", "ExclusiveGateway_0079typ", "Task_1rt44mz", "EndEvent_1s2d234", "StartEvent_13qwxem", "ReceiveTask_0tuz5r7" }
 
-Edge == {
-  "mf1","SequenceFlow_1vue23p","SequenceFlow_00aes3w","SequenceFlow_0z2xwql","SequenceFlow_0wto9d1","SequenceFlow_0uplc1a","SequenceFlow_01wc4ks","SequenceFlow_0b7efwa","SequenceFlow_1fuwd1z","SequenceFlow_0uzla8o","SequenceFlow_0ehu3gz","SequenceFlow_1rma85g"
-}
+Edge == { "mf1", "SequenceFlow_1vue23p", "SequenceFlow_00aes3w", "SequenceFlow_0z2xwql", "SequenceFlow_0wto9d1", "SequenceFlow_0uplc1a", "SequenceFlow_01wc4ks", "SequenceFlow_0b7efwa", "SequenceFlow_1fuwd1z", "SequenceFlow_0uzla8o", "SequenceFlow_0ehu3gz", "SequenceFlow_1rma85g" }
 
 Message == { "m1" }
 
 msgtype ==
-      "mf1" :> "m1"
+   "mf1" :> "m1"
+
 
 source ==
    "mf1" :> "Task_1rt44mz"
@@ -103,7 +100,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

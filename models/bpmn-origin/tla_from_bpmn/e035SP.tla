@@ -13,18 +13,15 @@ ContainRel ==
   @@ "Q_" :> { "StartEvent_0943q6x", "EndEvent_1jzyo34", "Task_0mft1gb" }
   @@ "SubProcess_1glz8ii" :> { "Task_1x5zvyz", "EndEvent_0atuxkh", "StartEvent_09ojxru" }
 
-Node == {
-  "P_","Q_","StartEvent_1","SubProcess_1glz8ii","EndEvent_0a59w28","Task_1x5zvyz","EndEvent_0atuxkh","StartEvent_09ojxru","StartEvent_0943q6x","EndEvent_1jzyo34","Task_0mft1gb"
-}
+Node == { "P_", "Q_", "StartEvent_1", "SubProcess_1glz8ii", "EndEvent_0a59w28", "Task_1x5zvyz", "EndEvent_0atuxkh", "StartEvent_09ojxru", "StartEvent_0943q6x", "EndEvent_1jzyo34", "Task_0mft1gb" }
 
-Edge == {
-  "MessageFlow_183e2wp","SequenceFlow_12utbfs","SequenceFlow_00j4ong","SequenceFlow_1uo79pd","SequenceFlow_0yhgli1","SequenceFlow_11rsxtg","SequenceFlow_0pgod6g"
-}
+Edge == { "MessageFlow_183e2wp", "SequenceFlow_12utbfs", "SequenceFlow_00j4ong", "SequenceFlow_1uo79pd", "SequenceFlow_0yhgli1", "SequenceFlow_11rsxtg", "SequenceFlow_0pgod6g" }
 
 Message == { "m1" }
 
 msgtype ==
-      "MessageFlow_183e2wp" :> "m1"
+   "MessageFlow_183e2wp" :> "m1"
+
 
 source ==
    "MessageFlow_183e2wp" :> "Task_0mft1gb"
@@ -84,7 +81,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================

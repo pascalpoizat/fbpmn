@@ -10,18 +10,15 @@ Interest ==
 ContainRel ==
   "Pid" :> { "se", "ee", "ti" }
 
-Node == {
-  "Pid","se","ee","ti"
-}
+Node == { "Pid", "se", "ee", "ti" }
 
-Edge == {
-  "SequenceFlow_04jhviy","SequenceFlow_0b689qw"
-}
+Edge == { "SequenceFlow_04jhviy", "SequenceFlow_0b689qw" }
 
 Message == {  }
 
 msgtype ==
-    [ i \in {} |-> {}]
+  [ i \in {} |-> {}]
+
 
 source ==
    "SequenceFlow_04jhviy" :> "se"
@@ -59,7 +56,7 @@ ConstraintNode == TRUE \* none
 ConstraintEdge == TRUE \* none
 Constraint == TRUE     \* none
 INSTANCE PWSConstraints
-
+INSTANCE UserProperties
 INSTANCE PWSSemantics
 
 ================================================================
