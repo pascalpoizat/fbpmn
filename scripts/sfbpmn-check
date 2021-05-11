@@ -1,0 +1,141 @@
+#!/bin/sh
+
+##################################################
+# Verification files for a model M
+# - M.bpmn (mandatory, space BPMN model)
+# - M.userdefs (optional, user properties definitions)
+# - M.userprops (optional, user properties used in verification)
+#   note: if M.userprops is defined, it should include the usual correctness properties
+#         (safety, soundness, message-relaxed soundness) if required
+# - M.constraint (optional, boundedness constraints)
+#################################################
+
+# runtlc="java -classpath /opt/tla --add-modules java.activation tlc2.TLC -deadlock"
+runtlc="java -XX:+UseParallelGC -classpath $TLA2TOOLS_HOME/tla2tools.jar tlc2.TLC -deadlock"
+
+################
+
+parse_stat()
+{
+  transitions=`expr "$1" : '\([0-9]*\) states generated'`
+  states=`expr "$1" : '.*, \([0-9]*\) distinct states found'`
+  depth=`expr "$2" : 'The depth of the complete state graph search is \([0-9]*\)'`
+  time=`expr "$3" : 'Finished in \([0-9]*\)s at .*'`
+  echo "states=$states trans=$transitions depth=$depth"
+  echo "time=$time s"
+}
+
+################
+
+if [ $# -eq 0 ] || [ $# -gt 2 ]; then
+  echo `basename $0` '<model>' '[#workers]'
+  exit 1
+fi
+
+if [ $# -eq 2 ]; then
+    workers=$2
+else
+    workers=1
+fi
+
+if ! which fbpmn > /dev/null; then
+  echo "fbpmn is not found in the PATH, please install it"
+  exit 1
+fi
+
+if ! which java > /dev/null; then
+  echo "java is not found in the PATH, please install it"
+  exit 1
+fi
+
+if [ -z $FBPMN_HOME ]; then
+        echo "FBPMN_HOME is not set, please set it to where you installed the fbpmn distribution"; exit 1
+fi
+if [ ! -d $FBPMN_HOME/theories/tla ]; then
+        echo "wrong FBPMN_HOME (theories/tla not found)"; exit 1
+fi
+if [ -z $TLA2TOOLS_HOME ]; then
+        echo "TLA2TOOLS_HOME is no set, please set it to where tla2tools.jar is"; exit 1
+fi
+if [ ! -f $TLA2TOOLS_HOME/tla2tools.jar ]; then
+        echo "wrong TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
+fi
+
+fullpath="${1%.bpmn}"  # just strip extension if necessary
+model=`basename $fullpath`
+dir=`mktemp -d /tmp/$model.XXXXX`
+
+if [ ! -f $fullpath.bpmn ]; then
+    echo "$fullpath.bpmn not found."
+    exit 1
+fi
+
+# Copy user defined files
+if [ -f $fullpath.userdefs ]; then echo "found user definitions"; cp $fullpath.userdefs $dir; else echo "no user definitions"; fi
+if [ -f $fullpath.userprops ]; then echo "found user properties"; cp $fullpath.userprops $dir; else echo "no user properties"; fi
+if [ -f $fullpath.constraint ]; then echo "found user constraints"; cp $fullpath.constraint $dir; else echo "no user contraints"; fi
+
+# Transform the space BPMN model into TLA
+echo "Working in $dir with $workers worker(s)"
+cp $fullpath.bpmn $dir
+cd $dir
+fbpmn sbpmn2tla $model $model
+if [ ! -f $model.tla ]; then
+    echo "model transformation failed"
+    exit 1
+fi
+
+# Copy theories files
+cp $FBPMN_HOME/theories/stla/PWS*.tla $FBPMN_HOME/theories/stla/Network*.tla .
+cp $FBPMN_HOME/theories/stla/UserProperties.tla .
+cp $FBPMN_HOME/theories/stla/configuration.cfg $FBPMN_HOME/theories/stla/configuration_base.cfg .
+cp -rf $FBPMN_HOME/theories/stla/Configs .
+
+# First, use StatsBPMN to print some information on the size of the BPMN model.
+cp -f $FBPMN_HOME/theories/tla/StatsBPMN.cfg .
+sed -e "s/INSTANCE.*$/INSTANCE $model/g"  $FBPMN_HOME/theories/tla/StatsBPMN.tla >StatsBPMN.tla
+$runtlc StatsBPMN |grep 'Processes='
+rm -rf states
+
+# Set file names
+network="Configs/Network01Bag.tla"
+networkname=`basename $network .tla`
+cp $network Network.tla
+cfg="configuration.cfg"
+basecfg="configuration_base.cfg"
+log=$model.$networkname.all.log
+logname=`basename $log`
+
+# Copy user defined files
+if [ -f $model.userdefs ]; then cp -f $model.userdefs UserProperties.tla; fi
+if [ -f $model.userprops ]; then cat $basecfg $model.userprops >> $model.cfg; else cp $cfg $model.cfg; fi
+if [ -f $model.constraint ]; then cat $model.constraint >> $model.cfg; fi
+
+# Verify
+echo
+echo "running with configuration:"
+cat $model.cfg
+
+# Perform verification
+$runtlc $model -workers $workers > $log
+rm -rf states
+if grep -q "Error: Assumption.*is false" $log; then
+    echo "  ! PANIC: bad model (assume failed)"
+else
+    if grep -q "No error has been found" $log; then
+        echo
+        echo "[X] model $model is correct"
+        echo "log file is in $log"
+    else
+        echo
+        echo "[ ] model $model does not veryfy some properties"
+        echo "log file and counter example is in $log"
+        fbpmn log2html $logname $logname
+    fi
+    stat1=`grep "^[0-9]* states generated.*0 states left on queue" $log`
+    stat2=`grep "The depth of the complete state graph" $log`
+    stat3=`grep "^Finished in [0-9]*s at" $log`
+    echo
+    parse_stat "$stat1" "$stat2" "$stat3"
+fi
+
