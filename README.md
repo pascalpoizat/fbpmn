@@ -140,7 +140,7 @@ To verify your BPMN models, you will need:
 - Java 12 and TLA+ tools version 1.6.0 (not 1.5.7)
 - Java 8 and TLA+ tools version 1.5.7 or 1.6.0	
 
-If you build `fbpmn` from sources (which is required only for **Windows**), you will also need:
+If you build `fbpmn` from sources, you will also need:
 
 - 2.1. The `stack` build system for Haskell, see [here](https://docs.haskellstack.org/en/stable/README/).
 
@@ -175,15 +175,11 @@ You may typically add such a command in your shell configuration file, e.g., `~/
 
 ## 3a. Getting a pre-built `fbpmn` binary
 
-**Linux** and **MacOS** binaries of stable versions of `fbpmn` are built using the continous integration server and are available [here](https://github.com/pascalpoizat/fbpmn/releases).
-
-*We are working on having binaries automatically built for Windows.*
+**Linux**, **MacOS** and **Windows** binaries of stable versions of `fbpmn` are built using the continous integration server and are available [here](https://github.com/pascalpoizat/fbpmn/releases).
 
 Please then put the `fbpmn` command in a directory that is in your `PATH` environment variable.
 
 ## 3b. Building `fbpmn` from source
-
-Required for **Windows**.
 
 ```shell
 cd fbpmn
