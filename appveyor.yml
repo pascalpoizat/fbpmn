@@ -17,3 +17,40 @@ test_script:
 # The ugly echo "" hack is to avoid complaints about 0 being an invalid file
 # descriptor
 - echo "" | stack --arch x86_64 --no-terminal build --bench --no-run-benchmarks --test
+
+- for /f %%i in ('stack path --local-install-root') do set DIR=%%i
+# set a batch variable with the output of stack path --local-install-root command
+- set BINDIR=%DIR%\bin
+- set PROG=fbpmn.exe
+- ps: if ($env:APPVEYOR_REPO_BRANCH -eq "develop") { $env:VERSION=(& "$env:BINDIR\$env:PROG" version)+"-SNAPSHOT" } else { $env:VERSION=(& "$env:BINDIR\$env:PROG" version)}
+# use powershell to avoid the precedent method to set a batch variable with the output of command
+- set OS=windows
+- set ARCH=x86_64
+- set ARCHIVE=fbpmn-%VERSION%-%OS%.%ARCH%
+- ps: Get-ChildItem "$env:BINDIR\$env:PROG" | Compress-Archive -DestinationPath "$env:ARCHIVE.zip"
+- ps: Push-AppveyorArtifact "$env:ARCHIVE.zip"
+- set APPVEYOR_TAG=v%VERSION%
+- ps: if ($env:APPVEYOR_REPO_BRANCH -eq "develop") { git tag $env:APPVEYOR_TAG ; echo tag $env:APPVEYOR_TAG ; } else { echo no tag }
+
+deploy:
+- provider: GitHub
+  release: $(APPVEYOR_TAG)
+  auth_token:
+    secure: <your encrypted token> # your encrypted token from GitHub
+  artifact: $(ARCHIVE).zip           
+  draft: false
+  prerelease: false
+  on:
+    # branch: master
+    all_branches: true                
+    APPVEYOR_REPO_TAG: true      
+- provider: GitHub
+  release: $(APPVEYOR_TAG)
+  auth_token:
+    secure: <your encrypted token> # your encrypted token from GitHub
+  artifact: $(ARCHIVE).zip           
+  draft: true
+  prerelease: false
+  on:
+    branch: develop                
+    APPVEYOR_REPO_TAG: false
