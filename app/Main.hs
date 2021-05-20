@@ -16,7 +16,7 @@ import Fbpmn.Analysis.Tla.IO.Dot as LogDot ( writer )
 import Fbpmn.Analysis.Tla.IO.Html as LogHtml ( writer )
 
 fversion :: Text
-fversion = "0.3.6"
+fversion = "0.3.7"
 
 toolversion :: Text
 toolversion = fversion
