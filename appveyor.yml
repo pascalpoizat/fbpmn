@@ -36,7 +36,7 @@ deploy:
 - provider: GitHub
   release: $(APPVEYOR_TAG)
   auth_token:
-    secure: <your encrypted token> # your encrypted token from GitHub
+    secure: lMm8EA0SMSypJ94MTQavnZjYFO5UpAn6TxuSpXk6iLjEYjkl2DpD3UOXGUZXgVbr
   artifact: $(ARCHIVE).zip           
   draft: false
   prerelease: false
@@ -47,7 +47,7 @@ deploy:
 - provider: GitHub
   release: $(APPVEYOR_TAG)
   auth_token:
-    secure: <your encrypted token> # your encrypted token from GitHub
+    secure: lMm8EA0SMSypJ94MTQavnZjYFO5UpAn6TxuSpXk6iLjEYjkl2DpD3UOXGUZXgVbr
   artifact: $(ARCHIVE).zip           
   draft: true
   prerelease: false
