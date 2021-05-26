@@ -32,7 +32,7 @@ genSetup xts (Log _ _ Failure mcex) =
     Just cex -> foldMap (genForState xts) cex
 
 genForState :: [Extension] -> CounterExampleState -> Text
-genForState s =
+genForState xts s =
   if sinfo s /= "Stuttering"
     then
       [text|
