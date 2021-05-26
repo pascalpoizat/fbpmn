@@ -18,7 +18,7 @@ $runtlc = {
 ################
 
 $parse_stat = {
-    param($a = "", $b = "", $c = "") #, $d = @{}
+    param($a = "", $b = "", $c = "")
     if ($a -match '(\d*) states generated') {
         $transitions = $matches[1] 
     }
@@ -31,7 +31,7 @@ $parse_stat = {
     if ($c -match 'Finished in (.*)s at .*') {
         $time = $matches[1] 
     }
-    Write-Host "     states=$states trans=$transitions depth=$depth"
+    Write-Host "states=$states trans=$transitions depth=$depth"
     Write-Host "time=$time s"
 }
 
