@@ -49,7 +49,7 @@ function Get-Worker {
 ################
 
 if ($args.Length -eq 0 -or $args.Length -gt 2) {
-    Write-Host ` (Get-ChildItem $PSCOMMANDPATH).Basename ` '<model>' '[#workers]' 
+    Write-Host fbpmn-check '<model>' '[#workers]'
     exit 1
 }
 
