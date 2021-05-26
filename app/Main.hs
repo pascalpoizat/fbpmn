@@ -1,7 +1,7 @@
 import Colourista (errorMessage, successMessage)
 import Fbpmn.Analysis.Alloy.IO.Alloy as BGAlloy (writer)
 import Fbpmn.Analysis.Tla.IO.Dot as LogDot (writer)
-import Fbpmn.Analysis.Tla.IO.Html as LogHtml (writer, writerS)
+import Fbpmn.Analysis.Tla.IO.Html as LogHtml (writer, Extension (Communication, Space))
 import Fbpmn.Analysis.Tla.IO.Json as LogJson (writer)
 import Fbpmn.Analysis.Tla.IO.Log as LogLog (reader)
 import Fbpmn.Analysis.Tla.IO.Tla as BGTla (writer, writerS)
@@ -353,10 +353,10 @@ log2dot :: Bool -> Text -> Text -> IO ()
 log2dot = transform2 LogLog.reader LogDot.writer isValidLog filterLog
 
 log2html :: Bool -> Text -> Text -> IO ()
-log2html = transform2 LogLog.reader LogHtml.writer isValidLog filterLog
+log2html = transform2 LogLog.reader (LogHtml.writer [Communication]) isValidLog filterLog
 
 slog2html :: Bool -> Text -> Text -> IO ()
-slog2html = transform2 LogLog.reader LogHtml.writerS isValidLog filterLog
+slog2html = transform2 LogLog.reader (LogHtml.writer [Communication, Space]) isValidLog filterLog
 
 main :: IO ()
 main = run =<< execParser opts
