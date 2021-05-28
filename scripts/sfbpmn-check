@@ -163,7 +163,7 @@ else {
         Write-Host
         Write-Host "[ ] model $model does not veryfy some properties"
         Write-Host "log file is in $log and counter example is in $model.html"
-        fbpmn log2html $model $model
+        fbpmn slog2html $model $model
     }
     $stat1 = Select-String "^[0-9]* states generated.*0 states left on queue" -Path $log
     $stat2 = Select-String "The depth of the complete state graph" -Path $log

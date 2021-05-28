@@ -39,37 +39,33 @@ genForState xts s =
         // step $ssid
         nodes = $sns;
         edges = $ses;
-        net = $snet;
-        steps.push([nodes, edges, net]);
+        $extension_assignments
+        steps.push([nodes, edges$extension_pushs]);
       |]
     else [text||]
   where
+    extension_assignments = extensionWork extensionAssigments (extensionAssigmentsInfo s) xts
+    extension_pushs = extensionWork' id extensionPushsInfo xts
     ssid = show $ sid s
-    sns = maybe "new Map([])" valueToJavascript (svalue s !? "nodemarks")
-    ses = maybe "new Map([])" valueToJavascript (svalue s !? "edgemarks")
-    snet = maybe "undefined" valueToJavascript (svalue s !? "net")
+    sns = genMapAssignment "nodemarks" s
+    ses = genMapAssignment "edgemarks" s
 
-genSForState :: CounterExampleState -> Text
-genSForState s =
-  if sinfo s /= "Stuttering"
-    then
-      [text|
-        // step $ssid
-        nodes = $sns;
-        edges = $ses;
-        net = $snet;
-        subs = $ssubs;
-        sigma = $ssigma;
-        steps.push([nodes, edges, net, subs, sigma]);
-      |]
-    else [text||]
-  where
-    ssid = show $ sid s
-    sns = maybe "new Map([])" valueToJavascript (svalue s !? "nodemarks")
-    ses = maybe "new Map([])" valueToJavascript (svalue s !? "edgemarks")
-    snet = maybe "undefined" valueToJavascript (svalue s !? "net")
-    ssubs = maybe "undefined" valueToJavascript (svalue s !? "subs")
-    ssigma = maybe "undefined" valueToJavascript (svalue s !? "sigma")
+extensionPushsInfo :: Extension -> [Text]
+extensionPushsInfo Communication = [", net"]
+extensionPushsInfo Space = [", subs", ", sigma"]
+
+extensionAssigmentsInfo :: CounterExampleState -> Extension -> [(Text, Text)]
+extensionAssigmentsInfo s Communication = [("net", genBaseAssignment "net" s)]
+extensionAssigmentsInfo s Space = [("subs", genBaseAssignment "subs" s), ("sigma", genBaseAssignment "sigma" s)]
+
+extensionAssigments :: (Text, Text) -> Text
+extensionAssigments (ident, val) = [text|$ident = $val|]
+
+genMapAssignment :: Variable -> CounterExampleState -> Text
+genMapAssignment t s = maybe "new Map([])" valueToJavascript (svalue s !? t) 
+
+genBaseAssignment :: Variable -> CounterExampleState -> Text
+genBaseAssignment t s = maybe "undefined" valueToJavascript (svalue s !? t) 
 
 valueToJavascript :: Value -> Text
 valueToJavascript (VariableValue v) = [text|"$sv"|] where sv = show v
@@ -131,6 +127,9 @@ extensionToHtml (ident, var) = [text|$("#$ident #status").html(valueToJSON($var)
 extensionWork :: (a -> Text) -> (Extension -> [a]) -> [Extension] -> Text
 extensionWork f g xts = unlines $ f <$> concat (g <$> xts) 
 
+extensionWork' :: (a -> Text) -> (Extension -> [a]) -> [Extension] -> Text
+extensionWork' f g xts = unwords $ f <$> concat (g <$> xts) 
+
 extensionGetvaluesInfo :: Extension -> [(Text, Text)]
 extensionGetvaluesInfo Communication = [("net", "2")];
 extensionGetvaluesInfo Space = [("sigma", "3"), ("subs", "4")];
@@ -141,7 +140,7 @@ extensionGetvalues (ident, index) = [text|$ident = csteps[step][$index];|]
 encodeLogToHtml :: [Extension] -> Log -> Text
 encodeLogToHtml xts l =
   let model = toText $ fromMaybe "noModel" $ lmodel l
-      setup = genSetup xts l -- TODO:
+      setup = genSetup xts l
       extension_init = extensionWork id extensionInit xts
       extension_css_main = extensionWork id extensionCss xts
       extension_css_title = extensionWork (T.append " #title") extensionCss xts
