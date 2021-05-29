@@ -52,20 +52,20 @@ genForState xts s =
 
 extensionPushsInfo :: Extension -> [Text]
 extensionPushsInfo Communication = [", net"]
-extensionPushsInfo Space = [", subs", ", sigma"]
+extensionPushsInfo Space = [", sigma", ", subs"]
 
 extensionAssigmentsInfo :: CounterExampleState -> Extension -> [(Text, Text)]
 extensionAssigmentsInfo s Communication = [("net", genBaseAssignment "net" s)]
-extensionAssigmentsInfo s Space = [("subs", genBaseAssignment "subs" s), ("sigma", genBaseAssignment "sigma" s)]
+extensionAssigmentsInfo s Space = [("sigma", genBaseAssignment "sigma" s), ("subs", genBaseAssignment "subs" s)]
 
 extensionAssigments :: (Text, Text) -> Text
 extensionAssigments (ident, val) = [text|$ident = $val|]
 
 genMapAssignment :: Variable -> CounterExampleState -> Text
-genMapAssignment t s = maybe "new Map([])" valueToJavascript (svalue s !? t) 
+genMapAssignment t s = maybe "new Map([])" valueToJavascript (svalue s !? t)
 
 genBaseAssignment :: Variable -> CounterExampleState -> Text
-genBaseAssignment t s = maybe "undefined" valueToJavascript (svalue s !? t) 
+genBaseAssignment t s = maybe "undefined" valueToJavascript (svalue s !? t)
 
 valueToJavascript :: Value -> Text
 valueToJavascript (VariableValue v) = [text|"$sv"|] where sv = show v
@@ -107,7 +107,7 @@ extensionCss Space = [", #sigma", ", #subs"]
 
 extensionDivInfo :: Extension -> [(Text, Text)]
 extensionDivInfo Communication = [("network", "Network")]
-extensionDivInfo Space = [("subs", "Subs"), ("sigma", "Sigma")]
+extensionDivInfo Space = [("sigma", "Sigma"), ("subs", "Subs")]
 
 extensionDiv :: (Text, Text) -> Text
 extensionDiv (ident, title) = [text|
@@ -119,16 +119,16 @@ extensionDiv (ident, title) = [text|
 
 extensionToHtmlInfo :: Extension -> [(Text, Text)]
 extensionToHtmlInfo Communication = [("network", "net")]
-extensionToHtmlInfo Space = [("subs", "subs"), ("sigma", "sigma")]
+extensionToHtmlInfo Space = [("sigma", "sigma"), ("subs", "subs")]
 
 extensionToHtml :: (Text, Text) -> Text
 extensionToHtml (ident, var) = [text|$("#$ident #status").html(valueToJSON($var)); |]
 
 extensionWork :: (a -> Text) -> (Extension -> [a]) -> [Extension] -> Text
-extensionWork f g xts = unlines $ f <$> concat (g <$> xts) 
+extensionWork f g xts = unlines $ f <$> concat (g <$> xts)
 
 extensionWork' :: (a -> Text) -> (Extension -> [a]) -> [Extension] -> Text
-extensionWork' f g xts = unwords $ f <$> concat (g <$> xts) 
+extensionWork' f g xts = unwords $ f <$> concat (g <$> xts)
 
 extensionGetvaluesInfo :: Extension -> [(Text, Text)]
 extensionGetvaluesInfo Communication = [("net", "2")];
@@ -137,13 +137,18 @@ extensionGetvaluesInfo Space = [("sigma", "3"), ("subs", "4")];
 extensionGetvalues :: (Text, Text) -> Text
 extensionGetvalues (ident, index) = [text|$ident = csteps[step][$index];|]
 
+extensionCSSInfoSize :: Extension -> Integer
+extensionCSSInfoSize Communication = 1
+extensionCSSInfoSize Space = 2
+
 encodeLogToHtml :: [Extension] -> Log -> Text
 encodeLogToHtml xts l =
   let model = toText $ fromMaybe "noModel" $ lmodel l
       setup = genSetup xts l
       extension_init = extensionWork id extensionInit xts
-      extension_css_main = extensionWork id extensionCss xts
-      extension_css_title = extensionWork (T.append " #title") extensionCss xts
+      extension_css_main = extensionWork' id extensionCss xts
+      extension_css_style = [text|width: $pc%;|] where pc = show . (100 `div`) . sum $ extensionCSSInfoSize <$> xts
+      extension_css_title = extensionWork' (`T.append` " #title") extensionCss xts
       extension_div = extensionWork extensionDiv extensionDivInfo xts
       extension_toHtml = extensionWork extensionToHtml extensionToHtmlInfo xts
       extension_getvalues = extensionWork extensionGetvalues extensionGetvaluesInfo xts
@@ -188,6 +193,7 @@ encodeLogToHtml xts l =
         }
   
         #dataviz $extension_css_main {
+          float: left;
           font-family: Arial, Helvetica, sans-serif;
           height: 10%;
           font-size: 18px;
@@ -195,9 +201,10 @@ encodeLogToHtml xts l =
           border: 0 solid rgba(0,128,0,0.8);
           border-left-width: 4px;
           color: #333;
+          $extension_css_style
         }
   
-        #dataviz #title $extension_css_title {
+        #dataviz #title$extension_css_title {
           text-align: left;
           font-weight: bold;
           font-size: 2vh;
