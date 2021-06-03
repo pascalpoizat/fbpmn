@@ -42,7 +42,7 @@ deploy:
   prerelease: false
   on:
     # branch: master
-    all_branches: true                
+    all_branches: ""            
     APPVEYOR_REPO_TAG: true      
 - provider: GitHub
   release: $(APPVEYOR_TAG)
