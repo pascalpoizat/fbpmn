@@ -49,43 +49,43 @@ parserOptions =
             "json2dot"
             ( info
                 parserJson2Dot
-                (progDesc "transforms a collaboration from JSON to DOT")
+                (progDesc "transforms a model from JSON to DOT")
             )
           <> command
             "json2tla"
             ( info
                 parserJson2Tla
-                (progDesc "transforms a collaboration from JSON to TLA+")
+                (progDesc "transforms a model from JSON to TLA+")
             )
           <> command
             "json2alloy"
             ( info
                 parserJson2Alloy
-                (progDesc "transforms a collaboration from JSON to Alloy")
+                (progDesc "transforms a model from JSON to Alloy")
             )
           <> command
             "bpmn2json"
             ( info
                 parserBpmn2Json
-                (progDesc "transforms a collaboration from BPMN to JSON")
+                (progDesc "transforms a model from BPMN to JSON")
             )
           <> command
             "bpmn2tla"
             ( info
                 parserBpmn2Tla
-                (progDesc "transforms a collaboration from BPMN to TLA+")
+                (progDesc "transforms a model from BPMN to TLA+")
             )
           <> command
             "bpmn2alloy"
             ( info
                 parserBpmn2Alloy
-                (progDesc "transforms a collaboration from BPMN to Alloy")
+                (progDesc "transforms a model from BPMN to Alloy")
             )
           <> command
             "sbpmn2tla"
             ( info
                 parserSBpmn2Tla
-                (progDesc "transforms a collaboration from space BPMN to TLA+")
+                (progDesc "transforms a model from space BPMN to TLA+")
             )
           <> command
             "log2json"

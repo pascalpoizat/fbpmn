@@ -31,7 +31,14 @@ To use it:
 - design your model (`M.bpmn`), user definitions (`M.userdefs`, optional), user specific properties (`M.userprops`, optional), and boundedness constraints (`M.constraint`, optional); see models with ids `s0xx` in the `models/bpmn-origin/src` for examples
 - verify your model with `sfbpmn-check M.bpmn cores` (the script will check if the optional files are there or not, `cores` is the number of cores to uses) 
 
-For the time being, `sfbpmn-check` is only available under Linux and MacOS (a PowerShell script is in preparation). For **Windows** you will have to copy files by hand and run `fbpmn sbpmn2tla`, TLC (see the `runtlc` definition in `sfbpmn-check`), and `fbpmn log2html` yourself.
+----
+
+**In next releases**
+
+- more documentation on associating time information to time-related BPMN constructs (available since v0.3.4)
+- more documentation on sBPMN extension fields (available since v0.3.6)
+- alignment between the `fbpmn-check` and `sfbpmn-check` verification scripts
+- new Web application
 
 ----
 
@@ -442,8 +449,8 @@ PROPERTY
 To get help with `fbpmn`, run `fbpmn -h`.
 
 ```sh
-❯ fbpmn -h
-0.3.5
+➜ fbpmn -h
+0.3.7
 
 Usage: fbpmn COMMAND
   formal transformations for BPMN models
@@ -453,19 +460,20 @@ Available options:
 
 Available commands:
   version                  prints the version
-  repl                     launches the REPL
-  json2dot                 transforms a collaboration from JSON to DOT
-  json2tla                 transforms a collaboration from JSON to TLA+
-  json2alloy               transforms a collaboration from JSON to Alloy
-  bpmn2json                transforms a collaboration from BPMN to JSON
-  bpmn2tla                 transforms a collaboration from BPMN to TLA+
-  bpmn2alloy               transforms a collaboration from BPMN to Alloy
+  json2dot                 transforms a model from JSON to DOT
+  json2tla                 transforms a model from JSON to TLA+
+  json2alloy               transforms a model from JSON to Alloy
+  bpmn2json                transforms a model from BPMN to JSON
+  bpmn2tla                 transforms a model from BPMN to TLA+
+  bpmn2alloy               transforms a model from BPMN to Alloy
+  sbpmn2tla                transforms a model from space BPMN to TLA+
   log2json                 transforms a TLA+ log from LOG to JSON
   log2dot                  transforms a TLA+ log from LOG to DOT
   log2html                 transforms a TLA+ log from LOG to HTML
+  slog2html                transforms a TLA+ space log from LOG to HTML
 ```
 
-But for the `version`and `repl` commands, you must provide two arguments: the source file and the target file for the transformation.
+But for the `version` and `repl` commands, you must provide two arguments: the source file and the target file for the transformation.
 
 **No suffixes are to be given for source/target files when running `fbpmn`.**
 
