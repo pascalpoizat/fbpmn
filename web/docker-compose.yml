@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: ./backend
+    image: fbpmn-api
+  client:
+    build:
+      context: ./frontend
+    image: fbpmn-client
+    ports:
+      - "3000:80"
