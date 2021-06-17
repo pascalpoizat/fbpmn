@@ -100,18 +100,18 @@ components:
             $ref: '#/components/schemas/Verif'
     Verif:
       properties:
-        mode:
+        prop:
           type: string
-          description: Communication mode
+          description: Propertie
           enum:
             - TYPE
             - SAFE
             - SOUND
             - MSGSOUND
           example: TYPE
-        prop:
+        mode:
           type: string
-          description: Propertie
+          description: Communication mode
           enum:
             - BAG
             - FIFOPAIR
