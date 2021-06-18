@@ -3,14 +3,17 @@ info:
   description: This is a simple API
   version: 1.0.0-oas3
   title: Simple Inventory API
-  contact:
-    email: you@your-company.com
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: verification
+    description: Resources about verification
 paths:
   /version:
     get:
+      tags: 
+        - verification
       summary: Get the current fbpmn version
       description: ''
       operationId: fbpmn version
@@ -23,7 +26,9 @@ paths:
                 $ref: '#/components/schemas/Version'
   /verifs:
     get:
-      summary: list all the verifications of BPMN model
+      tags: 
+        - verification
+      summary: List all the verifications of BPMN model
       description: ''
       operationId: getVerifications
       responses:
@@ -36,6 +41,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Verification'
     post:
+      tags: 
+        - verification
       summary: Add a new verification
       description: Add a new verification
       operationId: addVerification
@@ -51,7 +58,9 @@ paths:
           
   '/verifs/{verifId}':
     get:
-      summary: searches verification of BPMN model
+      tags: 
+        - verification
+      summary: Searches verification of BPMN model
       description: Returns a single verification
       operationId: getVerification
       parameters:
@@ -61,10 +70,10 @@ paths:
           required: true
           schema:
             type: integer
-            format: int64
+            format: integer
       responses:
         '200':
-          description: successful operation
+          description: Successful operation
           content:
             application/json:
               schema:
@@ -79,53 +88,83 @@ components:
       properties:
         num:
           type: integer
-          format: int64
+          format: integer
           example: 0.3.6
       xml:
         name: version
       type: object
     Verification:
-      type: object
       properties:
         id: 
           type: integer
-          format: int64
+          format: integer
           example: 2
         ref:
           type: string
           example: /verifs/:id/
+        file: 
+          type: string
+          example: /verifs/:id/diagram.bpmn
         resultat:
-          type: array
-          items:
-            $ref: '#/components/schemas/Verif'
-    Verif:
+          $ref: '#/components/schemas/Result'
+      xml:
+        name: verification
+      type: object
+    Result:
       properties:
-        prop:
-          type: string
-          description: Propertie
-          enum:
-            - TYPE
-            - SAFE
-            - SOUND
-            - MSGSOUND
-          example: TYPE
-        mode:
-          type: string
-          description: Communication mode
-          enum:
-            - BAG
-            - FIFOPAIR
-            - CAUSAL
-            - INBOX
-            - OUTBOX
-            - FIFO
-            - RSC
-          example: BAG
+        model: 
+          $ref: '#/components/schemas/Network'
+    Network: 
+      properties:
+        BAG:
+          $ref: '#/components/schemas/Property'
+        FIFOPAIR:
+          $ref: '#/components/schemas/Property'
+        CAUSAL:
+          $ref: '#/components/schemas/Property'
+        INBOX:
+          $ref: '#/components/schemas/Property'
+        OUTBOX:
+          $ref: '#/components/schemas/Property'
+        FIFO:
+          $ref: '#/components/schemas/Property'
+        RSC:
+          $ref: '#/components/schemas/Property'
+      xml:
+        name: network
+      type: object
+    Property:
+      properties:
+        TYPE: 
+          $ref: '#/components/schemas/Stat'
+        SAFE:
+          $ref: '#/components/schemas/Stat'
+        SOUND:
+          $ref: '#/components/schemas/Stat'
+        MSGSOUND:
+          $ref: '#/components/schemas/Stat'
+      xml:
+        name: Property
+      type: object
+    Stat:
+      properties:
+        trans: 
+          type: integer
+          format: integer
+          example: 64
+        depth: 
+          type: integer
+          format: integer
+          example: 128
+        states: 
+          type: integer
+          format: integer
+          example: 31
         value:
           type: boolean
           example: true
       xml:
-        name: verif
+        name: Stat
       type: object
 
 host: virtserver.swaggerhub.com
