@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title id="title"> </title>
+  <title id="title">fBPMN</title>
 
   <!-- required modeler styles -->
   <link rel="stylesheet" href="https://unpkg.com/bpmn-js@8.6.1/dist/assets/diagram-js.css">
@@ -14,6 +14,7 @@
 
   <!-- needed for this example only -->
   <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -38,24 +39,42 @@
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div class="topnav" id="settings">
-    <a id="export-nav">Export model</a>
-    <a id="import-nav">Import a model</a>
-    <input id="import-input" name="files" type="file" style="display:none;" accept=".bpmn">
+  <div id="settings">
+    <a id="save-nav">Save</a>
+    <a id="open-nav">Open</a>
+    <input id="import-input" name="files" style="display: none;" type="file" accept=".bpmn"></input>
     <a id="verify-nav">Verify model</a>
     <a id="verifications-nav">Verifications</a>
-    <a id="about-nav">About</a>
   </div>
   <div id="canvas"></div>
-
+  <div id="root"></div>
   <script src="bpmn.js"></script>
   <script>
+    function makePostRequest(path, queryObj) {
+      axios.post(path, queryObj).then(
+        (response) => {
+          var result = response.data;
+          console.log(result);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
     // wire buttons
-    $('#export-nav').click(exportDiagram);
+    $('#save-nav').click(exportDiagram);
     $('#import-input').on("change", function () { displayDiagram(this.files[0]); return false; });
-    $('#import-nav').click(() => $('#import-input').click());
-    $('#about-nav').click(function () { alert("show the version' tag") });
-    $('#verify-nav').click(function () { alert("verify the model with fbpmn-check") });
+    $('#open-nav').click(() => $('#import-input').click());
+    $('#verify-nav').click(async function () {
+      try {
+        const result = await bpmnModeler.saveXML({ format: true });
+        const { xml } = result;
+        queryObj = { model: xml };
+        makePostRequest('http://127.0.0.1:5000/verifications', queryObj);
+      } catch (err) {
+        console.log(err);
+      }
+    });
     $('#verifications-nav').click(function () { alert("list all the previous verifications") });
   </script>
   <!--
