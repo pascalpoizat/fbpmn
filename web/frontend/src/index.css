@@ -88,18 +88,3 @@ h2 {
   color:#843a3e;
   border-bottom: solid 1px #af5775;
 }
-
-/* lateral panels styles */
-#choices, #custom-networks-panel, #about, #docker-panel {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 5;
-  height:100%;
-  border-left: solid 2px #855a5c;
-  padding-left:40px;
-  padding-right:40px;
-  width:400px;
-  background-color:#fef7f7;
-  overflow:auto;
-}
