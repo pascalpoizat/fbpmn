@@ -14,7 +14,6 @@
 
   <!-- needed for this example only -->
   <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -50,17 +49,6 @@
   <div id="root"></div>
   <script src="bpmn.js"></script>
   <script>
-    function makePostRequest(path, queryObj) {
-      axios.post(path, queryObj).then(
-        (response) => {
-          var result = response.data;
-          console.log(result);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    }
     // wire buttons
     $('#save-nav').click(exportDiagram);
     $('#import-input').on("change", function () { displayDiagram(this.files[0]); return false; });
@@ -69,8 +57,12 @@
       try {
         const result = await bpmnModeler.saveXML({ format: true });
         const { xml } = result;
-        queryObj = { model: xml };
-        makePostRequest('http://127.0.0.1:5000/verifications', queryObj);
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://127.0.0.1:5000/verifications');
+        xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
+        xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+        xhr.setRequestHeader('Content-Type', 'application/xml');
+        xhr.send(xml);
       } catch (err) {
         console.log(err);
       }
