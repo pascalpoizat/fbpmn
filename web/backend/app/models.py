@@ -64,8 +64,9 @@ class Verification(db.Model):
 
     # TODO verifier all_ok()
     def all_ok(self):
-        for r in self.results:
-            if r.is_ok() == False:
+        v = Verification.query.get(self.id)
+        for r in v.results.all():
+            if not r.is_ok():
                 return False
         return True
 

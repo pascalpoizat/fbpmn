@@ -1,7 +1,6 @@
 from flask import request, jsonify
-from app import app, db
-from app.models import Application, Verification, Version, Model, Result, get_workir_with_output
-from app.context import Communication, Property
+from app import app
+from app.models import Application, Version
 
 a = Application()
 
@@ -24,8 +23,3 @@ def verifications():
         del m1, v1
     else:
         return {'id': 0}
-
-
-@app.route('/verifications/<int:verification_id>}', methods=['GET'])
-def verificationsId(verification_id):
-    pass
