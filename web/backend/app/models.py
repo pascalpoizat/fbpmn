@@ -9,7 +9,7 @@ import subprocess
 
 
 class Status(Enum):
-    PENDIND = auto()
+    PENDING = auto()
     DONE = auto()
     FAILED = auto()
 
@@ -44,7 +44,7 @@ class Verification(db.Model):
     results = db.relationship('Result', backref='results', lazy='dynamic')
 
     def __init__(self, model):
-        self.status = Status.PENDIND.name  # TODO corriger -> doit afficher juste PENDING
+        self.status = Status.PENDING.name  # TODO doit afficher juste PENDING
         self.model_id = model
 
     def get_id(self):
@@ -60,7 +60,6 @@ class Verification(db.Model):
         # TODO conditions si fail
         self.status = Status.DONE.name
 
-    # TODO verifier all_ok()
     def all_ok(self):
         v = Verification.query.get(self.id)
         for r in v.results.all():
@@ -85,26 +84,36 @@ class Result(db.Model):
         return self.id
 
     def get_context(self):
-        return self.communication + self.property  # TODO list plutôt
+        return self.communication + self.property  # TODO classe à part entière?
 
     def set_value(self, value):
         self.value = value
 
     def is_ok(self):
-        if self.value == True:
+        if self.value:
             return True
         else:
             return False
 
 
 def get_workdir(output):
-    # TODO peut-être trouver une meilleure solution
+    # TODO peut-être trouver une meilleure solution que re.search
     firstline = output.split('\n', 1)[0]
     workdir = (re.search(r'/tmp/(.+) with', firstline)).group(1)
     return workdir
 
 
 class Application():
+    def create_bpmn_file(self, content_request):
+        m1 = Model(content_request)
+        db.session.add(m1)
+        db.session.commit()
+        open(f'/tmp/{m1.name}.bpmn', 'x')
+        f = open(f'/tmp/{m1.name}.bpmn', 'w')
+        f.write(f'{m1.content}')
+        f.close
+        return m1
+
     def create_verification(self, model):
         # 1. créer une instance de vérification
         v1 = Verification(model.id)
@@ -130,17 +139,24 @@ class Application():
         db.session.commit()
         return v1
 
-    def create_bpmn_file(self, content_request):
-        m1 = Model(content_request)
-        db.session.add(m1)
-        db.session.commit()
-        open(f'/tmp/{m1.name}.bpmn', 'x')
-        f = open(f'/tmp/{m1.name}.bpmn', 'w')
-        f.write(f'{m1.content}')
-        f.close
-        return m1
+    def get_all_models(self):
+        return Model.query.all()
+
+    def get_all_verifications(self):
+        return Verification.query.all()
+
+    def get_all_results(self):
+        return Result.query.all()
+
+    def get_model_by_id(self, id):
+        return Model.query.get(id)
+
+    def get_verification_by_id(self, id):
+        return Verification.query.get(id)
+
+    def get_result_by_id(self, id):
+        return Result.query.get(id)
 
     # TODO def is_ok_verif():
-    #     verifications = Verification.query.all()
 
     # TODO def is_ok_result():
