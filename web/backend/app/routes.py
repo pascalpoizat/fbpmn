@@ -19,10 +19,9 @@ def verifications():
     if request.method == 'POST':
         # with request.data only, a b' ' appears to indicate the string is binary
         model = str(request.data.decode('UTF-8'))
-        m = Model(model)
-        db.session.add(m)
-        a.create_verification()
-
+        m1 = a.create_bpmn_file(model)
+        v1 = a.create_verification(m1)
+        del m1, v1
     else:
         return {'id': 0}
 

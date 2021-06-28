@@ -15,6 +15,7 @@ Jinja2==3.0.1
 Mako==1.1.4
 MarkupSafe==2.0.1
 marshmallow==3.12.1
+mysqlclient==2.0.3
 pycodestyle==2.7.0
 python-dateutil==2.8.1
 python-dotenv==0.18.0
