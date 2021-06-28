@@ -16,12 +16,10 @@ class Status(Enum):
 
 class Version:
     def __init__(self):
-        version = subprocess.check_output(
-            "fbpmn version", shell=True, universal_newlines=True)
-        version = version.split('.')
+        version = (subprocess.getoutput("fbpmn version")).split('.')
         self.major = int(version[0])
         self.minor = int(version[1])
-        self.patch = int(version[2].splitlines()[0])
+        self.patch = int(version[2])
 
 
 class Model(db.Model):
@@ -136,8 +134,10 @@ class Application():
         m1 = Model(content_request)
         db.session.add(m1)
         db.session.commit()
-        content = (m1.content).replace('\"', '\\"\"')
-        subprocess.run(f'echo "{content}" > /tmp/{m1.name}.bpmn', shell=True)
+        open(f'/tmp/{m1.name}.bpmn', 'x')
+        f = open(f'/tmp/{m1.name}.bpmn', 'w')
+        f.write(f'{m1.content}')
+        f.close
         return m1
 
     # TODO def is_ok_verif():
