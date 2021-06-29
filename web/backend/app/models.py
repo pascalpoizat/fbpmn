@@ -4,7 +4,7 @@ from app import db
 from datetime import datetime
 from app.context import Communication, Property
 from enum import Enum, auto
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ElemTree
 import subprocess
 
 
@@ -27,11 +27,11 @@ class Model(db.Model):
     name = db.Column(db.String(80), nullable=False)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', backref='verification', lazy='dynamic')
+        'Verification', backref='model', lazy='dynamic')
 
     def __init__(self, content_file):
         self.content = content_file
-        self.name = (ET.fromstring(content_file).find(
+        self.name = (ElemTree.fromstring(content_file).find(
             '{http://www.omg.org/spec/BPMN/20100524/MODEL}collaboration')).get('id')
 
 
@@ -41,7 +41,7 @@ class Verification(db.Model):
     pub_date = db.Column(db.DateTime, index=True,
                          default=datetime.utcnow)
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
-    results = db.relationship('Result', backref='results', lazy='dynamic')
+    results = db.relationship('Result', backref='verification', lazy='dynamic')
 
     def __init__(self, model):
         self.status = Status.PENDING.name  # TODO doit afficher juste PENDING
@@ -103,18 +103,26 @@ def get_workdir(output):
     return workdir
 
 
-class Application():
-    def create_bpmn_file(self, content_request):
+def serialize(self):
+    # JSON serializer for objects not serializable by default json code
+
+    return json.dumps({'items': self.items, 'receipt_id': self.receipt_id, 'order_id': self.order_id})
+
+
+class Application:
+    @staticmethod
+    def create_bpmn_file(content_request):
         m1 = Model(content_request)
         db.session.add(m1)
         db.session.commit()
         open(f'/tmp/{m1.name}.bpmn', 'x')
         f = open(f'/tmp/{m1.name}.bpmn', 'w')
         f.write(f'{m1.content}')
-        f.close
+        f.close()
         return m1
 
-    def create_verification(self, model):
+    @staticmethod
+    def create_verification(model):
         # 1. créer une instance de vérification
         v1 = Verification(model.id)
         db.session.add(v1)
@@ -123,7 +131,7 @@ class Application():
         output = subprocess.getoutput(f'fbpmn-check /tmp/{model.name}.bpmn')
         # 3. récupérer le workdir de fbpmn-check -> get_workir
         workdir = get_workdir(output)
-        # 4. charger le json stocké à /tmp/workdir/{model.name}.json
+        # 4. charger le json stock à /tmp/workdir/{model.name}.json
         f = open(f'/tmp/{workdir}/{model.name}.json')
         data = json.load(f)
         f.close()
@@ -139,24 +147,42 @@ class Application():
         db.session.commit()
         return v1
 
-    def get_all_models(self):
+    @staticmethod
+    def get_all_models():
         return Model.query.all()
 
-    def get_all_verifications(self):
+    @staticmethod
+    def get_all_verifications():
         return Verification.query.all()
 
-    def get_all_results(self):
+    @staticmethod
+    def get_all_results():
         return Result.query.all()
 
-    def get_model_by_id(self, id):
-        return Model.query.get(id)
+    @staticmethod
+    def get_model_by_id(model_id):
+        return Model.query.get(model_id)
 
-    def get_verification_by_id(self, id):
-        return Verification.query.get(id)
+    @staticmethod
+    def get_verification_by_id(verification_id):
+        return Verification.query.get(verification_id)
 
-    def get_result_by_id(self, id):
-        return Result.query.get(id)
+    @staticmethod
+    def get_result_by_id(result_id):
+        return Result.query.get(result_id)
 
-    # TODO def is_ok_verif():
+    @staticmethod
+    def is_ok_verif(verification_id):
+        v = Application.get_verification_by_id(verification_id)
+        if v.all_ok():
+            return True
+        else:
+            return False
 
-    # TODO def is_ok_result():
+    @staticmethod
+    def is_ok_result(result_id):
+        r = Application.get_result_by_id(result_id)
+        if r.is_ok():
+            return True
+        else:
+            return False
