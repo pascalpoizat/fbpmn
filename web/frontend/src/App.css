@@ -36,3 +36,34 @@
     transform: rotate(360deg);
   }
 }
+
+#settings {
+  margin: 0;
+  height: 6vh;
+  overflow: hidden;
+  background-color: #333;
+}
+
+#settings a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+#settings a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+#settings a.active {
+  background-color: #04aa6d;
+  color: white;
+}
+
+#settings .icon {
+  display: none;
+}

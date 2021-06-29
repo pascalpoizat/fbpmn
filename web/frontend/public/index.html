@@ -38,37 +38,7 @@
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="settings">
-    <a id="save-nav">Save</a>
-    <a id="open-nav">Open</a>
-    <input id="import-input" name="files" style="display: none;" type="file" accept=".bpmn"></input>
-    <a id="verify-nav">Verify model</a>
-    <a id="verifications-nav">Verifications</a>
-  </div>
-  <div id="canvas"></div>
   <div id="root"></div>
-  <script src="bpmn.js"></script>
-  <script>
-    // wire buttons
-    $('#save-nav').click(exportDiagram);
-    $('#import-input').on("change", function () { displayDiagram(this.files[0]); return false; });
-    $('#open-nav').click(() => $('#import-input').click());
-    $('#verify-nav').click(async function () {
-      try {
-        const result = await bpmnModeler.saveXML({ format: true });
-        const { xml } = result;
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://127.0.0.1:5000/verifications');
-        xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
-        xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-        xhr.setRequestHeader('Content-Type', 'application/xml');
-        xhr.send(xml);
-      } catch (err) {
-        console.log(err);
-      }
-    });
-    $('#verifications-nav').click(function () { alert("list all the previous verifications") });
-  </script>
   <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
