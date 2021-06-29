@@ -40,12 +40,16 @@ class Verification(db.Model):
     status = db.Column(db.Enum(Status))
     pub_date = db.Column(db.DateTime, index=True,
                          default=datetime.utcnow)
+    output = db.Column(db.Text(10000))
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
     results = db.relationship('Result', backref='verification', lazy='dynamic')
 
     def __init__(self, model):
         self.status = Status.PENDING.name  # TODO doit afficher juste PENDING
         self.model_id = model
+
+    def set_output(self, output):
+        self.output = output
 
     def get_id(self):
         return self.id
@@ -144,6 +148,7 @@ class Application:
                 db.session.add(r1)
                 del r1
         v1.change_status()
+        v1.set_output(output)
         db.session.commit()
         return v1
 
