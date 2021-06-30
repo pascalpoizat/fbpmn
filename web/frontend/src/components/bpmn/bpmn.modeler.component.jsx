@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { FaFolderOpen, FaDownload } from 'react-icons/fa';
 import BpmnJS from 'bpmn-js/dist/bpmn-modeler.production.min.js';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
@@ -20,6 +21,7 @@ function save(filename, data) {
         document.body.removeChild(elem);
     }
 }
+
 
 class BpmnModelerComponent extends Component {
 
@@ -55,9 +57,24 @@ class BpmnModelerComponent extends Component {
     displayDiagram(DiagramFile) {
         let reader = new FileReader();
         reader.readAsText(DiagramFile);
-        reader.onload = function (event) {
+        reader.onload = (event) => {
             this.openDiagram(event.target.result);
         };
+    }
+
+    async sendData() {
+        try {
+            const result = await this.modeler.saveXML({ format: true });
+            const { xml } = result;
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://127.0.0.1:5000/verifications");
+            xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            xhr.setRequestHeader("Content-Type", "application/xml");
+            xhr.send(xml);
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     render = () => {
@@ -65,11 +82,14 @@ class BpmnModelerComponent extends Component {
             <div>
                 <button id="open" href onClick={() => {
                     document.getElementById('import-input').click();
-                }}>Open</button>
-                <input id="import-input" onClick={() => {
-                    this.displayDiagram(this.files[0]); return false;
+                }}><FaFolderOpen size={30} /></button>
+                <input id="import-input" onChange={() => {
+                    this.displayDiagram(document.getElementById('import-input').files[0]);
                 }} name="files" style={{ display: 'none' }} type="file" accept=".bpmn"></input>
-                <a id="save" href onClick={this.exportDiagram}>Save</a>
+                <button id="save" href onClick={this.exportDiagram}><FaDownload size={30} /></button>
+                <button href onclick={this.sendData()}>
+                    Verify
+                </button>
                 <div id="canvas" style={{ width: '100%', height: '94vh' }}></div>
             </div >
         )
