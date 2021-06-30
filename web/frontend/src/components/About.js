@@ -1,4 +1,6 @@
 import React from "react";
+import { FaGithub } from "react-icons/fa";
+import Link from "@material-ui/core/Link";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -40,7 +42,12 @@ export default function About() {
       <Dialog open={open} onClose={handleToClose}>
         <DialogTitle>fBPMN v{version}</DialogTitle>
         <DialogContent>
-          <DialogContentText>Version {version}</DialogContentText>
+          <DialogContentText>
+            Outil d'analyse de processus métiers. Code à retrouver sur{" "}
+            <Link href="https://github.com/pascalpoizat/fbpmn" target="_blank">
+              <FaGithub></FaGithub>
+            </Link>
+          </DialogContentText>
         </DialogContent>
       </Dialog>
     </div>
