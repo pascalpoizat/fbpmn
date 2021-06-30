@@ -1,9 +1,10 @@
 FROM python:3.9
-WORKDIR /app
+WORKDIR /api
 
-COPY requirements.txt app.py .flaskenv ./
+COPY requirements.txt config.py .flaskenv ./
 RUN pip install -r ./requirements.txt
+COPY ./app app/
 ENV FLASK_ENV production
 
 EXPOSE 5000
-CMD ["gunicorn", "-b", "127.0.0.1:5000", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app.routes:app"]
