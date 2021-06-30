@@ -3,6 +3,7 @@ import { FaFolderOpen, FaDownload } from 'react-icons/fa';
 import BpmnJS from 'bpmn-js/dist/bpmn-modeler.production.min.js';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
+
 /**
  * offer to download a file.
  * @param {String} filename name of the file
@@ -92,11 +93,11 @@ class BpmnModelerComponent extends Component {
             <div>
                 <button id="open" href="true" onClick={() => {
                     document.getElementById('import-input').click();
-                }}><FaFolderOpen size={30} /></button>
+                }}><FaFolderOpen size={25} /></button>
                 <input id="import-input" onChange={() => {
                     this.displayDiagram(document.getElementById('import-input').files[0]);
                 }} name="files" style={{ display: 'none' }} type="file" accept=".bpmn"></input>
-                <button id="save" href="true" onClick={this.exportDiagram}><FaDownload size={30} /></button>
+                <button id="save" href="true" onClick={() => { this.exportDiagram() }}><FaDownload size={25} /></button>
                 <button href="true" onClick={() => { this.sendData() }}>
                     Verify
                 </button>
