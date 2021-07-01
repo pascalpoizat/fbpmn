@@ -3,10 +3,7 @@ import time
 from app import app, db
 from app.models import Application, Version
 
-
-@app.before_first_request
-def create_tables():
-    db.create_all()
+a = Application()
 
 
 @app.route('/api/time')
@@ -38,9 +35,11 @@ def verifications():
     if request.method == 'POST':
         # with request.data only, a b' ' appears to indicate the string is binary
         model = str(request.data.decode('UTF-8'))
-        m1 = Application.create_bpmn_file(model)
-        v1 = Application.create_verification(m1)
-        del m1, v1
+        v = a.create_verification()
+        m = v.create_model(model)
+        workir = v.launch_check(m.name)
+        xx = v.results_list(workir, m.name)
+        del m, v
         return "tout roule"
     else:
         verifications = Application.get_all_verifications()
@@ -75,15 +74,14 @@ def get_model_by_id(id):
 @app.route('/verifications/<id>', methods=['GET'])
 def get_verification_by_id(id):
     v = Application.get_verification_by_id(id)
-    return jsonify(id=v.id,
-                   date=v.pub_date, model=v.model_id, output=v.output)
+    print(len(v.results))
+    return jsonify(id=v.id, date=v.pub_date, model=v.model_id, output=v.output, results=f'/results/{v.results[0].id}')
 
 
 @app.route('/results/<id>', methods=['GET'])
 def get_result_by_id(id):
     r = Application.get_result_by_id(id)
-    return jsonify(id=r.id, communication=r.communication,
-                   property=r.property, value=r.value, verification=r.verification_id)
+    return jsonify(id=r.id, value=r.value, verification=f'verifications/{r.verification.id}')
 
 
 @app.route('/verifications/<id>/model', methods=['GET'])

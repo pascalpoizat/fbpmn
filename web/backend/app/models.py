@@ -8,6 +8,13 @@ import xml.etree.ElementTree as ElemTree
 import subprocess
 
 
+def get_workdir(output):
+    # TODO peut-être trouver une meilleure solution que re.search
+    firstline = output.split('\n', 1)[0]
+    workdir = (re.search(r'/tmp/(.+) with', firstline)).group(1)
+    return workdir
+
+
 class Status(Enum):
     PENDING = auto()
     DONE = auto()
@@ -44,21 +51,20 @@ class Verification(db.Model):
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
     results = db.relationship('Result', backref='verification', lazy='dynamic')
 
-    def __init__(self, model):
+    def __init__(self):
         self.status = Status.PENDING.name  # TODO doit afficher juste PENDING
-        self.model_id = model
 
     def set_output(self, output):
         self.output = output
+
+    def set_model(self, model_id):
+        self.model_id = model_id
 
     def get_id(self):
         return self.id
 
     def get_model(self):
         return self.model_id
-
-    def get_status(self):
-        return self.status
 
     def change_status(self):
         # TODO conditions si fail
@@ -70,6 +76,37 @@ class Verification(db.Model):
             if not r.is_ok():
                 return False
         return True
+
+    def create_model(self, content_request):
+        m = Model(content_request)
+        db.session.add(m)
+        db.session.commit()
+        self.set_model(m.id)
+        f = open(f'/tmp/{m.name}.bpmn', 'w')
+        f.write(f'{m.content}')
+        f.close()
+        return m
+
+    def launch_check(self, model_name):
+        output = subprocess.getoutput(
+            f'fbpmn-check /tmp/{model_name}.bpmn')
+        self.set_output(output)
+        return get_workdir(output)
+
+    def results_list(self, workdir, model_name):
+        f = open(f'/tmp/{workdir}/{model_name}.json')
+        data = json.load(f)
+        f.close()
+        results = []
+        for comm in Communication:
+            for prop in Property:
+                results.append(Result(comm.name, prop.name, self.id))
+                value = data[f'{model_name}'][f'{comm.name}'][f'{prop.name}']['value']
+                results[len(results)-1].set_value(value)
+                db.session.add(results[len(results)-1])
+        self.change_status()
+        db.session.commit()
+        return self.results.all()
 
 
 class Result(db.Model):
@@ -102,53 +139,12 @@ class Result(db.Model):
             return False
 
 
-def get_workdir(output):
-    # TODO peut-être trouver une meilleure solution que re.search
-    firstline = output.split('\n', 1)[0]
-    workdir = (re.search(r'/tmp/(.+) with', firstline)).group(1)
-    return workdir
-
-
 class Application:
-    @staticmethod
-    def create_bpmn_file(content_request):
-        m1 = Model(content_request)
-        db.session.add(m1)
+    def create_verification(self):
+        v = Verification()
+        db.session.add(v)
         db.session.commit()
-        open(f'/tmp/{m1.name}.bpmn', 'x')
-        f = open(f'/tmp/{m1.name}.bpmn', 'w')
-        f.write(f'{m1.content}')
-        f.close()
-        return m1
-
-    @staticmethod
-    def create_verification(model):
-        # 1. créer une instance de vérification
-        v1 = Verification(model.id)
-        db.session.add(v1)
-        db.session.commit()
-        # 2. lancer la vérification avec fbpmn-check sur le modèle
-        # TODO pb ne vient pas du fait que fbpmn-check est en pwsh?
-        output = subprocess.getoutput(
-            f'fbpmn-check /tmp/{model.name}.bpmn')
-        # 3. récupérer le workdir de fbpmn-check -> get_workir
-        workdir = get_workdir(output)
-        # 4. charger le json stock à /tmp/workdir/{model.name}.json
-        f = open(f'/tmp/{workdir}/{model.name}.json')
-        data = json.load(f)
-        f.close()
-        # 5. créer des instances de résults pour chaque config, les initialiser avec le json produit
-        for comm in Communication:
-            for prop in Property:
-                r1 = Result(comm.name, prop.name, v1.id)
-                value = data[f'{model.name}'][f'{comm.name}'][f'{prop.name}']['value']
-                r1.set_value(value)
-                db.session.add(r1)
-                del r1
-        v1.change_status()
-        v1.set_output(output)
-        db.session.commit()
-        return v1
+        return v
 
     @staticmethod
     def get_all_models():
