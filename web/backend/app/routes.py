@@ -1,7 +1,17 @@
 from flask import request, jsonify
-from app import app
+import time
+from app import app, db
 from app.models import Application, Version
-import json
+
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
+
+@app.route('/api/time')
+def get_current_time():
+    return {'time': time.time()}
 
 
 @app.route('/version', methods=['GET'])
@@ -31,6 +41,7 @@ def verifications():
         m1 = Application.create_bpmn_file(model)
         v1 = Application.create_verification(m1)
         del m1, v1
+        return "tout roule"
     else:
         verifications = Application.get_all_verifications()
         verifications_json = []
@@ -64,8 +75,8 @@ def get_model_by_id(id):
 @app.route('/verifications/<id>', methods=['GET'])
 def get_verification_by_id(id):
     v = Application.get_verification_by_id(id)
-    return jsonify(id=v.id, status=str(v.status),
-                   date=v.pub_date, model=v.model_id)
+    return jsonify(id=v.id,
+                   date=v.pub_date, model=v.model_id, output=v.output)
 
 
 @app.route('/results/<id>', methods=['GET'])

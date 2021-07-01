@@ -78,6 +78,8 @@ class Result(db.Model):
     property = db.Column(db.Enum(Property))
     value = db.Column(db.Boolean)
     verification_id = db.Column(db.Integer, db.ForeignKey('verification.id'))
+    # autre nom -> models n'est pas BD
+    # print('verification.id')  # -> doit marcher
 
     def __init__(self, comm, prop, verif):
         self.communication = comm
@@ -107,12 +109,6 @@ def get_workdir(output):
     return workdir
 
 
-def serialize(self):
-    # JSON serializer for objects not serializable by default json code
-
-    return json.dumps({'items': self.items, 'receipt_id': self.receipt_id, 'order_id': self.order_id})
-
-
 class Application:
     @staticmethod
     def create_bpmn_file(content_request):
@@ -132,7 +128,9 @@ class Application:
         db.session.add(v1)
         db.session.commit()
         # 2. lancer la vérification avec fbpmn-check sur le modèle
-        output = subprocess.getoutput(f'fbpmn-check /tmp/{model.name}.bpmn')
+        # TODO pb ne vient pas du fait que fbpmn-check est en pwsh?
+        output = subprocess.getoutput(
+            f'fbpmn-check /tmp/{model.name}.bpmn')
         # 3. récupérer le workdir de fbpmn-check -> get_workir
         workdir = get_workdir(output)
         # 4. charger le json stock à /tmp/workdir/{model.name}.json
