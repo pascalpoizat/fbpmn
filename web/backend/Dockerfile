@@ -10,6 +10,7 @@ RUN ./bin/install
 
 ENV FLASK_ENV=production FBPMN_HOME=/api/fbpmn TLA2TOOLS_HOME=/api
 ENV PATH="$FBPMN_HOME/scripts:/api/bin:$PATH"
+ENV DB_HOST='' DB_NAME='' DB_USER='' DB_PASSWORD=''
 
 EXPOSE 5000
 CMD ["gunicorn", "-b", ":5000", "app.routes:app"]
