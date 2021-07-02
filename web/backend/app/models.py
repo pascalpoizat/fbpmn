@@ -91,7 +91,7 @@ class Verification(db.Model):
         output = subprocess.getoutput(
             f'fbpmn-check /tmp/{model_name}.bpmn')
         self.set_output(output)
-        return get_workdir(output)
+        return output
 
     def results_list(self, workdir, model_name):
         f = open(f'/tmp/{workdir}/{model_name}.json')
@@ -128,6 +128,9 @@ class Result(db.Model):
 
     def get_context(self):
         return self.communication + self.property  # TODO classe à part entière?
+
+    def get_verification(self):
+        return self.verification_id
 
     def set_value(self, value):
         self.value = value
