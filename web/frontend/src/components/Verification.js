@@ -1,31 +1,61 @@
 import React from "react";
-import Popup from "reactjs-popup";
-import "reactjs-popup/dist/index.css";
+import Popper from "@material-ui/core/Popper";
+import { makeStyles } from "@material-ui/core/styles";
 
-let output;
+let output = "";
 
 function setOutput() {
   fetch("/verifications/3")
     .then((res) => res.json())
     .then((data) => {
-      output = data.ouput;
+      output = data.output;
     });
 }
 
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    border: "1px solid",
+    padding: theme.spacing(1),
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
+
 export default function Verification() {
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+    setOutput();
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popper" : undefined;
   return (
     <div>
-      <Popup
-        trigger={
-          <a href onClick={setOutput}>
-            {" "}
-            Verification Output
-          </a>
-        }
-        position="bottom center"
+      <a aria-describedby={id} type="button" onClick={handleClick}>
+        Verification Output
+      </a>
+      <Popper
+        placement="bottom"
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        modifiers={{
+          flip: {
+            enabled: true,
+          },
+          preventOverflow: {
+            enabled: true,
+            boundariesElement: "scrollParent",
+          },
+          arrow: {
+            enabled: true,
+          },
+        }}
       >
-        <div>Output vérification: {output}</div>
-      </Popup>
+        <div className={classes.paper}>{output}</div>
+      </Popper>
     </div>
   );
 }

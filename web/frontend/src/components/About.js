@@ -8,13 +8,13 @@ import DialogContent from "@material-ui/core/DialogContent";
 
 let version;
 
-function setVersion() {
-  fetch("/version")
+let setVersion = () => {
+  fetch("http://localhost:5000/version")
     .then((res) => res.json())
     .then((data) => {
       version = data.major + "." + data.minor + "." + data.patch;
     });
-}
+};
 
 export default function About() {
   const [open, setOpen] = React.useState(false);
