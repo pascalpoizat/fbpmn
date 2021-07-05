@@ -17,6 +17,7 @@ RUN apt-get update && \
     apt-get install -y powershell
 COPY requirements.txt config.py .flaskenv ./
 COPY ./app app/
+COPY ./data data/
 RUN pip install -r ./requirements.txt
 ENV FBPMN_HOME=/api/fbpmn-0.3.7 TLA2TOOLS_HOME=/api
 ENV PATH="$FBPMN_HOME/scripts:/api/bin:$PATH"
