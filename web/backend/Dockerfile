@@ -20,7 +20,6 @@ COPY ./app app/
 RUN pip install -r ./requirements.txt
 ENV FBPMN_HOME=/api/fbpmn-0.3.7 TLA2TOOLS_HOME=/api
 ENV PATH="$FBPMN_HOME/scripts:/api/bin:$PATH"
-ENV DB_USER='admin' DB_PASSWORD='Malinva5d' DB_HOST='3306' DB_NAME='fBPMN_db' 
 
 
 EXPOSE 5000
