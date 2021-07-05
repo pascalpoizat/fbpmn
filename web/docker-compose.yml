@@ -5,6 +5,8 @@ services:
     build:
       context: ./backend
     image: fbpmn-api
+    ports:
+      - "5000:5000"
   client:
     build:
       context: ./frontend

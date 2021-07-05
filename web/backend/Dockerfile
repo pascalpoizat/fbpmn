@@ -24,4 +24,4 @@ ENV DB_USER='admin' DB_PASSWORD='Malinva5d' DB_HOST='3306' DB_NAME='fBPMN_db'
 
 
 EXPOSE 5000
-CMD ["gunicorn", "-b", ":5000", "app.routes:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app.routes:app"]

@@ -78,7 +78,7 @@ class BpmnModelerComponent extends Component {
             const result = await this.modeler.saveXML({ format: true });
             const { xml } = result;
             const xhr = new XMLHttpRequest();
-            xhr.open("POST", "http://127.0.0.1:5000/verifications");
+            xhr.open("POST", "http://localhost:5000/verifications");
             xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
             xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
             xhr.setRequestHeader("Content-Type", "application/xml");

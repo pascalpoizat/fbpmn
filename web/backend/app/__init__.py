@@ -9,5 +9,4 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-cors = CORS(app, resources={
-            r"/verifications": {"origins": "http://localhost:3000"}})
+cors = CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
