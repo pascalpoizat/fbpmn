@@ -24,4 +24,4 @@ ENV FBPMN_HOME=/api/fbpmn-0.3.7 TLA2TOOLS_HOME=/api
 ENV PATH="$FBPMN_HOME/scripts:/api/bin:$PATH"
 
 EXPOSE 5000
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "app.routes:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app.routes:app", "--timeout", "120"]
