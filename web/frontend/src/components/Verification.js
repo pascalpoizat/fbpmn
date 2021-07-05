@@ -1,5 +1,6 @@
 import React from "react";
-import Popper from "@material-ui/core/Popper";
+import Popover from "@material-ui/core/Popover";
+import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
 let output = "";
@@ -12,11 +13,15 @@ function setOutput() {
     });
 }
 
+function displayOutput(text) {
+  return text.split("\n").map((item, i) => <p key={i}>{item}</p>);
+}
+
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    border: "1px solid",
+  typography: {
     padding: theme.spacing(1),
-    backgroundColor: theme.palette.background.paper,
+    width: 260,
+    height: 520,
   },
 }));
 
@@ -29,6 +34,10 @@ export default function Verification() {
     setOutput();
   };
 
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popper" : undefined;
   return (
@@ -36,26 +45,24 @@ export default function Verification() {
       <a aria-describedby={id} type="button" onClick={handleClick}>
         Verification Output
       </a>
-      <Popper
-        placement="bottom"
+      <Popover
         id={id}
         open={open}
         anchorEl={anchorEl}
-        modifiers={{
-          flip: {
-            enabled: true,
-          },
-          preventOverflow: {
-            enabled: true,
-            boundariesElement: "scrollParent",
-          },
-          arrow: {
-            enabled: true,
-          },
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
         }}
       >
-        <div className={classes.paper}>{output}</div>
-      </Popper>
+        <Typography className={classes.typography}>
+          {displayOutput(output)}
+        </Typography>
+      </Popover>
     </div>
   );
 }

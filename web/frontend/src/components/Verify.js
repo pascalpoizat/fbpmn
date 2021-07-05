@@ -1,6 +1,5 @@
 import React from "react";
-import modeler from "./bpmn/bpmn.modeler.component";
-
+/*
 async function sendData() {
   try {
     const result = await modeler.saveXML({ format: true });
@@ -16,12 +15,14 @@ async function sendData() {
   }
 }
 
+
 export default function Verify() {
   return (
     <div>
-      <a href onclick={sendData}>
+      <a href onclick={sendData()}>
         Verify
       </a>
     </div>
   );
 }
+*/
