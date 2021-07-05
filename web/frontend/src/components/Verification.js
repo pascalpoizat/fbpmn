@@ -5,7 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 let output = "";
 
 function setOutput() {
-  fetch("/verifications/latest")
+  fetch("http://localhost:5000/verifications/latest")
     .then((res) => res.json())
     .then((data) => {
       output = data.output;
