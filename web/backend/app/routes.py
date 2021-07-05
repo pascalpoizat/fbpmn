@@ -8,6 +8,11 @@ a = Application()
 # TODO refactorer -> une fonction serialize() pour éviter répétition de jsonify
 
 
+@app.before_first_request
+def before_first_request_func():
+    db.create_all()
+
+
 @app.route('/api/time')
 def get_current_time():
     return {'time': time.time()}

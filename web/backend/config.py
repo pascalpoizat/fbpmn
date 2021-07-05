@@ -1,12 +1,10 @@
 import os
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 
 class Config(object):
-    SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}/{}'.format(
-        os.getenv('DB_USER'),
-        os.getenv('DB_PASSWORD'),
-        os.getenv('DB_HOST'),
-        os.getenv('DB_NAME')
-    )
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
+        os.path.join(basedir, 'data/fBPMN_db.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CORS_HEADERS = 'Content-Type'
