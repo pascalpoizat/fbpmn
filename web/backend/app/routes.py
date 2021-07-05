@@ -99,6 +99,16 @@ def get_verification_by_id(id):
                    date=v.pub_date, model=f'models/{v.model.id}', output=v.output, results=results_json)
 
 
+@app.route('/verifications/latest', methods=['GET'])
+def get_latest_verification():
+    v = Application.get_latest_verification()
+    results_json = []
+    for r in v.results:
+        results_json.append(f'/results/{r.id}')
+    return jsonify(id=v.id, status=str(v.status.name),
+                   date=v.pub_date, model=f'models/{v.model.id}', output=v.output, results=results_json)
+
+
 @app.route('/results/<id>', methods=['GET'])
 def get_result_by_id(id):
     r = Application.get_result_by_id(id)

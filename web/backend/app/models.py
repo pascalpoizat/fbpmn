@@ -170,6 +170,12 @@ class Application:
         return Verification.query.get(verification_id)
 
     @staticmethod
+    def get_latest_verification():
+        verifications = Verification.query.filter_by().order_by(
+            db.desc(Verification.pub_date)).all()
+        return verifications[0]
+
+    @staticmethod
     def get_result_by_id(result_id):
         return Result.query.get(result_id)
 
