@@ -8,13 +8,15 @@ import DialogContent from "@material-ui/core/DialogContent";
 
 let version;
 
-let setVersion = () => {
+function setVersion() {
   fetch("http://localhost:5000/version")
     .then((res) => res.json())
     .then((data) => {
       version = data.major + "." + data.minor + "." + data.patch;
     });
-};
+}
+
+setVersion();
 
 export default function About() {
   const [open, setOpen] = React.useState(false);
@@ -33,8 +35,8 @@ export default function About() {
         id="about-nav"
         href
         onClick={() => {
-          handleClickToOpen();
           setVersion();
+          handleClickToOpen();
         }}
       >
         About
@@ -43,10 +45,14 @@ export default function About() {
         <DialogTitle>fBPMN v{version}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Outil d'analyse de processus métiers. Code à retrouver sur{" "}
+            This interface offers the verification of business processes
+            (workflows and collaborations). It supports several properties
+            (safety, soundness...), seven communication semantics. It is built
+            upon{" "}
             <Link href="https://github.com/pascalpoizat/fbpmn" target="_blank">
-              <FaGithub></FaGithub>
-            </Link>
+              fbpmn <FaGithub></FaGithub>
+            </Link>{" "}
+            where documentation is available.
           </DialogContentText>
         </DialogContent>
       </Dialog>

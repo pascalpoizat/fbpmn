@@ -25,6 +25,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+setOutput();
+
 export default function Verification() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
