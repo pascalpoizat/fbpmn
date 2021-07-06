@@ -20,8 +20,8 @@ function displayOutput(text) {
 const useStyles = makeStyles((theme) => ({
   typography: {
     padding: theme.spacing(1),
-    width: 260,
-    height: 520,
+    width: 300,
+    height: 600,
   },
 }));
 

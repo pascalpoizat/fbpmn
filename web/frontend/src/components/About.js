@@ -33,7 +33,6 @@ export default function About() {
     <div>
       <a
         id="about-nav"
-        href
         onClick={() => {
           setVersion();
           handleClickToOpen();
