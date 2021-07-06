@@ -149,46 +149,37 @@ class Application:
         db.session.commit()
         return v
 
-    @staticmethod
-    def get_all_models():
+    def get_all_models(self):
         return Model.query.all()
 
-    @staticmethod
-    def get_all_verifications():
+    def get_all_verifications(self):
         return Verification.query.all()
 
-    @staticmethod
-    def get_all_results():
+    def get_all_results(self):
         return Result.query.all()
 
-    @staticmethod
-    def get_model_by_id(model_id):
+    def get_model_by_id(self, model_id):
         return Model.query.get(model_id)
 
-    @staticmethod
-    def get_verification_by_id(verification_id):
+    def get_verification_by_id(self, verification_id):
         return Verification.query.get(verification_id)
 
-    @staticmethod
-    def get_latest_verification():
+    def get_latest_verification(self):
         verifications = Verification.query.filter_by().order_by(
             db.desc(Verification.pub_date)).all()
         return verifications[0]
 
-    @staticmethod
-    def get_result_by_id(result_id):
+    def get_result_by_id(self, result_id):
         return Result.query.get(result_id)
 
-    @staticmethod
-    def is_ok_verif(verification_id):
+    def is_ok_verif(self, verification_id):
         v = Application.get_verification_by_id(verification_id)
         if v.all_ok():
             return True
         else:
             return False
 
-    @staticmethod
-    def is_ok_result(result_id):
+    def is_ok_result(self, result_id):
         r = Application.get_result_by_id(result_id)
         if r.is_ok():
             return True
