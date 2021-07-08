@@ -29,6 +29,10 @@ function save(filename, data) {
     }
 }
 
+export const sleep = async (waitTime) =>
+    new Promise(resolve =>
+        setTimeout(resolve, waitTime));
+
 function hideCanvas() {
     let modeler = document.getElementById("modeler");
     modeler.style.display = "none";
@@ -71,8 +75,14 @@ function hideVerificationsButton() {
 
 let id, status;
 class BpmnModelerComponent extends Component {
-
-    modeler = null;
+    constructor(props) {
+        super(props);
+        this.state = {
+            modeler: "",
+            status: "?",
+            id: "?",
+        };
+    }
 
     async componentDidMount() {
         this.modeler = new BpmnJS({
@@ -149,29 +159,31 @@ class BpmnModelerComponent extends Component {
             <div>
                 <div id="settings">
                     <About></About>
-                    <a id="verify" onClick={() => {
+                    <a id="verify" onClick={async () => {
                         this.sendData();
-                        fetch("http://localhost:5000/verifications/latest")
-                            .then((res) => res.json())
-                            .then((data) => {
-                                id = data.id
-                                status = data.status
-                            });
-                        var r = document.getElementById('verify');
-                        r.innerHTML = id;
-                        var s = document.getElementById('status');
-                        s.innerHTML = status
-                    }}>
+                        sleep(500).then(() => {
+                            fetch("http://localhost:5000/verifications/latest")
+                                .then((res) => res.json())
+                                .then((data) => {
+                                    this.setState({
+                                        id: data.id,
+                                        status: data.status,
+                                    });
+                                });
+                        })
+                    }}>{this.state.id}
                     </a>
                     <a id="status" onClick={() => {
                         fetch("http://localhost:5000/verifications/latest")
                             .then((res) => res.json())
                             .then((data) => {
-                                status = data.status
+                                this.setState({
+                                    status: data.status,
+                                });
                             });
-                        var s = document.getElementById('status');
-                        s.innerHTML = status
-                    }}></a>
+                        // quand status != PENDING -> afficher le résultat de la vérif
+                    }}>{this.state.status}
+                    </a>
                     <a id="verifications"
                         type="button"
                         style={{ display: "block" }}

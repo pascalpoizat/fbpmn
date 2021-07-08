@@ -32,12 +32,6 @@ class Verifications extends Component {
     this.setData(data);
   }
 
-  showVerif() {
-    const rootElement = document.getElementById("detail-verification");
-    const detail = <VerificationDetail dataFromParent={this.state.id} />;
-    ReactDOM.render(detail, rootElement);
-  }
-
   setData(data) {
     for (let r of data) {
       this.setState((state) => {
@@ -48,13 +42,19 @@ class Verifications extends Component {
         };
       });
     }
-    console.log(this.state.rows);
   }
 
   render() {
     return (
       <div>
-        <TableContainer style={{ width: "20%", float: "left" }}>
+        <TableContainer
+          style={{
+            height: "10%",
+            width: "150px",
+            overflow: "scroll",
+            float: "left",
+          }}
+        >
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -69,7 +69,6 @@ class Verifications extends Component {
                     this.setState({
                       id: row.id,
                     });
-                    this.showVerif();
                   }}
                   key={row.id}
                 >
@@ -80,7 +79,11 @@ class Verifications extends Component {
             </TableBody>
           </Table>
         </TableContainer>
-        <div id="detail-verification"></div>
+        <div id="detail-verification">
+          <VerificationDetail
+            dataFromParent={this.state.id}
+          ></VerificationDetail>
+        </div>
       </div>
     );
   }

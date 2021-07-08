@@ -4,44 +4,48 @@ import BpmnJS from "bpmn-js/dist/bpmn-viewer.production.min.js";
 import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 
-/* quand this.props.dataFromParent change => tous les autres this.state doivent changer */
+const urlVerifications = "http://localhost:5000/verifications/";
 
 class VerificationDetail extends Component {
   constructor(props) {
     super(props);
-    const idVerification = this.props.dataFromParent.toString();
     this.state = {
       output: "",
-      model_content: "",
-      url: `http://localhost:5000/verifications/${idVerification}`,
-      urlmodel: `http://localhost:5000/verifications/${idVerification}/model`,
+      modelContent: "",
     };
   }
 
   componentDidMount = () => {
-    fetch(this.state.url)
-      .then((res) => res.json())
-      .then((data) => {
-        this.setState({
-          output: data.output,
-        });
-      });
-    fetch(this.state.urlmodel)
-      .then((res) => res.json())
-      .then((data) => {
-        this.setState({
-          model_content: data.content,
-        });
-      });
     this.viewer = new BpmnJS({
       container: "#model-viewer",
       keyboard: {
         bindTo: window,
       },
     });
-    /*var { content } = this.state;
-    this.viewer.importXML(content);*/
   };
+
+  updateOutput(url) {
+    const newUrl = `${urlVerifications}${url}`;
+    fetch(newUrl)
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({
+          output: data.output,
+        });
+      });
+  }
+
+  updateModel(url) {
+    const newUrlModel = `${urlVerifications}${url}/model`;
+    fetch(newUrlModel)
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({
+          modelContent: data.content,
+        });
+        this.viewer.importXML(this.state.modelContent);
+      });
+  }
 
   render() {
     return (
@@ -64,8 +68,7 @@ class VerificationDetail extends Component {
             overflowX: "auto",
           }}
         >
-          {this.state.output}
-          {this.state.url}
+          {this.props.dataFromParent}
         </div>
       </div>
     );
