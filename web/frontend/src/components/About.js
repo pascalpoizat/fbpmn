@@ -34,7 +34,6 @@ export default function About() {
       <a
         id="about-nav"
         onClick={() => {
-          setVersion();
           handleClickToOpen();
         }}
       >
