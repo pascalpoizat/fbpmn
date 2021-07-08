@@ -33,47 +33,6 @@ export const sleep = async (waitTime) =>
     new Promise(resolve =>
         setTimeout(resolve, waitTime));
 
-function hideCanvas() {
-    let modeler = document.getElementById("modeler");
-    modeler.style.display = "none";
-}
-
-function showCanvas() {
-    let modeler = document.getElementById("modeler");
-    modeler.style.display = "block";
-}
-
-function showList() {
-    let list = document.getElementById("list-verifications");
-    list.style.display = "block";
-}
-
-function hideList() {
-    let list = document.getElementById("list-verifications");
-    list.style.display = "none";
-}
-
-function showModelerButton() {
-    let list = document.getElementById("modeler");
-    list.style.display = "block";
-}
-
-function hideModelerButton() {
-    let list = document.getElementById("modeler");
-    list.style.display = "none";
-}
-
-function showVerificationsButton() {
-    let list = document.getElementById("verifications");
-    list.style.display = "block";
-}
-
-function hideVerificationsButton() {
-    let list = document.getElementById("verifications");
-    list.style.display = "none";
-}
-
-let id, status;
 class BpmnModelerComponent extends Component {
     constructor(props) {
         super(props);
@@ -81,6 +40,8 @@ class BpmnModelerComponent extends Component {
             modeler: "",
             status: "?",
             id: "?",
+            verificationsVisibility: false,
+            modelerVisibility: true,
         };
     }
 
@@ -159,37 +120,44 @@ class BpmnModelerComponent extends Component {
             <div>
                 <div id="settings">
                     <About></About>
-                    <a id="verify" onClick={async () => {
-                        this.sendData();
-                        sleep(500).then(() => {
+                    <a id="verify"
+                        style={this.state.modelerVisibility ? {} : { display: "none" }}
+                        onClick={async () => {
+                            this.sendData();
+                            sleep(500).then(() => {
+                                fetch("http://localhost:5000/verifications/latest")
+                                    .then((res) => res.json())
+                                    .then((data) => {
+                                        this.setState({
+                                            id: data.id,
+                                            status: data.status,
+                                        });
+                                    });
+                            })
+                        }}>{this.state.id}
+                    </a>
+                    <a id="status"
+                        style={this.state.modelerVisibility ? {} : { display: "none" }}
+                        onClick={() => {
                             fetch("http://localhost:5000/verifications/latest")
                                 .then((res) => res.json())
                                 .then((data) => {
                                     this.setState({
-                                        id: data.id,
                                         status: data.status,
                                     });
                                 });
-                        })
-                    }}>{this.state.id}
-                    </a>
-                    <a id="status" onClick={() => {
-                        fetch("http://localhost:5000/verifications/latest")
-                            .then((res) => res.json())
-                            .then((data) => {
-                                this.setState({
-                                    status: data.status,
-                                });
-                            });
-                        // quand status != PENDING -> afficher le résultat de la vérif
-                    }}>{this.state.status}
+                            // quand status != PENDING -> afficher le résultat de la vérif
+                        }}>{this.state.status}
                     </a>
                     <a id="verifications"
                         type="button"
-                        style={{ display: "block" }}
+                        style={this.state.modelerVisibility ? {} : { display: "none" }}
                         onClick={() => {
                             {
-                                hideCanvas();
+                                this.setState({
+                                    modelerVisibility: !this.state.modelerVisibility,
+                                    verificationsVisibility: !this.state.verificationsVisibility,
+                                })
 
                             }
                         }}
@@ -198,20 +166,21 @@ class BpmnModelerComponent extends Component {
                     </a>
                     <a id="modeler"
                         type="button"
-                        style={{ display: "none" }}
+                        style={this.state.verificationsVisibility ? {} : { display: "none" }}
                         onClick={() => {
                             {
-                                showCanvas();
-                                hideList();
-                                hideModelerButton();
-                                showVerificationsButton();
+                                this.setState({
+                                    modelerVisibility: !this.state.modelerVisibility,
+                                    verificationsVisibility: !this.state.verificationsVisibility,
+                                })
+
                             }
                         }}
                     >
                         Modeler
                     </a>
                 </div>
-                <div id="modeler" style={{ display: "none" }}>
+                <div id="modeler" style={this.state.modelerVisibility ? {} : { display: "none" }}>
                     <button id="open" href="true" onClick={() => {
                         document.getElementById('import-input').click();
                     }}><FaFolderOpen size={25} /></button>
@@ -224,7 +193,9 @@ class BpmnModelerComponent extends Component {
                         <div id="properties" style={{ width: '25%', height: '98vh', float: 'right', maxHeight: '98vh', overflowX: 'auto' }}></div>
                     </div>
                 </div>
-                <Verifications></Verifications>
+                <div id="verifications" style={this.state.verificationsVisibility ? {} : { display: "none" }}>
+                    <Verifications></Verifications>
+                </div>
             </div >
         )
     }

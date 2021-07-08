@@ -22,10 +22,12 @@ class VerificationDetail extends Component {
         bindTo: window,
       },
     });
+    this.updateOutput(2);
+    this.updateModel(2);
   };
 
-  updateOutput(url) {
-    const newUrl = `${urlVerifications}${url}`;
+  updateOutput(id) {
+    const newUrl = `${urlVerifications}${id}`;
     fetch(newUrl)
       .then((res) => res.json())
       .then((data) => {
@@ -35,8 +37,8 @@ class VerificationDetail extends Component {
       });
   }
 
-  updateModel(url) {
-    const newUrlModel = `${urlVerifications}${url}/model`;
+  updateModel(id) {
+    const newUrlModel = `${urlVerifications}${id}/model`;
     fetch(newUrlModel)
       .then((res) => res.json())
       .then((data) => {
@@ -53,7 +55,7 @@ class VerificationDetail extends Component {
         <div
           id="model-viewer"
           style={{
-            width: "60%",
+            width: "70%",
             height: "94vh",
             float: "left",
           }}
@@ -68,7 +70,7 @@ class VerificationDetail extends Component {
             overflowX: "auto",
           }}
         >
-          {this.props.dataFromParent}
+          {this.state.output}
         </div>
       </div>
     );
