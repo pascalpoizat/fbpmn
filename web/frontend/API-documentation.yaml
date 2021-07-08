@@ -1,173 +1,307 @@
-openapi: 3.0.2
+---
+swagger: "2.0"
 info:
   description: This is a simple API
-  version: 1.0.0-oas3
+  version: 1.0.0
   title: Simple Inventory API
+  contact:
+    email: you@your-company.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-tags:
-  - name: verification
-    description: Resources about verification
-paths:
-  /version:
-    get:
-      tags: 
-        - verification
-      summary: Get the current fbpmn version
-      description: ''
-      operationId: fbpmn version
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Version'
-  /verifs:
-    get:
-      tags: 
-        - verification
-      summary: List all the verifications of BPMN model
-      description: ''
-      operationId: getVerifications
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Verification'
-    post:
-      tags: 
-        - verification
-      summary: Add a new verification
-      description: Add a new verification
-      operationId: addVerification
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Verification'
-        '405':
-          description: Invalid input
-          
-  '/verifs/{verifId}':
-    get:
-      tags: 
-        - verification
-      summary: Searches verification of BPMN model
-      description: Returns a single verification
-      operationId: getVerification
-      parameters:
-        - name: verifId
-          in: path
-          description: ID of verification to return
-          required: true
-          schema:
-            type: integer
-            format: integer
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Verification'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Verification not found
-components:
-  schemas:
-    Version:
-      properties:
-        num:
-          type: integer
-          format: integer
-          example: 0.3.6
-      xml:
-        name: version
-      type: object
-    Verification:
-      properties:
-        id: 
-          type: integer
-          format: integer
-          example: 2
-        ref:
-          type: string
-          example: /verifs/:id/
-        file: 
-          type: string
-          example: /verifs/:id/diagram.bpmn
-        resultat:
-          $ref: '#/components/schemas/Result'
-      xml:
-        name: verification
-      type: object
-    Result:
-      properties:
-        model: 
-          $ref: '#/components/schemas/Network'
-    Network: 
-      properties:
-        BAG:
-          $ref: '#/components/schemas/Property'
-        FIFOPAIR:
-          $ref: '#/components/schemas/Property'
-        CAUSAL:
-          $ref: '#/components/schemas/Property'
-        INBOX:
-          $ref: '#/components/schemas/Property'
-        OUTBOX:
-          $ref: '#/components/schemas/Property'
-        FIFO:
-          $ref: '#/components/schemas/Property'
-        RSC:
-          $ref: '#/components/schemas/Property'
-      xml:
-        name: network
-      type: object
-    Property:
-      properties:
-        TYPE: 
-          $ref: '#/components/schemas/Stat'
-        SAFE:
-          $ref: '#/components/schemas/Stat'
-        SOUND:
-          $ref: '#/components/schemas/Stat'
-        MSGSOUND:
-          $ref: '#/components/schemas/Stat'
-      xml:
-        name: Property
-      type: object
-    Stat:
-      properties:
-        trans: 
-          type: integer
-          format: integer
-          example: 64
-        depth: 
-          type: integer
-          format: integer
-          example: 128
-        states: 
-          type: integer
-          format: integer
-          example: 31
-        value:
-          type: boolean
-          example: true
-      xml:
-        name: Stat
-      type: object
-
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
 host: virtserver.swaggerhub.com
 basePath: /TEAM5449/fBPMN/1.0.0
 schemes:
-  - https
+- https
+paths:
+  /version:
+    get:
+      summary: get the fbpmn version
+      operationId: fbpmn version
+      parameters: []
+      responses:
+        "200":
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Version'
+  /verifications:
+    get:
+      summary: list all the verifications of BPMN model
+      operationId: fbpmn-check
+      parameters: []
+      responses:
+        "200":
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Verification'
+        "400":
+          description: bad input parameter
+    post:
+      summary: add a verification
+      description: Adds a verification in the verifications' list
+      operationId: addVerif
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: verificationItem
+        description: Verification item to add
+        required: false
+        schema:
+          $ref: '#/definitions/Verification'
+      responses:
+        "201":
+          description: item created
+        "400":
+          description: invalid model input
+  /models:
+    get:
+      summary: list all the models
+      operationId: get_all_models
+      parameters: []
+      responses:
+        "200":
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Model'
+  /results:
+    get:
+      summary: list all the results
+      operationId: get_all_results
+      parameters: []
+      responses:
+        "200":
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Result'
+  /verifications/{id}:
+    get:
+      summary: Find verification by ID
+      description: Returns a single verification
+      operationId: get_verification_by_id
+      parameters:
+      - name: id
+        in: path
+        description: ID of verification to return
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Verification'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Verification not found
+  /verifications/latest:
+    get:
+      summary: Find the latest verification
+      description: Returns a single verification
+      operationId: get_latest_verification
+      parameters: []
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Verification'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Verification not found
+  /models/{id}:
+    get:
+      summary: Find model by ID
+      description: Returns a single model
+      operationId: get_model_by_id
+      parameters:
+      - name: id
+        in: path
+        description: ID of model to return
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Model'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Model not found
+  /results/{id}:
+    get:
+      summary: Find result by ID
+      description: Returns a single result
+      operationId: get_result_by_id
+      parameters:
+      - name: id
+        in: path
+        description: ID of result to return
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Result not found
+  /verifications/{id}/model:
+    get:
+      summary: Find model of a specific verification
+      description: Returns a single model
+      operationId: get_model_by_verification
+      parameters:
+      - name: id
+        in: path
+        description: ID of verification to return
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Model'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Model not found
+  /verifications/{id}/results:
+    get:
+      summary: Find results of a specific verification
+      description: Returns a single verification
+      operationId: get_results_by_verification
+      parameters:
+      - name: id
+        in: path
+        description: ID of verification to return
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Result'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Verification not found
+  /results/{id}/verification:
+    get:
+      summary: Find verification of a specific result
+      description: Returns a single verification
+      operationId: get_verification_by_result
+      parameters:
+      - name: id
+        in: path
+        description: ID of result to return
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Verification'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Result not found
+definitions:
+  Version:
+    type: object
+    required:
+    - major
+    - minor
+    - patch
+    properties:
+      major:
+        type: integer
+        example: 0
+      minor:
+        type: integer
+        example: 3
+      patch:
+        type: integer
+        example: 6
+  Model:
+    type: object
+    required:
+    - content
+    - id
+    - name
+    properties:
+      id:
+        type: integer
+        example: 2
+      name:
+        type: string
+        example: e002ClientSupplier
+      content:
+        type: string
+  Verification:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 5
+      status:
+        type: string
+        example: PENDING
+        enum:
+        - PENDING
+        - DONE
+        - FAILED
+      output:
+        type: string
+      model_id:
+        type: integer
+        example: 2
+      results:
+        type: array
+        items: {}
+  Result:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 2
+      mode:
+        type: string
+        example: BAG
+        enum:
+        - BAG
+        - FIFOPAIR
+        - CAUSAL
+        - INBOX
+        - OUTBOX
+        - FIFO
+        - RSC
+      prop:
+        type: string
+        example: TYPE
+        enum:
+        - TYPE
+        - SAFE
+        - SOUND
+        - MSGSOUND
+      value:
+        type: boolean
+        example: true
+      verification_id:
+        type: integer
+        example: 10

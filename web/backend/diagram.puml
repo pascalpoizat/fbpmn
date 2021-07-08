@@ -1,0 +1,79 @@
+@startuml fBPMN_backend
+!include ../../../resources/plantuml/commons.style
+
+enum Communication {
+    Network01Bag 
+    Network02FifoPair 
+    Network03Causal 
+    Network04Inbox 
+    Network05Outbox 
+    Network06Fifo 
+    Network07RSC 
+}
+enum Property {
+    Prop01Type
+    Prop02Safe
+    Prop03Sound
+    Prop04MsgSound
+}
+enum Status  {
+    PENDING
+    DONE
+    FAILED
+}
+
+class Model {
+    +id : int 
+    +name : string
+    +content : string
+    +verification : Verification
+    +Model()
+}
+
+class Verification {
+    +id : int 
+    +status : Status 
+    +pub_date : Date
+    +output : string
+    +model_id : int
+    +results : Result
+    +Verification()
+    +change_status()
+    +all_ok()
+    +create_model(in content : string)
+    +launch_check(in model_name : string)
+    +results_list(in workdir : string, in model_name : string)
+}
+
+class Result {
+    +id : int
+    +communication : Communication
+    +property : Property
+    +value : boolean
+    +verification_id : int
+    +Result()
+    +is_ok()
+} 
+
+class Application {
+    +Application()
+    +create_verification()
+    +get_all_models()
+    +get_all_verifications()
+    +get_all_results()
+    +get_model_by_id(in model_id : int)
+    +get_verification_by_id(in verification_id : int)
+    +get_latest_verification()
+    +get_result_by_id(in result_id : int)
+    +is_ok_verif(in verification_id : int)
+    +is_ok_result(in result_id : int)
+}
+
+Result "28" --* Verification
+Model "1" --* Verification
+Result -- Communication
+Result -- Property
+Verification -- Status
+Application *-- "1" Verification
+
+@enduml
