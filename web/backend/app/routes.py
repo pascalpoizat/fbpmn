@@ -44,7 +44,7 @@ def serialize_list(list):
 def serialize_object(object):
     if type(object) == Model:
         return jsonify(id=object.id, name=object.name,
-                       taille=len(object.content))
+                       content=object.content)
     if type(object) == Verification:
         results_json = []
         for r in object.results:

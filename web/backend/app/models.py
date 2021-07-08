@@ -67,8 +67,10 @@ class Verification(db.Model):
         return self.model_id
 
     def change_status(self):
-        # TODO conditions si fail
-        self.status = Status.DONE.name
+        if self.all_ok():
+            self.status = Status.DONE.name
+        else:
+            self.status = Status.FAILED.name
 
     def all_ok(self):
         v = Verification.query.get(self.id)
