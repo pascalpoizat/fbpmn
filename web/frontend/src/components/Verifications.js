@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { Component } from "react";
 import VerificationDetail from "./VerificationDetail";
 import Table from "@material-ui/core/Table";
@@ -49,9 +48,9 @@ class Verifications extends Component {
       <div>
         <TableContainer
           style={{
-            height: "10%",
-            width: "150px",
-            overflow: "scroll",
+            height: "650px",
+            width: "15%",
+            overflowY: "scroll",
             float: "left",
           }}
         >

@@ -4,9 +4,7 @@ import BpmnJS from 'bpmn-js/dist/bpmn-modeler.production.min.js';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import propertiesPanelModule from 'bpmn-js-properties-panel';
-import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/camunda';
-import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda';
-import VerificationDetail from "../VerificationDetail.js";
+import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/bpmn';
 import About from "./../About.js";
 import Verifications from "../Verifications.js";
 
@@ -42,6 +40,7 @@ class BpmnModelerComponent extends Component {
             id: "?",
             verificationsVisibility: false,
             modelerVisibility: true,
+            launched: false,
         };
     }
 
@@ -58,9 +57,6 @@ class BpmnModelerComponent extends Component {
                 propertiesPanelModule,
                 propertiesProviderModule
             ],
-            moddleExtensions: {
-                camunda: camundaModdleDescriptor
-            }
         });
         try {
             const result = await this.modeler.createDiagram();
@@ -115,6 +111,13 @@ class BpmnModelerComponent extends Component {
         }
     }
 
+    inverseVisibility() {
+        this.setState({
+            modelerVisibility: !this.state.modelerVisibility,
+            verificationsVisibility: !this.state.verificationsVisibility,
+        })
+    }
+
     render = () => {
         return (
             <div>
@@ -124,6 +127,7 @@ class BpmnModelerComponent extends Component {
                         style={this.state.modelerVisibility ? {} : { display: "none" }}
                         onClick={async () => {
                             this.sendData();
+                            this.setState({ launched: true })
                             sleep(500).then(() => {
                                 fetch("http://localhost:5000/verifications/latest")
                                     .then((res) => res.json())
@@ -139,43 +143,33 @@ class BpmnModelerComponent extends Component {
                     <a id="status"
                         style={this.state.modelerVisibility ? {} : { display: "none" }}
                         onClick={() => {
-                            fetch("http://localhost:5000/verifications/latest")
-                                .then((res) => res.json())
-                                .then((data) => {
-                                    this.setState({
-                                        status: data.status,
+                            if (this.state.launched) {
+                                fetch("http://localhost:5000/verifications/latest")
+                                    .then((res) => res.json())
+                                    .then((data) => {
+                                        this.setState({
+                                            status: data.status,
+                                        });
                                     });
-                                });
-                            // quand status != PENDING -> afficher le résultat de la vérif
+                                if (this.state.status != "PENDING") {
+                                    this.inverseVisibility();
+                                    //TODO clique sur la ligne correspondante du tableau de verifications
+                                    document.getElementById(`${this.state.id}`).click();
+                                }
+                            }
                         }}>{this.state.status}
                     </a>
                     <a id="verifications"
                         type="button"
                         style={this.state.modelerVisibility ? {} : { display: "none" }}
-                        onClick={() => {
-                            {
-                                this.setState({
-                                    modelerVisibility: !this.state.modelerVisibility,
-                                    verificationsVisibility: !this.state.verificationsVisibility,
-                                })
-
-                            }
-                        }}
+                        onClick={() => { { this.inverseVisibility(); } }}
                     >
                         Verifications
                     </a>
                     <a id="modeler"
                         type="button"
                         style={this.state.verificationsVisibility ? {} : { display: "none" }}
-                        onClick={() => {
-                            {
-                                this.setState({
-                                    modelerVisibility: !this.state.modelerVisibility,
-                                    verificationsVisibility: !this.state.verificationsVisibility,
-                                })
-
-                            }
-                        }}
+                        onClick={() => { { this.inverseVisibility(); } }}
                     >
                         Modeler
                     </a>
