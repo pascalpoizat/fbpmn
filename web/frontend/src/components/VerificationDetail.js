@@ -44,18 +44,17 @@ class VerificationDetail extends Component {
 
   updateModel(id) {
     const newUrlModel = `${urlVerifications}${id}/model`;
-    try {
-      fetch(newUrlModel)
-        .then((res) => res.json())
-        .then((data) => {
-          this.setState({
-            modelContent: data.content,
-          });
-          this.viewer.importXML(this.state.modelContent);
+    fetch(newUrlModel)
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({
+          modelContent: data.content,
         });
-    } catch (TypeError) {
-      this.viewer.clear();
-    }
+        this.viewer.importXML(this.state.modelContent);
+      })
+      .catch((error) => {
+        this.viewer.clear();
+      });
   }
 
   render() {
