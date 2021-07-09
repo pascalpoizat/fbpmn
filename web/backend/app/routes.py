@@ -86,12 +86,16 @@ def verifications():
         # with request.data only, a b' ' appears to indicate the string is binary
         model = str(request.data.decode('UTF-8'))
         v = a.create_verification()
-        m = v.create_model(model)
-        output = v.launch_check(m.name)
-        workdir = get_workdir(output)
-        xx = v.results_list(workdir, m.name)
-        del m, v
-        return output
+        try:
+            m = v.create_model(model)
+            output = v.launch_check(m.name)
+            workdir = get_workdir(output)
+            xx = v.results_list(workdir, m.name)
+            del m, v
+            return output
+        except (AttributeError, TypeError):
+            v.aborted()
+            return ("Incorrect model")
     else:
         verifications = a.get_all_verifications()
         return serialize_list(verifications)

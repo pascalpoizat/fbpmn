@@ -19,6 +19,7 @@ class Status(Enum):
     PENDING = auto()
     DONE = auto()
     FAILED = auto()
+    ABORTED = auto()
 
 
 class Version:
@@ -72,6 +73,10 @@ class Verification(db.Model):
         else:
             self.status = Status.FAILED.name
 
+    def aborted(self):
+        self.status = Status.ABORTED.name
+        db.session.commit()
+
     def all_ok(self):
         v = Verification.query.get(self.id)
         for r in v.results.all():
@@ -117,8 +122,6 @@ class Result(db.Model):
     property = db.Column(db.Enum(Property))
     value = db.Column(db.Boolean)
     verification_id = db.Column(db.Integer, db.ForeignKey('verification.id'))
-    # autre nom -> models n'est pas BD
-    # print('verification.id')  # -> doit marcher
 
     def __init__(self, comm, prop, verif):
         self.communication = comm
@@ -129,7 +132,7 @@ class Result(db.Model):
         return self.id
 
     def get_context(self):
-        return self.communication + self.property  # TODO classe à part entière?
+        return self.communication + self.property
 
     def get_verification(self):
         return self.verification_id
