@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FaFolderOpen, FaDownload } from 'react-icons/fa';
+import { FaFolderOpen, FaDownload, FaPlus } from 'react-icons/fa';
 import BpmnJS from 'bpmn-js/dist/bpmn-modeler.production.min.js';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
@@ -31,6 +31,8 @@ export const sleep = async (waitTime) =>
     new Promise(resolve =>
         setTimeout(resolve, waitTime));
 
+
+const iconsSize = 22;
 class BpmnModelerComponent extends Component {
     constructor(props) {
         super(props);
@@ -112,6 +114,41 @@ class BpmnModelerComponent extends Component {
         }
     }
 
+    async launchVerification() {
+        this.sendData();
+        this.setState({
+            launched: true,
+        })
+        sleep(500).then(() => {
+            fetch("http://localhost:5000/verifications/latest")
+                .then((res) => res.json())
+                .then((data) => {
+                    this.setState({
+                        id: data.id,
+                        status: data.status,
+                        launches: this.state.launches + 1
+                    });
+                });
+        })
+    }
+
+    statusButtonAction() {
+        if (this.state.launched) {
+            fetch("http://localhost:5000/verifications/latest")
+                .then((res) => res.json())
+                .then((data) => {
+                    this.setState({
+                        status: data.status,
+                    });
+                });
+            if (this.state.status != "PENDING") {
+                this.inverseVisibility();
+                //TODO clique sur la ligne correspondante du tableau de verifications
+                document.getElementById(`${this.state.id}`).click();
+            }
+        }
+    }
+
     inverseVisibility() {
         this.setState({
             modelerVisibility: !this.state.modelerVisibility,
@@ -126,42 +163,11 @@ class BpmnModelerComponent extends Component {
                     <About></About>
                     <a id="verify"
                         style={this.state.modelerVisibility ? {} : { display: "none" }}
-                        onClick={async () => {
-                            this.sendData();
-                            this.setState({
-                                launched: true,
-                            })
-                            sleep(500).then(() => {
-                                fetch("http://localhost:5000/verifications/latest")
-                                    .then((res) => res.json())
-                                    .then((data) => {
-                                        this.setState({
-                                            id: data.id,
-                                            status: data.status,
-                                            launches: this.state.launches + 1
-                                        });
-                                    });
-                            })
-                        }}>{this.state.id}
+                        onClick={() => { this.launchVerification() }}>{this.state.id}
                     </a>
                     <a id="status"
                         style={this.state.modelerVisibility ? {} : { display: "none" }}
-                        onClick={() => {
-                            if (this.state.launched) {
-                                fetch("http://localhost:5000/verifications/latest")
-                                    .then((res) => res.json())
-                                    .then((data) => {
-                                        this.setState({
-                                            status: data.status,
-                                        });
-                                    });
-                                if (this.state.status != "PENDING") {
-                                    this.inverseVisibility();
-                                    //TODO clique sur la ligne correspondante du tableau de verifications
-                                    document.getElementById(`${this.state.id}`).click();
-                                }
-                            }
-                        }}>{this.state.status}
+                        onClick={() => { this.statusButtonAction() }}>{this.state.status}
                     </a>
                     <a id="verifications"
                         type="button"
@@ -179,13 +185,14 @@ class BpmnModelerComponent extends Component {
                     </a>
                 </div>
                 <div id="modeler" style={this.state.modelerVisibility ? {} : { display: "none" }}>
-                    <button id="open" href="true" onClick={() => {
+                    <button id="open" class="button" href="true" onClick={() => {
                         document.getElementById('import-input').click();
-                    }}><FaFolderOpen size={25} /></button>
+                    }}><FaFolderOpen size={iconsSize} /></button>
                     <input id="import-input" onChange={() => {
                         this.displayDiagram(document.getElementById('import-input').files[0]);
                     }} name="files" style={{ display: 'none' }} type="file" accept=".bpmn"></input>
-                    <button id="save" href="true" onClick={() => { this.exportDiagram() }}><FaDownload size={25} /></button>
+                    <button id="save" class="button" href="true" onClick={() => { this.exportDiagram() }}><FaDownload size={iconsSize} /></button>
+                    <button id="new" class="button" href="true" onClick={() => { this.modeler.createDiagram() }}><FaPlus size={iconsSize} /></button>
                     <div id="modeler">
                         <div id="canvas" style={{ width: '75%', height: '98vh', float: 'left' }}></div>
                         <div id="properties" style={{ width: '25%', height: '98vh', float: 'right', maxHeight: '98vh', overflowX: 'auto' }}></div>

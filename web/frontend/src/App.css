@@ -67,3 +67,21 @@
 #settings .icon {
   display: none;
 }
+
+#modeler .button {
+  background-color: #4caf50; /* Green */
+  border: 1px solid green;
+  color: white;
+  padding: 8px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 8px;
+  cursor: pointer;
+  position: relative;
+  left: 20px;
+}
+
+#modeler .button:hover {
+  background-color: #3e8e41;
+}
