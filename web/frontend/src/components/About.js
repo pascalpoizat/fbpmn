@@ -43,12 +43,11 @@ export default function About() {
         <DialogTitle>fBPMN v{version}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            This interface offers the verification of business processes
-            (workflows and collaborations). It supports several properties
-            (safety, soundness...), seven communication semantics. It is built
-            upon{" "}
+            fBPMN Web application. Based on fbpmn version v{version}. fBPMN is a
+            framework for the formal analysis of BPMN business process models
+            (workflows and collaborations). See more information at {""}
             <Link href="https://github.com/pascalpoizat/fbpmn" target="_blank">
-              fbpmn <FaGithub></FaGithub>
+              https://github.com/pascalpoizat/fbpmn <FaGithub></FaGithub>
             </Link>{" "}
             where documentation is available.
           </DialogContentText>

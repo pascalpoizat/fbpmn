@@ -33,7 +33,7 @@ class VerificationDetail extends Component {
 
   updateOutput(id) {
     const newUrl = `${urlVerifications}${id}`;
-    fetch(newUrl)
+    fetch(newUrl, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
         this.setState({

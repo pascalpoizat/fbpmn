@@ -7,21 +7,26 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { FaGithub } from "react-icons/fa";
 
-function createData(id, status) {
-  return { id, status };
+function createData(id, status, date) {
+  return { id, status, date };
 }
 
 const url = "http://localhost:5000/verifications";
 
+//recharge rows quand: nouvelle verif, verif supprimée, verif actualisée par le status
 class Verifications extends Component {
   constructor(props) {
     super(props);
     this.state = {
       id: "",
       status: "",
+      date: "",
       rows: [],
       rowSelected: null,
+      suppress: false,
+      index: null,
     };
   }
 
@@ -40,12 +45,18 @@ class Verifications extends Component {
     if (prevProps.statusLastVerif !== this.props.statusLastVerif) {
       this.updateLastStatusRow();
     }
+    if (this.state.suppress) {
+      this.setState({
+        suppress: false,
+      });
+      this.deleteData();
+    }
   }
 
   setData(data) {
     for (let r of data) {
       this.setState((state) => {
-        const rows = state.rows.concat(createData(r.id, r.status));
+        const rows = state.rows.concat(createData(r.id, r.status, r.pub_date));
         return {
           rows,
         };
@@ -56,7 +67,20 @@ class Verifications extends Component {
   updateData(data) {
     let i = data.length - 1;
     this.setState((state) => {
-      const rows = state.rows.concat(createData(data[i].id, data[i].status));
+      const rows = state.rows.concat(
+        createData(data[i].id, data[i].status, data[i].pub_date)
+      );
+      return {
+        rows,
+      };
+    });
+  }
+
+  deleteData() {
+    let i = this.state.index;
+    this.setState((state) => {
+      state.rows.splice(i, 1);
+      const rows = state.rows;
       return {
         rows,
       };
@@ -76,7 +100,7 @@ class Verifications extends Component {
         <TableContainer
           style={{
             height: "650px",
-            width: "15%",
+            width: "50%",
             overflowY: "scroll",
             float: "left",
           }}
@@ -86,30 +110,51 @@ class Verifications extends Component {
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Date</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.state.rows.map((row) => (
-                <TableRow
-                  id={row.id}
-                  onClick={() => {
-                    this.setState({
-                      id: row.id,
-                      rowSelected: row.id,
-                    });
-                  }}
-                  key={row.id}
-                  style={{
-                    background:
-                      row.id === this.state.rowSelected
-                        ? "green"
-                        : "transparent",
-                  }}
-                >
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.status}</TableCell>
-                </TableRow>
-              ))}
+              {this.state.rows
+                .slice(0)
+                .reverse()
+                .map((row) => (
+                  <TableRow
+                    id={row.id}
+                    key={row.id}
+                    style={{
+                      background:
+                        row.id === this.state.rowSelected
+                          ? "green"
+                          : "transparent",
+                    }}
+                  >
+                    <TableCell
+                      onClick={() => {
+                        this.setState({
+                          id: row.id,
+                          rowSelected: row.id,
+                        });
+                      }}
+                    >
+                      {row.id}
+                    </TableCell>
+                    <TableCell>{row.status}</TableCell>
+                    <TableCell>{row.date}</TableCell>
+                    <TableCell>
+                      <button
+                        onClick={() => {
+                          fetch(url + `/${row.id}`, { method: "DELETE" });
+                          this.setState({
+                            suppress: true,
+                            index: row.id - 1,
+                          });
+                        }}
+                      >
+                        <FaGithub></FaGithub>
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
