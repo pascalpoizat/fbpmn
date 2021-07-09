@@ -31,6 +31,14 @@ class Verifications extends Component {
     this.setData(data);
   }
 
+  async componentDidUpdate(prevProps) {
+    if (prevProps.dataFromParent !== this.props.dataFromParent) {
+      let response = await fetch(url);
+      let data = await response.json();
+      this.updateData(data);
+    }
+  }
+
   setData(data) {
     for (let r of data) {
       this.setState((state) => {
@@ -40,6 +48,16 @@ class Verifications extends Component {
         };
       });
     }
+  }
+
+  updateData(data) {
+    let i = data.length - 1;
+    this.setState((state) => {
+      const rows = state.rows.concat(createData(data[i].id, data[i].status));
+      return {
+        rows,
+      };
+    });
   }
 
   render() {

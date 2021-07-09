@@ -41,6 +41,7 @@ class BpmnModelerComponent extends Component {
             verificationsVisibility: false,
             modelerVisibility: true,
             launched: false,
+            launches: 0,
         };
     }
 
@@ -127,7 +128,9 @@ class BpmnModelerComponent extends Component {
                         style={this.state.modelerVisibility ? {} : { display: "none" }}
                         onClick={async () => {
                             this.sendData();
-                            this.setState({ launched: true })
+                            this.setState({
+                                launched: true,
+                            })
                             sleep(500).then(() => {
                                 fetch("http://localhost:5000/verifications/latest")
                                     .then((res) => res.json())
@@ -135,6 +138,7 @@ class BpmnModelerComponent extends Component {
                                         this.setState({
                                             id: data.id,
                                             status: data.status,
+                                            launches: this.state.launches + 1
                                         });
                                     });
                             })
@@ -188,7 +192,7 @@ class BpmnModelerComponent extends Component {
                     </div>
                 </div>
                 <div id="verifications" style={this.state.verificationsVisibility ? {} : { display: "none" }}>
-                    <Verifications></Verifications>
+                    <Verifications dataFromParent={this.state.launches}></Verifications>
                 </div>
             </div >
         )
