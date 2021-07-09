@@ -21,7 +21,7 @@ class Verifications extends Component {
       id: "",
       status: "",
       rows: [],
-      row: "",
+      rowSelected: null,
     };
   }
 
@@ -89,12 +89,20 @@ class Verifications extends Component {
             <TableBody>
               {this.state.rows.map((row) => (
                 <TableRow
+                  id={row.id}
                   onClick={() => {
                     this.setState({
                       id: row.id,
+                      rowSelected: row.id,
                     });
                   }}
                   key={row.id}
+                  style={{
+                    background:
+                      row.id === this.state.rowSelected
+                        ? "green"
+                        : "transparent",
+                  }}
                 >
                   <TableCell>{row.id}</TableCell>
                   <TableCell>{row.status}</TableCell>
