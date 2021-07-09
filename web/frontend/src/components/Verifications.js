@@ -37,6 +37,9 @@ class Verifications extends Component {
       let data = await response.json();
       this.updateData(data);
     }
+    if (prevProps.statusLastVerif !== this.props.statusLastVerif) {
+      this.updateLastStatusRow();
+    }
   }
 
   setData(data) {
@@ -58,6 +61,11 @@ class Verifications extends Component {
         rows,
       };
     });
+  }
+
+  updateLastStatusRow() {
+    let i = this.state.rows.length - 1;
+    this.state.rows[i].status = this.props.statusLastVerif;
   }
 
   render() {

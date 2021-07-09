@@ -192,7 +192,7 @@ class BpmnModelerComponent extends Component {
                     </div>
                 </div>
                 <div id="verifications" style={this.state.verificationsVisibility ? {} : { display: "none" }}>
-                    <Verifications dataFromParent={this.state.launches}></Verifications>
+                    <Verifications dataFromParent={this.state.launches} statusLastVerif={this.state.status}></Verifications>
                 </div>
             </div >
         )
