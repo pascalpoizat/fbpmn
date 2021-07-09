@@ -44,7 +44,7 @@
   background-color: #333;
 }
 
-#settings a {
+#settings span {
   float: left;
   display: block;
   color: #f2f2f2;
@@ -54,18 +54,14 @@
   font-size: 17px;
 }
 
-#settings a:hover {
+#settings span:hover {
   background-color: #ddd;
   color: black;
 }
 
-#settings a.active {
+#settings span.active {
   background-color: #04aa6d;
   color: white;
-}
-
-#settings .icon {
-  display: none;
 }
 
 #modeler .button {

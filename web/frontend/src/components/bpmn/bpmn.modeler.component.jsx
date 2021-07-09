@@ -141,7 +141,7 @@ class BpmnModelerComponent extends Component {
                         status: data.status,
                     });
                 });
-            if (this.state.status != "PENDING") {
+            if (this.state.status !== "PENDING") {
                 this.inverseVisibility();
                 //TODO clique sur la ligne correspondante du tableau de verifications
                 document.getElementById(`${this.state.id}`).click();
@@ -161,28 +161,28 @@ class BpmnModelerComponent extends Component {
             <div>
                 <div id="settings">
                     <About></About>
-                    <a id="verify"
+                    <span id="verify"
                         style={this.state.modelerVisibility ? {} : { display: "none" }}
                         onClick={() => { this.launchVerification() }}>{this.state.id}
-                    </a>
-                    <a id="status"
+                    </span>
+                    <span id="status"
                         style={this.state.modelerVisibility ? {} : { display: "none" }}
                         onClick={() => { this.statusButtonAction() }}>{this.state.status}
-                    </a>
-                    <a id="verifications"
+                    </span>
+                    <span id="verifications"
                         type="button"
                         style={this.state.modelerVisibility ? {} : { display: "none" }}
-                        onClick={() => { { this.inverseVisibility(); } }}
+                        onClick={() => { this.inverseVisibility(); }}
                     >
                         Verifications
-                    </a>
-                    <a id="modeler"
+                    </span>
+                    <span id="modeler"
                         type="button"
                         style={this.state.verificationsVisibility ? {} : { display: "none" }}
-                        onClick={() => { { this.inverseVisibility(); } }}
+                        onClick={() => { this.inverseVisibility(); }}
                     >
                         Modeler
-                    </a>
+                    </span>
                 </div>
                 <div id="modeler" style={this.state.modelerVisibility ? {} : { display: "none" }}>
                     <button id="open" class="button" href="true" onClick={() => {

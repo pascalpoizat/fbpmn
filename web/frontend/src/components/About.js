@@ -31,14 +31,14 @@ export default function About() {
 
   return (
     <div>
-      <a
+      <span
         id="about-nav"
         onClick={() => {
           handleClickToOpen();
         }}
       >
         About
-      </a>
+      </span>
       <Dialog open={open} onClose={handleToClose}>
         <DialogTitle>fBPMN v{version}</DialogTitle>
         <DialogContent>
