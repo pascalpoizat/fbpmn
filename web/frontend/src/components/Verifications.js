@@ -34,10 +34,9 @@ class Verifications extends Component {
   setData(data) {
     for (let r of data) {
       this.setState((state) => {
-        const rows = state.rows.concat(state.row);
+        const rows = state.rows.concat(createData(r.id, r.status));
         return {
           rows,
-          row: createData(r.id, r.status),
         };
       });
     }

@@ -22,9 +22,14 @@ class VerificationDetail extends Component {
         bindTo: window,
       },
     });
-    this.updateOutput(2);
-    this.updateModel(2);
   };
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.dataFromParent !== this.props.dataFromParent) {
+      this.updateModel(this.props.dataFromParent);
+      this.updateOutput(this.props.dataFromParent);
+    }
+  }
 
   updateOutput(id) {
     const newUrl = `${urlVerifications}${id}`;
@@ -39,14 +44,18 @@ class VerificationDetail extends Component {
 
   updateModel(id) {
     const newUrlModel = `${urlVerifications}${id}/model`;
-    fetch(newUrlModel)
-      .then((res) => res.json())
-      .then((data) => {
-        this.setState({
-          modelContent: data.content,
+    try {
+      fetch(newUrlModel)
+        .then((res) => res.json())
+        .then((data) => {
+          this.setState({
+            modelContent: data.content,
+          });
+          this.viewer.importXML(this.state.modelContent);
         });
-        this.viewer.importXML(this.state.modelContent);
-      });
+    } catch (TypeError) {
+      this.viewer.clear();
+    }
   }
 
   render() {
