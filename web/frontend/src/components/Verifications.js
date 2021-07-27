@@ -7,7 +7,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { FaGithub } from "react-icons/fa";
+import { BsTrash } from "react-icons/bs";
 
 function createData(id, status, date) {
   return { id, status, date };
@@ -100,7 +100,7 @@ class Verifications extends Component {
         <TableContainer
           style={{
             height: "650px",
-            width: "50%",
+            width: "35%",
             overflowY: "scroll",
             float: "left",
           }}
@@ -150,7 +150,7 @@ class Verifications extends Component {
                           });
                         }}
                       >
-                        <FaGithub></FaGithub>
+                        <BsTrash></BsTrash>
                       </button>
                     </TableCell>
                   </TableRow>
