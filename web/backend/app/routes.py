@@ -22,11 +22,11 @@ def serialize_list(list):
             results_json = []
             for r in v.results:
                 results_json.append(f'/results/{r.id}')
-            del v.__dict__['_sa_instance_state'], v.__dict__[
-                'pub_date']
+            del v.__dict__['_sa_instance_state']
             v.__dict__['status'] = str(v.status.name)
             v.__dict__['model_id'] = f'/models/{v.model_id}'
             v.__dict__['results'] = results_json
+            v.__dict__['pub_date'] = v.pub_date.strftime("%b/%d/%Y %H:%M:%S")
             verifications_json.append(v.__dict__)
         return jsonify(verifications_json)
     if type(list[0]) == Result:
@@ -119,6 +119,14 @@ def get_verification_by_id(id):
     return serialize_object(v)
 
 
+@app.route('/verifications/<id>', methods=['DELETE'])
+def delete_verification(id):
+    v = Verification.query.get(id)
+    db.session.delete(v)
+    db.session.commit()
+    return "Verification was successfully deleted"
+
+
 @app.route('/verifications/latest', methods=['GET'])
 def get_latest_verification():
     v = a.get_latest_verification()
@@ -148,3 +156,8 @@ def get_verification_by_result(id):
     verification_id = (a.get_result_by_id(id)).get_verification()
     v = a.get_verification_by_id(verification_id)
     return serialize_object(v)
+
+
+@app.errorhandler(Exception)
+def basic_error(e):
+    return "an error occured: " + str(e)
