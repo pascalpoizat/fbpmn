@@ -47,7 +47,7 @@ class Verification(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     status = db.Column(db.Enum(Status))
     pub_date = db.Column(db.DateTime, index=True,
-                         default=datetime.now())
+                         default=datetime.utcnow)
     output = db.Column(db.Text(10000))
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
     results = db.relationship('Result', backref='verification', lazy='dynamic')
@@ -171,7 +171,7 @@ class Application:
 
     def get_latest_verification(self):
         verifications = Verification.query.filter_by().order_by(
-            db.desc(Verification.pub_date)).all()
+            db.desc(Verification.id)).all()
         return verifications[0]
 
     def get_result_by_id(self, result_id):

@@ -58,11 +58,16 @@ class VerificationDetail extends Component {
   }
 
   displayOutput(output) {
-    if (this.props.dataFromParent) {
+    if (!this.props.dataFromParent) {
+      console.log("no verification selected");
+    } else {
       if (output) {
         let x = document.getElementById("output");
         output = output.substr(output.search("<<"));
         x.innerText = "Verification realized in .. s" + output;
+      } else {
+        let x = document.getElementById("output");
+        x.innerText = "null";
       }
     }
   }
