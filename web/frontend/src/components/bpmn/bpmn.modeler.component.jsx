@@ -3,8 +3,9 @@ import { FaFolderOpen, FaDownload, FaPlus } from 'react-icons/fa';
 import BpmnJS from 'bpmn-js/lib/Modeler';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
+import "bpmn-js-properties-panel/dist/assets/bpmn-js-properties-panel.css";
 import propertiesPanelModule from 'bpmn-js-properties-panel';
-import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/bpmn';
+import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/camunda';
 import About from "./../About.js";
 import Verifications from "../Verifications.js";
 
@@ -194,8 +195,8 @@ class BpmnModelerComponent extends Component {
                     <button id="save" class="button" href="true" onClick={() => { this.exportDiagram() }}><FaDownload size={iconsSize} /></button>
                     <button id="new" class="button" href="true" onClick={() => { this.modeler.createDiagram() }}><FaPlus size={iconsSize} /></button>
                     <div id="modeler">
-                        <div id="canvas" style={{ width: '75%', height: '98vh', float: 'left' }}></div>
-                        <div id="properties" style={{ width: '25%', height: '98vh', float: 'right', maxHeight: '98vh', overflowX: 'auto' }}></div>
+                        <div id="canvas" style={{ width: '75%', height: '88vh', float: 'left' }}></div>
+                        <div id="properties" style={{ width: '25%', float: 'right', overflowX: 'auto' }}></div>
                     </div>
                 </div>
                 <div id="verifications" style={this.state.verificationsVisibility ? {} : { display: "none" }}>
