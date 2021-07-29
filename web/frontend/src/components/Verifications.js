@@ -100,7 +100,7 @@ class Verifications extends Component {
         <TableContainer
           style={{
             height: "650px",
-            width: "35%",
+            width: "310px",
             overflowY: "scroll",
             float: "left",
           }}
@@ -127,17 +127,14 @@ class Verifications extends Component {
                           ? "green"
                           : "transparent",
                     }}
+                    onClick={() => {
+                      this.setState({
+                        id: row.id,
+                        rowSelected: row.id,
+                      });
+                    }}
                   >
-                    <TableCell
-                      onClick={() => {
-                        this.setState({
-                          id: row.id,
-                          rowSelected: row.id,
-                        });
-                      }}
-                    >
-                      {row.id}
-                    </TableCell>
+                    <TableCell>{row.id}</TableCell>
                     <TableCell>{row.status}</TableCell>
                     <TableCell>{row.date}</TableCell>
                     <TableCell>

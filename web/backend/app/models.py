@@ -47,7 +47,7 @@ class Verification(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     status = db.Column(db.Enum(Status))
     pub_date = db.Column(db.DateTime, index=True,
-                         default=datetime.utcnow)
+                         default=datetime.now())
     output = db.Column(db.Text(10000))
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
     results = db.relationship('Result', backref='verification', lazy='dynamic')

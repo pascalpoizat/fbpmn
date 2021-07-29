@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FaFolderOpen, FaDownload, FaPlus } from 'react-icons/fa';
-import BpmnJS from 'bpmn-js/dist/bpmn-modeler.production.min.js';
+import BpmnJS from 'bpmn-js/lib/Modeler';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import propertiesPanelModule from 'bpmn-js-properties-panel';

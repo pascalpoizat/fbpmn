@@ -57,13 +57,23 @@ class VerificationDetail extends Component {
       });
   }
 
+  displayOutput(output) {
+    if (this.props.dataFromParent) {
+      if (output) {
+        let x = document.getElementById("output");
+        output = output.substr(output.search("<<"));
+        x.innerText = "Verification realized in .. s" + output;
+      }
+    }
+  }
+
   render() {
     return (
       <div>
         <div
           id="model-viewer"
           style={{
-            width: "65%",
+            width: "30%",
             height: "94vh",
             float: "left",
           }}
@@ -71,14 +81,14 @@ class VerificationDetail extends Component {
         <div
           id="output"
           style={{
-            width: "20%",
+            width: "275px",
             height: "94vh",
             float: "right",
             maxHeight: "98vh",
             overflowX: "auto",
           }}
         >
-          {this.state.output}
+          {this.displayOutput(this.state.output)}
         </div>
       </div>
     );
