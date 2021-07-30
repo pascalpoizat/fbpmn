@@ -1,0 +1,82 @@
+html,
+body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+#canvas {
+  height: 80%;
+  padding: 0;
+  margin: 0;
+}
+
+#header {
+  height: 10%;
+  padding: 4;
+  margin: 4;
+  background: rgba(0, 128, 0, 0.8);
+  color: White;
+}
+
+#dataviz,
+#network {
+  float: left;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 10%;
+  font-size: 18px;
+  background: rgba(0, 128, 0, 0.1);
+  border: 0 solid rgba(0, 128, 0, 0.8);
+  border-left-width: 4px;
+  color: #333;
+  width: 100%;
+}
+
+#dataviz #title,
+#network #title {
+  text-align: left;
+  font-weight: bold;
+  font-size: 2vh;
+}
+
+#header #title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 3vh;
+}
+
+#header #step {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 3vh;
+}
+
+.highlight-node:not(.djs-connection) .djs-visual > :nth-child(1) {
+  fill: rgba(0, 128, 0, 0.4) !important;
+}
+
+.highlight-edge:not(.djs-connection) .djs-visual > :nth-child(1) {
+  stroke: rgba(0, 128, 0, 0.8) !important;
+}
+
+.highlight-overlay {
+  background-color: rgba(0, 128, 0, 0.8) !important;
+  pointer-events: none; /* no pointer events, allows clicking through onto the element */
+}
+
+.diagram-note {
+  background-color: rgba(0, 128, 0, 1) !important;
+  color: White;
+  border-color: Black;
+  border-radius: 16px;
+  font-family: Arial;
+  font-size: 12px;
+  padding: 2px;
+  min-height: 16px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.needs-discussion:not(.djs-connection) .djs-visual > :nth-child(1) {
+  stroke: rgba(0, 128, 0, 0.4) !important;
+}
