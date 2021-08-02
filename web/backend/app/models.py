@@ -53,7 +53,7 @@ class Verification(db.Model):
     results = db.relationship('Result', backref='verification', lazy='dynamic')
 
     def __init__(self):
-        self.status = Status.PENDING.name  # TODO doit afficher juste PENDING
+        self.status = Status.PENDING.name
 
     def set_output(self, output):
         self.output = output
@@ -100,7 +100,7 @@ class Verification(db.Model):
         self.set_output(output)
         return output
 
-    def results_list(self, workdir, model_name):
+    def create_results_list(self, workdir, model_name):
         f = open(f'/tmp/{workdir}/{model_name}.json')
         data = json.load(f)
         f.close()
@@ -110,10 +110,21 @@ class Verification(db.Model):
                 results.append(Result(comm.name, prop.name, self.id))
                 value = data[f'{model_name}'][f'{comm.name}'][f'{prop.name}']['value']
                 results[len(results)-1].set_value(value)
-                db.session.add(results[len(results)-1])
+        db.session.add_all(results)
         self.change_status()
         db.session.commit()
         return self.results.all()
+
+    def create_counter_examples(self, workdir, model_name, results_list):
+        subprocess.run(
+            f'cd /tmp/{workdir} ; fbpmn-log-transform json ; cd', shell=True)
+        counter_examples = []
+        for result in results_list:
+            if not result.value:
+                counter_examples.append(
+                    result.create_counter_example(workdir, model_name))
+        db.session.add_all(counter_examples)
+        db.session.commit()
 
 
 class Result(db.Model):
@@ -121,6 +132,8 @@ class Result(db.Model):
     communication = db.Column(db.Enum(Communication))
     property = db.Column(db.Enum(Property))
     value = db.Column(db.Boolean)
+    counter_example = db.relationship(
+        'CounterExample', backref='result', lazy='dynamic')
     verification_id = db.Column(db.Integer, db.ForeignKey('verification.id'))
 
     def __init__(self, comm, prop, verif):
@@ -132,19 +145,39 @@ class Result(db.Model):
         return self.id
 
     def get_context(self):
-        return self.communication + self.property
+        return self.communication.name + self.property.name
 
     def get_verification(self):
         return self.verification_id
 
+    def get_counter_example(self):
+        return self.counter_example.first()
+
     def set_value(self, value):
         self.value = value
+
+    def create_counter_example(self, workdir, model_name):
+        f = open(
+            f'/tmp/{workdir}/{model_name}.{self.communication.name}.{self.property.name}.json')
+        data = json.load(f)
+        f.close()
+        return CounterExample(str(data), self.id)
 
     def is_ok(self):
         if self.value:
             return True
         else:
             return False
+
+
+class CounterExample(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.Text(10000000))
+    result_id = db.Column(db.Integer, db.ForeignKey('result.id'))
+
+    def __init__(self, content, result):
+        self.content = content
+        self.result_id = result
 
 
 class Application:
@@ -163,6 +196,9 @@ class Application:
     def get_all_results(self):
         return Result.query.all()
 
+    def get_all_counter_examples(self):
+        return CounterExample.query.all()
+
     def get_model_by_id(self, model_id):
         return Model.query.get(model_id)
 
@@ -176,6 +212,9 @@ class Application:
 
     def get_result_by_id(self, result_id):
         return Result.query.get(result_id)
+
+    def get_counter_example_by_id(self, counter_example_id):
+        return CounterExample.query.get(counter_example_id)
 
     def is_ok_verif(self, verification_id):
         v = Application.get_verification_by_id(verification_id)

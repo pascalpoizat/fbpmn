@@ -1,7 +1,7 @@
 from flask import request, jsonify
 import time
 from app import app, db
-from app.models import Application, Model, Verification, Result, Version, get_workdir
+from app.models import Application, CounterExample, Model, Verification, Result, Version, get_workdir
 
 a = Application()
 
@@ -39,6 +39,12 @@ def serialize_list(list):
                 'verification_id'] = f'verifications/{r.verification_id}'
             results_json.append(r.__dict__)
         return jsonify(results_json)
+    if type(list[0]) == CounterExample:
+        counter_examples_json = []
+        for ce in list:
+            del ce.__dict__['_sa_instance_state']
+            counter_examples_json.append(ce.__dict__)
+        return jsonify(counter_examples_json)
 
 
 def serialize_object(object):
@@ -54,6 +60,8 @@ def serialize_object(object):
     if type(object) == Result:
         return jsonify(id=object.id, communication=str(object.communication.name),
                        property=str(object.property.name), value=object.value, verification=f'verifications/{object.verification.id}')
+    if type(object) == CounterExample:
+        return jsonify(content=object.content)
 
 
 @app.before_first_request
@@ -90,7 +98,8 @@ def verifications():
             m = v.create_model(model)
             output = v.launch_check(m.name)
             workdir = get_workdir(output)
-            xx = v.results_list(workdir, m.name)
+            xx = v.create_results_list(workdir, m.name)
+            v.create_counter_examples(workdir, m.name, xx)
             del m, v
             return output
         except (AttributeError, TypeError):
@@ -105,6 +114,12 @@ def verifications():
 def get_all_results():
     results = a.get_all_results()
     return serialize_list(results)
+
+
+@app.route('/counter_examples', methods=['GET'])
+def get_all_counter_examples():
+    counter_examples = a.get_all_counter_examples()
+    return serialize_list(counter_examples)
 
 
 @app.route('/models/<id>', methods=['GET'])
@@ -139,6 +154,12 @@ def get_result_by_id(id):
     return serialize_object(r)
 
 
+@app.route('/counter_examples/<id>', methods=['GET'])
+def get_counter_examples_by_id(id):
+    ce = a.get_counter_example_by_id(id)
+    return serialize_object(ce)
+
+
 @app.route('/verifications/<id>/model', methods=['GET'])
 def get_model_by_verification(id):
     model_id = (a.get_verification_by_id(id)).get_model()
@@ -156,6 +177,11 @@ def get_verification_by_result(id):
     verification_id = (a.get_result_by_id(id)).get_verification()
     v = a.get_verification_by_id(verification_id)
     return serialize_object(v)
+
+
+@app.route('/results/<id>/counter_example', methods=['GET'])
+def get_counter_example_from_result(id):
+    return serialize_object((a.get_result_by_id(id)).get_counter_example())
 
 
 @app.errorhandler(Exception)
