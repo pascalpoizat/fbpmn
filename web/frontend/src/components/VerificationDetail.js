@@ -1,8 +1,8 @@
-import React from "react";
-import { Component } from "react";
+import React, { Component } from "react";
 import BpmnJS from "bpmn-js/dist/bpmn-viewer.production.min.js";
 import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
+import Link from "@material-ui/core/Link";
 
 const urlVerifications = "http://localhost:5000/verifications/";
 
@@ -93,6 +93,9 @@ class VerificationDetail extends Component {
             overflowX: "auto",
           }}
         >
+          <Link href="localhost:3000/counter-example" target="_blank">
+            counter-example
+          </Link>
           {this.displayOutput(this.state.output)}
         </div>
       </div>

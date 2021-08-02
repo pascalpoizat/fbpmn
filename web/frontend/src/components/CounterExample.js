@@ -6,10 +6,6 @@ import $ from "jquery";
 
 import "./styles.css";
 
-function createStep(nodes, edges, net) {
-  return { nodes, edges, net };
-}
-
 const urlVerifications = "http://localhost:5000/verifications/";
 
 class CounterExample extends Component {
@@ -34,16 +30,9 @@ class CounterExample extends Component {
         this.setState({
           modelContent: data.content,
         });
+        this.openDiagram(this.state.modelContent);
       });
-    this.openDiagram(this.state.modelContent);
   };
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.dataFromParent !== this.props.dataFromParent) {
-      this.updateModel(this.props.dataFromParent);
-      this.updateOutput(this.props.dataFromParent);
-    }
-  }
 
   initiateSteps = () => {
     // elements to highlight
@@ -59,7 +48,7 @@ class CounterExample extends Component {
     edges = new Map([]);
     net = [];
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
 
     // step 2
     nodes = new Map([
@@ -69,7 +58,7 @@ class CounterExample extends Component {
     edges = new Map([["cE1", 1]]);
     net = [];
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 3
     nodes = new Map([
       ["Client_", 1],
@@ -79,7 +68,7 @@ class CounterExample extends Component {
     edges = new Map([]);
     net = [];
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 4
     nodes = new Map([
       ["Client_", 1],
@@ -91,7 +80,7 @@ class CounterExample extends Component {
     ]);
     net = new Map([[["Client_", "Supplier_"], ["command"]]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 5
     nodes = new Map([
       ["Client_", 1],
@@ -103,7 +92,7 @@ class CounterExample extends Component {
     ]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 6
     nodes = new Map([
       ["Client_", 1],
@@ -113,7 +102,7 @@ class CounterExample extends Component {
     edges = new Map([["sE1", 1]]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 7
     nodes = new Map([
       ["Client_", 1],
@@ -125,7 +114,7 @@ class CounterExample extends Component {
     ]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 8
     nodes = new Map([
       ["Client_", 1],
@@ -138,7 +127,7 @@ class CounterExample extends Component {
     ]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 9
     nodes = new Map([
       ["Client_", 1],
@@ -151,7 +140,7 @@ class CounterExample extends Component {
     ]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 10
     nodes = new Map([
       ["Client_", 1],
@@ -164,7 +153,7 @@ class CounterExample extends Component {
     ]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 11
     nodes = new Map([
       ["Client_", 1],
@@ -177,7 +166,7 @@ class CounterExample extends Component {
     ]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 12
     nodes = new Map([
       ["Client_", 1],
@@ -188,7 +177,7 @@ class CounterExample extends Component {
     edges = new Map([["sE5", 1]]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 13
     nodes = new Map([
       ["Client_", 1],
@@ -201,7 +190,7 @@ class CounterExample extends Component {
     ]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 14
     nodes = new Map([
       ["Client_", 1],
@@ -211,7 +200,7 @@ class CounterExample extends Component {
     edges = new Map([["sE6", 1]]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 15
     nodes = new Map([
       ["Client_", 1],
@@ -222,7 +211,7 @@ class CounterExample extends Component {
     edges = new Map([]);
     net = new Map([[["Client_", "Supplier_"], []]]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 16
     nodes = new Map([
       ["Client_", 1],
@@ -238,7 +227,7 @@ class CounterExample extends Component {
       [["Supplier_", "Client_"], ["goods"]],
     ]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 17
     nodes = new Map([
       ["Client_", 1],
@@ -252,7 +241,7 @@ class CounterExample extends Component {
       [["Supplier_", "Client_"], ["goods"]],
     ]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 18
     nodes = new Map([
       ["Client_", 1],
@@ -272,7 +261,7 @@ class CounterExample extends Component {
       ],
     ]);
 
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
     // step 19
     nodes = new Map([
       ["Client_", 1],
@@ -291,15 +280,12 @@ class CounterExample extends Component {
         ["goods", "invoice"],
       ],
     ]);
-    this.setStep(nodes, edges, net);
+    this.setSteps(nodes, edges, net);
   };
 
-  setStep = (nodes, edges, net) => {
+  setSteps = (nodes, edges, net) => {
     this.setState((state) => {
-      const steps = state.steps.concat(createStep(nodes, edges, net));
-      return {
-        steps,
-      };
+      state.steps.push([nodes, edges, net]);
     });
   };
 
@@ -470,12 +456,12 @@ class CounterExample extends Component {
     return markings;
   }
 
-  openDiagram(bpmnXML) {
+  async openDiagram(bpmnXML) {
     // import diagram
-    this.viewer.importXML(bpmnXML, (err) => {
-      if (err) {
-        return console.error("could not import BPMN 2.0 diagram", err);
-      }
+    try {
+      const result = await this.viewer.importXML(bpmnXML);
+      const { warnings } = result;
+      console.log(warnings);
 
       // access viewer components
       var canvas = this.viewer.get("canvas");
@@ -493,6 +479,7 @@ class CounterExample extends Component {
       var step = 0;
       var position = this.token_position.MIDDLE;
       var nbsteps = this.state.steps.length;
+      console.log(this.state.steps[0][0]);
       // first drawing
       markings = this.animate(
         registry,
@@ -567,7 +554,9 @@ class CounterExample extends Component {
         var title = "&nbsp;step " + (step + 1) + "/" + nbsteps;
         $("#step").html(title);
       };
-    });
+    } catch (err) {
+      console.log(err.message, err.warnings);
+    }
   }
 
   render() {
@@ -583,8 +572,19 @@ class CounterExample extends Component {
           </div>
           <div id="step">step ../..</div>
         </div>
-        <div id="canvas"></div>
-        <div id="network">
+        <div
+          id="canvas"
+          style={{
+            height: "80vh",
+          }}
+        ></div>
+        <div
+          id="network"
+          style={{
+            width: "99%",
+            height: "10vh",
+          }}
+        >
           <div id="title">Network status</div>
           <div id="status"></div>
         </div>
