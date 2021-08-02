@@ -12,7 +12,10 @@ class CounterExample extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      modelTitle: "e002ClientSupplierDynamic.bpmn",
       modelContent: "",
+      communication: "Comm",
+      property: "Prop",
       steps: [],
     };
   }
@@ -23,7 +26,7 @@ class CounterExample extends Component {
     });
     this.token_position = { START: 1, MIDDLE: 2 };
     this.initiateSteps();
-    const newUrlModel = `${urlVerifications}${1}/model`;
+    const newUrlModel = `${urlVerifications}${2}/model`;
     fetch(newUrlModel)
       .then((res) => res.json())
       .then((data) => {
@@ -563,11 +566,10 @@ class CounterExample extends Component {
     return (
       <div>
         <div id="header">
-          <div id="title">
-            &nbsp;fBPMN Counter Example Animator for
-            e002ClientSupplierDynamic.bpmn
-          </div>
+          <div id="title">&nbsp;fBPMN Counter Example Animator for {""}</div>
           <div class="separator">
+            {this.state.communication + "." + this.state.property}- Contre
+            example numéro {this.props.match.params.id}
             <br />
           </div>
           <div id="step">step ../..</div>

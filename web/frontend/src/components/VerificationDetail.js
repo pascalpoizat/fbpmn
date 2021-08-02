@@ -2,16 +2,19 @@ import React, { Component } from "react";
 import BpmnJS from "bpmn-js/dist/bpmn-viewer.production.min.js";
 import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
-import Link from "@material-ui/core/Link";
+import Results from "./Results";
 
 const urlVerifications = "http://localhost:5000/verifications/";
+
+/* récupère la vérification sélectionnée, actualise le modèle
+fetch la vérification et retourne les urls de results à Results*/
 
 class VerificationDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      output: "",
       modelContent: "",
+      results: [],
     };
   }
 
@@ -27,17 +30,17 @@ class VerificationDetail extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.dataFromParent !== this.props.dataFromParent) {
       this.updateModel(this.props.dataFromParent);
-      this.updateOutput(this.props.dataFromParent);
+      this.updateResults(this.props.dataFromParent);
     }
   }
 
-  updateOutput(id) {
+  updateResults(id) {
     const newUrl = `${urlVerifications}${id}`;
     fetch(newUrl, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
         this.setState({
-          output: data.output,
+          results: data.results,
         });
       });
   }
@@ -57,21 +60,6 @@ class VerificationDetail extends Component {
       });
   }
 
-  displayOutput(output) {
-    if (!this.props.dataFromParent) {
-      console.log("no verification selected");
-    } else {
-      if (output) {
-        let x = document.getElementById("output");
-        output = output.substr(output.search("<<"));
-        x.innerText = "Verification realized in .. s" + output;
-      } else {
-        let x = document.getElementById("output");
-        x.innerText = "null";
-      }
-    }
-  }
-
   render() {
     return (
       <div>
@@ -83,21 +71,7 @@ class VerificationDetail extends Component {
             float: "left",
           }}
         ></div>
-        <div
-          id="output"
-          style={{
-            width: "275px",
-            height: "94vh",
-            float: "right",
-            maxHeight: "98vh",
-            overflowX: "auto",
-          }}
-        >
-          <Link href="localhost:3000/counter-example" target="_blank">
-            counter-example
-          </Link>
-          {this.displayOutput(this.state.output)}
-        </div>
+        <Results dataFromParent={this.state.results}></Results>
       </div>
     );
   }

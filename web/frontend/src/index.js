@@ -10,7 +10,7 @@ const routs = (
   <BrowserRouter>
     <div>
       <Route path="/a" component={App} />
-      <Route path="/counter-example" component={CounterExample} />
+      <Route path="/counter-example/:id" exact component={CounterExample} />
     </div>
   </BrowserRouter>
 );
