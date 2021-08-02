@@ -35,6 +35,11 @@ def serialize_list(list):
             del r.__dict__['_sa_instance_state']
             r.__dict__['communication'] = str(r.communication.name)
             r.__dict__['property'] = str(r.property.name)
+            if not r.value:
+                r.__dict__[
+                    'counter_example'] = True
+            else:
+                r.__dict__['counter_example'] = False
             r.__dict__[
                 'verification_id'] = f'verifications/{r.verification_id}'
             results_json.append(r.__dict__)
@@ -58,8 +63,12 @@ def serialize_object(object):
         return jsonify(id=object.id, status=str(object.status.name),
                        date=object.pub_date, model=f'models/{object.model_id}', output=object.output, results=results_json)
     if type(object) == Result:
-        return jsonify(id=object.id, communication=str(object.communication.name),
-                       property=str(object.property.name), value=object.value, verification=f'verifications/{object.verification.id}')
+        if not object.value:
+            return jsonify(id=object.id, communication=str(object.communication.name),
+                           property=str(object.property.name), value=object.value, counter_example=object.counter_example.first().id, verification=f'verifications/{object.verification.id}')
+        else:
+            return jsonify(id=object.id, communication=str(object.communication.name),
+                           property=str(object.property.name), value=object.value, counter_example=False, verification=f'verifications/{object.verification.id}')
     if type(object) == CounterExample:
         return jsonify(content=object.content)
 
