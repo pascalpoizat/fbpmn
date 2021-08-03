@@ -66,7 +66,7 @@ class Verification(db.Model):
         return self.id
 
     def get_model(self):
-        return self.model_id
+        return self.model.first()
 
     def change_status(self):
         if self.all_ok():
@@ -149,7 +149,7 @@ class Result(db.Model):
         return self.communication.name + self.property.name
 
     def get_verification(self):
-        return self.verification_id
+        return self.verification
 
     def get_counter_example(self):
         return self.counter_example.first()
@@ -179,6 +179,9 @@ class CounterExample(db.Model):
     def __init__(self, content, result):
         self.content = content
         self.result_id = result
+
+    def get_result(self):
+        return self.result
 
 
 class Application:

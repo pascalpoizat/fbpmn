@@ -193,6 +193,14 @@ def get_counter_example_from_result(id):
     return serialize_object((a.get_result_by_id(id)).get_counter_example())
 
 
+@app.route('/counter_examples/<id>/model', methods=['GET'])
+def get_model_from_counter_example(id):
+    ce = a.get_counter_example_by_id(id)
+    m_id = ce.get_result().get_verification().model_id
+    m = a.get_model_by_id(m_id)
+    return serialize_object(m)
+
+
 @app.errorhandler(Exception)
 def basic_error(e):
     return "an error occured: " + str(e)
