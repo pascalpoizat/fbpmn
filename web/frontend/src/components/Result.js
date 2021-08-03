@@ -47,8 +47,7 @@ class Result extends Component {
         <button>
           <Link
             to={{
-              pathname: `${urlCounterExample}${this.state.counter_example_id}`,
-              state: { foo: "bar" },
+              pathname: `${urlCounterExample}${this.state.counter_example_id}/${this.state.comm}/${this.state.prop}`,
             }}
             target="_blank"
           >

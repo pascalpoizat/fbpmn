@@ -6,16 +6,14 @@ import $ from "jquery";
 
 import "./styles.css";
 
-const urlVerifications = "http://localhost:5000/verifications/";
+const urlCounterExample = "http://localhost:5000/counter_examples/";
 
 class CounterExample extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      modelTitle: "e002ClientSupplierDynamic.bpmn",
+      modelTitle: "",
       modelContent: "",
-      communication: "Comm",
-      property: "Prop",
       steps: [],
     };
   }
@@ -26,8 +24,8 @@ class CounterExample extends Component {
     });
     this.token_position = { START: 1, MIDDLE: 2 };
     this.initiateSteps();
-    const newUrlModel = `${urlVerifications}${2}/model`;
-    fetch(newUrlModel)
+    const newUrlCounterExample = `${urlCounterExample}${this.props.match.params.id}/model`;
+    fetch(newUrlCounterExample)
       .then((res) => res.json())
       .then((data) => {
         this.setState({
@@ -568,8 +566,7 @@ class CounterExample extends Component {
         <div id="header">
           <div id="title">&nbsp;fBPMN Counter Example Animator for {""}</div>
           <div class="separator">
-            {this.state.communication + "." + this.state.property}- Contre
-            example numéro {this.props.match.params.id}
+            {this.props.match.params.comm + "." + this.props.match.params.prop}
             <br />
           </div>
           <div id="step">step ../..</div>
