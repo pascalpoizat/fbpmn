@@ -162,7 +162,8 @@ class Result(db.Model):
             f'/tmp/{workdir}/{model_name}.{self.communication.name}.{self.property.name}.json')
         data = json.load(f)
         f.close()
-        return CounterExample(str(data), self.id)
+
+        return CounterExample(str(data["lcex"]), str(data["lstatus"]), str(data["lname"]), str(data["lmodel"]), self.id)
 
     def is_ok(self):
         if self.value:
@@ -173,11 +174,17 @@ class Result(db.Model):
 
 class CounterExample(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    content = db.Column(db.Text(10000000))
+    lcex = db.Column(db.Text(100000))
+    lstatus = db.Column(db.Text(100))
+    lname = db.Column(db.Text(100))
+    lmodel = db.Column(db.Text(100))
     result_id = db.Column(db.Integer, db.ForeignKey('result.id'))
 
-    def __init__(self, content, result):
-        self.content = content
+    def __init__(self, lcex, lstatus, lname, lmodel, result):
+        self.lcex = lcex
+        self.lstatus = lstatus
+        self.lname = lname
+        self.lmodel = lmodel
         self.result_id = result
 
     def get_result(self):

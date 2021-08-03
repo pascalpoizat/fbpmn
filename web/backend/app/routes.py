@@ -70,7 +70,7 @@ def serialize_object(object):
             return jsonify(id=object.id, communication=str(object.communication.name),
                            property=str(object.property.name), value=object.value, counter_example=False, verification=f'verifications/{object.verification.id}')
     if type(object) == CounterExample:
-        return jsonify(content=object.content)
+        return jsonify(lcex=object.lcex, lstatus=object.lstatus, lname=object.lname, lmodel=object.lmodel)
 
 
 @app.before_first_request
