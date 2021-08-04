@@ -60,11 +60,11 @@ class Result extends Component {
 
   render() {
     return (
-      <p>
+      <div>
         {this.displayValue()}
         {this.state.comm}.{this.state.prop}
         {this.linkToCounterExample()}
-      </p>
+      </div>
     );
   }
 }

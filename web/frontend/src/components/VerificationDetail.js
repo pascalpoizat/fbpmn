@@ -14,7 +14,9 @@ class VerificationDetail extends Component {
     super(props);
     this.state = {
       modelContent: "",
+      modelName: "",
       results: [],
+      duration: null,
     };
   }
 
@@ -41,6 +43,7 @@ class VerificationDetail extends Component {
       .then((data) => {
         this.setState({
           results: data.results,
+          duration: data.duration,
         });
       });
   }
@@ -52,6 +55,7 @@ class VerificationDetail extends Component {
       .then((data) => {
         this.setState({
           modelContent: data.content,
+          modelName: data.name,
         });
         this.viewer.importXML(this.state.modelContent);
       })
@@ -71,7 +75,11 @@ class VerificationDetail extends Component {
             float: "left",
           }}
         ></div>
-        <Results dataFromParent={this.state.results}></Results>
+        <Results
+          dataFromParent={this.state.results}
+          duration={this.state.duration}
+          modelName={this.state.modelName}
+        ></Results>
       </div>
     );
   }

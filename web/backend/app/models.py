@@ -48,6 +48,7 @@ class Verification(db.Model):
     status = db.Column(db.Enum(Status))
     pub_date = db.Column(db.DateTime, index=True,
                          default=datetime.utcnow)
+    duration = db.Column(db.Integer)
     output = db.Column(db.Text(10000))
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
     results = db.relationship(
@@ -61,6 +62,9 @@ class Verification(db.Model):
 
     def set_model(self, model_id):
         self.model_id = model_id
+
+    def set_duration(self, duration):
+        self.duration = duration
 
     def get_id(self):
         return self.id
@@ -96,9 +100,12 @@ class Verification(db.Model):
         return m
 
     def launch_check(self, model_name):
+        begin = datetime.now()
         output = subprocess.getoutput(
             f'fbpmn-check /tmp/{model_name}.bpmn')
         self.set_output(output)
+        end = datetime.now()
+        self.set_duration((end - begin).seconds)
         return output
 
     def create_results_list(self, workdir, model_name):

@@ -4,7 +4,7 @@ import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 import $ from "jquery";
 
-import "./styles.css";
+import "./CounterExample.css";
 
 const urlCounterExample = "http://localhost:5000/counter_examples/";
 
@@ -12,8 +12,9 @@ class CounterExample extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      modelTitle: "",
+      modelName: "",
       modelContent: "",
+      lcex: "",
       steps: [],
     };
   }
@@ -36,6 +37,44 @@ class CounterExample extends Component {
   };
 
   initiateSteps = () => {
+    const newUrlCounterExample = `${urlCounterExample}${this.props.match.params.id}`;
+    fetch(newUrlCounterExample)
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({
+          modelName: data.lmodel,
+          lcex: data.lcex,
+        });
+        this.parseJSON(this.state.lcex);
+      });
+  };
+
+  parseJSON = (cex) => {
+    let cexJSON = JSON.parse(cex);
+    console.log(cexJSON);
+    var nodes;
+    var edges;
+    var net;
+    for (let step of cexJSON) {
+      if (step.sinfo !== "Stuttering") {
+        nodes = new Map([
+          ["StartEvent_1", 1],
+          ["StartEvent_1jxrjjb", 1],
+        ]);
+        edges = new Map([]);
+        net = [];
+
+        this.setSteps(nodes, edges, net);
+      }
+    }
+  };
+
+  switchFromTag = (tag) => {};
+
+  initiateStepsOld = () => {
+    this.getCounterExampleJson();
+    console.log(this.state.lcex);
+    this.parseJSON(this.state.lcex);
     // elements to highlight
     var nodes;
     var edges;
@@ -50,7 +89,6 @@ class CounterExample extends Component {
     net = [];
 
     this.setSteps(nodes, edges, net);
-
     // step 2
     nodes = new Map([
       ["Client_", 1],
@@ -81,206 +119,6 @@ class CounterExample extends Component {
     ]);
     net = new Map([[["Client_", "Supplier_"], ["command"]]]);
 
-    this.setSteps(nodes, edges, net);
-    // step 5
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-    ]);
-    edges = new Map([
-      ["cE2", 1],
-      ["sE1", 1],
-    ]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 6
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["cStoreRequest", 1],
-    ]);
-    edges = new Map([["sE1", 1]]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 7
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-    ]);
-    edges = new Map([
-      ["cE3", 1],
-      ["sE1", 1],
-    ]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 8
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-    ]);
-    edges = new Map([
-      ["cE3", 1],
-      ["sE2", 1],
-      ["sE3", 1],
-    ]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 9
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["sInvoiceManagement", 1],
-    ]);
-    edges = new Map([
-      ["cE3", 1],
-      ["sE2", 1],
-    ]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 10
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-    ]);
-    edges = new Map([
-      ["cE3", 1],
-      ["sE2", 1],
-      ["sE5", 1],
-    ]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 11
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["sPrepareCommand", 1],
-    ]);
-    edges = new Map([
-      ["cE3", 1],
-      ["sE5", 1],
-    ]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 12
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["cReceiveInvoice", 1],
-      ["sPrepareCommand", 1],
-    ]);
-    edges = new Map([["sE5", 1]]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 13
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["cReceiveInvoice", 1],
-    ]);
-    edges = new Map([
-      ["sE4", 1],
-      ["sE5", 1],
-    ]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 14
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["cReceiveInvoice", 1],
-    ]);
-    edges = new Map([["sE6", 1]]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 15
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["cReceiveInvoice", 1],
-      ["sShipCommand", 1],
-    ]);
-    edges = new Map([]);
-    net = new Map([[["Client_", "Supplier_"], []]]);
-
-    this.setSteps(nodes, edges, net);
-    // step 16
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["cReceiveInvoice", 1],
-    ]);
-    edges = new Map([
-      ["mf3", 1],
-      ["sE7", 1],
-    ]);
-    net = new Map([
-      [["Client_", "Supplier_"], []],
-      [["Supplier_", "Client_"], ["goods"]],
-    ]);
-
-    this.setSteps(nodes, edges, net);
-    // step 17
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["cReceiveInvoice", 1],
-      ["sSendInvoice", 1],
-    ]);
-    edges = new Map([["mf3", 1]]);
-    net = new Map([
-      [["Client_", "Supplier_"], []],
-      [["Supplier_", "Client_"], ["goods"]],
-    ]);
-
-    this.setSteps(nodes, edges, net);
-    // step 18
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["cReceiveInvoice", 1],
-    ]);
-    edges = new Map([
-      ["mf2", 1],
-      ["mf3", 1],
-      ["sE8", 1],
-    ]);
-    net = new Map([
-      [["Client_", "Supplier_"], []],
-      [
-        ["Supplier_", "Client_"],
-        ["goods", "invoice"],
-      ],
-    ]);
-
-    this.setSteps(nodes, edges, net);
-    // step 19
-    nodes = new Map([
-      ["Client_", 1],
-      ["Supplier_", 1],
-      ["cReceiveInvoice", 1],
-      ["sEnd", 1],
-    ]);
-    edges = new Map([
-      ["mf2", 1],
-      ["mf3", 1],
-    ]);
-    net = new Map([
-      [["Client_", "Supplier_"], []],
-      [
-        ["Supplier_", "Client_"],
-        ["goods", "invoice"],
-      ],
-    ]);
     this.setSteps(nodes, edges, net);
   };
 
@@ -564,7 +402,9 @@ class CounterExample extends Component {
     return (
       <div>
         <div id="header">
-          <div id="title">&nbsp;fBPMN Counter Example Animator for {""}</div>
+          <div id="title">
+            &nbsp;fBPMN Counter Example Animator for {this.state.modelName}
+          </div>
           <div class="separator">
             {this.props.match.params.comm + "." + this.props.match.params.prop}
             <br />

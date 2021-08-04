@@ -61,7 +61,7 @@ def serialize_object(object):
         for r in object.results:
             results_json.append(f'/results/{r.id}')
         return jsonify(id=object.id, status=str(object.status.name),
-                       pub_date=object.pub_date, model=f'models/{object.model_id}', output=object.output, results=results_json)
+                       pub_date=object.pub_date, duration=object.duration, model=f'models/{object.model_id}', output=object.output, results=results_json)
     if type(object) == Result:
         if not object.value:
             return jsonify(id=object.id, communication=str(object.communication.name),

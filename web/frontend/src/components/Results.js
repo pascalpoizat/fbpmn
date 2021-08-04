@@ -54,6 +54,12 @@ class Results extends Component {
     }
   }
 
+  displayDuration() {
+    if (this.props.duration) {
+      return `Verification realized in ${this.props.duration} seconds`;
+    }
+  }
+
   render() {
     return (
       <div
@@ -65,6 +71,12 @@ class Results extends Component {
           overflowX: "auto",
         }}
       >
+        <h4>
+          <center>
+            <b>{this.props.modelName}</b>
+          </center>
+        </h4>
+        <p> {this.displayDuration()}</p>
         {this.state.rows.map((row) => (
           <Result
             comm={row.comm}
