@@ -1,12 +1,12 @@
 import React from "react";
 import "./App.css";
 
-import BpmnModelerComponent from "./components/bpmn/bpmn.modeler.component";
+import Modeler from "./components/Modeler";
 
 function App() {
   return (
     <div>
-      <BpmnModelerComponent></BpmnModelerComponent>
+      <Modeler></Modeler>
     </div>
   );
 }

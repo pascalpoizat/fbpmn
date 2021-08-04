@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
 import { Route, BrowserRouter } from "react-router-dom";
 import App from "./App";
 import CounterExample from "./components/CounterExample";
 import reportWebVitals from "./reportWebVitals";
+import "./index.css";
 
 const routs = (
   <BrowserRouter>
