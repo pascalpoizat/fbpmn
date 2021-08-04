@@ -204,7 +204,7 @@ class Modeler extends Component {
         >
           <button
             id="open"
-            class="button"
+            className="button"
             href="true"
             onClick={() => {
               document.getElementById("import-input").click();
@@ -226,7 +226,7 @@ class Modeler extends Component {
           ></input>
           <button
             id="save"
-            class="button"
+            className="button"
             href="true"
             onClick={() => {
               this.exportDiagram();
@@ -236,7 +236,7 @@ class Modeler extends Component {
           </button>
           <button
             id="new"
-            class="button"
+            className="button"
             href="true"
             onClick={() => {
               this.modeler.createDiagram();

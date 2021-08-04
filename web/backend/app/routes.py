@@ -166,7 +166,7 @@ def get_counter_examples_by_id(id):
 
 @app.route('/verifications/<id>/model', methods=['GET'])
 def get_model_by_verification(id):
-    model_id = (a.get_verification_by_id(id)).get_model()
+    model_id = (a.get_verification_by_id(id)).model_id
     return get_model_by_id(model_id)
 
 
@@ -178,7 +178,7 @@ def get_results_by_verification(id):
 
 @app.route('/results/<id>/verification', methods=['GET'])
 def get_verification_by_result(id):
-    verification_id = (a.get_result_by_id(id)).get_verification()
+    verification_id = (a.get_result_by_id(id)).verification_id
     v = a.get_verification_by_id(verification_id)
     return serialize_object(v)
 
