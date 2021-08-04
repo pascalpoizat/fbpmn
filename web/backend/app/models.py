@@ -162,8 +162,7 @@ class Result(db.Model):
             f'/tmp/{workdir}/{model_name}.{self.communication.name}.{self.property.name}.json')
         data = json.load(f)
         f.close()
-
-        return CounterExample(str(data["lcex"]), str(data["lstatus"]), str(data["lname"]), str(data["lmodel"]), self.id)
+        return CounterExample(json.dumps(data["lcex"]), str(data["lstatus"]), str(data["lname"]), str(data["lmodel"]), self.id)
 
     def is_ok(self):
         if self.value:

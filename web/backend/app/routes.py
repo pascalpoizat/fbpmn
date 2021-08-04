@@ -1,5 +1,4 @@
 from flask import request, jsonify
-import time
 from app import app, db
 from app.models import Application, CounterExample, Model, Verification, Result, Version, get_workdir
 
@@ -22,32 +21,33 @@ def serialize_list(list):
             results_json = []
             for r in v.results:
                 results_json.append(f'/results/{r.id}')
-            del v.__dict__['_sa_instance_state']
             v.__dict__['status'] = str(v.status.name)
-            v.__dict__['model_id'] = f'/models/{v.model_id}'
+            v.__dict__['model'] = f'/models/{v.model_id}'
             v.__dict__['results'] = results_json
             v.__dict__['pub_date'] = v.pub_date.strftime("%b/%d/%Y %H:%M:%S")
+            del v.__dict__['_sa_instance_state'], v.__dict__['model_id']
             verifications_json.append(v.__dict__)
         return jsonify(verifications_json)
     if type(list[0]) == Result:
         results_json = []
         for r in list:
-            del r.__dict__['_sa_instance_state']
             r.__dict__['communication'] = str(r.communication.name)
             r.__dict__['property'] = str(r.property.name)
             if not r.value:
                 r.__dict__[
-                    'counter_example'] = True
+                    'counter_example_id'] = True
             else:
-                r.__dict__['counter_example'] = False
+                r.__dict__['counter_example_id'] = False
             r.__dict__[
-                'verification_id'] = f'verifications/{r.verification_id}'
+                'verification'] = f'verifications/{r.verification_id}'
+            del r.__dict__['_sa_instance_state'], r.__dict__['verification_id']
             results_json.append(r.__dict__)
         return jsonify(results_json)
     if type(list[0]) == CounterExample:
         counter_examples_json = []
         for ce in list:
-            del ce.__dict__['_sa_instance_state']
+            ce.__dict__['result'] = f'/results/{ce.result_id}'
+            del ce.__dict__['_sa_instance_state'], ce.__dict__['result_id']
             counter_examples_json.append(ce.__dict__)
         return jsonify(counter_examples_json)
 
@@ -55,32 +55,27 @@ def serialize_list(list):
 def serialize_object(object):
     if type(object) == Model:
         return jsonify(id=object.id, name=object.name,
-                       content=object.content)
+                       content=object.content, verification=f'/verifications/{object.verification[0].id}')
     if type(object) == Verification:
         results_json = []
         for r in object.results:
             results_json.append(f'/results/{r.id}')
         return jsonify(id=object.id, status=str(object.status.name),
-                       date=object.pub_date, model=f'models/{object.model_id}', output=object.output, results=results_json)
+                       pub_date=object.pub_date, model=f'models/{object.model_id}', output=object.output, results=results_json)
     if type(object) == Result:
         if not object.value:
             return jsonify(id=object.id, communication=str(object.communication.name),
-                           property=str(object.property.name), value=object.value, counter_example=object.counter_example.first().id, verification=f'verifications/{object.verification.id}')
+                           property=str(object.property.name), value=object.value, counter_example_id=object.counter_example.first().id, verification=f'verifications/{object.verification.id}')
         else:
             return jsonify(id=object.id, communication=str(object.communication.name),
-                           property=str(object.property.name), value=object.value, counter_example=False, verification=f'verifications/{object.verification.id}')
+                           property=str(object.property.name), value=object.value, counter_example_id=False, verification=f'verifications/{object.verification.id}')
     if type(object) == CounterExample:
-        return jsonify(lcex=object.lcex, lstatus=object.lstatus, lname=object.lname, lmodel=object.lmodel)
+        return jsonify(lcex=object.lcex, lstatus=object.lstatus, lname=object.lname, lmodel=object.lmodel, result=f'/results/{object.result_id}')
 
 
 @app.before_first_request
 def before_first_request_func():
     db.create_all()
-
-
-@app.route('/api/time')
-def get_current_time():
-    return {'time': time.time()}
 
 
 @app.route('/version', methods=['GET'])
