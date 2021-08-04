@@ -42,7 +42,7 @@ class Results extends Component {
                   data.communication,
                   data.property,
                   data.value,
-                  data.counter_example
+                  data.counter_example_id
                 )
               );
               return {
