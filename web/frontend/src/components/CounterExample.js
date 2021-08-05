@@ -51,75 +51,67 @@ class CounterExample extends Component {
 
   parseJSON = (cex) => {
     let cexJSON = JSON.parse(cex);
-    console.log(cexJSON);
     var nodes;
     var edges;
     var net;
     for (let step of cexJSON) {
       if (step.sinfo !== "Stuttering") {
-        nodes = new Map([
-          ["StartEvent_1", 1],
-          ["StartEvent_1jxrjjb", 1],
-        ]);
-        edges = new Map([]);
-        net = [];
-
+        nodes = this.tagCases(step.svalue.nodemarks);
+        edges = this.tagCases(step.svalue.edgemarks);
+        net = this.tagCases(step.svalue.net);
         this.setSteps(nodes, edges, net);
       }
     }
   };
 
-  switchFromTag = (tag) => {};
+  tagCases = (value) => {
+    switch (value.tag) {
+      case "TupleValue":
+        return this.tupleTagCase(value);
+      case "MapValue":
+        return this.mapTagCase(value);
+      case "BagValue":
+        return this.bagTagCase(value);
+      default:
+        return value.contents;
+    }
+  };
 
-  initiateStepsOld = () => {
-    this.getCounterExampleJson();
-    console.log(this.state.lcex);
-    this.parseJSON(this.state.lcex);
-    // elements to highlight
-    var nodes;
-    var edges;
-    var net;
+  tupleTagCase = (value) => {
+    if (value.contents.length === 0) {
+      return [];
+    } else {
+      let tab = [];
+      for (let i of value.contents) {
+        tab.push(this.tagCases(i));
+      }
+      return tab;
+    }
+  };
 
-    // step 1
-    nodes = new Map([
-      ["cStart", 1],
-      ["sStart", 1],
-    ]);
-    edges = new Map([]);
-    net = [];
+  mapTagCase = (value) => {
+    if (value.contents.size === 0) {
+      return new Map([]);
+    } else {
+      let tab = [];
+      for (let k in value.contents) {
+        tab.push([k, value.contents[k].contents]);
+      }
+      return new Map(tab);
+    }
+  };
 
-    this.setSteps(nodes, edges, net);
-    // step 2
-    nodes = new Map([
-      ["Client_", 1],
-      ["sStart", 1],
-    ]);
-    edges = new Map([["cE1", 1]]);
-    net = [];
-
-    this.setSteps(nodes, edges, net);
-    // step 3
-    nodes = new Map([
-      ["Client_", 1],
-      ["cSendCommand", 1],
-      ["sStart", 1],
-    ]);
-    edges = new Map([]);
-    net = [];
-
-    this.setSteps(nodes, edges, net);
-    // step 4
-    nodes = new Map([
-      ["Client_", 1],
-      ["sStart", 1],
-    ]);
-    edges = new Map([
-      ["cE2", 1],
-      ["mf1", 1],
-    ]);
-    net = new Map([[["Client_", "Supplier_"], ["command"]]]);
-
-    this.setSteps(nodes, edges, net);
+  bagTagCase = (value) => {
+    if (value.contents.length === 0) {
+      return new Map([[[]]]);
+    } else {
+      let tab = [];
+      for (let i of value.contents[0]) {
+        tab.push(this.tagCases(i));
+      }
+      console.log(tab);
+      return new Map([tab]);
+    }
   };
 
   setSteps = (nodes, edges, net) => {
@@ -405,7 +397,7 @@ class CounterExample extends Component {
           <div id="title">
             &nbsp;fBPMN Counter Example Animator for {this.state.modelName}
           </div>
-          <div class="separator">
+          <div>
             {this.props.match.params.comm + "." + this.props.match.params.prop}
             <br />
           </div>
