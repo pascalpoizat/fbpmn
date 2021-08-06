@@ -31,9 +31,19 @@ class VerificationDetail extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.dataFromParent !== this.props.dataFromParent) {
+      this.resetStates();
       this.updateModel(this.props.dataFromParent);
       this.updateResults(this.props.dataFromParent);
     }
+  }
+
+  resetStates() {
+    this.setState({
+      modelContent: "",
+      modelName: "",
+      results: [],
+      duration: null,
+    });
   }
 
   updateResults(id) {

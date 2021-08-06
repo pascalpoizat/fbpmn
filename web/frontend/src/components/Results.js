@@ -25,12 +25,16 @@ class Results extends Component {
   }
 
   resetRows() {
-    this.setState((state) => {
-      state.rows = [];
+    this.setState(() => {
+      let rows = [];
+      return {
+        rows,
+      };
     });
   }
+
   initiateRows(results) {
-    if (results) {
+    if (results.length > 0) {
       for (let result of results) {
         const urlResult = `http://localhost:5000${result}`;
         fetch(urlResult)
