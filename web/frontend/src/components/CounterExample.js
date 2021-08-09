@@ -59,6 +59,7 @@ class CounterExample extends Component {
         nodes = this.tagCases(step.svalue.nodemarks);
         edges = this.tagCases(step.svalue.edgemarks);
         net = this.tagCases(step.svalue.net);
+        console.log(net);
         this.setSteps(nodes, edges, net);
       }
     }
@@ -93,11 +94,11 @@ class CounterExample extends Component {
     if (value.contents.size === 0) {
       return new Map([]);
     } else {
-      let tab = [];
+      let map = new Map();
       for (let k in value.contents) {
-        tab.push([k, value.contents[k].contents]);
+        map.set(k, this.tagCases(value.contents[k]));
       }
-      return new Map(tab);
+      return new Map(map);
     }
   };
 
@@ -105,12 +106,15 @@ class CounterExample extends Component {
     if (value.contents.length === 0) {
       return new Map([[[]]]);
     } else {
-      let tab = [];
-      for (let i of value.contents[0]) {
-        tab.push(this.tagCases(i));
+      let map = new Map();
+      let key = [];
+      let valu = [];
+      for (let i of value.contents) {
+        key = this.tagCases(i[0]);
+        valu = this.tagCases(i[1]);
+        map.set(key, valu);
       }
-      console.log(tab);
-      return new Map([tab]);
+      return new Map(map);
     }
   };
 
