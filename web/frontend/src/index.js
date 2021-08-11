@@ -10,11 +10,7 @@ const routs = (
   <BrowserRouter>
     <div>
       <Route exact path="/" component={App} />
-      <Route
-        path="/counter-example/:id/:comm/:prop"
-        exact
-        component={CounterExample}
-      />
+      <Route path="/counter_examples/:id" exact component={CounterExample} />
     </div>
   </BrowserRouter>
 );

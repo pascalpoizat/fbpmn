@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 
-const urlCounterExample = "http://localhost:3000/counter-example/";
+const urlCounterExample = "http://localhost:3000/counter_examples/";
 
 class Result extends Component {
   constructor(props) {
@@ -47,7 +47,7 @@ class Result extends Component {
         <button>
           <Link
             to={{
-              pathname: `${urlCounterExample}${this.state.counter_example_id}/${this.state.comm}/${this.state.prop}`,
+              pathname: `${urlCounterExample}${this.state.counter_example_id}`,
             }}
             target="_blank"
           >

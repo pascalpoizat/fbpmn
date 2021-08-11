@@ -14,6 +14,8 @@ class CounterExample extends Component {
     this.state = {
       modelName: "",
       modelContent: "",
+      comm: "",
+      prop: "",
       lcex: "",
       steps: [],
     };
@@ -34,6 +36,7 @@ class CounterExample extends Component {
         });
         this.openDiagram(this.state.modelContent);
       });
+    document.title = " fBPMN | Counter-example";
   };
 
   initiateSteps = () => {
@@ -46,6 +49,14 @@ class CounterExample extends Component {
           lcex: data.lcex,
         });
         this.parseJSON(this.state.lcex);
+        fetch(`http://localhost:5000${data.result}`)
+          .then((res) => res.json())
+          .then((context) => {
+            this.setState({
+              comm: context.communication,
+              prop: context.property,
+            });
+          });
       });
   };
 
@@ -59,7 +70,6 @@ class CounterExample extends Component {
         nodes = this.tagCases(step.svalue.nodemarks);
         edges = this.tagCases(step.svalue.edgemarks);
         net = this.tagCases(step.svalue.net);
-        console.log(net);
         this.setSteps(nodes, edges, net);
       }
     }
@@ -402,7 +412,7 @@ class CounterExample extends Component {
             &nbsp;fBPMN Counter Example Animator for {this.state.modelName}
           </div>
           <div>
-            {this.props.match.params.comm + "." + this.props.match.params.prop}
+            {this.state.comm + "." + this.state.prop}
             <br />
           </div>
           <div id="step">step ../..</div>
