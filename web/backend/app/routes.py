@@ -35,9 +35,9 @@ def serialize_list(list):
             r.__dict__['property'] = str(r.property.name)
             if not r.value:
                 r.__dict__[
-                    'counter_example_id'] = True
+                    'counter_example_id'] = r.counter_example.first().id
             else:
-                r.__dict__['counter_example_id'] = False
+                r.__dict__['counter_example_id'] = None
             r.__dict__[
                 'verification'] = f'verifications/{r.verification_id}'
             del r.__dict__['_sa_instance_state'], r.__dict__['verification_id']
@@ -68,7 +68,7 @@ def serialize_object(object):
                            property=str(object.property.name), value=object.value, counter_example_id=object.counter_example.first().id, verification=f'verifications/{object.verification.id}')
         else:
             return jsonify(id=object.id, communication=str(object.communication.name),
-                           property=str(object.property.name), value=object.value, counter_example_id=False, verification=f'verifications/{object.verification.id}')
+                           property=str(object.property.name), value=object.value, counter_example_id=None, verification=f'verifications/{object.verification.id}')
     if type(object) == CounterExample:
         return jsonify(lcex=object.lcex, lstatus=object.lstatus, lname=object.lname, lmodel=object.lmodel, result=f'/results/{object.result_id}')
 
@@ -174,6 +174,12 @@ def get_model_by_verification(id):
 def get_results_by_verification(id):
     verification = a.get_verification_by_id(id)
     return serialize_list(verification.results)
+
+
+@app.route('/verifications/<id>/value', methods=['GET'])
+def get_value_by_verification(id):
+    verification = a.get_verification_by_id(id)
+    return verification.get_value()
 
 
 @app.route('/results/<id>/verification', methods=['GET'])

@@ -18,8 +18,13 @@ def get_workdir(output):
 class Status(Enum):
     PENDING = auto()
     DONE = auto()
-    FAILED = auto()
     ABORTED = auto()
+
+
+class Value(Enum):
+    FAIL = auto()
+    SUCCESS = auto()
+    INCONCLUSIVE = auto()
 
 
 class Version:
@@ -72,11 +77,14 @@ class Verification(db.Model):
     def get_model(self):
         return self.model.first()
 
-    def change_status(self):
-        if self.all_ok():
-            self.status = Status.DONE.name
+    def get_value(self):
+        if self.status == Status.DONE.name:
+            if self.all_ok():
+                return Value.SUCCESS.name
+            else:
+                return Value.FAIL.name
         else:
-            self.status = Status.FAILED.name
+            return Value.INCONCLUSIVE.name
 
     def aborted(self):
         self.status = Status.ABORTED.name
@@ -119,7 +127,7 @@ class Verification(db.Model):
                 value = data[f'{model_name}'][f'{comm.name}'][f'{prop.name}']['value']
                 results[len(results)-1].set_value(value)
         db.session.add_all(results)
-        self.change_status()
+        self.status = Status.DONE.name
         db.session.commit()
         return self.results.all()
 
