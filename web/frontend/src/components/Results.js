@@ -1,9 +1,45 @@
 import React, { Component } from "react";
-import Result from "./Result";
+import { DataGrid } from "@material-ui/data-grid";
+import { Link } from "react-router-dom";
+import { FaArrowRight } from "react-icons/fa";
 
-function createData(comm, prop, value, counter_example) {
-  return { comm, prop, value, counter_example };
+const urlCounterExample = "http://localhost:3000/counter_examples/";
+
+function createData(id, comm, prop, value, counter_example) {
+  if (value) {
+    return { id, comm, prop, value };
+  } else {
+    value = `${urlCounterExample}${counter_example}`;
+    return { id, comm, prop, value };
+  }
 }
+
+const columns = [
+  { field: "comm", headerName: "Communication", width: 118 },
+  { field: "prop", headerName: "Property", width: 118 },
+  {
+    field: "value",
+    headerName: "Value",
+    width: 70,
+    renderCell: (params) => (
+      <div>
+        {params.value !== true ? (
+          <Link
+            to={{
+              pathname: params.value,
+            }}
+            target="_blank"
+          >
+            <FaArrowRight></FaArrowRight>
+          </Link>
+        ) : (
+          <div>true</div>
+        )}
+      </div>
+    ),
+  },
+];
+
 class Results extends Component {
   constructor(props) {
     super(props);
@@ -35,7 +71,6 @@ class Results extends Component {
   initiateRows() {
     if (this.props.verificationId) {
       const urlResult = `http://localhost:5000/verifications/${this.props.verificationId}/results`;
-      console.log(urlResult);
       fetch(urlResult)
         .then((res) => res.json())
         .then((data) => {
@@ -43,6 +78,7 @@ class Results extends Component {
             this.setState((state) => {
               const rows = state.rows.concat(
                 createData(
+                  result.id,
                   result.communication,
                   result.property,
                   result.value,
@@ -68,7 +104,7 @@ class Results extends Component {
     return (
       <div
         style={{
-          width: "285px",
+          width: "325px",
           height: "94vh",
           float: "right",
           maxHeight: "98vh",
@@ -81,14 +117,13 @@ class Results extends Component {
           </center>
         </h4>
         <p> {this.displayDuration()}</p>
-        {this.state.rows.map((row) => (
-          <Result
-            comm={row.comm}
-            prop={row.prop}
-            value={row.value}
-            counter_example={row.counter_example}
-          ></Result>
-        ))}
+        <div style={{ height: 575, width: "100%" }}>
+          <DataGrid
+            rows={this.state.rows}
+            columns={columns}
+            hideFooter={true}
+          />
+        </div>
       </div>
     );
   }
