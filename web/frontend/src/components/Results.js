@@ -4,7 +4,6 @@ import Result from "./Result";
 function createData(comm, prop, value, counter_example) {
   return { comm, prop, value, counter_example };
 }
-
 class Results extends Component {
   constructor(props) {
     super(props);
@@ -14,13 +13,13 @@ class Results extends Component {
   }
 
   componentDidMount = () => {
-    this.initiateRows(this.props.dataFromParent);
+    this.initiateRows();
   };
 
   componentDidUpdate(prevProps) {
-    if (prevProps.dataFromParent !== this.props.dataFromParent) {
+    if (prevProps.verificationId !== this.props.verificationId) {
       this.resetRows();
-      this.initiateRows(this.props.dataFromParent);
+      this.initiateRows();
     }
   }
 
@@ -33,28 +32,29 @@ class Results extends Component {
     });
   }
 
-  initiateRows(results) {
-    if (results.length > 0) {
-      for (let result of results) {
-        const urlResult = `http://localhost:5000${result}`;
-        fetch(urlResult)
-          .then((res) => res.json())
-          .then((data) => {
+  initiateRows() {
+    if (this.props.verificationId) {
+      const urlResult = `http://localhost:5000/verifications/${this.props.verificationId}/results`;
+      console.log(urlResult);
+      fetch(urlResult)
+        .then((res) => res.json())
+        .then((data) => {
+          for (let result of data) {
             this.setState((state) => {
               const rows = state.rows.concat(
                 createData(
-                  data.communication,
-                  data.property,
-                  data.value,
-                  data.counter_example_id
+                  result.communication,
+                  result.property,
+                  result.value,
+                  result.counter_example_id
                 )
               );
               return {
                 rows,
               };
             });
-          });
-      }
+          }
+        });
     }
   }
 

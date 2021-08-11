@@ -86,7 +86,7 @@ class VerificationDetail extends Component {
           }}
         ></div>
         <Results
-          dataFromParent={this.state.results}
+          verificationId={this.props.dataFromParent}
           duration={this.state.duration}
           modelName={this.state.modelName}
         ></Results>
