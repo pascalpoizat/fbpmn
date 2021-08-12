@@ -7,13 +7,6 @@ import $ from "jquery";
 import "./CounterExample.css";
 
 const urlCounterExample = "http://localhost:5000/counter_examples/";
-
-function sum(a, b) {
-  return a + b;
-}
-
-module.exports = sum;
-
 class CounterExample extends Component {
   constructor(props) {
     super(props);

@@ -1,9 +1,8 @@
-import React from "react";
-import renderer from "react-test-renderer";
-import CounterExample from "./CounterExample";
+const stepsExpected = require("./expected/e001ClientSupplier.Network02FifoPair.Prop03Sound.js");
 
-const sum = require("./CounterExample");
+const parseJSON = require("./CounterExampleFunctions.js");
 
-test("adds 1 + 2 to equal 3", () => {
-  expect(sum(1, 2)).toBe(3);
+test("compare js from log2html with js from parseJSON of CounterExample.js", () => {
+  let jsonfile = require("./observed/e001ClientSupplier.Network02FifoPair.Prop03Sound.json");
+  expect(parseJSON(JSON.stringify(jsonfile.lcex))).toBe(stepsExpected());
 });

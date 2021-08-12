@@ -1,0 +1,1228 @@
+{
+    "lcex": [
+        {
+            "svalue": {
+                "net": {
+                    "tag": "TupleValue",
+                    "contents": []
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {}
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sStart": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "cStart": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Initial predicate>",
+            "sid": 1
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "TupleValue",
+                    "contents": []
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sE1": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "cStart": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 2
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "TupleValue",
+                    "contents": []
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {}
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sReceiveCommand": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "cStart": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 3
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "TupleValue",
+                    "contents": []
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cE1": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sReceiveCommand": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 4
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "TupleValue",
+                    "contents": []
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {}
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sReceiveCommand": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "cSendCommand": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 5
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "command"
+                                    }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cE2": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "mf1": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sReceiveCommand": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 6
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cE2": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sE2": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 7
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cE2": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sE4": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sE3": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 8
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cE2": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sE4": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sPrepareCommand": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 9
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sE4": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sPrepareCommand": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "cStoreRequest": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 10
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sE4": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sE5": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cStoreRequest": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 11
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sE5": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cStoreRequest": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sInvoiceManagement": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 12
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sE5": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sE6": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cStoreRequest": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 13
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sE7": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cStoreRequest": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 14
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {}
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cStoreRequest": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sShipCommand": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 15
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "cE3": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sShipCommand": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 16
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {}
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sShipCommand": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "cReceiveInvoice": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 17
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ],
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "goods"
+                                    }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "mf3": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sE8": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "cReceiveInvoice": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 18
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ],
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "goods"
+                                    }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "mf3": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sSendInvoice": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "cReceiveInvoice": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 19
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ],
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "goods"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "invoice"
+                                    }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "sE9": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "mf3": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "mf2": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "cReceiveInvoice": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 20
+        },
+        {
+            "svalue": {
+                "net": {
+                    "tag": "BagValue",
+                    "contents": [
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": []
+                            }
+                        ],
+                        [
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Supplier_"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "Client_"
+                                    }
+                                ]
+                            },
+                            {
+                                "tag": "TupleValue",
+                                "contents": [
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "goods"
+                                    },
+                                    {
+                                        "tag": "StringValue",
+                                        "contents": "invoice"
+                                    }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "edgemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "mf3": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "mf2": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                },
+                "nodemarks": {
+                    "tag": "MapValue",
+                    "contents": {
+                        "Supplier_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "Client_": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "cReceiveInvoice": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        },
+                        "sEnd": {
+                            "tag": "IntegerValue",
+                            "contents": 1
+                        }
+                    }
+                }
+            },
+            "sinfo": "<Action line 122, col 1 to line 122, col 21 of module e001ClientSupplier>",
+            "sid": 21
+        },
+        {
+            "svalue": {},
+            "sinfo": "Stuttering",
+            "sid": 22
+        }
+    ],
+    "lstatus": "Failure",
+    "lname": "log",
+    "lmodel": "e001ClientSupplier.bpmn"
+}
