@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Route, BrowserRouter } from "react-router-dom";
 import App from "./App";
-import CounterExample from "./components/CounterExample";
+import CounterExample from "./components/CounterExample/CounterExample";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 
