@@ -8,6 +8,7 @@ import propertiesPanelModule from "bpmn-js-properties-panel";
 import propertiesProviderModule from "bpmn-js-properties-panel/lib/provider/camunda";
 import About from "./About.js";
 import Verifications from "./Verifications.js";
+import VerificationParameters from "./VerificationParameters.js";
 
 /**
  * offer to download a file.
@@ -128,6 +129,10 @@ class Modeler extends Component {
     });
   }
 
+  saveParametersFiles() {
+    //TODO
+  }
+
   statusButtonAction() {
     if (this.state.launched) {
       fetch("http://localhost:5000/verifications/latest")
@@ -139,7 +144,6 @@ class Modeler extends Component {
         });
       if (this.state.status !== "PENDING") {
         this.inverseVisibility();
-        //TODO clique sur la ligne correspondante du tableau de verifications
         document.getElementById(`${this.state.id}`).click();
       }
     }
@@ -197,6 +201,7 @@ class Modeler extends Component {
           >
             Modeler
           </span>
+          <VerificationParameters></VerificationParameters>
         </div>
         <div
           id="modeler"
