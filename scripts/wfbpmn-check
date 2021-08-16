@@ -1,0 +1,189 @@
+#!/usr/bin/env pwsh
+
+$runtlc = { 
+    param($a = "", $b = 1)
+    java -XX:+UseParallelGC -classpath $env:TLA2TOOLS_HOME/tla2tools.jar tlc2.TLC -deadlock $a -workers $b
+}
+################
+
+$parse_stat = {
+    param($a = "", $b = "", $c = "", $d = @{})
+    if ($a -match '(\d*) states generated') {
+        $transitions = $matches[1] 
+    }
+    if ($a -match '(\d*) distinct states found') {
+        $states = $matches[1] 
+    }
+    if ($b -match 'The depth of the complete state graph search is (\d*)') {
+        $depth = $matches[1] 
+    }
+    if ($c -match 'Finished in (.*)s at .*') {
+        $time = $matches[1] 
+    }
+    Write-Host "states=$states trans=$transitions depth=$depth"
+    Write-Host "time=$time s"
+    $d.Add("states", $states)
+    $d.Add("trans", $transitions)
+    $d.Add("depth", $depth)
+}
+
+function New-Dir {
+    param ($fullpath, $model)
+    $parent = [System.IO.Path]::GetTempPath() 
+    $guid = [guid]::NewGuid()
+    $name = $model + "." + (([string]$guid).Replace("-", "")).Substring(0, 5)
+    $dir = New-Item -ItemType Directory -Path (Join-Path $parent $name)
+    return $dir
+} 
+
+function Get-Worker {
+    param($a , $b)
+    if ($a -eq 2 ) {
+        return $b
+    }
+    else {
+        return 1
+    }
+}
+
+################
+
+if ($args.Length -eq 0 -or $args.Length -gt 2) {
+    Write-Host sfbpmn-check '<model>' '[#workers]'
+    exit 1
+}
+
+$workers = Get-Worker $args.Length $args[1]
+
+if (-NOT (which fbpmn)) {
+    Write-Host "fbpmn is not found in the PATH, please install it"
+    exit 1
+}
+if (-NOT (which java)) {
+    Write-Host "java is not found in the PATH, please install it"
+    exit 1
+}
+
+if ($env:FBPMN_HOME.Length -eq 0) {
+    Write-Host "env:FBPMN_HOME is not set"; exit 1
+}
+if (-NOT(Test-Path $env:FBPMN_HOME/theories/tla)) {
+    Write-Host "wrong env:FBPMN_HOME (theories/tla not found)"; exit 1
+} 
+if ($env:TLA2TOOLS_HOME.Length -eq 0 ) {
+    Write-Host "TLA2TOOLS_HOME is no set"; exit 1
+}
+if (-NOT(Test-Path $env:TLA2TOOLS_HOME/tla2tools.jar)) {
+    Write-Host "wrong TLA2TOOLS_HOME (tla2tools.jar not found)"; exit 1
+} 
+
+$fullpath = $args[0]
+
+if (-NOT(Test-Path $fullpath)) {
+    Write-Host "$fullpath not found."
+    exit 1
+}
+
+$model = (Get-ChildItem $fullpath).Basename
+$dir = New-Dir $fullpath $model
+
+# TransfoRemove-Item the BPMN model into TLA
+Copy-Item $fullpath $dir
+$fullpath = (Get-Item $fullpath).DirectoryName + "/" + (Get-Item $fullpath).BaseName
+if (Test-Path "$fullpath.constraint") { 
+    Copy-Item -Path "$fullpath.constraint" $dir 
+}
+
+# Copy user defined files #
+if (Test-Path "$fullpath.userdefs") { Write-Host "found user definitions"; Copy-Item "$fullpath.userdefs" $dir; }else { Write-Host "no user definitions"; exit 1 ; }
+if (Test-Path "$fullpath.userprops") { Write-Host "found user properties"; Copy-Item "$fullpath.userprops" $dir; }else { Write-Host "no user properties"; exit 1 ; }
+if (Test-Path "$fullpath.constraint") { Write-Host "found user constraints"; Copy-Item "$fullpath.constraint" $dir; }else { Write-Host "no user contraints"; exit 1;}
+
+Write-Host "Working in $dir with $workers worker(s)"
+
+Set-Location $dir
+fbpmn bpmn2tla $model $model
+
+if (-NOT(Test-Path "$model.tla")) {
+    Write-Host "model transfoRemove-Itemation failed"
+    exit 1
+}
+
+# Copy verification files
+Copy-Item (Get-ChildItem $env:FBPMN_HOME/theories/tla -Filter PWS*.tla) $dir -Recurse -Force
+Copy-Item (Get-ChildItem $env:FBPMN_HOME/theories/tla -Filter Network*.tla) $dir -Recurse -Force
+Copy-Item $env:FBPMN_HOME/theories/tla/UserProperties.tla $dir -Force
+New-Item -Path "$dir/Configs" -ItemType Directory | Out-Null
+
+# Just copy Config's files from userprops and userdefs
+$userdefs = Get-Content "$model.userdefs"
+for($i=0 ; $i -lt $userdefs.Length; $i++){
+$def = $userdefs[$i]
+Copy-Item "$env:FBPMN_HOME/theories/tla/Configs/$def.tla" $dir/Configs
+}
+$userprops = Get-Content "$model.userprops"
+for($i=0 ; $i -lt $userprops.Length; $i++){
+$prop = $userprops[$i]
+Copy-Item "$env:FBPMN_HOME/theories/tla/Configs/$prop.cfg" $dir/Configs
+}
+
+# First, use StatsBPMN to print some infoRemove-Itemation on the size of the BPMN model.
+Copy-Item $env:FBPMN_HOME/theories/tla/StatsBPMN.cfg -Force
+(Get-Content $env:FBPMN_HOME/theories/tla/StatsBPMN.tla) -Replace ("INSTANCE.*$", "INSTANCE $model") > StatsBPMN.tla
+& $runtlc "$dir/StatsBPMN.tla" | Select-String "Processes=" -NoEmphasis
+Remove-Item states -Recurse -Force
+
+# Copy user defined files
+#if (Test-Path "$model.userdefs" ) { Copy-Item "$model.userdefs" UserProperties.tla; }
+#if (Test-Path "$model.userprops" ) { Get-Content $basecfg , "$model.userprops" >> "$model.cfg"; }else { Copy-Item $cfg "$model.cfg"; }
+if (Test-Path "$model.constraint" ) { Get-Content "$model.constraint" >> "$model.cfg" ; }
+
+# Verify
+Write-Host
+Write-Host "running with configuration:"
+Get-Content "$model.cfg"
+
+# Perform verification
+$file_network = Get-ChildItem -Path Configs -Name -Include Network*.tla 
+$file_cfg = Get-ChildItem -Path Configs -Name -Include Prop*.cfg 
+$modele = @{} #
+$comms = @{} #
+foreach ($network in $file_network) {
+    $props = @{}
+    $networkname = (Get-ChildItem Configs/$network).Basename
+    Copy-Item Configs/$network Network.tla
+    Write-Host "---------- $networkname ----------"
+    foreach ($cfg in $file_cfg) {
+        $result = @{} #
+        $cfgname = (Get-ChildItem Configs/$cfg).Basename
+        $log = "$model.$networkname.$cfgname.log"
+        Copy-Item Configs/$cfg "$model.cfg"
+        if (Test-Path "$model.constraint") { 
+            Get-Content "$model.constraint" >> "$model.cfg"; 
+        }
+        & $runtlc $model $workers > $log
+        Remove-Item states -Recurse -Force
+        if (Select-String -Quiet "Error: Assumption.*is false" -Path $log) {
+            Write-Host "  ! PANIC: bad model (assume failed)"
+        }
+        else {
+            if (Select-String -Quiet "No error has been found" -Path $log) {
+                Write-Host "[X] $cfgname"
+                $result.Add("value", $true)
+            }
+            else {
+                Write-Host "[ ] $cfgname"
+                $result.Add("value", $false)
+            }
+            $stat1 = Select-String "^[0-9]* states generated.*0 states left on queue" -Path $log
+            $stat2 = Select-String "The depth of the complete state graph" -Path $log
+            $stat3 = Select-String "^Finished in ([0-9]*min )?[0-9]*s at" $log
+            & $parse_stat "$stat1" "$stat2" "$stat3" $result 
+        }
+        $props.Add("$cfgname", $result)
+    }
+    $comms.Add("$networkname", $props) #
+}
+$modele.Add("$model", $comms)
+$modele | ConvertTo-Json -Depth 5 | Out-File "$model.json" #
+
