@@ -44,7 +44,10 @@ class Modeler extends Component {
       modelerVisibility: true,
       launched: false,
       launches: 0,
+      networksSelected: [],
+      propertiesSelected: [],
     };
+    this.VerificationsOptions = React.createRef();
   }
 
   async componentDidMount() {
@@ -98,20 +101,46 @@ class Modeler extends Component {
 
   async sendData() {
     try {
+      this.setNetworksSelected();
+      this.setPropertiesSelected();
       const result = await this.modeler.saveXML({ format: true });
-      const { xml } = result;
+      const xml = {
+        model: result,
+        userdefs: this.state.networksSelected,
+        userprops: this.state.propertiesSelected,
+      };
       const xhr = new XMLHttpRequest();
       xhr.open("POST", "http://localhost:5000/verifications");
       xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
       xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-      xhr.setRequestHeader("Content-Type", "application/xml");
-      xhr.send(xml);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.send(JSON.stringify(xml));
     } catch (err) {
       console.log(err);
     }
   }
 
+  setNetworksSelected() {
+    const currentVerificationOptions = this.VerificationsOptions.current;
+    const currentNetworksSelected =
+      currentVerificationOptions.state.networksChecked;
+    this.setState({
+      networksSelected: currentNetworksSelected,
+    });
+  }
+
+  setPropertiesSelected() {
+    const currentVerificationOptions = this.VerificationsOptions.current;
+    const currentPropertiesSelected =
+      currentVerificationOptions.state.propertiesChecked;
+    this.setState({
+      propertiesSelected: currentPropertiesSelected,
+    });
+  }
+
   async launchVerification() {
+    this.setNetworksSelected();
+    this.setPropertiesSelected();
     this.sendData();
     this.setState({
       launched: true,
@@ -201,7 +230,9 @@ class Modeler extends Component {
           >
             Modeler
           </span>
-          <VerificationOptions></VerificationOptions>
+          <VerificationOptions
+            ref={this.VerificationsOptions}
+          ></VerificationOptions>
         </div>
         <div
           id="modeler"

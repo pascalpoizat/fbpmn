@@ -190,18 +190,6 @@ class VerificationOptions extends Component {
     }
   };
 
-  getNetworksChecked = () => {
-    this.state.networks.filter((item) => {
-      return item.check === true;
-    });
-  };
-
-  getPropertiesChecked = () => {
-    this.state.properties.filter((element) => {
-      return element.check === true;
-    });
-  };
-
   getConstraintNode = () => {};
 
   getConstraintEdge = () => {};
