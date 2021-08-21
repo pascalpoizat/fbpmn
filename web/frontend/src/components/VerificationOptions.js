@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Checkbox } from "@material-ui/core";
 import Tooltip from "@material-ui/core/Tooltip";
 import { createMuiTheme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -7,7 +8,7 @@ import Popper from "@material-ui/core/Popper";
 import { withStyles } from "@material-ui/styles";
 
 const theme = createMuiTheme({
-  spacing: 4,
+  spacing: 2,
 });
 
 const styles = {
@@ -16,12 +17,14 @@ const styles = {
   },
 };
 
-class VerificationParameters extends Component {
+class VerificationOptions extends Component {
   constructor(props) {
     super(props);
     this.state = {
       networks: [],
+      networksChecked: [],
       properties: [],
+      propertiesChecked: [],
       constraintNode: [],
       constraintEdge: [],
       anchorEl: null,
@@ -30,92 +33,82 @@ class VerificationParameters extends Component {
   }
 
   componentDidMount() {
-    console.log("coucou");
     this.setState({
       networks: [
         {
-          type: "checkbox",
-          name: "net",
+          name: "networks",
           value: "Network01Bag",
           text: "Bag",
           tooltiptext: "Unordered communication",
         },
         {
-          type: "checkbox",
-          name: "net",
+          name: "networks",
           value: "Network02FifoPair",
           text: "FifoPair",
           tooltiptext:
             "Fifo between each couple of processes (array of queues)",
         },
         {
-          type: "checkbox",
-          name: "net",
+          name: "networks",
           value: "Network03Causal ",
           text: "Causal",
           tooltiptext: "Causal communication, implemented with vector clocks.",
         },
         {
-          type: "checkbox",
-          name: "net",
+          name: "networks",
           value: "Network04Inbox",
           text: "Inbox",
           tooltiptext: "Input queue at each process where messages are added.",
         },
         {
-          type: "checkbox",
-          name: "net",
+          name: "networks",
           value: "Network05Outbox",
           text: "Outbox",
           tooltiptext:
             "Output queue at each process from where messages are fetched.",
         },
         {
-          type: "checkbox",
-          name: "net",
+          name: "networks",
           value: "Network06Fifo",
           text: "Fifo",
           tooltiptext: "Unique shared queue.",
         },
         {
-          type: "checkbox",
-          name: "net",
+          name: "networks",
           value: "Network07RSC",
           text: "RSC",
           tooltiptext: "Realizable with synchronous communication.",
         },
       ],
+      networksChecked: ["Network01Bag"],
       properties: [
         {
-          type: "checkbox",
-          name: "prop",
+          name: "properties",
           value: "Prop01Type",
           text: "Type",
           tooltiptext: "Check well-formedness and compute total state space.",
         },
         {
-          type: "checkbox",
-          name: "prop",
+          name: "properties",
           value: "Prop02Safe",
           text: "Safe",
           tooltiptext: "No sequence flow edge has more than one token.",
         },
         {
-          type: "checkbox",
-          name: "prop",
+          name: "properties",
           value: "Prop03Sound",
           text: "Sound",
           tooltiptext:
             "A process is sound if there are no token on inside edges, and one token only on EndEvents. A collaboration is sound if all processes are sound and there are no undelivered messages.",
         },
         {
-          type: "checkbox",
-          name: "prop",
+          name: "properties",
           value: "Prop04MsgSound",
           text: "MsgSound",
           tooltiptext: "Like Sound, but ignore messages in transit.",
         },
       ],
+      propertiesChecked: ["Prop01Type"],
       constraintNode: [
         { value: "TRUE", text: "None" },
         { value: "MaxNodeMarking1", text: "At most 1 token on nodes" },
@@ -167,6 +160,52 @@ class VerificationParameters extends Component {
     this.flipOpen();
   };
 
+  handleNetworksChange = (event) => {
+    let net = event.target.value;
+    if (!this.state.networksChecked.includes(net)) {
+      this.setState({
+        networksChecked: [...this.state.networksChecked, net],
+      });
+    } else {
+      this.setState({
+        networksChecked: this.state.networksChecked.filter((item) => {
+          return item !== event.target.value;
+        }),
+      });
+    }
+  };
+
+  handlePropertiesChange = (event) => {
+    let prop = event.target.value;
+    if (!this.state.propertiesChecked.includes(prop)) {
+      this.setState({
+        propertiesChecked: [...this.state.propertiesChecked, prop],
+      });
+    } else {
+      this.setState({
+        propertiesChecked: this.state.propertiesChecked.filter((item) => {
+          return item !== event.target.value;
+        }),
+      });
+    }
+  };
+
+  getNetworksChecked = () => {
+    this.state.networks.filter((item) => {
+      return item.check === true;
+    });
+  };
+
+  getPropertiesChecked = () => {
+    this.state.properties.filter((element) => {
+      return element.check === true;
+    });
+  };
+
+  getConstraintNode = () => {};
+
+  getConstraintEdge = () => {};
+
   render() {
     const id = this.state.open ? "simple-popper" : null;
     const { classes } = this.props;
@@ -177,12 +216,12 @@ class VerificationParameters extends Component {
       networks.map((item, i) => {
         return (
           <div>
-            <input
+            <Checkbox
               key={i}
-              type={item.type}
               name={item.name}
               value={item.value}
-              defaultChecked
+              checked={this.state.networksChecked.includes(item.value)}
+              onChange={this.handleNetworksChange}
             />
             <Tooltip title={item.tooltiptext} placement="right">
               <a href>{item.text}</a>
@@ -196,12 +235,12 @@ class VerificationParameters extends Component {
       properties.map((item, i) => {
         return (
           <div>
-            <input
+            <Checkbox
               key={i}
-              type={item.type}
               name={item.name}
               value={item.value}
-              defaultChecked
+              checked={this.state.propertiesChecked.includes(item.value)}
+              onChange={this.handlePropertiesChange}
             />
             <Tooltip title={item.tooltiptext} placement="left">
               <a href>{item.text}</a>
@@ -236,7 +275,7 @@ class VerificationParameters extends Component {
           id="parameters-verif-nav"
           onClick={(event) => this.handleClick(event)}
         >
-          Parameters of verification
+          Verification options
         </span>
         <Popper
           placement="bottom"
@@ -245,35 +284,34 @@ class VerificationParameters extends Component {
           anchorEl={this.state.anchorEl}
         >
           <Paper>
-            <Typography className={classes.typography}>
-              <div className={classes.paper} id="choices">
-                <div id="properties-choice">
-                  <h2 class="choice-title"> Properties </h2>
-                  {propertiesList}
-                </div>
-                <div id="networks-choice">
-                  <h2 class="choice-title"> Communication semantics </h2>
-                  <div id="basic-networks">
-                    <h3 class="network-type-title"> Base semantics </h3>
-                    {networksList}
-                  </div>
-                </div>
-
-                <div id="constraints-choice">
-                  <h2 class="choice-title"> Constraints </h2>
-                  <div>
-                    Constraint on nodes:
-                    <br></br>
-                    <select id="ConstraintNode">{constraintsNodeList}</select>
-                  </div>
-                  <div>
-                    Constraint on edges:
-                    <br></br>
-                    <select id="ConstraintEdge">{constraintsEdgeList}</select>
-                  </div>
+            <Typography className={classes.typography}></Typography>
+            <div className={classes.paper} id="choices">
+              <div id="properties-choice">
+                <h2 className="choice-title"> Properties </h2>
+                {propertiesList}
+              </div>
+              <div id="networks-choice">
+                <h2 className="choice-title"> Communication semantics </h2>
+                <div id="basic-networks">
+                  <h3 className="network-type-title"> Base semantics </h3>
+                  {networksList}
                 </div>
               </div>
-            </Typography>
+
+              <div id="constraints-choice">
+                <h2 className="choice-title"> Constraints </h2>
+                <div>
+                  Constraint on nodes:
+                  <br></br>
+                  <select id="ConstraintNode">{constraintsNodeList}</select>
+                </div>
+                <div>
+                  Constraint on edges:
+                  <br></br>
+                  <select id="ConstraintEdge">{constraintsEdgeList}</select>
+                </div>
+              </div>
+            </div>
           </Paper>
         </Popper>
       </div>
@@ -281,4 +319,4 @@ class VerificationParameters extends Component {
   }
 }
 
-export default withStyles(styles)(VerificationParameters);
+export default withStyles(styles)(VerificationOptions);

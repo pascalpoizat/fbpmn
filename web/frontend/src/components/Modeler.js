@@ -8,7 +8,7 @@ import propertiesPanelModule from "bpmn-js-properties-panel";
 import propertiesProviderModule from "bpmn-js-properties-panel/lib/provider/camunda";
 import About from "./About.js";
 import Verifications from "./Verifications.js";
-import VerificationParameters from "./VerificationParameters.js";
+import VerificationOptions from "./VerificationOptions.js";
 
 /**
  * offer to download a file.
@@ -201,7 +201,7 @@ class Modeler extends Component {
           >
             Modeler
           </span>
-          <VerificationParameters></VerificationParameters>
+          <VerificationOptions></VerificationOptions>
         </div>
         <div
           id="modeler"
