@@ -95,12 +95,16 @@ def get_all_models():
 @app.route('/verifications', methods=['POST', 'GET'])
 def verifications():
     if request.method == 'POST':
-        # with request.data only, a b' ' appears to indicate the string is binary
-        model = str(request.data.decode('UTF-8'))
+        data = request.get_json()
+        model = (str(data['model']['xml']))
+        userdefs = str(data['userdefs'])
+        userprops = str(data['userprops'])
         v = a.create_verification()
         try:
+            v.create_userdefs(userdefs)
+            v.create_userprops(userprops)
             m = v.create_model(model)
-            output = v.launch_check(m.name)
+            output = v.launch_check(m.name, v.userdefs, v.userprops)
             workdir = get_workdir(output)
             xx = v.create_results_list(workdir, m.name)
             v.create_counter_examples(workdir, m.name, xx)
@@ -112,6 +116,21 @@ def verifications():
     else:
         verifications = a.get_all_verifications()
         return serialize_list(verifications)
+
+
+@app.route('/userdefs', methods=['POST', 'GET'])
+def userdefs():
+    pass
+
+
+@app.route('/userprops', methods=['POST', 'GET'])
+def userprops():
+    pass
+
+
+@app.route('/constraints', methods=['POST', 'GET'])
+def constraints():
+    pass
 
 
 @app.route('/results', methods=['GET'])
@@ -152,6 +171,24 @@ def get_latest_verification():
     return serialize_object(v)
 
 
+@app.route('/userdefs/<id>', methods=['GET'])
+def get_userdefs_by_id(id):
+    ud = a.get_userdef_by_id(id)
+    return serialize_object(ud)
+
+
+@app.route('/userprops/<id>', methods=['GET'])
+def get_userprops_by_id(id):
+    up = a.get_userprop_by_id(id)
+    return serialize_object(up)
+
+
+@app.route('/constraints/<id>', methods=['GET'])
+def get_constraints_by_id(id):
+    c = a.get_constraint_by_id(id)
+    return serialize_object(c)
+
+
 @app.route('/results/<id>', methods=['GET'])
 def get_result_by_id(id):
     r = a.get_result_by_id(id)
@@ -168,6 +205,24 @@ def get_counter_examples_by_id(id):
 def get_model_by_verification(id):
     model_id = (a.get_verification_by_id(id)).model_id
     return get_model_by_id(model_id)
+
+
+@app.route('/verifications/<id>/userdefs', methods=['GET'])
+def get_userdefs_by_verification(id):
+    ud = (a.get_verification_by_id(id)).userdefs
+    return serialize_object(ud)
+
+
+@app.route('/verifications/<id>/userprops', methods=['GET'])
+def get_userprops_by_verification(id):
+    up = (a.get_verification_by_id(id)).userprops
+    return serialize_object(up)
+
+
+@app.route('/verifications/<id>/constraints', methods=['GET'])
+def get_constraints_by_verification(id):
+    c = (a.get_verification_by_id(id)).constraints
+    return serialize_object(c)
 
 
 @app.route('/verifications/<id>/results', methods=['GET'])

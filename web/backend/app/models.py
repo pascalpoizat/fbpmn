@@ -48,6 +48,36 @@ class Model(db.Model):
             '{http://www.omg.org/spec/BPMN/20100524/MODEL}collaboration')).get('id')
 
 
+class UserDefs(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.Text(10000), nullable=False)
+    verification = db.relationship(
+        'Verification', cascade="all,delete", backref='userdefs', lazy='dynamic')
+
+    def __init__(self, content_file):
+        self.content = content_file
+
+
+class UserProps(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.Text(10000), nullable=False)
+    verification = db.relationship(
+        'Verification', cascade="all,delete", backref='userprops', lazy='dynamic')
+
+    def __init__(self, content_file):
+        self.content = content_file
+
+
+class Constraints(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.Text(10000), nullable=False)
+    verification = db.relationship(
+        'Verification', cascade="all,delete", backref='constraints', lazy='dynamic')
+
+    def __init__(self, content_file):
+        self.content = content_file
+
+
 class Verification(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     status = db.Column(db.Enum(Status))
@@ -56,6 +86,9 @@ class Verification(db.Model):
     duration = db.Column(db.Integer)
     output = db.Column(db.Text(10000))
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
+    userdefs_id = db.Column(db.Integer, db.ForeignKey('user_defs.id'))
+    userprops_id = db.Column(db.Integer, db.ForeignKey('user_props.id'))
+    constraints_id = db.Column(db.Integer, db.ForeignKey('constraints.id'))
     results = db.relationship(
         'Result', cascade="all,delete", backref='verification', lazy='dynamic')
 
@@ -107,10 +140,29 @@ class Verification(db.Model):
         f.close()
         return m
 
+    def create_userdefs(self, content_request, model_name):
+        ud = UserDefs(content_request)
+        db.session.add(ud)
+        db.session.commit()
+        f = open(f'/tmp/{model_name}.userdefs', 'w')
+        f.write(f'{ud.content}')
+        f.close()
+
+    def create_userprops(self, content_request, model_name):
+        up = UserProps(content_request)
+        db.session.add(up)
+        db.session.commit()
+        f = open(f'/tmp/{model_name}.userdefs', 'w')
+        f.write(f'{up.content}')
+        f.close()
+
+    def create_constraints(self, content_request, model_name):
+        pass
+
     def launch_check(self, model_name):
         begin = datetime.now()
         output = subprocess.getoutput(
-            f'fbpmn-check /tmp/{model_name}.bpmn')
+            f'wfbpmn-check /tmp/{model_name}.bpmn')
         self.set_output(output)
         end = datetime.now()
         self.set_duration((end - begin).seconds)
