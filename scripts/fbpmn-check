@@ -120,15 +120,15 @@ Remove-Item states -Recurse -Force
 # build the files Network.tla and model.cfg
 $file_network = Get-ChildItem -Path Configs -Name -Include Network*.tla 
 $file_cfg = Get-ChildItem -Path Configs -Name -Include Prop*.cfg 
-$modele = @{} #
-$comms = @{} #
+$modele = [ordered]@{} #
+$comms = [ordered]@{} #
 foreach ($network in $file_network) {
-    $props = @{}
+    $props = [ordered]@{}
     $networkname = (Get-ChildItem Configs/$network).Basename
     Copy-Item Configs/$network Network.tla
     Write-Host "---------- $networkname ----------"
     foreach ($cfg in $file_cfg) {
-        $result = @{} #
+        $result = [ordered]@{} #
         $cfgname = (Get-ChildItem Configs/$cfg).Basename
         $log = "$model.$networkname.$cfgname.log"
         Copy-Item Configs/$cfg "$model.cfg"
