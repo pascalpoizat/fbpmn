@@ -1,6 +1,7 @@
+from os import error
 from flask import request, jsonify
 from app import app, db
-from app.models import Application, CounterExample, Model, Verification, Result, Version, get_workdir
+from app.models import Application, Constraints, CounterExample, Model, UserDefs, UserProps, Verification, Result, Version, get_workdir
 
 a = Application()
 
@@ -15,6 +16,14 @@ def serialize_list(list):
             del m.__dict__['_sa_instance_state'], m.__dict__['content']
             models_json.append(m.__dict__)
         return jsonify(models_json)
+    if type(list[0]) == UserDefs or type(list[0]) == UserProps or type(list[0]) == Constraints:
+        tab = []
+        for l in list:
+            l.__dict__[
+                'verification'] = f'/verifications/{l.verification[0].id}'
+            del l.__dict__['_sa_instance_state']
+            tab.append(l.__dict__)
+        return jsonify(tab)
     if type(list[0]) == Verification:
         verifications_json = []
         for v in list:
@@ -23,9 +32,13 @@ def serialize_list(list):
                 results_json.append(f'/results/{r.id}')
             v.__dict__['status'] = str(v.status.name)
             v.__dict__['model'] = f'/models/{v.model_id}'
+            v.__dict__['userdefs'] = f'/userdefs/{v.userdefs_id}'
+            v.__dict__['userprops'] = f'/userprops/{v.userprops_id}'
+            v.__dict__['constraints'] = f'/constraints/{v.constraints_id}'
             v.__dict__['results'] = results_json
             v.__dict__['pub_date'] = v.pub_date.strftime("%b/%d/%Y %H:%M:%S")
-            del v.__dict__['_sa_instance_state'], v.__dict__['model_id']
+            del v.__dict__['_sa_instance_state'], v.__dict__[
+                'model_id'],  v.__dict__['userdefs_id'],  v.__dict__['userprops_id'],  v.__dict__['constraints_id']
             verifications_json.append(v.__dict__)
         return jsonify(verifications_json)
     if type(list[0]) == Result:
@@ -56,12 +69,14 @@ def serialize_object(object):
     if type(object) == Model:
         return jsonify(id=object.id, name=object.name,
                        content=object.content, verification=f'/verifications/{object.verification[0].id}')
+    if type(object) == UserDefs or type(object) == UserProps or type(object) == Constraints:
+        return jsonify(id=object.id, content=object.content, verification=f'/verifications/{object.verification[0].id}')
     if type(object) == Verification:
         results_json = []
         for r in object.results:
             results_json.append(f'/results/{r.id}')
         return jsonify(id=object.id, status=str(object.status.name),
-                       pub_date=object.pub_date, duration=object.duration, model=f'models/{object.model_id}', output=object.output, results=results_json)
+                       pub_date=object.pub_date, duration=object.duration, model=f'models/{object.model_id}', userdefs=f'userdefs/{object.userdefs_id}', userprops=f'userprops/{object.userprops_id}', constraints=f'constraints/{object.constraints_id}', output=object.output, results=results_json)
     if type(object) == Result:
         if not object.value:
             return jsonify(id=object.id, communication=str(object.communication.name),
@@ -88,72 +103,99 @@ def version():
 
 @app.route('/models', methods=['GET'])
 def get_all_models():
-    models = a.get_all_models()
+    models = a.get_all_elements(Model)
     return serialize_list(models)
+
+
+@app.route('/userdefs', methods=['POST', 'GET'])
+def get_all_userdefs():
+    userdefs = a.get_all_elements(UserDefs)
+    return serialize_list(userdefs)
+
+
+@app.route('/userprops', methods=['POST', 'GET'])
+def get_all_userprops():
+    userprops = a.get_all_elements(UserProps)
+    return serialize_list(userprops)
+
+
+@app.route('/constraints', methods=['POST', 'GET'])
+def get_all_constraints():
+    constraints = a.get_all_elements(Constraints)
+    return serialize_list(constraints)
 
 
 @app.route('/verifications', methods=['POST', 'GET'])
 def verifications():
     if request.method == 'POST':
         data = request.get_json()
-        model = (str(data['model']['xml']))
-        userdefs = str(data['userdefs'])
-        userprops = str(data['userprops'])
+        model = (data['model']['xml'])
+        userdefs = data['userdefs']
+        userprops = data['userprops']
+        constraint = str("CONSTANT ConstraintNode <- TRUE\n"
+                         "         ConstraintEdge <- TRUE\n"
+                         "         Constraint <- ConstraintNodeEdge\n")
         v = a.create_verification()
         try:
-            v.create_userdefs(userdefs)
-            v.create_userprops(userprops)
             m = v.create_model(model)
-            output = v.launch_check(m.name, v.userdefs, v.userprops)
+            v.create_file(UserDefs, userdefs, m.name)
+            v.create_file(UserProps, userprops, m.name)
+            v.create_file(Constraints, constraint, m.name)
+            output = v.launch_check(m.name)
             workdir = get_workdir(output)
+            # pb ici
             xx = v.create_results_list(workdir, m.name)
             v.create_counter_examples(workdir, m.name, xx)
             del m, v
             return output
-        except (AttributeError, TypeError):
+        except (AttributeError, TypeError) as e:
+            print(e)
             v.aborted()
             return ("Incorrect model")
     else:
-        verifications = a.get_all_verifications()
+        verifications = a.get_all_elements(Verification)
         return serialize_list(verifications)
-
-
-@app.route('/userdefs', methods=['POST', 'GET'])
-def userdefs():
-    pass
-
-
-@app.route('/userprops', methods=['POST', 'GET'])
-def userprops():
-    pass
-
-
-@app.route('/constraints', methods=['POST', 'GET'])
-def constraints():
-    pass
 
 
 @app.route('/results', methods=['GET'])
 def get_all_results():
-    results = a.get_all_results()
+    results = a.get_all_elements(Result)
     return serialize_list(results)
 
 
 @app.route('/counter_examples', methods=['GET'])
 def get_all_counter_examples():
-    counter_examples = a.get_all_counter_examples()
+    counter_examples = a.get_all_elements(CounterExample)
     return serialize_list(counter_examples)
 
 
 @app.route('/models/<id>', methods=['GET'])
 def get_model_by_id(id):
-    m = a.get_model_by_id(id)
+    m = a.get_element_by_id(Model, id)
     return serialize_object(m)
+
+
+@app.route('/userdefs/<id>', methods=['GET'])
+def get_userdefs_by_id(id):
+    ud = a.get_element_by_id(UserDefs, id)
+    return serialize_object(ud)
+
+
+@app.route('/userprops/<id>', methods=['GET'])
+def get_userprops_by_id(id):
+    up = a.get_element_by_id(UserProps, id)
+    return serialize_object(up)
+
+
+@app.route('/constraints/<id>', methods=['GET'])
+def get_constraints_by_id(id):
+    c = a.get_element_by_id(Constraints, id)
+    return serialize_object(c)
 
 
 @app.route('/verifications/<id>', methods=['GET'])
 def get_verification_by_id(id):
-    v = a.get_verification_by_id(id)
+    v = a.get_element_by_id(Verification, id)
     return serialize_object(v)
 
 
@@ -171,89 +213,71 @@ def get_latest_verification():
     return serialize_object(v)
 
 
-@app.route('/userdefs/<id>', methods=['GET'])
-def get_userdefs_by_id(id):
-    ud = a.get_userdef_by_id(id)
-    return serialize_object(ud)
-
-
-@app.route('/userprops/<id>', methods=['GET'])
-def get_userprops_by_id(id):
-    up = a.get_userprop_by_id(id)
-    return serialize_object(up)
-
-
-@app.route('/constraints/<id>', methods=['GET'])
-def get_constraints_by_id(id):
-    c = a.get_constraint_by_id(id)
-    return serialize_object(c)
-
-
 @app.route('/results/<id>', methods=['GET'])
 def get_result_by_id(id):
-    r = a.get_result_by_id(id)
+    r = a.get_element_by_id(Result, id)
     return serialize_object(r)
 
 
 @app.route('/counter_examples/<id>', methods=['GET'])
 def get_counter_examples_by_id(id):
-    ce = a.get_counter_example_by_id(id)
+    ce = a.get_element_by_id(CounterExample, id)
     return serialize_object(ce)
 
 
 @app.route('/verifications/<id>/model', methods=['GET'])
 def get_model_by_verification(id):
-    model_id = (a.get_verification_by_id(id)).model_id
+    model_id = (a.get_element_by_id(Verification, id)).model_id
     return get_model_by_id(model_id)
 
 
 @app.route('/verifications/<id>/userdefs', methods=['GET'])
 def get_userdefs_by_verification(id):
-    ud = (a.get_verification_by_id(id)).userdefs
+    ud = (a.get_element_by_id(Verification, id)).userdefs
     return serialize_object(ud)
 
 
 @app.route('/verifications/<id>/userprops', methods=['GET'])
 def get_userprops_by_verification(id):
-    up = (a.get_verification_by_id(id)).userprops
+    up = (a.get_element_by_id(Verification, id)).userprops
     return serialize_object(up)
 
 
 @app.route('/verifications/<id>/constraints', methods=['GET'])
 def get_constraints_by_verification(id):
-    c = (a.get_verification_by_id(id)).constraints
+    c = (a.get_element_by_id(Verification, id)).constraints
     return serialize_object(c)
 
 
 @app.route('/verifications/<id>/results', methods=['GET'])
 def get_results_by_verification(id):
-    verification = a.get_verification_by_id(id)
+    verification = a.get_element_by_id(Verification, id)
     return serialize_list(verification.results)
 
 
 @app.route('/verifications/<id>/value', methods=['GET'])
 def get_value_by_verification(id):
-    verification = a.get_verification_by_id(id)
+    verification = a.get_element_by_id(Verification, id)
     return verification.get_value()
 
 
 @app.route('/results/<id>/verification', methods=['GET'])
 def get_verification_by_result(id):
-    verification_id = (a.get_result_by_id(id)).verification_id
+    verification_id = (a.get_element_by_id(Result, id)).verification_id
     v = a.get_verification_by_id(verification_id)
     return serialize_object(v)
 
 
 @app.route('/results/<id>/counter_example', methods=['GET'])
 def get_counter_example_from_result(id):
-    return serialize_object((a.get_result_by_id(id)).get_counter_example())
+    return serialize_object((a.get_element_by_id(Result, id)).get_counter_example())
 
 
 @app.route('/counter_examples/<id>/model', methods=['GET'])
 def get_model_from_counter_example(id):
-    ce = a.get_counter_example_by_id(id)
+    ce = a.get_element_by_id(CounterExample, id)
     m_id = ce.get_result().get_verification().model_id
-    m = a.get_model_by_id(m_id)
+    m = a.get_element_by_id(Model, m_id)
     return serialize_object(m)
 
 
