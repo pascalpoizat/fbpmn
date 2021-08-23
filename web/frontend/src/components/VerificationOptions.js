@@ -60,7 +60,7 @@ class VerificationOptions extends Component {
         },
         {
           name: "networks",
-          value: "Network03Causal ",
+          value: "Network03Causal",
           text: "Causal",
           tooltiptext: "Causal communication, implemented with vector clocks.",
         },
