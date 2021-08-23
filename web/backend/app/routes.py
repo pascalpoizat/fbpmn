@@ -16,15 +16,7 @@ def serialize_list(list):
             del m.__dict__['_sa_instance_state'], m.__dict__['content']
             models_json.append(m.__dict__)
         return jsonify(models_json)
-    if type(list[0]) == UserDefs or type(list[0]) == UserProps or type(list[0]) == Constraints:
-        tab = []
-        for l in list:
-            l.__dict__[
-                'verification'] = f'/verifications/{l.verification[0].id}'
-            del l.__dict__['_sa_instance_state']
-            tab.append(l.__dict__)
-        return jsonify(tab)
-    if type(list[0]) == Verification:
+    elif type(list[0]) == Verification:
         verifications_json = []
         for v in list:
             results_json = []
@@ -41,7 +33,7 @@ def serialize_list(list):
                 'model_id'],  v.__dict__['userdefs_id'],  v.__dict__['userprops_id'],  v.__dict__['constraints_id']
             verifications_json.append(v.__dict__)
         return jsonify(verifications_json)
-    if type(list[0]) == Result:
+    elif type(list[0]) == Result:
         results_json = []
         for r in list:
             r.__dict__['communication'] = str(r.communication.name)
@@ -56,13 +48,21 @@ def serialize_list(list):
             del r.__dict__['_sa_instance_state'], r.__dict__['verification_id']
             results_json.append(r.__dict__)
         return jsonify(results_json)
-    if type(list[0]) == CounterExample:
+    elif type(list[0]) == CounterExample:
         counter_examples_json = []
         for ce in list:
             ce.__dict__['result'] = f'/results/{ce.result_id}'
             del ce.__dict__['_sa_instance_state'], ce.__dict__['result_id']
             counter_examples_json.append(ce.__dict__)
         return jsonify(counter_examples_json)
+    else:
+        tab = []
+        for l in list:
+            l.__dict__[
+                'verification'] = f'/verifications/{l.verification[0].id}'
+            del l.__dict__['_sa_instance_state']
+            tab.append(l.__dict__)
+        return jsonify(tab)
 
 
 def serialize_object(object):
@@ -132,8 +132,8 @@ def verifications():
         model = (data['model']['xml'])
         userdefs = data['userdefs']
         userprops = data['userprops']
-        constraint = str("CONSTANT ConstraintNode <- TRUE\n"
-                         "         ConstraintEdge <- TRUE\n"
+        constraint = str(f'CONSTANT ConstraintNode <- {data["constraintNode"]}\n'
+                         f'         ConstraintEdge <- {data["constraintEdge"]}\n'
                          "         Constraint <- ConstraintNodeEdge\n")
         v = a.create_verification()
         try:
@@ -143,7 +143,6 @@ def verifications():
             v.create_file(Constraints, constraint, m.name)
             output = v.launch_check(m.name)
             workdir = get_workdir(output)
-            # pb ici
             xx = v.create_results_list(workdir, m.name)
             v.create_counter_examples(workdir, m.name, xx)
             del m, v

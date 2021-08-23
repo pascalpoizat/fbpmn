@@ -46,6 +46,8 @@ class Modeler extends Component {
       launches: 0,
       networksSelected: [],
       propertiesSelected: [],
+      constraintNodeSelected: null,
+      constraintEdgeSelected: null,
     };
     this.VerificationsOptions = React.createRef();
   }
@@ -103,11 +105,15 @@ class Modeler extends Component {
     try {
       this.setNetworksSelected();
       this.setPropertiesSelected();
+      this.setConstraintNodeSelected();
+      this.setConstraintEdgeSelected();
       const result = await this.modeler.saveXML({ format: true });
       const xml = {
         model: result,
         userdefs: this.state.networksSelected,
         userprops: this.state.propertiesSelected,
+        constraintNode: this.state.constraintNodeSelected,
+        constraintEdge: this.state.constraintEdgeSelected,
       };
       const xhr = new XMLHttpRequest();
       xhr.open("POST", "http://localhost:5000/verifications");
@@ -135,6 +141,24 @@ class Modeler extends Component {
       currentVerificationOptions.state.propertiesChecked;
     this.setState({
       propertiesSelected: currentPropertiesSelected,
+    });
+  }
+
+  setConstraintNodeSelected() {
+    const currentVerificationOptions = this.VerificationsOptions.current;
+    const currentConstraintNodeSelected =
+      currentVerificationOptions.state.constraintNodeSelected;
+    this.setState({
+      constraintNodeSelected: currentConstraintNodeSelected,
+    });
+  }
+
+  setConstraintEdgeSelected() {
+    const currentVerificationOptions = this.VerificationsOptions.current;
+    const currentConstraintEdgeSelected =
+      currentVerificationOptions.state.constraintEdgeSelected;
+    this.setState({
+      constraintEdgeSelected: currentConstraintEdgeSelected,
     });
   }
 
