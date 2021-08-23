@@ -116,15 +116,12 @@ Copy-Item $env:FBPMN_HOME/theories/tla/UserProperties.tla $dir -Force
 New-Item -Path "$dir/Configs" -ItemType Directory | Out-Null
 
 # Just copy Config's files from userprops and userdefs
-$userdefs = Get-Content "$model.userdefs"
-for($i=0 ; $i -lt $userdefs.Length; $i++){
-$def = $userdefs[$i]
-Copy-Item "$env:FBPMN_HOME/theories/tla/Configs/$def.tla" $dir/Configs
+foreach($item in (Get-Content "$model.userdefs")){
+    Copy-Item "$env:FBPMN_HOME/theories/tla/Configs/$item.tla" $dir/Configs
 }
-$userprops = Get-Content "$model.userprops"
-for($i=0 ; $i -lt $userprops.Length; $i++){
-$prop = $userprops[$i]
-Copy-Item "$env:FBPMN_HOME/theories/tla/Configs/$prop.cfg" $dir/Configs
+
+foreach($item in (Get-Content "$model.userprops")){
+    Copy-Item "$env:FBPMN_HOME/theories/tla/Configs/$item.cfg" $dir/Configs
 }
 
 # First, use StatsBPMN to print some infoRemove-Itemation on the size of the BPMN model.
