@@ -55,7 +55,10 @@ class UserDefs(db.Model):
         'Verification', cascade="all,delete", backref='userdefs', lazy='dynamic')
 
     def __init__(self, content_file):
-        self.content = content_file
+        content = ""
+        for userdef in content_file:
+            content += str(userdef + "\n")
+        self.content = content
 
 
 class UserProps(db.Model):
@@ -65,7 +68,10 @@ class UserProps(db.Model):
         'Verification', cascade="all,delete", backref='userprops', lazy='dynamic')
 
     def __init__(self, content_file):
-        self.content = content_file
+        content = ""
+        for userprop in content_file:
+            content += str(userprop + "\n")
+        self.content = content
 
 
 class Constraints(db.Model):
@@ -100,6 +106,15 @@ class Verification(db.Model):
 
     def set_model(self, model_id):
         self.model_id = model_id
+
+    def set_userdefs(self, userdefs_id):
+        self.userdefs_id = userdefs_id
+
+    def set_userprops(self, userprops_id):
+        self.userprops_id = userprops_id
+
+    def set_constraints(self, constraints_id):
+        self.constraints_id = constraints_id
 
     def set_duration(self, duration):
         self.duration = duration
@@ -140,24 +155,21 @@ class Verification(db.Model):
         f.close()
         return m
 
-    def create_userdefs(self, content_request, model_name):
-        ud = UserDefs(content_request)
-        db.session.add(ud)
+    def create_file(self, type, content_request, model_name):
+        element = type(content_request)
+        db.session.add(element)
         db.session.commit()
-        f = open(f'/tmp/{model_name}.userdefs', 'w')
-        f.write(f'{ud.content}')
+        if type == UserDefs:
+            self.set_userdefs(element.id)
+            f = open(f'/tmp/{model_name}.userdefs', 'w')
+        if type == UserProps:
+            self.set_userprops(element.id)
+            f = open(f'/tmp/{model_name}.userprops', 'w')
+        if type == Constraints:
+            self.set_constraints(element.id)
+            f = open(f'/tmp/{model_name}.constraint', 'w')
+        f.write(f'{element.content}')
         f.close()
-
-    def create_userprops(self, content_request, model_name):
-        up = UserProps(content_request)
-        db.session.add(up)
-        db.session.commit()
-        f = open(f'/tmp/{model_name}.userdefs', 'w')
-        f.write(f'{up.content}')
-        f.close()
-
-    def create_constraints(self, content_request, model_name):
-        pass
 
     def launch_check(self, model_name):
         begin = datetime.now()
@@ -168,11 +180,13 @@ class Verification(db.Model):
         self.set_duration((end - begin).seconds)
         return output
 
+    # revoir pour userdefs et userprops + revoir représentation API + doc
     def create_results_list(self, workdir, model_name):
         f = open(f'/tmp/{workdir}/{model_name}.json')
         data = json.load(f)
         f.close()
         results = []
+        print(self.userdefs.content)
         for comm in Communication:
             for prop in Property:
                 results.append(Result(comm.name, prop.name, self.id))
@@ -264,44 +278,26 @@ class Application:
         db.session.commit()
         return v
 
-    def get_all_models(self):
-        return Model.query.all()
+    def get_all_elements(self, type):
+        return type.query.all()
 
-    def get_all_verifications(self):
-        return Verification.query.all()
-
-    def get_all_results(self):
-        return Result.query.all()
-
-    def get_all_counter_examples(self):
-        return CounterExample.query.all()
-
-    def get_model_by_id(self, model_id):
-        return Model.query.get(model_id)
-
-    def get_verification_by_id(self, verification_id):
-        return Verification.query.get(verification_id)
+    def get_element_by_id(self, type, id):
+        return type.query.get(id)
 
     def get_latest_verification(self):
         verifications = Verification.query.filter_by().order_by(
             db.desc(Verification.id)).all()
         return verifications[0]
 
-    def get_result_by_id(self, result_id):
-        return Result.query.get(result_id)
-
-    def get_counter_example_by_id(self, counter_example_id):
-        return CounterExample.query.get(counter_example_id)
-
     def is_ok_verif(self, verification_id):
-        v = Application.get_verification_by_id(verification_id)
+        v = Application.get_element_by_id(Verification, verification_id)
         if v.all_ok():
             return True
         else:
             return False
 
     def is_ok_result(self, result_id):
-        r = Application.get_result_by_id(result_id)
+        r = Application.get_element_by_id(Result, result_id)
         if r.is_ok():
             return True
         else:
