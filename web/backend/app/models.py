@@ -9,10 +9,7 @@ import subprocess
 
 
 def get_workdir(output):
-    # TODO peut-être trouver une meilleure solution que re.search
-    firstline = output.split('\n', 1)[0]
-    workdir = (re.search(r'/tmp/(.+) with', firstline)).group(1)
-    return workdir
+    return (re.search(r'/tmp/(.+) with', output)).group(1)
 
 
 class Status(Enum):
@@ -186,11 +183,10 @@ class Verification(db.Model):
         data = json.load(f)
         f.close()
         results = []
-        print(self.userdefs.content)
-        for comm in Communication:
-            for prop in Property:
-                results.append(Result(comm.name, prop.name, self.id))
-                value = data[f'{model_name}'][f'{comm.name}'][f'{prop.name}']['value']
+        for (k, v) in data[f'{model_name}'].items():
+            for (key, value) in data[f'{model_name}'][f'{k}'].items():
+                results.append(Result(k, key, self.id))
+                value = value['value']
                 results[len(results)-1].set_value(value)
         db.session.add_all(results)
         self.status = Status.DONE.name
