@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Checkbox } from "@material-ui/core";
+import { Checkbox, Select, MenuItem } from "@material-ui/core";
 import Tooltip from "@material-ui/core/Tooltip";
 import { createMuiTheme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -12,8 +12,16 @@ const theme = createMuiTheme({
 });
 
 const styles = {
-  typography: {
+  paper: {
+    border: "2px solid rgba(0, 0, 0, 0.20)",
     padding: theme.spacing(2),
+    width: 250,
+  },
+  checkboxes: {
+    height: 15,
+  },
+  select: {
+    minWidth: 180,
   },
 };
 
@@ -26,7 +34,9 @@ class VerificationOptions extends Component {
       properties: [],
       propertiesChecked: [],
       constraintNode: [],
+      constraintNodeSelected: null,
       constraintEdge: [],
+      constraintEdgeSelected: null,
       anchorEl: null,
       open: false,
     };
@@ -115,6 +125,7 @@ class VerificationOptions extends Component {
         { value: "MaxNodeMarking2", text: "At most 2 token on nodes" },
         { value: "MaxNodeMarking3", text: "At most 3 token on nodes" },
       ],
+      constraintNodeSelected: "TRUE",
       constraintEdge: [
         { value: "TRUE", text: "None" },
         { value: "MaxEdgeMarking1", text: "At most 1 token on edges" },
@@ -148,6 +159,7 @@ class VerificationOptions extends Component {
           text: "At most 3 token on sequence edges",
         },
       ],
+      constraintEdgeSelected: "TRUE",
     });
   }
 
@@ -190,9 +202,17 @@ class VerificationOptions extends Component {
     }
   };
 
-  getConstraintNode = () => {};
+  handleConstraintNodeChange = (event) => {
+    this.setState({
+      constraintNodeSelected: event.target.value,
+    });
+  };
 
-  getConstraintEdge = () => {};
+  handleConstraintEdgeChange = (event) => {
+    this.setState({
+      constraintEdgeSelected: event.target.value,
+    });
+  };
 
   render() {
     const id = this.state.open ? "simple-popper" : null;
@@ -205,14 +225,14 @@ class VerificationOptions extends Component {
         return (
           <div>
             <Checkbox
-              key={i}
+              className={classes.checkboxes}
               name={item.name}
               value={item.value}
               checked={this.state.networksChecked.includes(item.value)}
               onChange={this.handleNetworksChange}
             />
             <Tooltip title={item.tooltiptext} placement="right">
-              <a href>{item.text}</a>
+              <span>{item.text}</span>
             </Tooltip>
           </div>
         );
@@ -224,14 +244,14 @@ class VerificationOptions extends Component {
         return (
           <div>
             <Checkbox
-              key={i}
+              className={classes.checkboxes}
               name={item.name}
               value={item.value}
               checked={this.state.propertiesChecked.includes(item.value)}
               onChange={this.handlePropertiesChange}
             />
             <Tooltip title={item.tooltiptext} placement="left">
-              <a href>{item.text}</a>
+              <span>{item.text}</span>
             </Tooltip>
           </div>
         );
@@ -240,21 +260,13 @@ class VerificationOptions extends Component {
     let constraintsNodeList =
       constraintNode.length > 0 &&
       constraintNode.map((item, i) => {
-        return (
-          <option key={i} value={item.value}>
-            {item.text}
-          </option>
-        );
+        return <MenuItem value={item.value}>{item.text}</MenuItem>;
       }, this);
 
     let constraintsEdgeList =
       constraintEdge.length > 0 &&
       constraintEdge.map((item, i) => {
-        return (
-          <option key={i} value={item.value}>
-            {item.text}
-          </option>
-        );
+        return <MenuItem value={item.value}>{item.text}</MenuItem>;
       }, this);
 
     return (
@@ -271,33 +283,36 @@ class VerificationOptions extends Component {
           open={this.state.open}
           anchorEl={this.state.anchorEl}
         >
-          <Paper>
-            <Typography className={classes.typography}></Typography>
-            <div className={classes.paper} id="choices">
-              <div id="properties-choice">
-                <h2 className="choice-title"> Properties </h2>
-                {propertiesList}
+          <Paper className={classes.paper}>
+            <div id="choices">
+              <Typography variant="h5">Properties</Typography>
+              <Typography variant="body1">{propertiesList}</Typography>
+              <Typography variant="h5">Communication semantics</Typography>
+              <Typography variant="body1">{networksList}</Typography>
+              <Typography variant="h5">Constraints</Typography>
+              <div>
+                Constraint on nodes:
+                <br></br>
+                <Select
+                  className={classes.select}
+                  id="ConstraintNode"
+                  defaultValue={"TRUE"}
+                  onChange={this.handleConstraintNodeChange}
+                >
+                  {constraintsNodeList}
+                </Select>
               </div>
-              <div id="networks-choice">
-                <h2 className="choice-title"> Communication semantics </h2>
-                <div id="basic-networks">
-                  <h3 className="network-type-title"> Base semantics </h3>
-                  {networksList}
-                </div>
-              </div>
-
-              <div id="constraints-choice">
-                <h2 className="choice-title"> Constraints </h2>
-                <div>
-                  Constraint on nodes:
-                  <br></br>
-                  <select id="ConstraintNode">{constraintsNodeList}</select>
-                </div>
-                <div>
-                  Constraint on edges:
-                  <br></br>
-                  <select id="ConstraintEdge">{constraintsEdgeList}</select>
-                </div>
+              <div>
+                Constraint on edges:
+                <br></br>
+                <Select
+                  className={classes.select}
+                  id="ConstraintEdge"
+                  defaultValue={"TRUE"}
+                  onChange={this.handleConstraintEdgeChange}
+                >
+                  {constraintsEdgeList}
+                </Select>
               </div>
             </div>
           </Paper>
