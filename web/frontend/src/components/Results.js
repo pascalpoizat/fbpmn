@@ -3,13 +3,13 @@ import { DataGrid } from "@material-ui/data-grid";
 import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 
-const urlCounterExample = "http://localhost:3000/counter_examples/";
+const localhost = "http://localhost:3000";
 
 function createData(id, comm, prop, value, counter_example) {
   if (value) {
     return { id, comm, prop, value };
   } else {
-    value = `${urlCounterExample}${counter_example}`;
+    value = `${localhost}${counter_example}`;
     return { id, comm, prop, value };
   }
 }
@@ -82,7 +82,7 @@ class Results extends Component {
                   result.communication,
                   result.property,
                   result.value,
-                  result.counter_example_id
+                  result.counter_example
                 )
               );
               return {

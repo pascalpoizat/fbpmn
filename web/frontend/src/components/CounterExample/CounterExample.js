@@ -40,6 +40,7 @@ class CounterExample extends Component {
 
   initiateSteps = () => {
     const newUrlCounterExample = `${urlCounterExample}${this.props.match.params.id}`;
+    console.log(newUrlCounterExample);
     fetch(newUrlCounterExample)
       .then((res) => res.json())
       .then((data) => {
