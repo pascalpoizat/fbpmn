@@ -2,6 +2,7 @@ from os import error
 from flask import request, jsonify
 from app import app, db
 from app.models import Application, Constraints, CounterExample, Model, UserDefs, UserProps, Verification, Result, Version, get_workdir
+from app.schemas import CounterExampleSchema, ModelSchema, ResultSchema, UserDefsSchema, VerificationSchema
 
 a = Application()
 
@@ -104,7 +105,8 @@ def version():
 @app.route('/models', methods=['GET'])
 def get_all_models():
     models = a.get_all_elements(Model)
-    return serialize_list(models)
+    models_schema = ModelSchema(many=True)
+    return models_schema.jsonify(models)
 
 
 @app.route('/userdefs', methods=['POST', 'GET'])
@@ -171,13 +173,15 @@ def get_all_counter_examples():
 @app.route('/models/<id>', methods=['GET'])
 def get_model_by_id(id):
     m = a.get_element_by_id(Model, id)
-    return serialize_object(m)
+    model_schema = ModelSchema()
+    return model_schema.dump(m)
 
 
 @app.route('/userdefs/<id>', methods=['GET'])
 def get_userdefs_by_id(id):
     ud = a.get_element_by_id(UserDefs, id)
-    return serialize_object(ud)
+    userdefs_schema = UserDefsSchema()
+    return userdefs_schema.dump(ud)
 
 
 @app.route('/userprops/<id>', methods=['GET'])
@@ -195,7 +199,8 @@ def get_constraints_by_id(id):
 @app.route('/verifications/<id>', methods=['GET'])
 def get_verification_by_id(id):
     v = a.get_element_by_id(Verification, id)
-    return serialize_object(v)
+    verification_schema = VerificationSchema()
+    return verification_schema.dump(v)
 
 
 @app.route('/verifications/<id>', methods=['DELETE'])
@@ -215,13 +220,15 @@ def get_latest_verification():
 @app.route('/results/<id>', methods=['GET'])
 def get_result_by_id(id):
     r = a.get_element_by_id(Result, id)
-    return serialize_object(r)
+    result_schema = ResultSchema()
+    return result_schema.dump(r)
 
 
 @app.route('/counter_examples/<id>', methods=['GET'])
 def get_counter_examples_by_id(id):
     ce = a.get_element_by_id(CounterExample, id)
-    return serialize_object(ce)
+    counter_example_schema = CounterExampleSchema()
+    return counter_example_schema.dump(ce)
 
 
 @app.route('/verifications/<id>/model', methods=['GET'])
