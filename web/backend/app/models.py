@@ -37,7 +37,7 @@ class Model(db.Model):
     name = db.Column(db.String(80), nullable=False)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='model', lazy='dynamic')
+        'Verification', cascade="all,delete", backref='model', uselist=False)
 
     def __init__(self, content_file):
         self.content = content_file
@@ -49,7 +49,7 @@ class UserDefs(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='userdefs', lazy='dynamic')
+        'Verification', cascade="all,delete", backref='userdefs', uselist=False)
 
     def __init__(self, content_file):
         content = ""
@@ -62,7 +62,7 @@ class UserProps(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='userprops', lazy='dynamic')
+        'Verification', cascade="all,delete", backref='userprops', uselist=False)
 
     def __init__(self, content_file):
         content = ""
@@ -75,7 +75,7 @@ class Constraints(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='constraints', lazy='dynamic')
+        'Verification', cascade="all,delete", backref='constraints', uselist=False)
 
     def __init__(self, content_file):
         self.content = content_file
@@ -93,7 +93,7 @@ class Verification(db.Model):
     userprops_id = db.Column(db.Integer, db.ForeignKey('user_props.id'))
     constraints_id = db.Column(db.Integer, db.ForeignKey('constraints.id'))
     results = db.relationship(
-        'Result', cascade="all,delete", backref='verification', lazy='dynamic')
+        'Result', cascade="all,delete", backref='verification', lazy="dynamic")
 
     def __init__(self):
         self.status = Status.PENDING.name
@@ -177,7 +177,6 @@ class Verification(db.Model):
         self.set_duration((end - begin).seconds)
         return output
 
-    # revoir pour userdefs et userprops + revoir représentation API + doc
     def create_results_list(self, workdir, model_name):
         f = open(f'/tmp/{workdir}/{model_name}.json')
         data = json.load(f)
@@ -211,7 +210,7 @@ class Result(db.Model):
     property = db.Column(db.Enum(Property))
     value = db.Column(db.Boolean)
     counter_example = db.relationship(
-        'CounterExample', cascade="all,delete", backref='result', lazy='dynamic')
+        'CounterExample', cascade="all,delete", backref='result', uselist=False)
     verification_id = db.Column(db.Integer, db.ForeignKey('verification.id'))
 
     def __init__(self, comm, prop, verif):

@@ -2,91 +2,16 @@ from os import error
 from flask import request, jsonify
 from app import app, db
 from app.models import Application, Constraints, CounterExample, Model, UserDefs, UserProps, Verification, Result, Version, get_workdir
-from app.schemas import CounterExampleSchema, ModelSchema, ResultSchema, UserDefsSchema, VerificationSchema
+from app.schemas import ConstraintsSchema, CounterExampleSchema, ModelSchema, ResultSchema, UserDefsSchema, UserPropsSchema, VerificationSchema
 
 a = Application()
 
 
-def serialize_list(list):
-    if type(list[0]) == Model:
-        models_json = []
-        for m in list:
-            m.__dict__['taille'] = len(m.__dict__['content'])
-            m.__dict__[
-                'verification'] = f'/verifications/{m.verification[0].id}'
-            del m.__dict__['_sa_instance_state'], m.__dict__['content']
-            models_json.append(m.__dict__)
-        return jsonify(models_json)
-    elif type(list[0]) == Verification:
-        verifications_json = []
-        for v in list:
-            results_json = []
-            for r in v.results:
-                results_json.append(f'/results/{r.id}')
-            v.__dict__['status'] = str(v.status.name)
-            v.__dict__['model'] = f'/models/{v.model_id}'
-            v.__dict__['userdefs'] = f'/userdefs/{v.userdefs_id}'
-            v.__dict__['userprops'] = f'/userprops/{v.userprops_id}'
-            v.__dict__['constraints'] = f'/constraints/{v.constraints_id}'
-            v.__dict__['results'] = results_json
-            v.__dict__['pub_date'] = v.pub_date.strftime("%b/%d/%Y %H:%M:%S")
-            del v.__dict__['_sa_instance_state'], v.__dict__[
-                'model_id'],  v.__dict__['userdefs_id'],  v.__dict__['userprops_id'],  v.__dict__['constraints_id']
-            verifications_json.append(v.__dict__)
-        return jsonify(verifications_json)
-    elif type(list[0]) == Result:
-        results_json = []
-        for r in list:
-            r.__dict__['communication'] = str(r.communication.name)
-            r.__dict__['property'] = str(r.property.name)
-            if not r.value:
-                r.__dict__[
-                    'counter_example_id'] = r.counter_example.first().id
-            else:
-                r.__dict__['counter_example_id'] = None
-            r.__dict__[
-                'verification'] = f'verifications/{r.verification_id}'
-            del r.__dict__['_sa_instance_state'], r.__dict__['verification_id']
-            results_json.append(r.__dict__)
-        return jsonify(results_json)
-    elif type(list[0]) == CounterExample:
-        counter_examples_json = []
-        for ce in list:
-            ce.__dict__['result'] = f'/results/{ce.result_id}'
-            del ce.__dict__['_sa_instance_state'], ce.__dict__['result_id']
-            counter_examples_json.append(ce.__dict__)
-        return jsonify(counter_examples_json)
+def create_schema(schema_type, bool):
+    if bool:
+        return schema_type(many=bool)
     else:
-        tab = []
-        for l in list:
-            l.__dict__[
-                'verification'] = f'/verifications/{l.verification[0].id}'
-            del l.__dict__['_sa_instance_state']
-            tab.append(l.__dict__)
-        return jsonify(tab)
-
-
-def serialize_object(object):
-    if type(object) == Model:
-        return jsonify(id=object.id, name=object.name,
-                       content=object.content, verification=f'/verifications/{object.verification[0].id}')
-    if type(object) == UserDefs or type(object) == UserProps or type(object) == Constraints:
-        return jsonify(id=object.id, content=object.content, verification=f'/verifications/{object.verification[0].id}')
-    if type(object) == Verification:
-        results_json = []
-        for r in object.results:
-            results_json.append(f'/results/{r.id}')
-        return jsonify(id=object.id, status=str(object.status.name),
-                       pub_date=object.pub_date, duration=object.duration, model=f'models/{object.model_id}', userdefs=f'userdefs/{object.userdefs_id}', userprops=f'userprops/{object.userprops_id}', constraints=f'constraints/{object.constraints_id}', output=object.output, results=results_json)
-    if type(object) == Result:
-        if not object.value:
-            return jsonify(id=object.id, communication=str(object.communication.name),
-                           property=str(object.property.name), value=object.value, counter_example_id=object.counter_example.first().id, verification=f'verifications/{object.verification.id}')
-        else:
-            return jsonify(id=object.id, communication=str(object.communication.name),
-                           property=str(object.property.name), value=object.value, counter_example_id=None, verification=f'verifications/{object.verification.id}')
-    if type(object) == CounterExample:
-        return jsonify(lcex=object.lcex, lstatus=object.lstatus, lname=object.lname, lmodel=object.lmodel, result=f'/results/{object.result_id}')
+        return schema_type()
 
 
 @app.before_first_request
@@ -105,26 +30,25 @@ def version():
 @app.route('/models', methods=['GET'])
 def get_all_models():
     models = a.get_all_elements(Model)
-    models_schema = ModelSchema(many=True)
-    return models_schema.jsonify(models)
+    return (create_schema(ModelSchema, True)).jsonify(models)
 
 
 @app.route('/userdefs', methods=['POST', 'GET'])
 def get_all_userdefs():
-    userdefs = a.get_all_elements(UserDefs)
-    return serialize_list(userdefs)
+    ud = a.get_all_elements(UserDefs)
+    return (create_schema(UserDefsSchema, True)).jsonify(ud)
 
 
 @app.route('/userprops', methods=['POST', 'GET'])
 def get_all_userprops():
-    userprops = a.get_all_elements(UserProps)
-    return serialize_list(userprops)
+    up = a.get_all_elements(UserProps)
+    return (create_schema(UserPropsSchema, True)).jsonify(up)
 
 
 @app.route('/constraints', methods=['POST', 'GET'])
 def get_all_constraints():
-    constraints = a.get_all_elements(Constraints)
-    return serialize_list(constraints)
+    c = a.get_all_elements(Constraints)
+    return (create_schema(ConstraintsSchema, True)).jsonify(c)
 
 
 @app.route('/verifications', methods=['POST', 'GET'])
@@ -154,53 +78,50 @@ def verifications():
             v.aborted()
             return ("Incorrect model")
     else:
-        verifications = a.get_all_elements(Verification)
-        return serialize_list(verifications)
+        v = a.get_all_elements(Verification)
+        return (create_schema(VerificationSchema, True)).jsonify(v)
 
 
 @app.route('/results', methods=['GET'])
 def get_all_results():
-    results = a.get_all_elements(Result)
-    return serialize_list(results)
+    r = a.get_all_elements(Result)
+    return (create_schema(ResultSchema, True)).jsonify(r)
 
 
 @app.route('/counter_examples', methods=['GET'])
 def get_all_counter_examples():
-    counter_examples = a.get_all_elements(CounterExample)
-    return serialize_list(counter_examples)
+    ce = a.get_all_elements(CounterExample)
+    return (create_schema(CounterExampleSchema, True)).jsonify(ce)
 
 
 @app.route('/models/<id>', methods=['GET'])
 def get_model_by_id(id):
     m = a.get_element_by_id(Model, id)
-    model_schema = ModelSchema()
-    return model_schema.dump(m)
+    return (create_schema(ModelSchema, False)).jsonify(m)
 
 
 @app.route('/userdefs/<id>', methods=['GET'])
 def get_userdefs_by_id(id):
     ud = a.get_element_by_id(UserDefs, id)
-    userdefs_schema = UserDefsSchema()
-    return userdefs_schema.dump(ud)
+    return (create_schema(UserDefsSchema, False)).jsonify(ud)
 
 
 @app.route('/userprops/<id>', methods=['GET'])
 def get_userprops_by_id(id):
     up = a.get_element_by_id(UserProps, id)
-    return serialize_object(up)
+    return (create_schema(UserPropsSchema, False)).jsonify(up)
 
 
 @app.route('/constraints/<id>', methods=['GET'])
 def get_constraints_by_id(id):
     c = a.get_element_by_id(Constraints, id)
-    return serialize_object(c)
+    return (create_schema(ConstraintsSchema, False)).jsonify(c)
 
 
 @app.route('/verifications/<id>', methods=['GET'])
 def get_verification_by_id(id):
     v = a.get_element_by_id(Verification, id)
-    verification_schema = VerificationSchema()
-    return verification_schema.dump(v)
+    return (create_schema(VerificationSchema, False)).jsonify(v)
 
 
 @app.route('/verifications/<id>', methods=['DELETE'])
@@ -214,21 +135,19 @@ def delete_verification(id):
 @app.route('/verifications/latest', methods=['GET'])
 def get_latest_verification():
     v = a.get_latest_verification()
-    return serialize_object(v)
+    return (create_schema(VerificationSchema, False)).jsonify(v)
 
 
 @app.route('/results/<id>', methods=['GET'])
 def get_result_by_id(id):
     r = a.get_element_by_id(Result, id)
-    result_schema = ResultSchema()
-    return result_schema.dump(r)
+    return (create_schema(ResultSchema, False)).jsonify(r)
 
 
 @app.route('/counter_examples/<id>', methods=['GET'])
 def get_counter_examples_by_id(id):
     ce = a.get_element_by_id(CounterExample, id)
-    counter_example_schema = CounterExampleSchema()
-    return counter_example_schema.dump(ce)
+    return (create_schema(CounterExampleSchema, False)).jsonify(ce)
 
 
 @app.route('/verifications/<id>/model', methods=['GET'])
@@ -239,26 +158,26 @@ def get_model_by_verification(id):
 
 @app.route('/verifications/<id>/userdefs', methods=['GET'])
 def get_userdefs_by_verification(id):
-    ud = (a.get_element_by_id(Verification, id)).userdefs
-    return serialize_object(ud)
+    userdefs_id = (a.get_element_by_id(Verification, id)).userdefs.id
+    return get_userdefs_by_id(userdefs_id)
 
 
 @app.route('/verifications/<id>/userprops', methods=['GET'])
 def get_userprops_by_verification(id):
-    up = (a.get_element_by_id(Verification, id)).userprops
-    return serialize_object(up)
+    userprops_id = (a.get_element_by_id(Verification, id)).userprops.id
+    return get_userprops_by_id(userprops_id)
 
 
 @app.route('/verifications/<id>/constraints', methods=['GET'])
 def get_constraints_by_verification(id):
-    c = (a.get_element_by_id(Verification, id)).constraints
-    return serialize_object(c)
+    constraints_id = (a.get_element_by_id(Verification, id)).constraints.id
+    return get_constraints_by_id(constraints_id)
 
 
 @app.route('/verifications/<id>/results', methods=['GET'])
 def get_results_by_verification(id):
     verification = a.get_element_by_id(Verification, id)
-    return serialize_list(verification.results)
+    return (create_schema(ResultSchema, True)).jsonify(verification.results)
 
 
 @app.route('/verifications/<id>/value', methods=['GET'])
@@ -269,22 +188,24 @@ def get_value_by_verification(id):
 
 @app.route('/results/<id>/verification', methods=['GET'])
 def get_verification_by_result(id):
-    verification_id = (a.get_element_by_id(Result, id)).verification_id
-    v = a.get_verification_by_id(verification_id)
-    return serialize_object(v)
+    verification = (a.get_element_by_id(Result, id)).verification
+    return (create_schema(VerificationSchema, False)).jsonify(verification)
 
 
 @app.route('/results/<id>/counter_example', methods=['GET'])
 def get_counter_example_from_result(id):
-    return serialize_object((a.get_element_by_id(Result, id)).get_counter_example())
+    counter_example = (a.get_element_by_id(Result, id)).counter_example
+    if counter_example:
+        return (create_schema(CounterExampleSchema, False)).jsonify(counter_example)
+    else:
+        return "Record not found", 400
 
 
 @app.route('/counter_examples/<id>/model', methods=['GET'])
 def get_model_from_counter_example(id):
     ce = a.get_element_by_id(CounterExample, id)
     m_id = ce.get_result().get_verification().model_id
-    m = a.get_element_by_id(Model, m_id)
-    return serialize_object(m)
+    return get_model_by_id(m_id)
 
 
 @app.errorhandler(Exception)

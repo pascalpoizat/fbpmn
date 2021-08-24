@@ -4,58 +4,60 @@ from app.context import Communication, Property
 from marshmallow_enum import EnumField
 
 
-class ModelSchema(ma.SQLAlchemySchema):
+class ModelSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Model
-    id = ma.auto_field()
-    name = ma.auto_field()
-    content = ma.auto_field()
-    verification = ma.auto_field()
+        include_relationships = True
+    verification = ma.HyperlinkRelated("get_verification_by_id")
 
 
 class UserDefsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = UserDefs
-    verification = ma.HyperlinkRelated("verifications")
+        include_relationships = True
+    verification = ma.HyperlinkRelated("get_verification_by_id")
 
 
 class UserPropsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = UserProps
-    verification = ma.HyperlinkRelated("verifications")
+        include_relationships = True
+    verification = ma.HyperlinkRelated("get_verification_by_id")
 
 
 class ConstraintsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Constraints
+        include_relationships = True
+    verification = ma.HyperlinkRelated("get_verification_by_id")
 
 
-class VerificationSchema(ModelSchema):
-    status = EnumField(Status)
-    model_id = ma.HyperlinkRelated("models")
-
+class VerificationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Verification
-        include_fk = True
+        include_relationships = True
+
+    status = EnumField(Status)
+    results = ma.List(ma.HyperlinkRelated("get_result_by_id"))
+    model = ma.HyperlinkRelated("get_model_by_id")
+    userdefs = ma.HyperlinkRelated("get_userdefs_by_id")
+    userprops = ma.HyperlinkRelated("get_userprops_by_id")
+    constraints = ma.HyperlinkRelated("get_constraints_by_id")
 
 
-class ResultSchema(ma.SQLAlchemySchema):
-    id = ma.auto_field()
-    communication = EnumField(Communication)
-    property = EnumField(Property)
-    value = ma.auto_field()
-    counter_example = ma.HyperlinkRelated("counter_examples")
-
+class ResultSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Result
+        include_relationships = True
+
+    communication = EnumField(Communication)
+    property = EnumField(Property)
+    verification = ma.HyperlinkRelated("get_verification_by_id")
+    counter_example = ma.HyperlinkRelated("get_counter_examples_by_id")
 
 
-class CounterExampleSchema(ma.SQLAlchemySchema):
+class CounterExampleSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = CounterExample
-    id = ma.auto_field()
-    lcex = ma.auto_field()
-    lstatus = ma.auto_field()
-    lname = ma.auto_field()
-    lmodel = ma.auto_field()
-    result_id = ma.HyperlinkRelated("results")
+        include_realtionships = True
+    result = ma.HyperlinkRelated("get_result_by_id")
