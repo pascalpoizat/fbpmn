@@ -38,6 +38,7 @@ class VerificationSchema(ma.SQLAlchemyAutoSchema):
         include_relationships = True
 
     status = EnumField(Status)
+    pub_date = ma.DateTime(format='%Y-%m-%dT%H:%M')
     results = ma.List(ma.HyperlinkRelated("get_result_by_id"))
     model = ma.HyperlinkRelated("get_model_by_id")
     userdefs = ma.HyperlinkRelated("get_userdefs_by_id")
