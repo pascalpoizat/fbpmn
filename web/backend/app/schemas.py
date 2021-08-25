@@ -8,6 +8,7 @@ class ModelSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Model
         include_relationships = True
+        load_instance = True
     verification = ma.HyperlinkRelated("get_verification_by_id")
 
 

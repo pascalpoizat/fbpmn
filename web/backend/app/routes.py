@@ -1,10 +1,28 @@
 from os import error
-from flask import request, jsonify
+from flask import request, jsonify, Blueprint
 from app import app, db
 from app.models import Application, Constraints, CounterExample, Model, UserDefs, UserProps, Verification, Result, Version, get_workdir
 from app.schemas import ConstraintsSchema, CounterExampleSchema, ModelSchema, ResultSchema, UserDefsSchema, UserPropsSchema, VerificationSchema
+from marshmallow import ValidationError
+from flask_restplus import Api
+from app.resources import ModelResource, VerificationResource, models_ns, verifications_ns
+
 
 a = Application()
+
+blue_print = Blueprint('api', __name__, url_prefix='/api')
+api = Api(blue_print, doc='/doc', title='Documentation of fBPMN API')
+app.register_blueprint(blue_print)
+
+api.add_namespace(models_ns)
+api.add_namespace(verifications_ns)
+
+
+#models_ns.add_resource(ModelResource, "")
+models_ns.add_resource(ModelResource, "/<int:id>")
+
+verifications_ns.add_resource(VerificationResource, "/<int:id>/model")
+verifications_ns.add_resource(VerificationResource, "/<int:id>")
 
 
 def create_schema(schema_type, bool):
@@ -17,6 +35,11 @@ def create_schema(schema_type, bool):
 @app.before_first_request
 def before_first_request_func():
     db.create_all()
+
+
+@api.errorhandler(ValidationError)
+def handle_validation_error(error):
+    return jsonify(error.messages), 400
 
 
 @app.route('/version', methods=['GET'])
