@@ -4,16 +4,7 @@ import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 
 const localhost = "http://localhost:3000";
-
-function createData(id, comm, prop, value, counter_example) {
-  if (value) {
-    return { id, comm, prop, value };
-  } else {
-    value = `${localhost}${counter_example}`;
-    return { id, comm, prop, value };
-  }
-}
-
+const urlVerification = "http://localhost:5000/api/verifications/";
 const columns = [
   { field: "comm", headerName: "Communication", width: 118 },
   { field: "prop", headerName: "Property", width: 118 },
@@ -39,6 +30,15 @@ const columns = [
     ),
   },
 ];
+
+function createData(id, comm, prop, value, counter_example) {
+  if (value) {
+    return { id, comm, prop, value };
+  } else {
+    value = `${localhost}/counter_examples/${counter_example}`;
+    return { id, comm, prop, value };
+  }
+}
 
 class Results extends Component {
   constructor(props) {
@@ -70,7 +70,7 @@ class Results extends Component {
 
   initiateRows() {
     if (this.props.verificationId) {
-      const urlResult = `http://localhost:5000/verifications/${this.props.verificationId}/results`;
+      const urlResult = `${urlVerification}${this.props.verificationId}/results`;
       fetch(urlResult)
         .then((res) => res.json())
         .then((data) => {

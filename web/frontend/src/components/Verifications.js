@@ -1,5 +1,4 @@
-import React from "react";
-import { Component } from "react";
+import React, { Component } from "react";
 import VerificationDetail from "./VerificationDetail";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -9,13 +8,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { BsTrash } from "react-icons/bs";
 
+const urlVerification = "http://localhost:5000/api/verifications";
+
 function createData(id, status, date) {
   return { id, status, date };
 }
-
-const url = "http://localhost:5000/verifications";
-
-//recharge rows quand: nouvelle verif, verif supprimée, verif actualisée par le status
 class Verifications extends Component {
   constructor(props) {
     super(props);
@@ -31,14 +28,14 @@ class Verifications extends Component {
   }
 
   async componentDidMount() {
-    let response = await fetch(url);
+    let response = await fetch(urlVerification);
     let data = await response.json();
     this.setData(data);
   }
 
   async componentDidUpdate(prevProps) {
     if (prevProps.dataFromParent !== this.props.dataFromParent) {
-      let response = await fetch(url);
+      let response = await fetch(urlVerification);
       let data = await response.json();
       this.updateData(data);
     }
@@ -140,7 +137,9 @@ class Verifications extends Component {
                     <TableCell>
                       <button
                         onClick={() => {
-                          fetch(url + `/${row.id}`, { method: "DELETE" });
+                          fetch(urlVerification + `/${row.id}`, {
+                            method: "DELETE",
+                          });
                           this.setState({
                             suppress: true,
                             index: row.id - 1,

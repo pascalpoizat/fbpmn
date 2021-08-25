@@ -10,6 +10,13 @@ import About from "./About.js";
 import Verifications from "./Verifications.js";
 import VerificationOptions from "./VerificationOptions.js";
 
+const urlVerification = "http://localhost:5000/api/verifications";
+
+export const sleep = async (waitTime) =>
+  new Promise((resolve) => setTimeout(resolve, waitTime));
+
+const iconsSize = 22;
+
 /**
  * offer to download a file.
  * @param {String} filename name of the file
@@ -29,10 +36,6 @@ function save(filename, data) {
   }
 }
 
-export const sleep = async (waitTime) =>
-  new Promise((resolve) => setTimeout(resolve, waitTime));
-
-const iconsSize = 22;
 class Modeler extends Component {
   constructor(props) {
     super(props);
@@ -116,7 +119,7 @@ class Modeler extends Component {
         constraintEdge: this.state.constraintEdgeSelected,
       };
       const xhr = new XMLHttpRequest();
-      xhr.open("POST", "http://localhost:5000/verifications");
+      xhr.open("POST", urlVerification);
       xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
       xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
       xhr.setRequestHeader("Content-Type", "application/json");
@@ -170,7 +173,7 @@ class Modeler extends Component {
       launched: true,
     });
     sleep(500).then(() => {
-      fetch("http://localhost:5000/verifications/latest")
+      fetch(`${urlVerification}/latest`)
         .then((res) => res.json())
         .then((data) => {
           this.setState({
@@ -188,7 +191,7 @@ class Modeler extends Component {
 
   statusButtonAction() {
     if (this.state.launched) {
-      fetch("http://localhost:5000/verifications/latest")
+      fetch(`${urlVerification}/latest`)
         .then((res) => res.json())
         .then((data) => {
           this.setState({

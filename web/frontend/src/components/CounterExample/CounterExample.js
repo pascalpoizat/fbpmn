@@ -6,7 +6,7 @@ import $ from "jquery";
 
 import "./CounterExample.css";
 
-const urlCounterExample = "http://localhost:5000/counter_examples/";
+const urlCounterExample = "http://localhost:5000/api/counter_examples/";
 class CounterExample extends Component {
   constructor(props) {
     super(props);

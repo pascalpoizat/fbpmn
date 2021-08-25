@@ -4,10 +4,7 @@ import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 import Results from "./Results";
 
-const urlVerifications = "http://localhost:5000/verifications/";
-
-/* récupère la vérification sélectionnée, actualise le modèle
-fetch la vérification et retourne les urls de results à Results*/
+const urlVerification = "http://localhost:5000/api/verifications/";
 
 class VerificationDetail extends Component {
   constructor(props) {
@@ -47,7 +44,7 @@ class VerificationDetail extends Component {
   }
 
   updateResults(id) {
-    const newUrl = `${urlVerifications}${id}`;
+    const newUrl = `${urlVerification}${id}`;
     fetch(newUrl, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
@@ -59,7 +56,7 @@ class VerificationDetail extends Component {
   }
 
   updateModel(id) {
-    const newUrlModel = `${urlVerifications}${id}/model`;
+    const newUrlModel = `${urlVerification}${id}/model`;
     fetch(newUrlModel)
       .then((res) => res.json())
       .then((data) => {
