@@ -1,8 +1,8 @@
-from flask import request, jsonify
+from flask import request
 from flask_restplus import Resource, fields, Namespace
-
-from app.models import *
-from app.schemas import *
+from app import db
+from app.models import Application, Constraints, CounterExample, Model, Result, UserDefs, UserProps, Verification, get_workdir
+from app.schemas import ConstraintsSchema, CounterExampleSchema, ModelSchema, ResultSchema, UserDefsSchema, UserPropsSchema, VerificationSchema
 
 MODEL_NOT_FOUND = "Model not found."
 USERDEFS_NOT_FOUND = "Userdefs not found."
@@ -39,13 +39,13 @@ model = models_ns.model('Model', {
 })
 
 
-class ModelListResource(Resource):
+class ModelList(Resource):
     def get(self):
         models = a.get_all_elements(Model)
         return (create_schema(ModelSchema, True)).jsonify(models)
 
 
-class ModelByIdResource(Resource):
+class ModelById(Resource):
     def get(self, id):
         m = a.get_element_by_id(Model, id)
         if m:
@@ -56,23 +56,23 @@ class ModelByIdResource(Resource):
 class ModelByVerification(Resource):
     def get(self, id):
         model_id = (a.get_element_by_id(Verification, id)).model_id
-        return ModelByIdResource.get(self, model_id)
+        return ModelById.get(self, model_id)
 
 
 class ModelByCounterExample(Resource):
     def get(self, id):
         ce = a.get_element_by_id(CounterExample, id)
         m_id = ce.get_result().get_verification().model_id
-        return ModelByIdResource.get(self, m_id)
+        return ModelById.get(self, m_id)
 
 
-class UserDefsListResource(Resource):
+class UserDefsList(Resource):
     def get(self):
         ud = a.get_all_elements(UserDefs)
         return (create_schema(UserDefsSchema, True)).jsonify(ud)
 
 
-class UserDefsByIdResource(Resource):
+class UserDefsById(Resource):
     def get(self, id):
         ud = a.get_element_by_id(UserDefs, id)
         if ud:
@@ -80,49 +80,49 @@ class UserDefsByIdResource(Resource):
         return {'message': USERDEFS_NOT_FOUND}, 404
 
 
-class UserDefsByVerificationResource(Resource):
+class UserDefsByVerification(Resource):
     def get(self, id):
         userdefs_id = (a.get_element_by_id(Verification, id)).userdefs.id
-        return UserDefsByIdResource.get(self, userdefs_id)
+        return UserDefsById.get(self, userdefs_id)
 
 
-class UserPropsListResource(Resource):
+class UserPropsList(Resource):
     def get(self):
         up = a.get_all_elements(UserProps)
         return (create_schema(UserPropsSchema, True)).jsonify(up)
 
 
-class UserPropsByIdResource(Resource):
+class UserPropsById(Resource):
     def get(self, id):
         up = a.get_element_by_id(UserProps, id)
         return (create_schema(UserPropsSchema, False)).jsonify(up)
 
 
-class UserPropsByVerificationResource(Resource):
+class UserPropsByVerification(Resource):
     def get(self, id):
         userprops_id = (a.get_element_by_id(Verification, id)).userprops.id
-        return UserPropsByIdResource.get(self, userprops_id)
+        return UserPropsById.get(self, userprops_id)
 
 
-class ConstraintsListResource(Resource):
+class ConstraintsList(Resource):
     def get(self):
         c = a.get_all_elements(Constraints)
         return (create_schema(ConstraintsSchema, True)).jsonify(c)
 
 
-class ConstraintsByIdResource(Resource):
+class ConstraintsById(Resource):
     def get(self, id):
         c = a.get_element_by_id(Constraints, id)
         return (create_schema(ConstraintsSchema, False)).jsonify(c)
 
 
-class ConstraintsByVerificationResource(Resource):
+class ConstraintsByVerification(Resource):
     def get(self, id):
         constraints_id = (a.get_element_by_id(Verification, id)).constraints.id
-        return ConstraintsByIdResource.get(self, constraints_id)
+        return ConstraintsById.get(self, constraints_id)
 
 
-class VerificationListResource(Resource):
+class VerificationList(Resource):
     def get(self):
         v = a.get_all_elements(Verification)
         return (create_schema(VerificationSchema, True)).jsonify(v)
@@ -153,7 +153,7 @@ class VerificationListResource(Resource):
             return ("Incorrect model")
 
 
-class VerificationByIdResource(Resource):
+class VerificationById(Resource):
     def get(self, id):
         v = a.get_element_by_id(Verification, id)
         return (create_schema(VerificationSchema, False)).jsonify(v)
@@ -171,43 +171,43 @@ class VerificationByResult(Resource):
         return (create_schema(VerificationSchema, False)).jsonify(verification)
 
 
-class LatestVerificationResource(Resource):
+class LatestVerification(Resource):
     def get(self):
         v = a.get_latest_verification()
         return (create_schema(VerificationSchema, False)).jsonify(v)
 
 
-class ResultListResource(Resource):
+class ResultList(Resource):
     def get(self):
         r = a.get_all_elements(Result)
         return (create_schema(ResultSchema, True)).jsonify(r)
 
 
-class ResultByIdResource(Resource):
+class ResultById(Resource):
     def get(self, id):
         r = a.get_element_by_id(Result, id)
         return (create_schema(ResultSchema, False)).jsonify(r)
 
 
-class ResultByVerificationResource(Resource):
+class ResultByVerification(Resource):
     def get(self, id):
         verification = a.get_element_by_id(Verification, id)
         return (create_schema(ResultSchema, True)).jsonify(verification.results)
 
 
-class CounterExampleListResource(Resource):
+class CounterExampleList(Resource):
     def get(self):
         ce = a.get_all_elements(CounterExample)
         return (create_schema(CounterExampleSchema, True)).jsonify(ce)
 
 
-class CounterExampleByIdResource(Resource):
+class CounterExampleById(Resource):
     def get(self, id):
         ce = a.get_element_by_id(CounterExample, id)
         return (create_schema(CounterExampleSchema, False)).jsonify(ce)
 
 
-class CounterExampleResourceByResult(Resource):
+class CounterExampleByResult(Resource):
     def get(self, id):
         counter_example = (a.get_element_by_id(Result, id)).counter_example
         if counter_example:
