@@ -5,7 +5,7 @@ from app.models import Application, Constraints, CounterExample, Model, UserDefs
 from app.schemas import ConstraintsSchema, CounterExampleSchema, ModelSchema, ResultSchema, UserDefsSchema, UserPropsSchema, VerificationSchema
 from marshmallow import ValidationError
 from flask_restplus import Api
-from app.resources import ModelResource, VerificationResource, models_ns, verifications_ns
+from app.resources import *
 
 
 a = Application()
@@ -15,31 +15,52 @@ api = Api(blue_print, doc='/doc', title='Documentation of fBPMN API')
 app.register_blueprint(blue_print)
 
 api.add_namespace(models_ns)
+api.add_namespace(userdefs_ns)
+api.add_namespace(userprops_ns)
+api.add_namespace(constraints_ns)
 api.add_namespace(verifications_ns)
+api.add_namespace(results_ns)
+api.add_namespace(counter_examples_ns)
 
-
-#models_ns.add_resource(ModelResource, "")
-models_ns.add_resource(ModelResource, "/<int:id>")
-
-verifications_ns.add_resource(VerificationResource, "/<int:id>/model")
-verifications_ns.add_resource(VerificationResource, "/<int:id>")
-
-
-def create_schema(schema_type, bool):
-    if bool:
-        return schema_type(many=bool)
-    else:
-        return schema_type()
-
-
-@app.before_first_request
-def before_first_request_func():
-    db.create_all()
+models_ns.add_resource(ModelListResource, "")
+models_ns.add_resource(ModelByIdResource, "/<int:id>")
+userdefs_ns.add_resource(UserDefsListResource, "")
+userdefs_ns.add_resource(UserDefsByIdResource, "/<int:id>")
+userprops_ns.add_resource(UserPropsListResource, "")
+userprops_ns.add_resource(UserPropsByIdResource, "/<int:id>")
+constraints_ns.add_resource(ConstraintsListResource, "")
+constraints_ns.add_resource(ConstraintsByIdResource, "/<int:id>")
+verifications_ns.add_resource(VerificationListResource, "")
+verifications_ns.add_resource(VerificationByIdResource, "/<int:id>")
+verifications_ns.add_resource(LatestVerificationResource, "/latest")
+verifications_ns.add_resource(
+    ModelByVerification, "/<int:id>/model")
+verifications_ns.add_resource(
+    UserDefsByVerificationResource, "/<int:id>/userdefs")
+verifications_ns.add_resource(
+    UserPropsByVerificationResource, "/<int:id>/userprops")
+verifications_ns.add_resource(
+    ConstraintsByVerificationResource, "/<int:id>/constraints")
+verifications_ns.add_resource(
+    ResultByVerificationResource, "/<int:id>/results")
+results_ns.add_resource(ResultListResource, "")
+results_ns.add_resource(ResultByIdResource, "/<int:id>")
+results_ns.add_resource(VerificationByResult, "/<int:id>/verification")
+results_ns.add_resource(CounterExampleResourceByResult,
+                        "/<int:id>/counter_example")
+counter_examples_ns.add_resource(CounterExampleListResource, "")
+counter_examples_ns.add_resource(CounterExampleByIdResource, "/<int:id>")
+counter_examples_ns.add_resource(ModelByCounterExample, "/<int:id>/model")
 
 
 @api.errorhandler(ValidationError)
 def handle_validation_error(error):
     return jsonify(error.messages), 400
+
+
+@app.before_first_request
+def before_first_request_func():
+    db.create_all()
 
 
 @app.route('/version', methods=['GET'])
@@ -209,6 +230,7 @@ def get_value_by_verification(id):
     return verification.get_value()
 
 
+# manque ces tois dernières
 @app.route('/results/<id>/verification', methods=['GET'])
 def get_verification_by_result(id):
     verification = (a.get_element_by_id(Result, id)).verification
