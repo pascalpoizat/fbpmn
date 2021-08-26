@@ -77,11 +77,13 @@ class Verifications extends Component {
     let i = this.state.index;
     this.setState((state) => {
       state.rows.splice(i, 1);
+      state.rowSelected = i;
       const rows = state.rows;
       return {
         rows,
       };
     });
+    this.forceUpdate();
   }
 
   updateLastStatusRow() {
@@ -126,7 +128,6 @@ class Verifications extends Component {
                     }}
                     onClick={() => {
                       this.setState({
-                        id: row.id,
                         rowSelected: row.id,
                       });
                     }}
@@ -156,7 +157,7 @@ class Verifications extends Component {
         </TableContainer>
         <div id="detail-verification">
           <VerificationDetail
-            dataFromParent={this.state.id}
+            dataFromParent={this.state.rowSelected}
           ></VerificationDetail>
         </div>
       </div>
