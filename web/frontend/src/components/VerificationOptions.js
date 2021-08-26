@@ -94,31 +94,29 @@ class VerificationOptions extends Component {
       properties: [
         {
           name: "properties",
-          value: "Prop01Type",
-          text: "Type",
-          tooltiptext: "Check well-formedness and compute total state space.",
-        },
-        {
-          name: "properties",
-          value: "Prop02Safe",
+          value: "SafeCollaboration",
           text: "Safe",
           tooltiptext: "No sequence flow edge has more than one token.",
         },
         {
           name: "properties",
-          value: "Prop03Sound",
+          value: "SoundCollaboration",
           text: "Sound",
           tooltiptext:
             "A process is sound if there are no token on inside edges, and one token only on EndEvents. A collaboration is sound if all processes are sound and there are no undelivered messages.",
         },
         {
           name: "properties",
-          value: "Prop04MsgSound",
+          value: "MessageRelaxedSoundCollaboration",
           text: "MsgSound",
           tooltiptext: "Like Sound, but ignore messages in transit.",
         },
       ],
-      propertiesChecked: ["Prop01Type"],
+      propertiesChecked: [
+        "SafeCollaboration",
+        "SoundCollaboration",
+        "MessageRelaxedSoundCollaboration",
+      ],
       constraintNode: [
         { value: "TRUE", text: "None" },
         { value: "MaxNodeMarking1", text: "At most 1 token on nodes" },
