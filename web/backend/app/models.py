@@ -45,11 +45,11 @@ class Model(db.Model):
             '{http://www.omg.org/spec/BPMN/20100524/MODEL}collaboration')).get('id')
 
 
-class UserDefs(db.Model):
+class UserNets(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='userdefs', uselist=False)
+        'Verification', cascade="all,delete", backref='usernets', uselist=False)
 
     def __init__(self, content_file):
         content = ""
@@ -89,7 +89,7 @@ class Verification(db.Model):
     duration = db.Column(db.Integer)
     output = db.Column(db.Text(10000))
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
-    userdefs_id = db.Column(db.Integer, db.ForeignKey('user_defs.id'))
+    usernets_id = db.Column(db.Integer, db.ForeignKey('user_nets.id'))
     userprops_id = db.Column(db.Integer, db.ForeignKey('user_props.id'))
     constraints_id = db.Column(db.Integer, db.ForeignKey('constraints.id'))
     results = db.relationship(
@@ -104,8 +104,8 @@ class Verification(db.Model):
     def set_model(self, model_id):
         self.model_id = model_id
 
-    def set_userdefs(self, userdefs_id):
-        self.userdefs_id = userdefs_id
+    def set_usernets(self, usernets_id):
+        self.usernets_id = usernets_id
 
     def set_userprops(self, userprops_id):
         self.userprops_id = userprops_id
@@ -156,9 +156,9 @@ class Verification(db.Model):
         element = type(content_request)
         db.session.add(element)
         db.session.commit()
-        if type == UserDefs:
-            self.set_userdefs(element.id)
-            f = open(f'/tmp/{model_name}.userdefs', 'w')
+        if type == UserNets:
+            self.set_usernets(element.id)
+            f = open(f'/tmp/{model_name}.usernets', 'w')
         if type == UserProps:
             self.set_userprops(element.id)
             f = open(f'/tmp/{model_name}.userprops', 'w')

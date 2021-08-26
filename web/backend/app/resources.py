@@ -1,11 +1,11 @@
 from flask import request
 from flask_restplus import Resource, fields, Namespace
 from app import db
-from app.models import Application, Constraints, CounterExample, Model, Result, UserDefs, UserProps, Verification, get_workdir
-from app.schemas import ConstraintsSchema, CounterExampleSchema, ModelSchema, ResultSchema, UserDefsSchema, UserPropsSchema, VerificationSchema
+from app.models import Application, Constraints, CounterExample, Model, Result, UserNets, UserProps, Verification, get_workdir
+from app.schemas import ConstraintsSchema, CounterExampleSchema, ModelSchema, ResultSchema, UserNetsSchema, UserPropsSchema, VerificationSchema
 
 MODEL_NOT_FOUND = "Model not found."
-USERDEFS_NOT_FOUND = "Userdefs not found."
+USERNETS_NOT_FOUND = "usernets not found."
 USERPROPS_NOT_FOUND = "Userprops not found."
 CONSTRAINTS_NOT_FOUND = "Constraints not found."
 VERIFICATION_NOT_FOUND = "Verification not found."
@@ -25,7 +25,7 @@ def create_schema(schema_type, bool):
 a = Application()
 
 models_ns = Namespace('models', description='models related operations')
-userdefs_ns = Namespace('userdefs', description='userdefs related operations')
+usernets_ns = Namespace('usernets', description='usernets related operations')
 userprops_ns = Namespace(
     'userprops', description='userprops related operations')
 constraints_ns = Namespace(
@@ -40,7 +40,7 @@ counter_examples_ns = Namespace(
 verification_input = verifications_ns.model(
     'Verification', {
         'model': fields.Raw(),
-        'userdefs': fields.List(fields.String, description='Network01Bag'),
+        'usernets': fields.List(fields.String, description='Network01Bag'),
         'userprops': fields.List(fields.String, description='Prop01Type'),
         'constraintNode': fields.String('TRUE'),
         'constraintEdge': fields.String('TRUE')
@@ -77,27 +77,27 @@ class ModelByCounterExample(Resource):
         return ModelById.get(self, m_id)
 
 
-@userdefs_ns.route('')
-class UserDefsList(Resource):
+@usernets_ns.route('')
+class UserNetsList(Resource):
     def get(self):
-        ud = a.get_all_elements(UserDefs)
-        return (create_schema(UserDefsSchema, True)).jsonify(ud)
+        ud = a.get_all_elements(UserNets)
+        return (create_schema(UserNetsSchema, True)).jsonify(ud)
 
 
-@userdefs_ns.route(f'{URL_ID}')
-class UserDefsById(Resource):
+@usernets_ns.route(f'{URL_ID}')
+class UserNetsById(Resource):
     def get(self, id):
-        ud = a.get_element_by_id(UserDefs, id)
+        ud = a.get_element_by_id(UserNets, id)
         if ud:
-            return (create_schema(UserDefsSchema, False)).jsonify(ud)
-        return {'message': USERDEFS_NOT_FOUND}, 404
+            return (create_schema(UserNetsSchema, False)).jsonify(ud)
+        return {'message': USERNETS_NOT_FOUND}, 404
 
 
-@verifications_ns.route(f'{URL_ID}/userdefs')
-class UserDefsByVerification(Resource):
+@verifications_ns.route(f'{URL_ID}/usernets')
+class UserNetsByVerification(Resource):
     def get(self, id):
-        userdefs_id = (a.get_element_by_id(Verification, id)).userdefs.id
-        return UserDefsById.get(self, userdefs_id)
+        usernets_id = (a.get_element_by_id(Verification, id)).usernets.id
+        return UserNetsById.get(self, usernets_id)
 
 
 @userprops_ns.route('')
@@ -156,7 +156,7 @@ class VerificationList(Resource):
     def post(self):
         data = request.get_json()
         model = (data['model']['xml'])
-        userdefs = data['userdefs']
+        usernets = data['usernets']
         userprops = data['userprops']
         constraints = str(f'CONSTANT ConstraintNode <- {data["constraintNode"]}\n'
                           f'         ConstraintEdge <- {data["constraintEdge"]}\n'
@@ -164,7 +164,7 @@ class VerificationList(Resource):
         v = a.create_verification()
         try:
             m = v.create_model(model)
-            v.create_file(UserDefs, userdefs, m.name)
+            v.create_file(UserNets, usernets, m.name)
             v.create_file(UserProps, userprops, m.name)
             v.create_file(Constraints, constraints, m.name)
             output = v.launch_check(m.name)

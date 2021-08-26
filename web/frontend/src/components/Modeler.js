@@ -113,7 +113,7 @@ class Modeler extends Component {
       const result = await this.modeler.saveXML({ format: true });
       const xml = {
         model: result,
-        userdefs: this.state.networksSelected,
+        usernets: this.state.networksSelected,
         userprops: this.state.propertiesSelected,
         constraintNode: this.state.constraintNodeSelected,
         constraintEdge: this.state.constraintEdgeSelected,

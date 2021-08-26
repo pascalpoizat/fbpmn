@@ -95,7 +95,7 @@ if (Test-Path "$fullpath.constraint") {
 }
 
 # Copy user defined files #
-if (Test-Path "$fullpath.userdefs") { Write-Host "found user definitions"; Copy-Item "$fullpath.userdefs" $dir; }else { Write-Host "no user definitions"; exit 1 ; }
+if (Test-Path "$fullpath.usernets") { Write-Host "found user networks"; Copy-Item "$fullpath.usernets" $dir; }else { Write-Host "no user networks"; exit 1 ; }
 if (Test-Path "$fullpath.userprops") { Write-Host "found user properties"; Copy-Item "$fullpath.userprops" $dir; }else { Write-Host "no user properties"; exit 1 ; }
 if (Test-Path "$fullpath.constraint") { Write-Host "found user constraints"; Copy-Item "$fullpath.constraint" $dir; }else { Write-Host "no user contraints"; exit 1;}
 
@@ -115,8 +115,8 @@ Copy-Item (Get-ChildItem $env:FBPMN_HOME/theories/tla -Filter Network*.tla) $dir
 Copy-Item $env:FBPMN_HOME/theories/tla/UserProperties.tla $dir -Force
 New-Item -Path "$dir/Configs" -ItemType Directory | Out-Null
 
-# Just copy Config's files from userprops and userdefs
-foreach($item in (Get-Content "$model.userdefs")){
+# Just copy Config's files from userprops and usernets
+foreach($item in (Get-Content "$model.usernets")){
     Copy-Item "$env:FBPMN_HOME/theories/tla/Configs/$item.tla" $dir/Configs
 }
 
@@ -131,7 +131,7 @@ Copy-Item $env:FBPMN_HOME/theories/tla/StatsBPMN.cfg -Force
 Remove-Item states -Recurse -Force
 
 # Copy user defined files
-#if (Test-Path "$model.userdefs" ) { Copy-Item "$model.userdefs" UserProperties.tla; }
+#if (Test-Path "$model.usernets" ) { Copy-Item "$model.usernets" UserProperties.tla; }
 #if (Test-Path "$model.userprops" ) { Get-Content $basecfg , "$model.userprops" >> "$model.cfg"; }else { Copy-Item $cfg "$model.cfg"; }
 if (Test-Path "$model.constraint" ) { Get-Content "$model.constraint" >> "$model.cfg" ; }
 
