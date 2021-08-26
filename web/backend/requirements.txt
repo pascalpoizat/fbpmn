@@ -4,7 +4,7 @@ apispec==4.6.0
 attrs==21.2.0
 autopep8==1.5.7
 click==8.0.1
-flask==1.1.2
+Flask==1.1.2
 flask-apispec==0.11.0
 Flask-Cors==3.0.10
 flask-marshmallow==0.14.0
@@ -20,6 +20,7 @@ jsonschema==3.2.0
 Mako==1.1.4
 MarkupSafe==2.0.1
 marshmallow==3.12.1
+marshmallow-enum==1.5.1
 marshmallow-sqlalchemy==0.26.1
 mysqlclient==2.0.3
 pycodestyle==2.7.0
@@ -32,5 +33,4 @@ six==1.16.0
 SQLAlchemy==1.4.19
 toml==0.10.2
 webargs==8.0.0
-werkzeug==0.16.1
-
+Werkzeug==0.16.1
