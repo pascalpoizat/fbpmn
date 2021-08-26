@@ -37,12 +37,14 @@ counter_examples_ns = Namespace(
     'counter_examples', description='counter-examples related operations')
 
 
-model = models_ns.model('Model', {
-    'content': fields.String('Content of the model'),
-    'id': fields.Integer,
-    'name': fields.String('Name of the model'),
-    'verification': fields.String('URL to the verification')
-})
+verification_input = verifications_ns.model(
+    'Verification', {
+        'model': fields.Raw(),
+        'userdefs': fields.List(fields.String, description='Network01Bag'),
+        'userprops': fields.List(fields.String, description='Prop01Type'),
+        'constraintNode': fields.String('TRUE'),
+        'constraintEdge': fields.String('TRUE')
+    })
 
 
 @models_ns.route('')
@@ -150,20 +152,21 @@ class VerificationList(Resource):
         v = a.get_all_elements(Verification)
         return (create_schema(VerificationSchema, True)).jsonify(v)
 
+    @verifications_ns.expect(verification_input)
     def post(self):
         data = request.get_json()
         model = (data['model']['xml'])
         userdefs = data['userdefs']
         userprops = data['userprops']
-        constraint = str(f'CONSTANT ConstraintNode <- {data["constraintNode"]}\n'
-                         f'         ConstraintEdge <- {data["constraintEdge"]}\n'
-                         "         Constraint <- ConstraintNodeEdge\n")
+        constraints = str(f'CONSTANT ConstraintNode <- {data["constraintNode"]}\n'
+                          f'         ConstraintEdge <- {data["constraintEdge"]}\n'
+                          "         Constraint <- ConstraintNodeEdge\n")
         v = a.create_verification()
         try:
             m = v.create_model(model)
             v.create_file(UserDefs, userdefs, m.name)
             v.create_file(UserProps, userprops, m.name)
-            v.create_file(Constraints, constraint, m.name)
+            v.create_file(Constraints, constraints, m.name)
             output = v.launch_check(m.name)
             workdir = get_workdir(output)
             xx = v.create_results_list(workdir, m.name)
@@ -198,7 +201,7 @@ class VerificationByResult(Resource):
         return (create_schema(VerificationSchema, False)).jsonify(verification)
 
 
-@verifications_ns.route(f'{URL_ID}/latest')
+@verifications_ns.route(f'/latest')
 class LatestVerification(Resource):
     def get(self):
         v = a.get_latest_verification()
