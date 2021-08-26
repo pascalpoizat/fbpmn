@@ -6,7 +6,11 @@ from app.schemas import ConstraintsSchema, CounterExampleSchema, ModelSchema, Re
 
 MODEL_NOT_FOUND = "Model not found."
 USERDEFS_NOT_FOUND = "Userdefs not found."
+USERPROPS_NOT_FOUND = "Userprops not found."
+CONSTRAINTS_NOT_FOUND = "Constraints not found."
 VERIFICATION_NOT_FOUND = "Verification not found."
+RESULT_NOT_FOUND = "Result not found."
+COUNTER_EXAMPLE_NOT_FOUND = "Counter-example not found."
 
 
 def create_schema(schema_type, bool):
@@ -95,7 +99,9 @@ class UserPropsList(Resource):
 class UserPropsById(Resource):
     def get(self, id):
         up = a.get_element_by_id(UserProps, id)
-        return (create_schema(UserPropsSchema, False)).jsonify(up)
+        if up:
+            return (create_schema(UserPropsSchema, False)).jsonify(up)
+        return {'message': USERPROPS_NOT_FOUND}, 404
 
 
 class UserPropsByVerification(Resource):
@@ -113,7 +119,9 @@ class ConstraintsList(Resource):
 class ConstraintsById(Resource):
     def get(self, id):
         c = a.get_element_by_id(Constraints, id)
-        return (create_schema(ConstraintsSchema, False)).jsonify(c)
+        if c:
+            return (create_schema(ConstraintsSchema, False)).jsonify(c)
+        return {'message': CONSTRAINTS_NOT_FOUND}, 404
 
 
 class ConstraintsByVerification(Resource):
@@ -156,7 +164,9 @@ class VerificationList(Resource):
 class VerificationById(Resource):
     def get(self, id):
         v = a.get_element_by_id(Verification, id)
-        return (create_schema(VerificationSchema, False)).jsonify(v)
+        if v:
+            return (create_schema(VerificationSchema, False)).jsonify(v)
+        return {'message': VERIFICATION_NOT_FOUND}, 404
 
     def delete(self, id):
         v = Verification.query.get(id)
@@ -186,7 +196,9 @@ class ResultList(Resource):
 class ResultById(Resource):
     def get(self, id):
         r = a.get_element_by_id(Result, id)
-        return (create_schema(ResultSchema, False)).jsonify(r)
+        if r:
+            return (create_schema(ResultSchema, False)).jsonify(r)
+        return {'message': RESULT_NOT_FOUND}, 404
 
 
 class ResultByVerification(Resource):
@@ -204,7 +216,9 @@ class CounterExampleList(Resource):
 class CounterExampleById(Resource):
     def get(self, id):
         ce = a.get_element_by_id(CounterExample, id)
-        return (create_schema(CounterExampleSchema, False)).jsonify(ce)
+        if ce:
+            return (create_schema(CounterExampleSchema, False)).jsonify(ce)
+        return {'message': CONSTRAINTS_NOT_FOUND}, 404
 
 
 class CounterExampleByResult(Resource):
