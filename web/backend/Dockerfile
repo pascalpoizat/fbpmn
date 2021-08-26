@@ -17,6 +17,8 @@ RUN apt-get update && \
     apt-get install -y powershell
 RUN apt-get update && apt-get install -y openjdk-11-jdk
 COPY requirements.txt config.py .flaskenv ./
+COPY wfbpmn-check /api/bin
+# until the next release with wfbpmn-check on fbpmn public repo
 COPY ./app app/
 COPY ./data data/
 RUN pip install -r ./requirements.txt
