@@ -12,6 +12,8 @@ VERIFICATION_NOT_FOUND = "Verification not found."
 RESULT_NOT_FOUND = "Result not found."
 COUNTER_EXAMPLE_NOT_FOUND = "Counter-example not found."
 
+URL_ID = "/<int:id>"
+
 
 def create_schema(schema_type, bool):
     if bool:
@@ -43,12 +45,14 @@ model = models_ns.model('Model', {
 })
 
 
+@models_ns.route('')
 class ModelList(Resource):
     def get(self):
         models = a.get_all_elements(Model)
         return (create_schema(ModelSchema, True)).jsonify(models)
 
 
+@models_ns.route(f'{URL_ID}')
 class ModelById(Resource):
     def get(self, id):
         m = a.get_element_by_id(Model, id)
@@ -57,6 +61,7 @@ class ModelById(Resource):
         return {'message': MODEL_NOT_FOUND}, 404
 
 
+@verifications_ns.route(f'{URL_ID}/model')
 class ModelByVerification(Resource):
     def get(self, id):
         model_id = (a.get_element_by_id(Verification, id)).model_id
@@ -70,12 +75,14 @@ class ModelByCounterExample(Resource):
         return ModelById.get(self, m_id)
 
 
+@userdefs_ns.route('')
 class UserDefsList(Resource):
     def get(self):
         ud = a.get_all_elements(UserDefs)
         return (create_schema(UserDefsSchema, True)).jsonify(ud)
 
 
+@userdefs_ns.route(f'{URL_ID}')
 class UserDefsById(Resource):
     def get(self, id):
         ud = a.get_element_by_id(UserDefs, id)
@@ -84,18 +91,21 @@ class UserDefsById(Resource):
         return {'message': USERDEFS_NOT_FOUND}, 404
 
 
+@verifications_ns.route(f'{URL_ID}/userdefs')
 class UserDefsByVerification(Resource):
     def get(self, id):
         userdefs_id = (a.get_element_by_id(Verification, id)).userdefs.id
         return UserDefsById.get(self, userdefs_id)
 
 
+@userprops_ns.route('')
 class UserPropsList(Resource):
     def get(self):
         up = a.get_all_elements(UserProps)
         return (create_schema(UserPropsSchema, True)).jsonify(up)
 
 
+@userprops_ns.route(f'{URL_ID}')
 class UserPropsById(Resource):
     def get(self, id):
         up = a.get_element_by_id(UserProps, id)
@@ -104,18 +114,21 @@ class UserPropsById(Resource):
         return {'message': USERPROPS_NOT_FOUND}, 404
 
 
+@verifications_ns.route(f'{URL_ID}/userprops')
 class UserPropsByVerification(Resource):
     def get(self, id):
         userprops_id = (a.get_element_by_id(Verification, id)).userprops.id
         return UserPropsById.get(self, userprops_id)
 
 
+@constraints_ns.route('')
 class ConstraintsList(Resource):
     def get(self):
         c = a.get_all_elements(Constraints)
         return (create_schema(ConstraintsSchema, True)).jsonify(c)
 
 
+@constraints_ns.route(f'{URL_ID}')
 class ConstraintsById(Resource):
     def get(self, id):
         c = a.get_element_by_id(Constraints, id)
@@ -124,12 +137,14 @@ class ConstraintsById(Resource):
         return {'message': CONSTRAINTS_NOT_FOUND}, 404
 
 
+@verifications_ns.route(f'{URL_ID}/constraints')
 class ConstraintsByVerification(Resource):
     def get(self, id):
         constraints_id = (a.get_element_by_id(Verification, id)).constraints.id
         return ConstraintsById.get(self, constraints_id)
 
 
+@verifications_ns.route('')
 class VerificationList(Resource):
     def get(self):
         v = a.get_all_elements(Verification)
@@ -161,6 +176,7 @@ class VerificationList(Resource):
             return ("Incorrect model")
 
 
+@verifications_ns.route(f'{URL_ID}')
 class VerificationById(Resource):
     def get(self, id):
         v = a.get_element_by_id(Verification, id)
@@ -175,24 +191,28 @@ class VerificationById(Resource):
         return "Verification was successfully deleted"
 
 
+@results_ns.route(f'{URL_ID}/verification')
 class VerificationByResult(Resource):
     def get(self, id):
         verification = (a.get_element_by_id(Result, id)).verification
         return (create_schema(VerificationSchema, False)).jsonify(verification)
 
 
+@verifications_ns.route(f'{URL_ID}/latest')
 class LatestVerification(Resource):
     def get(self):
         v = a.get_latest_verification()
         return (create_schema(VerificationSchema, False)).jsonify(v)
 
 
+@results_ns.route('')
 class ResultList(Resource):
     def get(self):
         r = a.get_all_elements(Result)
         return (create_schema(ResultSchema, True)).jsonify(r)
 
 
+@results_ns.route(f'{URL_ID}')
 class ResultById(Resource):
     def get(self, id):
         r = a.get_element_by_id(Result, id)
@@ -201,18 +221,21 @@ class ResultById(Resource):
         return {'message': RESULT_NOT_FOUND}, 404
 
 
+@verifications_ns.route(f'{URL_ID}/results')
 class ResultByVerification(Resource):
     def get(self, id):
         verification = a.get_element_by_id(Verification, id)
         return (create_schema(ResultSchema, True)).jsonify(verification.results)
 
 
+@counter_examples_ns.route('')
 class CounterExampleList(Resource):
     def get(self):
         ce = a.get_all_elements(CounterExample)
         return (create_schema(CounterExampleSchema, True)).jsonify(ce)
 
 
+@counter_examples_ns.route(f'{URL_ID}')
 class CounterExampleById(Resource):
     def get(self, id):
         ce = a.get_element_by_id(CounterExample, id)
@@ -221,6 +244,7 @@ class CounterExampleById(Resource):
         return {'message': CONSTRAINTS_NOT_FOUND}, 404
 
 
+@results_ns.route(f'{URL_ID}/counter_examples')
 class CounterExampleByResult(Resource):
     def get(self, id):
         counter_example = (a.get_element_by_id(Result, id)).counter_example
