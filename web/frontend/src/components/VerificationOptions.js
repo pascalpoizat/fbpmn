@@ -1,10 +1,15 @@
 import React, { Component } from "react";
-import { Checkbox, Select, MenuItem } from "@material-ui/core";
-import Tooltip from "@material-ui/core/Tooltip";
+import {
+  Checkbox,
+  Select,
+  MenuItem,
+  TextField,
+  Tooltip,
+  Typography,
+  Paper,
+  Popper,
+} from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Popper from "@material-ui/core/Popper";
 import { withStyles } from "@material-ui/styles";
 
 const theme = createMuiTheme({
@@ -33,6 +38,7 @@ class VerificationOptions extends Component {
       networksChecked: [],
       properties: [],
       propertiesChecked: [],
+      defs: "",
       constraintNode: [],
       constraintNodeSelected: null,
       constraintEdge: [],
@@ -200,6 +206,12 @@ class VerificationOptions extends Component {
     }
   };
 
+  handleDefinitionsChange = (event) => {
+    this.setState({
+      defs: event.target.value,
+    });
+  };
+
   handleConstraintNodeChange = (event) => {
     this.setState({
       constraintNodeSelected: event.target.value,
@@ -284,7 +296,18 @@ class VerificationOptions extends Component {
           <Paper className={classes.paper}>
             <div id="choices">
               <Typography variant="h5">Properties</Typography>
-              <Typography variant="body1">{propertiesList}</Typography>
+              <Typography variant="body1">
+                {propertiesList}
+                <TextField
+                  id="userdefs"
+                  label="Tap your own definitions here"
+                  multiline
+                  rowsMax={4}
+                  value={this.state.defs}
+                  onChange={this.handleDefinitionsChange}
+                  variant="filled"
+                />
+              </Typography>
               <Typography variant="h5">Communication semantics</Typography>
               <Typography variant="body1">{networksList}</Typography>
               <Typography variant="h5">Constraints</Typography>
@@ -294,7 +317,7 @@ class VerificationOptions extends Component {
                 <Select
                   className={classes.select}
                   id="ConstraintNode"
-                  defaultValue={"TRUE"}
+                  value={this.state.constraintNodeSelected}
                   onChange={this.handleConstraintNodeChange}
                 >
                   {constraintsNodeList}
@@ -306,7 +329,7 @@ class VerificationOptions extends Component {
                 <Select
                   className={classes.select}
                   id="ConstraintEdge"
-                  defaultValue={"TRUE"}
+                  value={this.state.constraintEdgeSelected}
                   onChange={this.handleConstraintEdgeChange}
                 >
                   {constraintsEdgeList}

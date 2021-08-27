@@ -48,6 +48,7 @@ class Modeler extends Component {
       launched: false,
       launches: 0,
       networksSelected: [],
+      userdefs: null,
       propertiesSelected: [],
       constraintNodeSelected: null,
       constraintEdgeSelected: null,
@@ -106,14 +107,12 @@ class Modeler extends Component {
 
   async sendData() {
     try {
-      this.setNetworksSelected();
-      this.setPropertiesSelected();
-      this.setConstraintNodeSelected();
-      this.setConstraintEdgeSelected();
+      this.setVerificationOptions();
       const result = await this.modeler.saveXML({ format: true });
       const xml = {
         model: result,
         usernets: this.state.networksSelected,
+        userdefs: this.state.userDefs,
         userprops: this.state.propertiesSelected,
         constraintNode: this.state.constraintNodeSelected,
         constraintEdge: this.state.constraintEdgeSelected,
@@ -129,45 +128,27 @@ class Modeler extends Component {
     }
   }
 
-  setNetworksSelected() {
+  setVerificationOptions() {
     const currentVerificationOptions = this.VerificationsOptions.current;
     const currentNetworksSelected =
       currentVerificationOptions.state.networksChecked;
-    this.setState({
-      networksSelected: currentNetworksSelected,
-    });
-  }
-
-  setPropertiesSelected() {
-    const currentVerificationOptions = this.VerificationsOptions.current;
+    const currentUserDefs = currentVerificationOptions.state.defs;
     const currentPropertiesSelected =
       currentVerificationOptions.state.propertiesChecked;
-    this.setState({
-      propertiesSelected: currentPropertiesSelected,
-    });
-  }
-
-  setConstraintNodeSelected() {
-    const currentVerificationOptions = this.VerificationsOptions.current;
     const currentConstraintNodeSelected =
       currentVerificationOptions.state.constraintNodeSelected;
-    this.setState({
-      constraintNodeSelected: currentConstraintNodeSelected,
-    });
-  }
-
-  setConstraintEdgeSelected() {
-    const currentVerificationOptions = this.VerificationsOptions.current;
     const currentConstraintEdgeSelected =
       currentVerificationOptions.state.constraintEdgeSelected;
     this.setState({
+      networksSelected: currentNetworksSelected,
+      userdefs: currentUserDefs,
+      propertiesSelected: currentPropertiesSelected,
+      constraintNodeSelected: currentConstraintNodeSelected,
       constraintEdgeSelected: currentConstraintEdgeSelected,
     });
   }
 
   async launchVerification() {
-    this.setNetworksSelected();
-    this.setPropertiesSelected();
     this.sendData();
     this.setState({
       launched: true,
@@ -183,10 +164,6 @@ class Modeler extends Component {
           });
         });
     });
-  }
-
-  saveParametersFiles() {
-    //TODO
   }
 
   statusButtonAction() {
