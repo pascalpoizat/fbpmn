@@ -38,7 +38,7 @@ class VerificationOptions extends Component {
       networksChecked: [],
       properties: [],
       propertiesChecked: [],
-      defs: "",
+      defs: null,
       constraintNode: [],
       constraintNodeSelected: null,
       constraintEdge: [],
@@ -207,9 +207,15 @@ class VerificationOptions extends Component {
   };
 
   handleDefinitionsChange = (event) => {
-    this.setState({
-      defs: event.target.value,
-    });
+    if (event.target.value === "") {
+      this.setState({
+        defs: null,
+      });
+    } else {
+      this.setState({
+        defs: [event.target.value],
+      });
+    }
   };
 
   handleConstraintNodeChange = (event) => {

@@ -129,7 +129,7 @@ $cfg = "configuration.cfg"
 $basecfg = "configuration_base.cfg"
 
 # Copy user defined files
-if (Test-Path "$model.userdefs" ) { Copy-Item "$model.usernets" UserProperties.tla; }
+if (Test-Path "$model.userdefs" ) { Copy-Item "$model.userdefs" UserProperties.tla; }
 if (Test-Path "$model.userprops" ) { Get-Content $basecfg , "$model.userprops" >> "$model.cfg"; }else { Copy-Item $cfg "$model.cfg"; }
 if (Test-Path "$model.constraint" ) { Get-Content "$model.constraint" >> "$model.cfg" ; }
 

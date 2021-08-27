@@ -1,11 +1,14 @@
 from flask import request
 from flask_restplus import Resource, fields, Namespace
 from app import db
-from app.models import Application, Constraints, CounterExample, Model, Result, UserNets, UserProps, Verification, get_workdir
-from app.schemas import ConstraintsSchema, CounterExampleSchema, ModelSchema, ResultSchema, UserNetsSchema, UserPropsSchema, VerificationSchema
+from app.models import Application, Constraints, CounterExample, Model, Result, UserDefs, UserNets, UserProps, \
+    Verification, get_workdir
+from app.schemas import ConstraintsSchema, CounterExampleSchema, ModelSchema, ResultSchema, UserDefsSchema, \
+    UserNetsSchema, UserPropsSchema, VerificationSchema
 
 MODEL_NOT_FOUND = "Model not found."
 USERNETS_NOT_FOUND = "usernets not found."
+USERDEFS_NOT_FOUND = "userdefs not found."
 USERPROPS_NOT_FOUND = "Userprops not found."
 CONSTRAINTS_NOT_FOUND = "Constraints not found."
 VERIFICATION_NOT_FOUND = "Verification not found."
@@ -26,6 +29,7 @@ a = Application()
 
 models_ns = Namespace('models', description='models related operations')
 usernets_ns = Namespace('usernets', description='usernets related operations')
+userdefs_ns = Namespace('userdefs', description='userdefs related operations')
 userprops_ns = Namespace(
     'userprops', description='userprops related operations')
 constraints_ns = Namespace(
@@ -36,12 +40,12 @@ results_ns = Namespace('results', description='results related operations')
 counter_examples_ns = Namespace(
     'counter_examples', description='counter-examples related operations')
 
-
 verification_input = verifications_ns.model(
     'Verification', {
         'model': fields.Raw(),
         'usernets': fields.List(fields.String, description='Network01Bag'),
-        'userprops': fields.List(fields.String, description='Prop01Type'),
+        'userdefs': fields.List(fields.String, description='User1'),
+        'userprops': fields.List(fields.String, description='MessageSound'),
         'constraintNode': fields.String('TRUE'),
         'constraintEdge': fields.String('TRUE')
     })
@@ -81,16 +85,16 @@ class ModelByCounterExample(Resource):
 @usernets_ns.route('')
 class UserNetsList(Resource):
     def get(self):
-        ud = a.get_all_elements(UserNets)
-        return (create_schema(UserNetsSchema, True)).jsonify(ud)
+        un = a.get_all_elements(UserNets)
+        return (create_schema(UserNetsSchema, True)).jsonify(un)
 
 
 @usernets_ns.route(f'{URL_ID}')
 class UserNetsById(Resource):
     def get(self, id):
-        ud = a.get_element_by_id(UserNets, id)
-        if ud:
-            return (create_schema(UserNetsSchema, False)).jsonify(ud)
+        un = a.get_element_by_id(UserNets, id)
+        if un:
+            return (create_schema(UserNetsSchema, False)).jsonify(un)
         return {'message': USERNETS_NOT_FOUND}, 404
 
 
@@ -99,6 +103,29 @@ class UserNetsByVerification(Resource):
     def get(self, id):
         usernets_id = (a.get_element_by_id(Verification, id)).usernets.id
         return UserNetsById.get(self, usernets_id)
+
+
+@userdefs_ns.route('')
+class UserDefsList(Resource):
+    def get(self):
+        ud = a.get_all_elements(UserDefs)
+        return (create_schema(UserDefsSchema, True)).jsonify(ud)
+
+
+@userdefs_ns.route(f'{URL_ID}')
+class UserDefsById(Resource):
+    def get(self, id):
+        ud = a.get_element_by_id(UserDefs, id)
+        if ud:
+            return (create_schema(UserDefsSchema, False)).jsonify(ud)
+        return {'message': USERDEFS_NOT_FOUND}, 404
+
+
+@verifications_ns.route(f'{URL_ID}/userdefs')
+class UserDefsByVerification(Resource):
+    def get(self, id):
+        userdefs_id = (a.get_element_by_id(Verification, id)).userdefs.id
+        return UserDefsById.get(self, userdefs_id)
 
 
 @userprops_ns.route('')
@@ -158,6 +185,7 @@ class VerificationList(Resource):
         data = request.get_json()
         model = (data['model']['xml'])
         usernets = data['usernets']
+        userdefs = data['userdefs']
         userprops = data['userprops']
         constraints = str(f'CONSTANT ConstraintNode <- {data["constraintNode"]}\n'
                           f'         ConstraintEdge <- {data["constraintEdge"]}\n'
@@ -166,7 +194,10 @@ class VerificationList(Resource):
         try:
             m = v.create_model(model)
             v.create_file(UserNets, usernets, m.name)
-            v.create_file(UserProps, userprops, m.name)
+            if not userdefs is None:
+                v.create_properties_files(userdefs, userprops, m.name)
+            else:
+                v.create_file(UserProps, userprops, m.name)
             v.create_file(Constraints, constraints, m.name)
             output = v.launch_check(m.name)
             workdir = get_workdir(output)

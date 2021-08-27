@@ -2,14 +2,25 @@ import re
 import json
 from app import db
 from datetime import datetime
-from app.context import Communication, Property
 from enum import Enum, auto
 import xml.etree.ElementTree as ElemTree
 import subprocess
 
+CASCADE = "all,delete"
+
 
 def get_workdir(output):
     return (re.search(r'/tmp/(.+) with', output)).group(1)
+
+
+class Communication(Enum):
+    Network01Bag = auto()
+    Network02FifoPair = auto()
+    Network03Causal = auto()
+    Network04Inbox = auto()
+    Network05Outbox = auto()
+    Network06Fifo = auto()
+    Network07RSC = auto()
 
 
 class Status(Enum):
@@ -37,7 +48,7 @@ class Model(db.Model):
     name = db.Column(db.String(80), nullable=False)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='model', uselist=False)
+        'Verification', cascade=CASCADE, backref='model', uselist=False)
 
     def __init__(self, content_file):
         self.content = content_file
@@ -49,7 +60,20 @@ class UserNets(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='usernets', uselist=False)
+        'Verification', cascade=CASCADE, backref='usernets', uselist=False)
+
+    def __init__(self, content_file):
+        content = ""
+        for usernet in content_file:
+            content += str(usernet + "\n")
+        self.content = content
+
+
+class UserDefs(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.Text(10000), nullable=False)
+    verification = db.relationship(
+        'Verification', cascade=CASCADE, backref='userdefs', uselist=False)
 
     def __init__(self, content_file):
         content = ""
@@ -62,7 +86,7 @@ class UserProps(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='userprops', uselist=False)
+        'Verification', cascade=CASCADE, backref='userprops', uselist=False)
 
     def __init__(self, content_file):
         content = ""
@@ -75,7 +99,7 @@ class Constraints(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='constraints', uselist=False)
+        'Verification', cascade=CASCADE, backref='constraints', uselist=False)
 
     def __init__(self, content_file):
         self.content = content_file
@@ -89,11 +113,12 @@ class Verification(db.Model):
     duration = db.Column(db.Integer)
     output = db.Column(db.Text(10000))
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
+    userdefs_id = db.Column(db.Integer, db.ForeignKey('user_defs.id'))
     usernets_id = db.Column(db.Integer, db.ForeignKey('user_nets.id'))
     userprops_id = db.Column(db.Integer, db.ForeignKey('user_props.id'))
     constraints_id = db.Column(db.Integer, db.ForeignKey('constraints.id'))
     results = db.relationship(
-        'Result', cascade="all,delete", backref='verification', lazy="dynamic")
+        'Result', cascade=CASCADE, backref='verification', lazy="dynamic")
 
     def __init__(self):
         self.status = Status.PENDING.name
@@ -106,6 +131,9 @@ class Verification(db.Model):
 
     def set_usernets(self, usernets_id):
         self.usernets_id = usernets_id
+
+    def set_userdefs(self, userdefs_id):
+        self.userdefs_id = userdefs_id
 
     def set_userprops(self, userprops_id):
         self.userprops_id = userprops_id
@@ -168,6 +196,26 @@ class Verification(db.Model):
         f.write(f'{element.content}')
         f.close()
 
+    def create_properties_files(self, def_content, prop_content, model_name):
+        userdefs = UserDefs(def_content)
+        userprops = UserProps(prop_content)
+        db.session.add(userdefs)
+        db.session.add(userprops)
+        db.session.commit()
+        self.set_userdefs(userdefs.id)
+        f = open(f'/tmp/{model_name}.userdefs', 'w')
+        f.write(f'---------------- MODULE UserProperties ----------------\n\n'
+                'VARIABLES nodemarks, edgemarks, net\n\n'
+                f'{userdefs.content}'
+                '\n================================================================')
+        defs = (re.findall(r'(.*) == ', userdefs.content))
+        for x in range(len(defs), 0, -1):
+            defs.insert(x, '\n')
+        self.set_userprops(userprops.id)
+        f = open(f'/tmp/{model_name}.userprops', 'w')
+        f.write(f'{userprops.content}' + "".join(defs))
+        f.close()
+
     def launch_check(self, model_name):
         begin = datetime.now()
         output = subprocess.getoutput(
@@ -208,7 +256,7 @@ class Result(db.Model):
     communication = db.Column(db.Enum(Communication))
     value = db.Column(db.Boolean)
     counter_example = db.relationship(
-        'CounterExample', cascade="all,delete", backref='result', uselist=False)
+        'CounterExample', cascade=CASCADE, backref='result', uselist=False)
     verification_id = db.Column(db.Integer, db.ForeignKey('verification.id'))
 
     def __init__(self, comm, verif):

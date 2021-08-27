@@ -48,7 +48,7 @@ class Modeler extends Component {
       launched: false,
       launches: 0,
       networksSelected: [],
-      userdefs: null,
+      userDefs: null,
       propertiesSelected: [],
       constraintNodeSelected: null,
       constraintEdgeSelected: null,
@@ -141,7 +141,7 @@ class Modeler extends Component {
       currentVerificationOptions.state.constraintEdgeSelected;
     this.setState({
       networksSelected: currentNetworksSelected,
-      userdefs: currentUserDefs,
+      userDefs: currentUserDefs,
       propertiesSelected: currentPropertiesSelected,
       constraintNodeSelected: currentConstraintNodeSelected,
       constraintEdgeSelected: currentConstraintEdgeSelected,
