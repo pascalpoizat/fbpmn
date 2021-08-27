@@ -70,6 +70,7 @@ class ModelByVerification(Resource):
         return ModelById.get(self, model_id)
 
 
+@counter_examples_ns.route(f'{URL_ID}/model')
 class ModelByCounterExample(Resource):
     def get(self, id):
         ce = a.get_element_by_id(CounterExample, id)
@@ -244,7 +245,7 @@ class CounterExampleById(Resource):
         ce = a.get_element_by_id(CounterExample, id)
         if ce:
             return (create_schema(CounterExampleSchema, False)).jsonify(ce)
-        return {'message': CONSTRAINTS_NOT_FOUND}, 404
+        return {'message': COUNTER_EXAMPLE_NOT_FOUND}, 404
 
 
 @results_ns.route(f'{URL_ID}/counter_examples')
