@@ -14,7 +14,6 @@ class CounterExample extends Component {
       modelName: "",
       modelContent: "",
       comm: "",
-      prop: "",
       lcex: "",
       steps: [],
     };
@@ -54,7 +53,6 @@ class CounterExample extends Component {
           .then((context) => {
             this.setState({
               comm: context.communication,
-              prop: context.property,
             });
           });
       });
@@ -412,7 +410,7 @@ class CounterExample extends Component {
             &nbsp;fBPMN Counter Example Animator for {this.state.modelName}
           </div>
           <div>
-            {this.state.comm + "." + this.state.prop}
+            {this.state.comm}
             <br />
           </div>
           <div id="step">step ../..</div>
