@@ -114,7 +114,7 @@ Copy-Item $env:FBPMN_HOME/theories/stla/configuration.cfg $dir
 Copy-Item $env:FBPMN_HOME/theories/stla/configuration_base.cfg $dir
 New-Item -Path "$dir/Configs" -ItemType Directory | Out-Null
 
-# Just copy Config's files from userprops and usernets
+# Just copy Config's files from usernets
 foreach($item in (Get-Content "$model.usernets")){
     Copy-Item "$env:FBPMN_HOME/theories/tla/Configs/$item.tla" $dir/Configs
 }
@@ -133,21 +133,23 @@ if (Test-Path "$model.userdefs" ) { Copy-Item "$model.userdefs" UserProperties.t
 if (Test-Path "$model.userprops" ) { Get-Content $basecfg , "$model.userprops" >> "$model.cfg"; }else { Copy-Item $cfg "$model.cfg"; }
 if (Test-Path "$model.constraint" ) { Get-Content "$model.constraint" >> "$model.cfg" ; }
 
-# Verify
-Write-Host
-Write-Host "running with configuration:"
-Get-Content "$model.cfg"
-
 # Perform verification
 $file_network = Get-ChildItem -Path Configs -Name -Include Network*.tla 
 $modele = [ordered]@{} 
 $comms = [ordered]@{} 
 foreach ($network in $file_network) {
+    $props = [ordered]@{}
     $networkname = (Get-ChildItem Configs/$network).Basename
     Copy-Item Configs/$network Network.tla
     Write-Host "---------- $networkname ----------"
+    foreach($prop in (Get-Content "$model.userprops")){
         $result = [ordered]@{} 
-        $log = "$model.$networkname.log"
+        $log = "$model.$networkname.$prop.log"
+        Copy-Item $basecfg "$model.cfg"
+        $prop >> "$model.cfg"
+        if (Test-Path "$model.constraint") { 
+            Get-Content "$model.constraint" >> "$model.cfg"; 
+        }
         & $runtlc $model $workers > $log
         Remove-Item states -Recurse -Force
         if (Select-String -Quiet "Error: Assumption.*is false" -Path $log) {
@@ -155,13 +157,13 @@ foreach ($network in $file_network) {
         }
         else {
             if (Select-String -Quiet "No error has been found" -Path $log) {
-                Write-Host "[X] correct"
+                Write-Host "[X] $prop"
                 $result.Add("value", $true)
             }
             else {
-                Write-Host "[ ] not verify every property"
-                Write-Host "log file is in $log and counter example is in $model.$networkname.html"
-                fbpmn log2html "$model.$networkname" "$model.$networkname"
+                Write-Host "[ ] $prop"
+                Write-Host "log file is in $log and counter example is in $model.$networkname.$prop.html"
+                fbpmn log2html "$model.$networkname.$prop" "$model.$networkname.$prop" | Out-Null
                 $result.Add("value", $false)
             }
             $stat1 = Select-String "^[0-9]* states generated.*0 states left on queue" -Path $log
@@ -169,7 +171,9 @@ foreach ($network in $file_network) {
             $stat3 = Select-String "^Finished in ([0-9]*min )?[0-9]*s at" $log
             & $parse_stat "$stat1" "$stat2" "$stat3" $result 
         }
-    $comms.Add("$networkname", $result) 
+        $props.Add("$prop", $result)
+    }
+    $comms.Add("$networkname", $props) 
 }
 $modele.Add("$model", $comms)
 $modele | ConvertTo-Json -Depth 5 | Out-File "$model.json" 

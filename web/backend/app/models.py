@@ -231,9 +231,10 @@ class Verification(db.Model):
         f.close()
         results = []
         for (k, v) in data[f'{model_name}'].items():
-            results.append(Result(k, self.id))
-            value = v['value']
-            results[len(results)-1].set_value(value)
+            for (key, value) in data[f'{model_name}'][f'{k}'].items():
+                results.append(Result(k, key, self.id))
+                value = value['value']
+                results[len(results)-1].set_value(value)
         db.session.add_all(results)
         self.status = Status.DONE.name
         db.session.commit()
@@ -254,20 +255,22 @@ class Verification(db.Model):
 class Result(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     communication = db.Column(db.Enum(Communication))
+    property = db.Column(db.Text(100))
     value = db.Column(db.Boolean)
     counter_example = db.relationship(
         'CounterExample', cascade=CASCADE, backref='result', uselist=False)
     verification_id = db.Column(db.Integer, db.ForeignKey('verification.id'))
 
-    def __init__(self, comm, verif):
+    def __init__(self, comm, property, verif):
         self.communication = comm
+        self.property = property
         self.verification_id = verif
 
     def get_id(self):
         return self.id
 
     def get_context(self):
-        return self.communication.name + self.property.name
+        return self.communication.name
 
     def get_verification(self):
         return self.verification
@@ -280,7 +283,7 @@ class Result(db.Model):
 
     def create_counter_example(self, workdir, model_name):
         f = open(
-            f'/tmp/{workdir}/{model_name}.{self.communication.name}.json')
+            f'/tmp/{workdir}/{model_name}.{self.communication.name}.{self.property}.json')
         data = json.load(f)
         f.close()
         return CounterExample(json.dumps(data["lcex"]), str(data["lstatus"]), str(data["lname"]), str(data["lmodel"]), self.id)
