@@ -31,7 +31,27 @@ const columns = [
   },
 ];
 
+function code_comm_to_name(comm) {
+  switch (comm) {
+    case "Network01Bag":
+      return "Bag";
+    case "Network02FifoPair":
+      return "FifoPair";
+    case "Network03Causal":
+      return "Causal";
+    case "Network04Inbox":
+      return "Inbox";
+    case "Network05Outbox":
+      return "Outbox";
+    case "Network06Fifo":
+      return "Fifo";
+    case "Network07RSC":
+      return "RSC";
+  }
+}
+
 function createData(id, comm, prop, value, counter_example) {
+  comm = code_comm_to_name(comm);
   if (value) {
     return { id, comm, prop, value };
   } else {
