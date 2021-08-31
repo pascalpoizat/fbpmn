@@ -108,6 +108,7 @@ class Constraints(db.Model):
 class Verification(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     status = db.Column(db.Enum(Status))
+    value = db.Column(db.Enum(Value))
     pub_date = db.Column(db.DateTime, index=True,
                          default=datetime.utcnow)
     duration = db.Column(db.Integer)
@@ -144,20 +145,20 @@ class Verification(db.Model):
     def set_duration(self, duration):
         self.duration = duration
 
+    def set_value(self):
+        if self.status == Status.DONE.name:
+            if self.all_ok():
+                self.value = Value.SUCCESS.name
+            else:
+                self.value = Value.FAIL.name
+        else:
+            self.value = Value.INCONCLUSIVE.name
+
     def get_id(self):
         return self.id
 
     def get_model(self):
         return self.model.first()
-
-    def get_value(self):
-        if self.status == Status.DONE.name:
-            if self.all_ok():
-                return Value.SUCCESS.name
-            else:
-                return Value.FAIL.name
-        else:
-            return Value.INCONCLUSIVE.name
 
     def aborted(self):
         self.status = Status.ABORTED.name
@@ -237,6 +238,7 @@ class Verification(db.Model):
                 results[len(results)-1].set_value(value)
         db.session.add_all(results)
         self.status = Status.DONE.name
+        self.set_value()
         db.session.commit()
         return self.results.all()
 

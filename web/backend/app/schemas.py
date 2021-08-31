@@ -1,5 +1,5 @@
 from app import ma
-from app.models import Communication, Status, Constraints, CounterExample, Model, UserDefs, UserNets, UserProps, Verification, Result
+from app.models import Communication, Status, Constraints, CounterExample, Model, UserDefs, UserNets, UserProps, Value, Verification, Result
 from marshmallow_enum import EnumField
 
 VERIFICATION_BY_ID = "api.verifications_verification_by_id"
@@ -47,7 +47,8 @@ class VerificationSchema(ma.SQLAlchemyAutoSchema):
         include_relationships = True
 
     status = EnumField(Status)
-    pub_date = ma.DateTime(format='%Y-%m-%dT%H:%M')
+    value = EnumField(Value)
+    pub_date = ma.DateTime(format='%d/%m\n%H:%M')
     results = ma.List(ma.HyperlinkRelated("api.results_result_by_id"))
     model = ma.HyperlinkRelated("api.models_model_by_id")
     usernets = ma.HyperlinkRelated("api.usernets_user_nets_by_id")
