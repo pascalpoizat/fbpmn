@@ -198,3 +198,11 @@ For each resource we can declare the four methods get, put, post, delete. In the
 === routes.py
 Use of all objects instantiated in previous files. Similar to a main class. 
 
+== Perspectives
+- Animation of model like in http://pros.unicam.it:8080/Mida/modeler.html#. 
+- Better user-interface
+- Support for space-bpmn
+- Comments in /api/doc
+- Property panel in modeler reducible like Camunda
+- Integration of react bpmn tools developed (https://github.com/flowsquad/camunda-web-modeler)
+
