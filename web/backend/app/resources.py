@@ -1,16 +1,11 @@
 from flask import request
 from flask_restplus import Resource, fields, Namespace
 from app import db
-from app.models import Application, Constraints, CounterExample, Model, Result, UserDefs, UserNets, UserProps, \
+from app.models import Application, Constraints, CounterExample, Model, Result, UserNets, UserProps, \
     Verification, get_workdir
-from app.schemas import ConstraintsSchema, CounterExampleSchema, ModelSchema, ResultSchema, UserDefsSchema, \
-    UserNetsSchema, UserPropsSchema, VerificationSchema
+from app.schemas import CounterExampleSchema, ModelSchema, ResultSchema, VerificationSchema
 
 MODEL_NOT_FOUND = "Model not found."
-USERNETS_NOT_FOUND = "usernets not found."
-USERDEFS_NOT_FOUND = "userdefs not found."
-USERPROPS_NOT_FOUND = "Userprops not found."
-CONSTRAINTS_NOT_FOUND = "Constraints not found."
 VERIFICATION_NOT_FOUND = "Verification not found."
 RESULT_NOT_FOUND = "Result not found."
 COUNTER_EXAMPLE_NOT_FOUND = "Counter-example not found."
@@ -28,12 +23,6 @@ def create_schema(schema_type, bool):
 a = Application()
 
 models_ns = Namespace('models', description='models related operations')
-usernets_ns = Namespace('usernets', description='usernets related operations')
-userdefs_ns = Namespace('userdefs', description='userdefs related operations')
-userprops_ns = Namespace(
-    'userprops', description='userprops related operations')
-constraints_ns = Namespace(
-    'constraints', description='constraints related operations')
 verifications_ns = Namespace(
     'verifications', description='verifications related operations')
 results_ns = Namespace('results', description='results related operations')
@@ -80,98 +69,6 @@ class ModelByCounterExample(Resource):
         ce = a.get_element_by_id(CounterExample, id)
         m_id = ce.get_result().get_verification().model_id
         return ModelById.get(self, m_id)
-
-
-@usernets_ns.route('')
-class UserNetsList(Resource):
-    def get(self):
-        un = a.get_all_elements(UserNets)
-        return (create_schema(UserNetsSchema, True)).jsonify(un)
-
-
-@usernets_ns.route(f'{URL_ID}')
-class UserNetsById(Resource):
-    def get(self, id):
-        un = a.get_element_by_id(UserNets, id)
-        if un:
-            return (create_schema(UserNetsSchema, False)).jsonify(un)
-        return {'message': USERNETS_NOT_FOUND}, 404
-
-
-@verifications_ns.route(f'{URL_ID}/usernets')
-class UserNetsByVerification(Resource):
-    def get(self, id):
-        usernets_id = (a.get_element_by_id(Verification, id)).usernets.id
-        return UserNetsById.get(self, usernets_id)
-
-
-@userdefs_ns.route('')
-class UserDefsList(Resource):
-    def get(self):
-        ud = a.get_all_elements(UserDefs)
-        return (create_schema(UserDefsSchema, True)).jsonify(ud)
-
-
-@userdefs_ns.route(f'{URL_ID}')
-class UserDefsById(Resource):
-    def get(self, id):
-        ud = a.get_element_by_id(UserDefs, id)
-        if ud:
-            return (create_schema(UserDefsSchema, False)).jsonify(ud)
-        return {'message': USERDEFS_NOT_FOUND}, 404
-
-
-@verifications_ns.route(f'{URL_ID}/userdefs')
-class UserDefsByVerification(Resource):
-    def get(self, id):
-        userdefs_id = (a.get_element_by_id(Verification, id)).userdefs.id
-        return UserDefsById.get(self, userdefs_id)
-
-
-@userprops_ns.route('')
-class UserPropsList(Resource):
-    def get(self):
-        up = a.get_all_elements(UserProps)
-        return (create_schema(UserPropsSchema, True)).jsonify(up)
-
-
-@userprops_ns.route(f'{URL_ID}')
-class UserPropsById(Resource):
-    def get(self, id):
-        up = a.get_element_by_id(UserProps, id)
-        if up:
-            return (create_schema(UserPropsSchema, False)).jsonify(up)
-        return {'message': USERPROPS_NOT_FOUND}, 404
-
-
-@verifications_ns.route(f'{URL_ID}/userprops')
-class UserPropsByVerification(Resource):
-    def get(self, id):
-        userprops_id = (a.get_element_by_id(Verification, id)).userprops.id
-        return UserPropsById.get(self, userprops_id)
-
-
-@constraints_ns.route('')
-class ConstraintsList(Resource):
-    def get(self):
-        c = a.get_all_elements(Constraints)
-        return (create_schema(ConstraintsSchema, True)).jsonify(c)
-
-
-@constraints_ns.route(f'{URL_ID}')
-class ConstraintsById(Resource):
-    def get(self, id):
-        c = a.get_element_by_id(Constraints, id)
-        if c:
-            return (create_schema(ConstraintsSchema, False)).jsonify(c)
-        return {'message': CONSTRAINTS_NOT_FOUND}, 404
-
-
-@verifications_ns.route(f'{URL_ID}/constraints')
-class ConstraintsByVerification(Resource):
-    def get(self, id):
-        constraints_id = (a.get_element_by_id(Verification, id)).constraints.id
-        return ConstraintsById.get(self, constraints_id)
 
 
 @verifications_ns.route('')

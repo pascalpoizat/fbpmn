@@ -1,5 +1,5 @@
 from app import ma
-from app.models import Communication, Status, Constraints, CounterExample, Model, UserDefs, UserNets, UserProps, Value, Verification, Result
+from app.models import Communication, Status, CounterExample, Model, Value, Verification, Result
 from marshmallow_enum import EnumField
 
 VERIFICATION_BY_ID = "api.verifications_verification_by_id"
@@ -13,48 +13,15 @@ class ModelSchema(ma.SQLAlchemyAutoSchema):
     verification = ma.HyperlinkRelated(VERIFICATION_BY_ID)
 
 
-class UserNetsSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = UserNets
-        include_relationships = True
-    verification = ma.HyperlinkRelated(VERIFICATION_BY_ID)
-
-
-class UserDefsSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = UserDefs
-        include_relationships = True
-    verification = ma.HyperlinkRelated(VERIFICATION_BY_ID)
-
-
-class UserPropsSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = UserProps
-        include_relationships = True
-    verification = ma.HyperlinkRelated(VERIFICATION_BY_ID)
-
-
-class ConstraintsSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Constraints
-        include_relationships = True
-    verification = ma.HyperlinkRelated(VERIFICATION_BY_ID)
-
-
 class VerificationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Verification
-        include_relationships = True
-
+        include_fk = True
     status = EnumField(Status)
     value = EnumField(Value)
     pub_date = ma.DateTime(format='%d/%m\n%H:%M')
     results = ma.List(ma.HyperlinkRelated("api.results_result_by_id"))
     model = ma.HyperlinkRelated("api.models_model_by_id")
-    usernets = ma.HyperlinkRelated("api.usernets_user_nets_by_id")
-    userdefs = ma.HyperlinkRelated("api.userdefs_user_defs_by_id")
-    userprops = ma.HyperlinkRelated("api.userprops_user_props_by_id")
-    constraints = ma.HyperlinkRelated("api.constraints_constraints_by_id")
 
 
 class ResultSchema(ma.SQLAlchemyAutoSchema):

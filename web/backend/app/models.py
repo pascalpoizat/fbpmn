@@ -114,10 +114,14 @@ class Verification(db.Model):
     duration = db.Column(db.Integer)
     output = db.Column(db.Text(10000))
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
-    userdefs_id = db.Column(db.Integer, db.ForeignKey('user_defs.id'))
-    usernets_id = db.Column(db.Integer, db.ForeignKey('user_nets.id'))
-    userprops_id = db.Column(db.Integer, db.ForeignKey('user_props.id'))
-    constraints_id = db.Column(db.Integer, db.ForeignKey('constraints.id'))
+    userdefs_content = db.Column(
+        db.Text(10000), db.ForeignKey('user_defs.content'))
+    usernets_content = db.Column(
+        db.Text(10000), db.ForeignKey('user_nets.content'))
+    userprops_content = db.Column(
+        db.Text(10000), db.ForeignKey('user_props.content'))
+    constraints_content = db.Column(
+        db.Text(10000), db.ForeignKey('constraints.content'))
     results = db.relationship(
         'Result', cascade=CASCADE, backref='verification', lazy="dynamic")
 
@@ -130,17 +134,17 @@ class Verification(db.Model):
     def set_model(self, model_id):
         self.model_id = model_id
 
-    def set_usernets(self, usernets_id):
-        self.usernets_id = usernets_id
+    def set_usernets_content(self, usernets):
+        self.usernets_content = usernets
 
-    def set_userdefs(self, userdefs_id):
-        self.userdefs_id = userdefs_id
+    def set_userdefs_content(self, userdefs):
+        self.userdefs_content = userdefs
 
-    def set_userprops(self, userprops_id):
-        self.userprops_id = userprops_id
+    def set_userprops_content(self, userprops):
+        self.userprops_content = userprops
 
-    def set_constraints(self, constraints_id):
-        self.constraints_id = constraints_id
+    def set_constraints_content(self, constraints):
+        self.constraints_content = constraints
 
     def set_duration(self, duration):
         self.duration = duration
@@ -186,13 +190,13 @@ class Verification(db.Model):
         db.session.add(element)
         db.session.commit()
         if type == UserNets:
-            self.set_usernets(element.id)
+            self.set_usernets_content(element.content)
             f = open(f'/tmp/{model_name}.usernets', 'w')
         if type == UserProps:
-            self.set_userprops(element.id)
+            self.set_userprops_content(element.content)
             f = open(f'/tmp/{model_name}.userprops', 'w')
         if type == Constraints:
-            self.set_constraints(element.id)
+            self.set_constraints_content(element.content)
             f = open(f'/tmp/{model_name}.constraint', 'w')
         f.write(f'{element.content}')
         f.close()
@@ -203,7 +207,7 @@ class Verification(db.Model):
         db.session.add(userdefs)
         db.session.add(userprops)
         db.session.commit()
-        self.set_userdefs(userdefs.id)
+        self.set_userdefs_content(userdefs.content)
         f = open(f'/tmp/{model_name}.userdefs', 'w')
         f.write(f'---------------- MODULE UserProperties ----------------\n\n'
                 'VARIABLES nodemarks, edgemarks, net\n\n'
@@ -212,7 +216,7 @@ class Verification(db.Model):
         defs = (re.findall(r'(.*) == ', userdefs.content))
         for x in range(len(defs), 0, -1):
             defs.insert(x, '\n')
-        self.set_userprops(userprops.id)
+        self.set_userprops_content(userprops.content)
         f = open(f'/tmp/{model_name}.userprops', 'w')
         f.write(f'{userprops.content}' + "".join(defs))
         f.close()
