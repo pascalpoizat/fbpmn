@@ -46,6 +46,7 @@ class Modeler extends Component {
       launches: 0,
       networksSelected: [],
       userDefs: null,
+      userDefsUsed: null,
       propertiesSelected: [],
       constraintNodeSelected: null,
       constraintEdgeSelected: null,
@@ -107,11 +108,13 @@ class Modeler extends Component {
     try {
       this.setVerificationOptions();
       const result = await this.modeler.saveXML({ format: true });
+      const userprops =
+        this.state.propertiesSelected + "," + this.state.userDefsUsed;
       const xml = {
         model: result,
         usernets: this.state.networksSelected,
         userdefs: this.state.userDefs,
-        userprops: this.state.propertiesSelected,
+        userprops: userprops,
         constraintNode: this.state.constraintNodeSelected,
         constraintEdge: this.state.constraintEdgeSelected,
       };
@@ -131,6 +134,7 @@ class Modeler extends Component {
     const currentNetworksSelected =
       currentVerificationOptions.state.networksChecked;
     const currentUserDefs = currentVerificationOptions.state.defs;
+    const currentUserDefsUsed = currentVerificationOptions.state.defsUsed;
     const currentPropertiesSelected =
       currentVerificationOptions.state.propertiesChecked;
     const currentConstraintNodeSelected =
@@ -140,6 +144,7 @@ class Modeler extends Component {
     this.setState({
       networksSelected: currentNetworksSelected,
       userDefs: currentUserDefs,
+      userDefsUsed: currentUserDefsUsed,
       propertiesSelected: currentPropertiesSelected,
       constraintNodeSelected: currentConstraintNodeSelected,
       constraintEdgeSelected: currentConstraintEdgeSelected,

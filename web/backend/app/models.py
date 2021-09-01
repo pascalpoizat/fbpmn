@@ -89,10 +89,7 @@ class UserProps(db.Model):
         'Verification', cascade=CASCADE, backref='userprops', uselist=False)
 
     def __init__(self, content_file):
-        content = ""
-        for userprop in content_file:
-            content += str(userprop + "\n")
-        self.content = content
+        self.content = content_file
 
 
 class Constraints(db.Model):
@@ -213,12 +210,11 @@ class Verification(db.Model):
                 'VARIABLES nodemarks, edgemarks, net\n\n'
                 f'{userdefs.content}'
                 '\n================================================================')
-        defs = (re.findall(r'(.*) == ', userdefs.content))
-        for x in range(len(defs), 0, -1):
-            defs.insert(x, '\n')
-        self.set_userprops_content(userprops.content)
+        props = userprops.content
+        props = props.replace(',', "\n")
+        self.set_userprops_content(props)
         f = open(f'/tmp/{model_name}.userprops', 'w')
-        f.write(f'{userprops.content}' + "".join(defs))
+        f.write(f'{props}')
         f.close()
 
     def launch_check(self, model_name):
