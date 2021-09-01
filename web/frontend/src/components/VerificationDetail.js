@@ -75,7 +75,7 @@ class VerificationDetail extends Component {
         <div
           id="model-viewer"
           style={{
-            width: "53%",
+            width: "50%",
             height: "94vh",
             float: "left",
           }}

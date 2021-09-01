@@ -101,7 +101,7 @@ class Verifications extends Component {
         <TableContainer
           style={{
             height: "90%",
-            width: "22%",
+            width: "25%",
             overflowY: "scroll",
             float: "left",
           }}
