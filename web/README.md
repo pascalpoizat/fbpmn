@@ -1,53 +1,39 @@
-Template of React + Flask application (not for production, soon to be Dockerized)
+# fBPMN Web-application
 
-References:
+The web application is divided into two parts: frontend and backend. You can find more information about the backend in the pdf document in the doc directory.
+The frontend is made **with React, a JavaScript library.**
+   ![Home](web-home.png)
+- The nav-bar allows you to perform some actions through the application.
+In the modeler part you can open, save, create, modify a BPMN model. On the right there is a property panel where you can enter metadata of the model such as its name or documentation. 
 
-- https://blog.miguelgrinberg.com/post/how-to-create-a-react--flask-project
+**Before clicking on Verify, make sure you enter the options you want for verification in the verification Options menu.**
 
-To install:
+---
+   ![VerificationOptions](verification-options.png)
+- The first two groups of checkboxes are the properties and semantics that we have made available to you. By hovering your mouse over their names you will get a definition of the object.
+You can also define your own definitions in TLA in the first textfield, they will be taken into account only when you write its name in the second textfield. At the bottom you can also set the constraints of the verification.
 
-1. clone the repository
+**Once the verification is launched, go to the verification section.**
 
-    ```sh
-    git clone https://github.com/pascalpoizat/template-reactflask-project
-    ```
+---
+   ![Verifications](verifications.png)
 
-2. setup the backend
+- The left part lists all the verifications you have made and indicates some information. You can also delete them by clicking on the trash icone
+The middle part is an image of the model on which the verification was based.
+The right part details the results of the verification by communication and property - you can sort this list by clicking on the column name. 
 
-    ```sh
-    cd template-reactflask-project/backend
-    python3 -m venv venv
-    source venv/bin/activate
-    pip3 install python-dotenv flask
-    ```
+**In each line is indicated a value, indicating if the property has been verified, true if it is the case, otherwise a link to the associated counter-example.** 
 
-3. check the backend is ok
+---
+   ![Counter-example](counter-example.png)
 
-    ```sh
-    venv/bin/flask run
-    ```
+Here you can play with the counter example using &leftarrow;/&rightarrow;/`Shift`&leftarrow;/`Shift`&rightarrow; on your keyboard.
 
-    and then open `http://localhost:5000/time` (it should work and display time)
+## You can launch the entire web-application, with two ways:
+### 1.With docker-compose:
+- 1.1. Make sure you have the command `docker-compose`
+- 1.2. From this directory, launch the command `docker-compose build`
+- 1.3. After that you can launch `docker-compose up`. You can access to the web-app frontend in [http://localhost:3000](http://localhost:3000) and its API in [http://localhost:5000/api/doc](http://localhost:5000/api/doc)
 
-4. setup the frontend
-
-    ```sh
-    cd template-reactflask-project/frontend
-    npm install
-    ```
-
-5. check the frontend is ok
-
-    ```sh
-    yarn start
-    ```
-
-    and then open `http://localhost:3000` (it should work, with time displayed as 0)
-
-6. make all work
-
-    ```sh
-   cd template-reactflask-project/frontend; yarn start-api &; yarn start 
-    ```
-
-    and then open `http://localhost:3000` (it should work and display time)
+### 2. With yarn:
+Go in the frontend directory for more informations
