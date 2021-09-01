@@ -91,7 +91,11 @@ class Verifications extends Component {
   updateLastStatusRow() {
     let i = this.state.rows.length - 1;
     let rows = [...this.state.rows];
-    rows[i] = { ...rows[i], status: this.props.statusLastVerif };
+    rows[i] = {
+      ...rows[i],
+      status: this.props.statusLastVerif,
+      value: this.props.valueLastVerif,
+    };
     this.setState({ rows });
   }
 

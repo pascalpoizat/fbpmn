@@ -170,6 +170,19 @@ class Modeler extends Component {
     });
   }
 
+  updateStatusVerification() {
+    if (this.state.launched) {
+      fetch(`${urlVerification}/latest`)
+        .then((res) => res.json())
+        .then((data) => {
+          this.setState({
+            status: data.status,
+            value: data.value,
+          });
+        });
+    }
+  }
+
   inverseVisibility() {
     if (!this.state.visibility) {
       document.getElementById("verifications").style =
@@ -214,6 +227,7 @@ class Modeler extends Component {
             id="verifications"
             type="button"
             onClick={() => {
+              this.updateStatusVerification();
               this.inverseVisibility();
             }}
           >
@@ -284,6 +298,7 @@ class Modeler extends Component {
           <Verifications
             dataFromParent={this.state.launches}
             statusLastVerif={this.state.status}
+            valueLastVerif={this.state.value}
           ></Verifications>
         </div>
       </div>
