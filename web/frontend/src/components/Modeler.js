@@ -41,13 +41,12 @@ class Modeler extends Component {
     super(props);
     this.state = {
       modeler: "",
-      status: "?",
-      id: "?",
-      verificationsVisibility: false,
-      modelerVisibility: true,
+      visibility: true,
       launched: false,
       launches: 0,
       networksSelected: [],
+      userDefs: null,
+      userDefsUsed: null,
       propertiesSelected: [],
       constraintNodeSelected: null,
       constraintEdgeSelected: null,
@@ -73,6 +72,7 @@ class Modeler extends Component {
     } catch (err) {
       console.log(err.message, err.warnings);
     }
+    this.inverseVisibility();
   }
 
   async exportDiagram() {
@@ -106,14 +106,12 @@ class Modeler extends Component {
 
   async sendData() {
     try {
-      this.setNetworksSelected();
-      this.setPropertiesSelected();
-      this.setConstraintNodeSelected();
-      this.setConstraintEdgeSelected();
+      this.setVerificationOptions();
       const result = await this.modeler.saveXML({ format: true });
       const xml = {
         model: result,
-        userdefs: this.state.networksSelected,
+        usernets: this.state.networksSelected,
+        userdefs: this.state.userDefs,
         userprops: this.state.propertiesSelected,
         constraintNode: this.state.constraintNodeSelected,
         constraintEdge: this.state.constraintEdgeSelected,
@@ -129,45 +127,32 @@ class Modeler extends Component {
     }
   }
 
-  setNetworksSelected() {
+  setVerificationOptions() {
     const currentVerificationOptions = this.VerificationsOptions.current;
     const currentNetworksSelected =
       currentVerificationOptions.state.networksChecked;
-    this.setState({
-      networksSelected: currentNetworksSelected,
-    });
-  }
-
-  setPropertiesSelected() {
-    const currentVerificationOptions = this.VerificationsOptions.current;
-    const currentPropertiesSelected =
+    const currentUserDefs = currentVerificationOptions.state.defs;
+    const currentUserDefsUsed = currentVerificationOptions.state.defsUsed;
+    let currentPropertiesSelected =
       currentVerificationOptions.state.propertiesChecked;
-    this.setState({
-      propertiesSelected: currentPropertiesSelected,
-    });
-  }
-
-  setConstraintNodeSelected() {
-    const currentVerificationOptions = this.VerificationsOptions.current;
+    if (currentUserDefsUsed) {
+      currentPropertiesSelected =
+        currentPropertiesSelected.concat(currentUserDefsUsed);
+    }
     const currentConstraintNodeSelected =
       currentVerificationOptions.state.constraintNodeSelected;
-    this.setState({
-      constraintNodeSelected: currentConstraintNodeSelected,
-    });
-  }
-
-  setConstraintEdgeSelected() {
-    const currentVerificationOptions = this.VerificationsOptions.current;
     const currentConstraintEdgeSelected =
       currentVerificationOptions.state.constraintEdgeSelected;
     this.setState({
+      networksSelected: currentNetworksSelected,
+      userDefs: currentUserDefs,
+      propertiesSelected: currentPropertiesSelected,
+      constraintNodeSelected: currentConstraintNodeSelected,
       constraintEdgeSelected: currentConstraintEdgeSelected,
     });
   }
 
   async launchVerification() {
-    this.setNetworksSelected();
-    this.setPropertiesSelected();
     this.sendData();
     this.setState({
       launched: true,
@@ -185,30 +170,31 @@ class Modeler extends Component {
     });
   }
 
-  saveParametersFiles() {
-    //TODO
-  }
-
-  statusButtonAction() {
+  updateStatusVerification() {
     if (this.state.launched) {
       fetch(`${urlVerification}/latest`)
         .then((res) => res.json())
         .then((data) => {
           this.setState({
             status: data.status,
+            value: data.value,
           });
         });
-      if (this.state.status !== "PENDING") {
-        this.inverseVisibility();
-        document.getElementById(`${this.state.id}`).click();
-      }
     }
   }
 
   inverseVisibility() {
+    if (!this.state.visibility) {
+      document.getElementById("verifications").style =
+        "background-color: #ddd ;   color: black; pointer-events: none ; ";
+      document.getElementById("modeler").style = "";
+    } else {
+      document.getElementById("verifications").style = "";
+      document.getElementById("modeler").style =
+        "background-color: #ddd ;   color: black; pointer-events: none ; ";
+    }
     this.setState({
-      modelerVisibility: !this.state.modelerVisibility,
-      verificationsVisibility: !this.state.verificationsVisibility,
+      visibility: !this.state.visibility,
     });
   }
 
@@ -218,39 +204,8 @@ class Modeler extends Component {
         <div id="settings">
           <About></About>
           <span
-            id="verify"
-            style={this.state.modelerVisibility ? {} : { display: "none" }}
-            onClick={() => {
-              this.launchVerification();
-            }}
-          >
-            {this.state.id}
-          </span>
-          <span
-            id="status"
-            style={this.state.modelerVisibility ? {} : { display: "none" }}
-            onClick={() => {
-              this.statusButtonAction();
-            }}
-          >
-            {this.state.status}
-          </span>
-          <span
-            id="verifications"
-            type="button"
-            style={this.state.modelerVisibility ? {} : { display: "none" }}
-            onClick={() => {
-              this.inverseVisibility();
-            }}
-          >
-            Verifications
-          </span>
-          <span
             id="modeler"
             type="button"
-            style={
-              this.state.verificationsVisibility ? {} : { display: "none" }
-            }
             onClick={() => {
               this.inverseVisibility();
             }}
@@ -260,10 +215,28 @@ class Modeler extends Component {
           <VerificationOptions
             ref={this.VerificationsOptions}
           ></VerificationOptions>
+          <span
+            id="verify"
+            onClick={() => {
+              this.launchVerification();
+            }}
+          >
+            Verify
+          </span>
+          <span
+            id="verifications"
+            type="button"
+            onClick={() => {
+              this.updateStatusVerification();
+              this.inverseVisibility();
+            }}
+          >
+            Verifications
+          </span>
         </div>
         <div
           id="modeler"
-          style={this.state.modelerVisibility ? {} : { display: "none" }}
+          style={this.state.visibility ? { display: "none" } : {}}
         >
           <button
             id="open"
@@ -320,11 +293,12 @@ class Modeler extends Component {
         </div>
         <div
           id="verifications"
-          style={this.state.verificationsVisibility ? {} : { display: "none" }}
+          style={this.state.visibility ? {} : { display: "none" }}
         >
           <Verifications
             dataFromParent={this.state.launches}
             statusLastVerif={this.state.status}
+            valueLastVerif={this.state.value}
           ></Verifications>
         </div>
       </div>

@@ -2,14 +2,25 @@ import re
 import json
 from app import db
 from datetime import datetime
-from app.context import Communication, Property
 from enum import Enum, auto
 import xml.etree.ElementTree as ElemTree
 import subprocess
 
+CASCADE = "all,delete"
+
 
 def get_workdir(output):
     return (re.search(r'/tmp/(.+) with', output)).group(1)
+
+
+class Communication(Enum):
+    Network01Bag = auto()
+    Network02FifoPair = auto()
+    Network03Causal = auto()
+    Network04Inbox = auto()
+    Network05Outbox = auto()
+    Network06Fifo = auto()
+    Network07RSC = auto()
 
 
 class Status(Enum):
@@ -37,7 +48,7 @@ class Model(db.Model):
     name = db.Column(db.String(80), nullable=False)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='model', uselist=False)
+        'Verification', cascade=CASCADE, backref='model', uselist=False)
 
     def __init__(self, content_file):
         self.content = content_file
@@ -45,11 +56,24 @@ class Model(db.Model):
             '{http://www.omg.org/spec/BPMN/20100524/MODEL}collaboration')).get('id')
 
 
+class UserNets(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.Text(10000), nullable=False)
+    verification = db.relationship(
+        'Verification', cascade=CASCADE, backref='usernets', uselist=False)
+
+    def __init__(self, content_file):
+        content = ""
+        for usernet in content_file:
+            content += str(usernet + "\n")
+        self.content = content
+
+
 class UserDefs(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='userdefs', uselist=False)
+        'Verification', cascade=CASCADE, backref='userdefs', uselist=False)
 
     def __init__(self, content_file):
         content = ""
@@ -62,7 +86,7 @@ class UserProps(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='userprops', uselist=False)
+        'Verification', cascade=CASCADE, backref='userprops', uselist=False)
 
     def __init__(self, content_file):
         content = ""
@@ -75,7 +99,7 @@ class Constraints(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text(10000), nullable=False)
     verification = db.relationship(
-        'Verification', cascade="all,delete", backref='constraints', uselist=False)
+        'Verification', cascade=CASCADE, backref='constraints', uselist=False)
 
     def __init__(self, content_file):
         self.content = content_file
@@ -84,16 +108,22 @@ class Constraints(db.Model):
 class Verification(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     status = db.Column(db.Enum(Status))
+    value = db.Column(db.Enum(Value))
     pub_date = db.Column(db.DateTime, index=True,
                          default=datetime.utcnow)
     duration = db.Column(db.Integer)
     output = db.Column(db.Text(10000))
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'))
-    userdefs_id = db.Column(db.Integer, db.ForeignKey('user_defs.id'))
-    userprops_id = db.Column(db.Integer, db.ForeignKey('user_props.id'))
-    constraints_id = db.Column(db.Integer, db.ForeignKey('constraints.id'))
+    userdefs_content = db.Column(
+        db.Text(10000), db.ForeignKey('user_defs.content'))
+    usernets_content = db.Column(
+        db.Text(10000), db.ForeignKey('user_nets.content'))
+    userprops_content = db.Column(
+        db.Text(10000), db.ForeignKey('user_props.content'))
+    constraints_content = db.Column(
+        db.Text(10000), db.ForeignKey('constraints.content'))
     results = db.relationship(
-        'Result', cascade="all,delete", backref='verification', lazy="dynamic")
+        'Result', cascade=CASCADE, backref='verification', lazy="dynamic")
 
     def __init__(self):
         self.status = Status.PENDING.name
@@ -104,32 +134,35 @@ class Verification(db.Model):
     def set_model(self, model_id):
         self.model_id = model_id
 
-    def set_userdefs(self, userdefs_id):
-        self.userdefs_id = userdefs_id
+    def set_usernets_content(self, usernets):
+        self.usernets_content = usernets
 
-    def set_userprops(self, userprops_id):
-        self.userprops_id = userprops_id
+    def set_userdefs_content(self, userdefs):
+        self.userdefs_content = userdefs
 
-    def set_constraints(self, constraints_id):
-        self.constraints_id = constraints_id
+    def set_userprops_content(self, userprops):
+        self.userprops_content = userprops
+
+    def set_constraints_content(self, constraints):
+        self.constraints_content = constraints
 
     def set_duration(self, duration):
         self.duration = duration
+
+    def set_value(self):
+        if self.status == Status.DONE.name:
+            if self.all_ok():
+                self.value = Value.SUCCESS.name
+            else:
+                self.value = Value.FAIL.name
+        else:
+            self.value = Value.INCONCLUSIVE.name
 
     def get_id(self):
         return self.id
 
     def get_model(self):
         return self.model.first()
-
-    def get_value(self):
-        if self.status == Status.DONE.name:
-            if self.all_ok():
-                return Value.SUCCESS.name
-            else:
-                return Value.FAIL.name
-        else:
-            return Value.INCONCLUSIVE.name
 
     def aborted(self):
         self.status = Status.ABORTED.name
@@ -156,16 +189,33 @@ class Verification(db.Model):
         element = type(content_request)
         db.session.add(element)
         db.session.commit()
-        if type == UserDefs:
-            self.set_userdefs(element.id)
-            f = open(f'/tmp/{model_name}.userdefs', 'w')
+        if type == UserNets:
+            self.set_usernets_content(element.content)
+            f = open(f'/tmp/{model_name}.usernets', 'w')
         if type == UserProps:
-            self.set_userprops(element.id)
+            self.set_userprops_content(element.content)
             f = open(f'/tmp/{model_name}.userprops', 'w')
         if type == Constraints:
-            self.set_constraints(element.id)
+            self.set_constraints_content(element.content)
             f = open(f'/tmp/{model_name}.constraint', 'w')
         f.write(f'{element.content}')
+        f.close()
+
+    def create_properties_files(self, def_content, prop_content, model_name):
+        userdefs = UserDefs(def_content)
+        userprops = UserProps(prop_content)
+        db.session.add(userdefs)
+        db.session.add(userprops)
+        db.session.commit()
+        self.set_userdefs_content(userdefs.content)
+        f = open(f'/tmp/{model_name}.userdefs', 'w')
+        f.write(f'---------------- MODULE UserProperties ----------------\n\n'
+                'VARIABLES nodemarks, edgemarks, net\n\n'
+                f'{userdefs.content}'
+                '\n================================================================')
+        self.set_userprops_content(userprops.content)
+        f = open(f'/tmp/{model_name}.userprops', 'w')
+        f.write(f'{userprops.content}')
         f.close()
 
     def launch_check(self, model_name):
@@ -189,6 +239,7 @@ class Verification(db.Model):
                 results[len(results)-1].set_value(value)
         db.session.add_all(results)
         self.status = Status.DONE.name
+        self.set_value()
         db.session.commit()
         return self.results.all()
 
@@ -207,22 +258,22 @@ class Verification(db.Model):
 class Result(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     communication = db.Column(db.Enum(Communication))
-    property = db.Column(db.Enum(Property))
+    property = db.Column(db.Text(100))
     value = db.Column(db.Boolean)
     counter_example = db.relationship(
-        'CounterExample', cascade="all,delete", backref='result', uselist=False)
+        'CounterExample', cascade=CASCADE, backref='result', uselist=False)
     verification_id = db.Column(db.Integer, db.ForeignKey('verification.id'))
 
-    def __init__(self, comm, prop, verif):
+    def __init__(self, comm, property, verif):
         self.communication = comm
-        self.property = prop
+        self.property = property
         self.verification_id = verif
 
     def get_id(self):
         return self.id
 
     def get_context(self):
-        return self.communication.name + self.property.name
+        return self.communication.name
 
     def get_verification(self):
         return self.verification
@@ -235,7 +286,7 @@ class Result(db.Model):
 
     def create_counter_example(self, workdir, model_name):
         f = open(
-            f'/tmp/{workdir}/{model_name}.{self.communication.name}.{self.property.name}.json')
+            f'/tmp/{workdir}/{model_name}.{self.communication.name}.{self.property}.json')
         data = json.load(f)
         f.close()
         return CounterExample(json.dumps(data["lcex"]), str(data["lstatus"]), str(data["lname"]), str(data["lmodel"]), self.id)

@@ -1,10 +1,15 @@
 import React, { Component } from "react";
-import { Checkbox, Select, MenuItem } from "@material-ui/core";
-import Tooltip from "@material-ui/core/Tooltip";
+import {
+  Checkbox,
+  Select,
+  MenuItem,
+  TextField,
+  Tooltip,
+  Typography,
+  Paper,
+  Popper,
+} from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Popper from "@material-ui/core/Popper";
 import { withStyles } from "@material-ui/styles";
 
 const theme = createMuiTheme({
@@ -15,13 +20,16 @@ const styles = {
   paper: {
     border: "2px solid rgba(0, 0, 0, 0.20)",
     padding: theme.spacing(2),
-    width: 250,
+    width: 275,
   },
   checkboxes: {
-    height: 15,
+    height: 12,
   },
   select: {
     minWidth: 180,
+  },
+  textfield: {
+    width: 275,
   },
 };
 
@@ -33,6 +41,8 @@ class VerificationOptions extends Component {
       networksChecked: [],
       properties: [],
       propertiesChecked: [],
+      defs: null,
+      defsUsed: null,
       constraintNode: [],
       constraintNodeSelected: null,
       constraintEdge: [],
@@ -94,31 +104,29 @@ class VerificationOptions extends Component {
       properties: [
         {
           name: "properties",
-          value: "Prop01Type",
-          text: "Type",
-          tooltiptext: "Check well-formedness and compute total state space.",
-        },
-        {
-          name: "properties",
-          value: "Prop02Safe",
+          value: "SafeCollaboration",
           text: "Safe",
           tooltiptext: "No sequence flow edge has more than one token.",
         },
         {
           name: "properties",
-          value: "Prop03Sound",
+          value: "SoundCollaboration",
           text: "Sound",
           tooltiptext:
             "A process is sound if there are no token on inside edges, and one token only on EndEvents. A collaboration is sound if all processes are sound and there are no undelivered messages.",
         },
         {
           name: "properties",
-          value: "Prop04MsgSound",
+          value: "MessageRelaxedSoundCollaboration",
           text: "MsgSound",
           tooltiptext: "Like Sound, but ignore messages in transit.",
         },
       ],
-      propertiesChecked: ["Prop01Type"],
+      propertiesChecked: [
+        "SafeCollaboration",
+        "SoundCollaboration",
+        "MessageRelaxedSoundCollaboration",
+      ],
       constraintNode: [
         { value: "TRUE", text: "None" },
         { value: "MaxNodeMarking1", text: "At most 1 token on nodes" },
@@ -198,6 +206,30 @@ class VerificationOptions extends Component {
         propertiesChecked: this.state.propertiesChecked.filter((item) => {
           return item !== event.target.value;
         }),
+      });
+    }
+  };
+
+  handleDefinitionsChange = (event) => {
+    if (event.target.value === "") {
+      this.setState({
+        defs: null,
+      });
+    } else {
+      this.setState({
+        defs: [event.target.value],
+      });
+    }
+  };
+
+  handleDefinitionsUsedChange = (event) => {
+    if (event.target.value === "") {
+      this.setState({
+        defsUsed: null,
+      });
+    } else {
+      this.setState({
+        defsUsed: [event.target.value],
       });
     }
   };
@@ -285,18 +317,46 @@ class VerificationOptions extends Component {
         >
           <Paper className={classes.paper}>
             <div id="choices">
-              <Typography variant="h5">Properties</Typography>
-              <Typography variant="body1">{propertiesList}</Typography>
-              <Typography variant="h5">Communication semantics</Typography>
+              <Typography variant="h5" align="center">
+                Properties
+              </Typography>
+              <Typography variant="body1">
+                {propertiesList}
+                <TextField
+                  id="userdefs"
+                  className={classes.textfield}
+                  label="Tap your own definitions here"
+                  multiline
+                  rowsMax={3}
+                  value={this.state.defs}
+                  onChange={this.handleDefinitionsChange}
+                  variant="filled"
+                />
+                <TextField
+                  id="userdefsUsed"
+                  className={classes.textfield}
+                  label="Name of definitions you want to use"
+                  multiline
+                  rowsMax={3}
+                  value={this.state.defsUsed}
+                  onChange={this.handleDefinitionsUsedChange}
+                  variant="filled"
+                />
+              </Typography>
+              <Typography variant="h5" align="center">
+                Communication semantics
+              </Typography>
               <Typography variant="body1">{networksList}</Typography>
-              <Typography variant="h5">Constraints</Typography>
+              <Typography variant="h5" align="center">
+                Constraints
+              </Typography>
               <div>
                 Constraint on nodes:
                 <br></br>
                 <Select
                   className={classes.select}
                   id="ConstraintNode"
-                  defaultValue={"TRUE"}
+                  value={this.state.constraintNodeSelected}
                   onChange={this.handleConstraintNodeChange}
                 >
                   {constraintsNodeList}
@@ -308,7 +368,7 @@ class VerificationOptions extends Component {
                 <Select
                   className={classes.select}
                   id="ConstraintEdge"
-                  defaultValue={"TRUE"}
+                  value={this.state.constraintEdgeSelected}
                   onChange={this.handleConstraintEdgeChange}
                 >
                   {constraintsEdgeList}

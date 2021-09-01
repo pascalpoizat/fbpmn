@@ -7,6 +7,25 @@ import $ from "jquery";
 import "./CounterExample.css";
 
 const urlCounterExample = "http://localhost:5000/api/counter_examples/";
+
+function code_comm_to_name(comm) {
+  switch (comm) {
+    case "Network01Bag":
+      return "Bag";
+    case "Network02FifoPair":
+      return "FifoPair";
+    case "Network03Causal":
+      return "Causal";
+    case "Network04Inbox":
+      return "Inbox";
+    case "Network05Outbox":
+      return "Outbox";
+    case "Network06Fifo":
+      return "Fifo";
+    case "Network07RSC":
+      return "RSC";
+  }
+}
 class CounterExample extends Component {
   constructor(props) {
     super(props);
@@ -16,6 +35,7 @@ class CounterExample extends Component {
       comm: "",
       prop: "",
       lcex: "",
+      date: null,
       steps: [],
     };
   }
@@ -53,9 +73,16 @@ class CounterExample extends Component {
           .then((res) => res.json())
           .then((context) => {
             this.setState({
-              comm: context.communication,
+              comm: code_comm_to_name(context.communication),
               prop: context.property,
             });
+            fetch(`http://localhost:5000${data.result}/verification`)
+              .then((res) => res.json())
+              .then((verif) => {
+                this.setState({
+                  date: verif.pub_date,
+                });
+              });
           });
       });
   };
@@ -409,10 +436,11 @@ class CounterExample extends Component {
       <div>
         <div id="header">
           <div id="title">
-            &nbsp;fBPMN Counter Example Animator for {this.state.modelName}
+            &nbsp;fBPMN Counter Example Animator for {this.state.modelName} at{" "}
+            {this.state.date}
           </div>
           <div>
-            {this.state.comm + "." + this.state.prop}
+            {this.state.comm}.{this.state.prop}
             <br />
           </div>
           <div id="step">step ../..</div>

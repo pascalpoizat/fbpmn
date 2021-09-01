@@ -6,12 +6,12 @@ import { FaArrowRight } from "react-icons/fa";
 const localhost = "http://localhost:3000";
 const urlVerification = "http://localhost:5000/api/verifications/";
 const columns = [
-  { field: "comm", headerName: "Communication", width: 118 },
-  { field: "prop", headerName: "Property", width: 118 },
+  { field: "comm", headerName: "Network", width: 110 },
+  { field: "prop", headerName: "Property", width: 145 },
   {
     field: "value",
     headerName: "Value",
-    width: 70,
+    width: 92,
     renderCell: (params) => (
       <div>
         {params.value !== true ? (
@@ -31,7 +31,27 @@ const columns = [
   },
 ];
 
+function code_comm_to_name(comm) {
+  switch (comm) {
+    case "Network01Bag":
+      return "Bag";
+    case "Network02FifoPair":
+      return "FifoPair";
+    case "Network03Causal":
+      return "Causal";
+    case "Network04Inbox":
+      return "Inbox";
+    case "Network05Outbox":
+      return "Outbox";
+    case "Network06Fifo":
+      return "Fifo";
+    case "Network07RSC":
+      return "RSC";
+  }
+}
+
 function createData(id, comm, prop, value, counter_example) {
+  comm = code_comm_to_name(comm);
   if (value) {
     return { id, comm, prop, value };
   } else {
@@ -104,8 +124,7 @@ class Results extends Component {
     return (
       <div
         style={{
-          width: "325px",
-          height: "94vh",
+          width: "25%",
           float: "right",
           maxHeight: "98vh",
           overflowX: "auto",
@@ -117,11 +136,12 @@ class Results extends Component {
           </center>
         </h4>
         <p> {this.displayDuration()}</p>
-        <div style={{ height: 575, width: "100%" }}>
+        <div style={{ height: 540, width: "100%" }}>
           <DataGrid
             rows={this.state.rows}
             columns={columns}
             hideFooter={true}
+            disableColumnMenu
           />
         </div>
       </div>
