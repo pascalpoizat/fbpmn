@@ -1,0 +1,131 @@
+@startuml fBPMN_backend
+!include ../../../resources/plantuml/commons.style
+
+enum Communication {
+    Network01Bag 
+    Network02FifoPair 
+    Network03Causal 
+    Network04Inbox 
+    Network05Outbox 
+    Network06Fifo 
+    Network07RSC 
+}
+enum Value {
+    FAIL
+    SUCCESS
+    INCONCLUSIVE
+}
+enum Status  {
+    PENDING
+    DONE
+    ABORTED
+}
+
+class Model {
+    +id : int 
+    +name : string
+    +content : string
+    +verification : Verification
+    +Model()
+}
+
+class UserNets {
+    +id : int 
+    +name : string
+    +content : string
+    +verification : Verification
+    +UserNets()
+}
+
+class UserDefs {
+    +id : int 
+    +name : string
+    +content : string
+    +verification : Verification
+    +UserDefs()
+}
+
+class UserProps {
+    +id : int 
+    +name : string
+    +content : string
+    +verification : Verification
+    +UserProps()
+}
+
+class Constraints {
+    +id : int 
+    +name : string
+    +content : string
+    +verification : Verification
+    +Constraints()
+}
+
+class Verification {
+    +id : int 
+    +status : Status 
+    +value : Value
+    +pub_date : Date
+    +duration: int
+    +output : string
+    +model_id : int
+    +usernets_content : string
+    +userdefs_content : string
+    +userprops_content : string
+    +constraints_content : string
+    +results : Result
+    +Verification()
+    +aborted()
+    +all_ok()
+    +create_model(in content : string)
+    +create_file(in type : string, in content_request : string, in model_name : string)
+    +create_properties_files(in def_content : string, in prop_content : string, in model_name : string)
+    +launch_check(in model_name : string)
+    +create_results_list(in workdir : string, in model_name : string)
+    +create_results_list(in workdir : string, in model_name : string, in results_list : [Result])
+}
+
+class Result {
+    +id : int
+    +communication : Communication
+    +property : string
+    +value : boolean
+    +counter_example: CounterExample
+    +verification_id : int
+    +Result()
+    +create_counter_example(in workdir : string, in model_name : string)
+    +is_ok()
+} 
+
+class CounterExample {
+    +id : int 
+    +lcex : string
+    +lstatus : string
+    +lname : string
+    +lmodel : string
+    +results_id : int
+}
+
+class Application {
+    +Application()
+    +create_verification()
+    +get_all_elements(in type : string)
+    +get_element_by_id(in type : string, in id : int)
+    +get_latest_verification()
+    +is_ok_verif(in verification_id : int)
+    +is_ok_result(in result_id : int)
+}
+
+Result "*" --* Verification
+Model "1" --* Verification
+UserDefs "1" --* Verification
+UserNets "0,1" --* Verification
+UserProps "1" --* Verification
+Constraints "1" --* Verification
+CounterExample "0,1" --* Result
+Result -- Communication
+Verification -- Status
+Verification -- Value
+Application *-- "1" Verification
+
+@enduml
