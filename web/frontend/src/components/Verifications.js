@@ -10,8 +10,8 @@ import { BsTrash } from "react-icons/bs";
 
 const urlVerification = "http://localhost:5000/api/verifications";
 
-function createData(id, status, date) {
-  return { id, status, date };
+function createData(id, status, value, date) {
+  return { id, status, value, date };
 }
 class Verifications extends Component {
   constructor(props) {
@@ -53,7 +53,9 @@ class Verifications extends Component {
   setData(data) {
     for (let r of data) {
       this.setState((state) => {
-        const rows = state.rows.concat(createData(r.id, r.status, r.pub_date));
+        const rows = state.rows.concat(
+          createData(r.id, r.status, r.value, r.pub_date)
+        );
         return {
           rows,
         };
@@ -65,7 +67,7 @@ class Verifications extends Component {
     let i = data.length - 1;
     this.setState((state) => {
       const rows = state.rows.concat(
-        createData(data[i].id, data[i].status, data[i].pub_date)
+        createData(data[i].id, data[i].status, data[i].value, data[i].pub_date)
       );
       return {
         rows,
@@ -98,8 +100,8 @@ class Verifications extends Component {
       <div>
         <TableContainer
           style={{
-            height: "650px",
-            width: "310px",
+            height: "90%",
+            width: "22%",
             overflowY: "scroll",
             float: "left",
           }}
@@ -109,6 +111,7 @@ class Verifications extends Component {
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Value</TableCell>
                 <TableCell>Date</TableCell>
               </TableRow>
             </TableHead>
@@ -134,6 +137,7 @@ class Verifications extends Component {
                   >
                     <TableCell>{row.id}</TableCell>
                     <TableCell>{row.status}</TableCell>
+                    <TableCell>{row.value}</TableCell>
                     <TableCell>{row.date}</TableCell>
                     <TableCell>
                       <button

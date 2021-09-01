@@ -18,11 +18,9 @@ class VerificationDetail extends Component {
   }
 
   componentDidMount = () => {
-    this.viewer = new BpmnJS({
-      container: "#model-viewer",
-      keyboard: {
-        bindTo: window,
-      },
+    this.viewer = new BpmnJS({ container: "#model-viewer" });
+    this.viewer.on("import.done", () => {
+      this.viewer.get("canvas").zoom("fit-viewport");
     });
   };
 
@@ -73,11 +71,11 @@ class VerificationDetail extends Component {
 
   render() {
     return (
-      <div>
+      <div id="canvas">
         <div
           id="model-viewer"
           style={{
-            width: "30%",
+            width: "53%",
             height: "94vh",
             float: "left",
           }}

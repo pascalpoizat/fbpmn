@@ -6,12 +6,12 @@ import { FaArrowRight } from "react-icons/fa";
 const localhost = "http://localhost:3000";
 const urlVerification = "http://localhost:5000/api/verifications/";
 const columns = [
-  { field: "comm", headerName: "Communication", width: 118 },
-  { field: "prop", headerName: "Property", width: 118 },
+  { field: "comm", headerName: "Network", width: 110 },
+  { field: "prop", headerName: "Property", width: 145 },
   {
     field: "value",
     headerName: "Value",
-    width: 70,
+    width: 92,
     renderCell: (params) => (
       <div>
         {params.value !== true ? (
@@ -124,8 +124,7 @@ class Results extends Component {
     return (
       <div
         style={{
-          width: "325px",
-          height: "94vh",
+          width: "25%",
           float: "right",
           maxHeight: "98vh",
           overflowX: "auto",
@@ -137,11 +136,12 @@ class Results extends Component {
           </center>
         </h4>
         <p> {this.displayDuration()}</p>
-        <div style={{ height: 575, width: "100%" }}>
+        <div style={{ height: 540, width: "100%" }}>
           <DataGrid
             rows={this.state.rows}
             columns={columns}
             hideFooter={true}
+            disableColumnMenu
           />
         </div>
       </div>

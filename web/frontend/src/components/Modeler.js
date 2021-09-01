@@ -41,10 +41,7 @@ class Modeler extends Component {
     super(props);
     this.state = {
       modeler: "",
-      status: "?",
-      id: "?",
-      verificationsVisibility: false,
-      modelerVisibility: true,
+      visibility: true,
       launched: false,
       launches: 0,
       networksSelected: [],
@@ -74,6 +71,7 @@ class Modeler extends Component {
     } catch (err) {
       console.log(err.message, err.warnings);
     }
+    this.inverseVisibility();
   }
 
   async exportDiagram() {
@@ -166,26 +164,18 @@ class Modeler extends Component {
     });
   }
 
-  statusButtonAction() {
-    if (this.state.launched) {
-      fetch(`${urlVerification}/latest`)
-        .then((res) => res.json())
-        .then((data) => {
-          this.setState({
-            status: data.status,
-          });
-        });
-      if (this.state.status !== "PENDING") {
-        this.inverseVisibility();
-        document.getElementById(`${this.state.id}`).click();
-      }
-    }
-  }
-
   inverseVisibility() {
+    if (!this.state.visibility) {
+      document.getElementById("verifications").style =
+        "background-color: #ddd ;   color: black; pointer-events: none ; ";
+      document.getElementById("modeler").style = "";
+    } else {
+      document.getElementById("verifications").style = "";
+      document.getElementById("modeler").style =
+        "background-color: #ddd ;   color: black; pointer-events: none ; ";
+    }
     this.setState({
-      modelerVisibility: !this.state.modelerVisibility,
-      verificationsVisibility: !this.state.verificationsVisibility,
+      visibility: !this.state.visibility,
     });
   }
 
@@ -195,39 +185,8 @@ class Modeler extends Component {
         <div id="settings">
           <About></About>
           <span
-            id="verify"
-            style={this.state.modelerVisibility ? {} : { display: "none" }}
-            onClick={() => {
-              this.launchVerification();
-            }}
-          >
-            {this.state.id}
-          </span>
-          <span
-            id="status"
-            style={this.state.modelerVisibility ? {} : { display: "none" }}
-            onClick={() => {
-              this.statusButtonAction();
-            }}
-          >
-            {this.state.status}
-          </span>
-          <span
-            id="verifications"
-            type="button"
-            style={this.state.modelerVisibility ? {} : { display: "none" }}
-            onClick={() => {
-              this.inverseVisibility();
-            }}
-          >
-            Verifications
-          </span>
-          <span
             id="modeler"
             type="button"
-            style={
-              this.state.verificationsVisibility ? {} : { display: "none" }
-            }
             onClick={() => {
               this.inverseVisibility();
             }}
@@ -237,10 +196,27 @@ class Modeler extends Component {
           <VerificationOptions
             ref={this.VerificationsOptions}
           ></VerificationOptions>
+          <span
+            id="verify"
+            onClick={() => {
+              this.launchVerification();
+            }}
+          >
+            Verify
+          </span>
+          <span
+            id="verifications"
+            type="button"
+            onClick={() => {
+              this.inverseVisibility();
+            }}
+          >
+            Verifications
+          </span>
         </div>
         <div
           id="modeler"
-          style={this.state.modelerVisibility ? {} : { display: "none" }}
+          style={this.state.visibility ? { display: "none" } : {}}
         >
           <button
             id="open"
@@ -297,7 +273,7 @@ class Modeler extends Component {
         </div>
         <div
           id="verifications"
-          style={this.state.verificationsVisibility ? {} : { display: "none" }}
+          style={this.state.visibility ? {} : { display: "none" }}
         >
           <Verifications
             dataFromParent={this.state.launches}

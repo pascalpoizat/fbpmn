@@ -20,13 +20,16 @@ const styles = {
   paper: {
     border: "2px solid rgba(0, 0, 0, 0.20)",
     padding: theme.spacing(2),
-    width: 250,
+    width: 275,
   },
   checkboxes: {
-    height: 15,
+    height: 12,
   },
   select: {
     minWidth: 180,
+  },
+  textfield: {
+    width: 275,
   },
 };
 
@@ -39,6 +42,7 @@ class VerificationOptions extends Component {
       properties: [],
       propertiesChecked: [],
       defs: null,
+      defsUsed: null,
       constraintNode: [],
       constraintNodeSelected: null,
       constraintEdge: [],
@@ -218,6 +222,18 @@ class VerificationOptions extends Component {
     }
   };
 
+  handleDefinitionsUsedChange = (event) => {
+    if (event.target.value === "") {
+      this.setState({
+        defsUsed: null,
+      });
+    } else {
+      this.setState({
+        defsUsed: [event.target.value],
+      });
+    }
+  };
+
   handleConstraintNodeChange = (event) => {
     this.setState({
       constraintNodeSelected: event.target.value,
@@ -301,22 +317,39 @@ class VerificationOptions extends Component {
         >
           <Paper className={classes.paper}>
             <div id="choices">
-              <Typography variant="h5">Properties</Typography>
+              <Typography variant="h5" align="center">
+                Properties
+              </Typography>
               <Typography variant="body1">
                 {propertiesList}
                 <TextField
                   id="userdefs"
+                  className={classes.textfield}
                   label="Tap your own definitions here"
                   multiline
-                  rowsMax={4}
+                  rowsMax={3}
                   value={this.state.defs}
                   onChange={this.handleDefinitionsChange}
                   variant="filled"
                 />
+                <TextField
+                  id="userdefsUsed"
+                  className={classes.textfield}
+                  label="Name of definitions you want to use"
+                  multiline
+                  rowsMax={3}
+                  value={this.state.defsUsed}
+                  onChange={this.handleDefinitionsUsedChange}
+                  variant="filled"
+                />
               </Typography>
-              <Typography variant="h5">Communication semantics</Typography>
+              <Typography variant="h5" align="center">
+                Communication semantics
+              </Typography>
               <Typography variant="body1">{networksList}</Typography>
-              <Typography variant="h5">Constraints</Typography>
+              <Typography variant="h5" align="center">
+                Constraints
+              </Typography>
               <div>
                 Constraint on nodes:
                 <br></br>
