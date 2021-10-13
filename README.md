@@ -4,6 +4,7 @@
 [![Windows build status](https://ci.appveyor.com/api/projects/status/github/pascalpoizat/fbpmn?branch=master&svg=true)](https://ci.appveyor.com/project/pascalpoizat/fbpmn)
 [![Apache-2.0 license](https://img.shields.io/github/license/pascalpoizat/veca-haskell.svg)](LICENSE)
 [![Version](https://img.shields.io/github/tag/pascalpoizat/fbpmn.svg)](fbpmn.cabal)
+
 <!--
 <br/>
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/pascalpoizat/fbpmn.svg?columns=all)](https://waffle.io/pascalpoizat/fbpmn)
@@ -20,27 +21,47 @@
 
 **formal tools for BPMN**
 
-----
+---
 
-**NEW: sBPMN (BPMN extension for spatial information) is now supported.**
+**NEW: fBPMN Web Application (since v0.3.8)**
+
+We provide the user with a Web application of `fbpmn` so that its installation and use is made easier.
+
+To use it:
+
+- install [Docker](https://www.docker.com) on your computer
+- clone `fbpmn` from the GitHub repository [here](https://github.com/pascalpoizat/fbpmn)
+- go to `fbpmn/web`
+- read `README.md`
+- run `docker-compose build` and then `docker-compose up`
+- open [http://localhost:3000/](http://localhost:3000/)
+
+Note: sBPMN (see below) is not yet supported in the Web application.
+
+Note: the old fBPMN Web application, available [here](http://vacs.enseeiht.fr/bpmn/) is now deprecated. It may stop operating at any time.
+
+---
+
+**NEW: sBPMN, BPMN extension for spatial information (since v0.3.6)**
 
 To use it:
 
 - install `fbpmn` as explained below
-- in addition to steps *1. -- 5.* below, ensure `sfbpmn-check` from the `scripts/` directory is found on your command `PATH`
+- in addition to steps _1. -- 5._ below, ensure `sfbpmn-check` from the `scripts/` directory is found on your command `PATH`
 - design your model (`M.bpmn`), user definitions (`M.userdefs`, optional), user specific properties (`M.userprops`, optional), and boundedness constraints (`M.constraint`, optional); see models with ids `s0xx` in the `models/bpmn-origin/src` for examples
-- verify your model with `sfbpmn-check M.bpmn cores` (the script will check if the optional files are there or not, `cores` is the number of cores to uses) 
+- verify your model with `sfbpmn-check M.bpmn cores` (the script will check if the optional files are there or not, `cores` is the number of cores to uses)
 
-----
+---
 
 **In next releases**
 
 - more documentation on associating time information to time-related BPMN constructs (available since v0.3.4)
 - more documentation on sBPMN extension fields (available since v0.3.6)
 - alignment between the `fbpmn-check` and `sfbpmn-check` verification scripts
-- new Web application
+- support for sBPMN in the Web application
+- pre-build Docker image
 
-----
+---
 
 `fbpmn` supports the verification of business processes (workflows and collaborations) properties:
 
@@ -54,84 +75,85 @@ To use it:
 for seven different communication semantics:
 
 - **Bag** (shared message multiset, no ordering)
-- **Fifo all** (shared message queue, ordering *wrt.* emission time)
-- **Causal**, (shared message causality structure, ordering *wrt.* message emission causality)
+- **Fifo all** (shared message queue, ordering _wrt._ emission time)
+- **Causal**, (shared message causality structure, ordering _wrt._ message emission causality)
 - **Realizable with Synchronous Communication (RSC)** (shared 1-sized message buffer)
-- **Fifo pair** (message queue for each couple of processes, ordering *wrt.* emission time)
-- **Fifo inbox** (input message queue for each process, ordering *wrt.* emission time)
-- **Fifo outbox**, (output message queue for each process, ordering *wrt.* emission time)
+- **Fifo pair** (message queue for each couple of processes, ordering _wrt._ emission time)
+- **Fifo inbox** (input message queue for each process, ordering _wrt._ emission time)
+- **Fifo outbox**, (output message queue for each process, ordering _wrt._ emission time)
 
-**New properties and communication semantics can be easily taken into account** (see Sect. 5, *Extending the verification*).
-
-A Web Application version of `fbpmn` (that unfortunately may be some versions late from the command-line version) is available from [here](http://vacs.enseeiht.fr/bpmn/).
+**New properties and communication semantics can be easily taken into account** (see Sect. 5, _Extending the verification_).
 
 ### References
 
-- Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A Direct Formal Semantics for BPMN Time-Related Constructs.** In: *16th International Conference on Evaluation of Novel Approaches to Software Engineering (ENASE)*, 2021.
+- Rim Saddem-Yagoubi, Pascal Poizat, and Sara Houhou. **Business Processes Meet Spatial Concerns: the sBPMN Verification Framework.** In: _24th International Symposium on Formal Methods (FM)_, 2021.
 
-- Sara Houhou, Souheib Baarir, Pascal Poizat, Philippe Quéinnec, and Laïd Kahloul. **A First-Order Logic Verification Framework for Communication-Parametric and Time-Aware BPMN Collaborations**. *Information Systems*, 2021. 
+- Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A Direct Formal Semantics for BPMN Time-Related Constructs.** In: _16th International Conference on Evaluation of Novel Approaches to Software Engineering (ENASE)_, 2021.
 
-- Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Order Logic Semantics for Communication-Parametric BPMN Collaborations**. In: *17th International Conference on Business Process Management (BPM)*, Springer, 2019.
+- Sara Houhou, Souheib Baarir, Pascal Poizat, Philippe Quéinnec, and Laïd Kahloul. **A First-Order Logic Verification Framework for Communication-Parametric and Time-Aware BPMN Collaborations**. _Information Systems_, 2021.
+
+- Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Order Logic Semantics for Communication-Parametric BPMN Collaborations**. In: _17th International Conference on Business Process Management (BPM)_, Springer, 2019.
 
 ### TL;DR for the impatient
 
+Since we now provide you with a new Web application, all this can also be performed using it. If you like it the "command line interface" way, here is the procedure:
+
 1. use the modeler of your choice to model a process or a collaboration
-	![BPMN example.](e033MBE.png)
-	
+   ![BPMN example.](e033MBE.png)
 2. verify your model for all combinations of property and communication semantics
 
-	```sh
-	❯ fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
-	Working in /tmp/e033MBE.T07y4 with 2 worker(s)
-	transformation done
-	<<"Processes=", 2, "Nodes=", 22, "Gateway=", 4, "SF=", 20, "MF=", 6>>
-	---------- Network01Bag ----------
-	[X] Prop01Type
-	     states=101 trans=169 depth=23
-	[X] Prop02Safe
-	     states=101 trans=169 depth=23
-	[ ] Prop03Sound
-	     states=101 trans=169 depth=
-	[X] Prop04MsgSound
-	     states=101 trans=169 depth=23
-	[... other communication semantics ...]
-	done.
-	```
+   ```sh
+   ❯ fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+   Working in /tmp/e033MBE.T07y4 with 2 worker(s)
+   transformation done
+   <<"Processes=", 2, "Nodes=", 22, "Gateway=", 4, "SF=", 20, "MF=", 6>>
+   ---------- Network01Bag ----------
+   [X] Prop01Type
+        states=101 trans=169 depth=23
+   [X] Prop02Safe
+        states=101 trans=169 depth=23
+   [ ] Prop03Sound
+        states=101 trans=169 depth=
+   [X] Prop04MsgSound
+        states=101 trans=169 depth=23
+   [... other communication semantics ...]
+   done.
+   ```
 
 3. generate interactive counter example exploration pages for all `fbpmn-check` analysis log files
 
-	```sh
-	❯ (cd /tmp/e033MBE.T07y4; fbpmn-log-transform html)
-	transformation done
-	transformation done
-	transformation done
-	[...]
-	```
-	
+   ```sh
+   ❯ (cd /tmp/e033MBE.T07y4; fbpmn-log-transform html)
+   transformation done
+   transformation done
+   transformation done
+   [...]
+   ```
+
 4. open one of the generated files with a browser and play with the counter example using &leftarrow;/&rightarrow;/`Shift`&leftarrow;/`Shift`&rightarrow; on your keyboard
 
-	![step 24](animation_24.png)
-	
-	| 01 |...| 12 | 13 | 14 |...| 24 |
-	|:----------:|:-:|:----------:|:----------:|:----------:|:-:|:----------:|
-	| ![step 01](animation_01.png) | ![](animation_00.png)| ![step 12](animation_12.png) | ![step 13](animation_13.png) | ![step 14](animation_14.png) | ![](animation_00.png) | ![step 24](animation_24.png) |
+   ![step 24](animation_24.png)
 
-	**note:** for security issues, and since the interactive counter example exploration pages load local files (your BPMN models), you will have either to:
-	
-	- (preferred) serve the pages using a server such as [http-server](https://www.npmjs.com/package/http-server) or [SimpleHTTPServer](https://docs.python.org/2/library/simplehttpserver.html).
+   |              01              |          ...          |              12              |              13              |              14              |          ...          |              24              |
+   | :--------------------------: | :-------------------: | :--------------------------: | :--------------------------: | :--------------------------: | :-------------------: | :--------------------------: |
+   | ![step 01](animation_01.png) | ![](animation_00.png) | ![step 12](animation_12.png) | ![step 13](animation_13.png) | ![step 14](animation_14.png) | ![](animation_00.png) | ![step 24](animation_24.png) |
 
-		```sh
-		❯ npm install -g http-server # run only once to install http-server
-		❯ (cd /tmp/e033MBE.T07y4; http-server .) 
-		```
-		
-		```sh
-		❯ (cd /tmp/e033MBE.T07y4; python2 -m SimpleHTTPServer 8080) # for Python 2
-		❯ (cd /tmp/e033MBE.T07y4; python3 -m http.server 8080) # for Python 3
-		```
-				
-	- (not recommended) de-activate local file restrictions, see [here](https://github.com/mrdoob/three.js/wiki/How-to-run-things-locally).
-		
+   **note:** for security issues, and since the interactive counter example exploration pages load local files (your BPMN models), you will have either to:
+
+   - (preferred) serve the pages using a server such as [http-server](https://www.npmjs.com/package/http-server) or [SimpleHTTPServer](https://docs.python.org/2/library/simplehttpserver.html).
+
+     ```sh
+     ❯ npm install -g http-server # run only once to install http-server
+     ❯ (cd /tmp/e033MBE.T07y4; http-server .)
+     ```
+
+     ```sh
+     ❯ (cd /tmp/e033MBE.T07y4; python2 -m SimpleHTTPServer 8080) # for Python 2
+     ❯ (cd /tmp/e033MBE.T07y4; python3 -m http.server 8080) # for Python 3
+     ```
+
+   - (not recommended) de-activate local file restrictions, see [here](https://github.com/mrdoob/three.js/wiki/How-to-run-things-locally).
+
 ## 1. Requisites
 
 To verify your BPMN models, you will need:
@@ -141,22 +163,22 @@ To verify your BPMN models, you will need:
 - 1.2. The TLA+ tools, get `tla2tools.jar` [here](https://github.com/tlaplus/tlaplus/releases).
 
 - 1.3. The task-based command-line shell and scripting language Powershell, get it [here](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.1)
-	
+
 :warning: `fbpmn` is known to be working with:
 
 - Java 12 and TLA+ tools version 1.6.0 (not 1.5.7)
-- Java 8 and TLA+ tools version 1.5.7 or 1.6.0	
+- Java 8 and TLA+ tools version 1.5.7 or 1.6.0
 
 If you build `fbpmn` from sources (not required in most situations since binaries are available, see Sect. 3a), you will also need:
 
 - 2.1. The `stack` build system for Haskell, see [here](https://docs.haskellstack.org/en/stable/README/).
 
-	Under **Windows**, due to a bug, please use:
-	
-	```shell
-	curl -sS -ostack.zip -L --insecure https://www.stackage.org/stack/windows-x86_64
-	7z x stack.zip stack.exe
-	```
+  Under **Windows**, due to a bug, please use:
+
+  ```shell
+  curl -sS -ostack.zip -L --insecure https://www.stackage.org/stack/windows-x86_64
+  7z x stack.zip stack.exe
+  ```
 
 ## 2. Getting source files
 
@@ -168,9 +190,9 @@ You can get the source files in either way:
 
 - 2b. by cloning the repository using the `git` command.
 
-	```shell
-	git clone https://github.com/pascalpoizat/fbpmn
-	```
+  ```shell
+  git clone https://github.com/pascalpoizat/fbpmn
+  ```
 
 Please then set the `FBPMN_HOME` environment variable to the place where the fbpmn sources have been installed.
 
@@ -211,7 +233,7 @@ Please see [the BPMN 2.0 standard](https://www.omg.org/spec/BPMN/2.0/).
 The subset of BPMN that we support is presented in Fig. 1.
 
 ![BPMN support.](bpmn.png)
-*Figure 1: supported subset of the BPMN notation.*
+_Figure 1: supported subset of the BPMN notation._
 
 `fbpmn` has been tested with models made with the Camunda Modeler, which you can get [here](https://camunda.com/products/modeler/).
 
@@ -234,12 +256,12 @@ Verification is achieved in two steps (see Fig. 2):
 2. use this representation and the TLA+ implementation of our FOL semantics for BPMN collaborations to perform verification (using the `TLC` model checker from the TLA+ tool box).
 
 <img alt="Transformation overview." src="overview.png" width=400><br/>
-*Figure 2: `fbpmn` approach to the verification of BPMN collaborations.*
+_Figure 2: `fbpmn` approach to the verification of BPMN collaborations._
 
 In the sequel, we will use the model in Fig. 3.
 
 ![BPMN example.](e033MBE.png)
-*Figure 3: example collaboration model (`e033MBE.bpmn`).*
+_Figure 3: example collaboration model (`e033MBE.bpmn`)._
 
 We provide you with a `fbpmn-check` script (in the `scripts` directory of the source distribution) that does the two steps described in Fig. 2 for you and performs verification for each possible communication model.
 
@@ -315,7 +337,7 @@ done.
 
 ```
 
-Verification for a single communication model and choosing the properties of interest is also possible but requires some more commands to run (mostly copying files and launching Java, as can be seen in `fbpmn-check`). *We are working on an extension of `fbpm-check` with options to help there.*
+Verification for a single communication model and choosing the properties of interest is also possible but requires some more commands to run (mostly copying files and launching Java, as can be seen in `fbpmn-check`). _We are working on an extension of `fbpm-check` with options to help there._
 
 ### Analysing counter-examples
 
@@ -335,7 +357,7 @@ e033MBE.Network02FifoPair.Prop03Sound.log    e033MBE.Network05Outbox.Prop01Type.
 e033MBE.Network02FifoPair.Prop04MsgSound.log e033MBE.Network05Outbox.Prop02Safe.log       e033MBE.Network07RSC.Prop04MsgSound.log
 e033MBE.Network03Causal.Prop01Type.log       e033MBE.Network05Outbox.Prop03Sound.log
 e033MBE.Network03Causal.Prop02Safe.log       e033MBE.Network05Outbox.Prop04MsgSound.log
-``` 
+```
 
 These files include information about the computation time and the counter-examples themselves in a verbose mode.
 
@@ -352,31 +374,31 @@ To generate versions of the counter-examples that are **easier to analyse** you 
 
 - `fbpmn log2json` to get a JSON version of the counter-example
 
-	```sh
-	❯ fbpmn log2json /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
-	transformation done
-	```
+  ```sh
+  ❯ fbpmn log2json /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
+  transformation done
+  ```
 
 - `fbpmn log2dot` to get a graph version of the counter example in the format of the `dot` command ([see here](https://graphviz.org)) and then use this command to generate PDF or PNG images.
 
-	```sh
-	❯ fbpmn log2dot /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
-	transformation done
-	```
-	
+  ```sh
+  ❯ fbpmn log2dot /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
+  transformation done
+  ```
+
 - `fbpmn log2html` to generate an interactive counter example exploration page (use the &leftarrow;/&rightarrow; keys to navigate between states of the counter example, in combination with the `Shift`key to go the the start/end of the counter example).
 
-	```sh
-	❯ fbpmn log2html /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
-	transformation done
-	```
+  ```sh
+  ❯ fbpmn log2html /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound /tmp/e033MBE.T07y4/e033MBE.Network01Bag.Prop03Sound
+  transformation done
+  ```
 
-	An excerpt of a counter example for the model in Fig. 3 is given in Fig. 4.
+  An excerpt of a counter example for the model in Fig. 3 is given in Fig. 4.
 
-	[![Counter example animation (step 24).](animation_24.png)](e033MBE.Network01Bag.Prop03Sound.html)
+  [![Counter example animation (step 24).](animation_24.png)](e033MBE.Network01Bag.Prop03Sound.html)
 
-	*Figure 4: last state of the animation of the counter example for soundness of the model in Fig. 4 with network unordered semantics.*
-	
+  _Figure 4: last state of the animation of the counter example for soundness of the model in Fig. 4 with network unordered semantics._
+
 The first parameter of the three commands is the source `.log` file and the second one is the target `.json`/`.dot`/`.html` file (no suffixes in both cases, `fbpmn` adds them given the type of the read/generated file).
 
 In all three cases, the counter-examples are filtered of the markings that are null.
@@ -394,7 +416,7 @@ transformation done
 
 ### Verification constraints
 
-Some models are unbounded (see *e.g.*, models `e004` to `e006` [here](models/bpmn-origin/src)). To be able to check these models, you may add constraints to the verification process. For this, given your model is in file `myModel.bpmn`, create a file `myModel.constraint` of the form:
+Some models are unbounded (see _e.g._, models `e004` to `e006` [here](models/bpmn-origin/src)). To be able to check these models, you may add constraints to the verification process. For this, given your model is in file `myModel.bpmn`, create a file `myModel.constraint` of the form:
 
 ```tla
 CONSTANT ConstraintNode <- <ConstraintOnNodes>
@@ -413,7 +435,7 @@ CONSTANT ConstraintNode <- TRUE
 ```
 
 that states
-that node markings (the maximum number of tokens authorized on a node) is not constrained, 
+that node markings (the maximum number of tokens authorized on a node) is not constrained,
 that edge markings (the maximum number of tokens authorized on an edge) is 2, and
 that the overall constraint is to have both the constraint on nodes and the constraint on edges.
 
@@ -431,7 +453,7 @@ LOCAL NetworkImpl == INSTANCE NetworkMyNet
 
 To add a **new property to verify**:
 
-1. define your new property, say `MyProperty`,  at the end of the `PWSSemantics.tla` file in `$FBPMN_HOME/theories/tla`
+1. define your new property, say `MyProperty`, at the end of the `PWSSemantics.tla` file in `$FBPMN_HOME/theories/tla`
 2. create a new file `PropNNMyProperty.cfg` in `$FBPMN_HOME/theories/tla/Configs`, with `NN` being a number different from the existing properties there
 3. in the contents of `PropNNMyProperty.cfg` refer to your property name as defined in step 1.
 
@@ -450,7 +472,7 @@ To get help with `fbpmn`, run `fbpmn -h`.
 
 ```sh
 ➜ fbpmn -h
-0.3.7
+0.3.8
 
 Usage: fbpmn COMMAND
   formal transformations for BPMN models
@@ -473,7 +495,7 @@ Available commands:
   slog2html                transforms a TLA+ space log from LOG to HTML
 ```
 
-But for the `version` and `repl` commands, you must provide two arguments: the source file and the target file for the transformation.
+But for the `version` command, you must provide two arguments: the source file and the target file for the transformation.
 
 **No suffixes are to be given for source/target files when running `fbpmn`.**
 
@@ -497,4 +519,3 @@ Then provided you have `dot` installed, you can generate a PNG picture for your 
 ```shell
 dot -Tpng sourcefile.dot -o targetfile.png
 ```
-
