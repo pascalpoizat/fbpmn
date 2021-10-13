@@ -23,7 +23,26 @@
 
 ---
 
-**NEW: sBPMN (BPMN extension for spatial information) is now supported.**
+**NEW: fBPMN Web Application (since v0.3.8)**
+
+We provide the user with a Web application of `fbpmn` so that its installation and use is made easier.
+
+To use it:
+
+- install [Docker](https://www.docker.com) on your computer
+- clone `fbpmn` from the GitHub repository [here](https://github.com/pascalpoizat/fbpmn)
+- go to `fbpmn/web`
+- read `README.md`
+- run `docker-compose build` and then `docker-compose up`
+- open [http://localhost:3000/](http://localhost:3000/)
+
+Note: sBPMN (see below) is not yet supported in the Web application.
+
+Note: the old fBPMN Web application, available [here](http://vacs.enseeiht.fr/bpmn/) is now deprecated. It may stop operating at any time.
+
+---
+
+**NEW: sBPMN, BPMN extension for spatial information (since v0.3.6)**
 
 To use it:
 
@@ -39,7 +58,8 @@ To use it:
 - more documentation on associating time information to time-related BPMN constructs (available since v0.3.4)
 - more documentation on sBPMN extension fields (available since v0.3.6)
 - alignment between the `fbpmn-check` and `sfbpmn-check` verification scripts
-- new Web application
+- support for sBPMN in the Web application
+- pre-build Docker image
 
 ---
 
@@ -64,9 +84,9 @@ for seven different communication semantics:
 
 **New properties and communication semantics can be easily taken into account** (see Sect. 5, _Extending the verification_).
 
-A Web Application version of `fbpmn` (that unfortunately may be some versions late from the command-line version) is available from [here](http://vacs.enseeiht.fr/bpmn/).
-
 ### References
+
+- Rim Saddem-Yagoubi, Pascal Poizat, and Sara Houhou. **Business Processes Meet Spatial Concerns: the sBPMN Verification Framework.** In: _24th International Symposium on Formal Methods (FM)_, 2021.
 
 - Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A Direct Formal Semantics for BPMN Time-Related Constructs.** In: _16th International Conference on Evaluation of Novel Approaches to Software Engineering (ENASE)_, 2021.
 
@@ -75,6 +95,8 @@ A Web Application version of `fbpmn` (that unfortunately may be some versions la
 - Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Order Logic Semantics for Communication-Parametric BPMN Collaborations**. In: _17th International Conference on Business Process Management (BPM)_, Springer, 2019.
 
 ### TL;DR for the impatient
+
+Since we now provide you with a new Web application, all this can also be performed using it. If you like it the "command line interface" way, here is the procedure:
 
 1. use the modeler of your choice to model a process or a collaboration
    ![BPMN example.](e033MBE.png)
@@ -450,7 +472,7 @@ To get help with `fbpmn`, run `fbpmn -h`.
 
 ```sh
 ➜ fbpmn -h
-0.3.7
+0.3.8
 
 Usage: fbpmn COMMAND
   formal transformations for BPMN models
@@ -473,7 +495,7 @@ Available commands:
   slog2html                transforms a TLA+ space log from LOG to HTML
 ```
 
-But for the `version` and `repl` commands, you must provide two arguments: the source file and the target file for the transformation.
+But for the `version` command, you must provide two arguments: the source file and the target file for the transformation.
 
 **No suffixes are to be given for source/target files when running `fbpmn`.**
 
