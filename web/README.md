@@ -30,8 +30,8 @@ The right part details the results of the verification by communication and prop
 Here you can play with the counter example using &leftarrow;/&rightarrow;/`Shift`&leftarrow;/`Shift`&rightarrow; on your keyboard.
 
 ## You can launch the entire web-application, with two ways:
-### 1.With docker-compose:
-- 1.1. Make sure you have the command `docker-compose`
+### 1. With docker-compose:
+- 1.1. Make sure you have the command `docker-compose` and Docker is up and running.
 - 1.2. From this directory, launch the command `docker-compose build`
 - 1.3. After that you can launch `docker-compose up`. You can access to the web-app frontend in [http://localhost:3000](http://localhost:3000) and its API in [http://localhost:5000/api/doc](http://localhost:5000/api/doc)
 
