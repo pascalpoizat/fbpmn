@@ -1,4 +1,4 @@
-FROM python:latest
+FROM python:3.9
 WORKDIR /api
 
 ENV VERSION="0.3.7"
