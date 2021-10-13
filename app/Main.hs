@@ -15,7 +15,7 @@ import Fbpmn.Helper (FReader (..), FWriter (..))
 import Options.Applicative
 
 fversion :: Text
-fversion = "0.3.7"
+fversion = "0.3.8"
 
 toolversion :: Text
 toolversion = fversion
