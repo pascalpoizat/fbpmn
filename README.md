@@ -59,7 +59,7 @@ To use it:
 - more documentation on sBPMN extension fields (available since v0.3.6)
 - alignment between the `fbpmn-check` and `sfbpmn-check` verification scripts
 - support for sBPMN in the Web application
-- pre-build Docker image
+- pre-built Docker image
 
 ---
 
