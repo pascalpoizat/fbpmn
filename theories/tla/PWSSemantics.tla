@@ -137,13 +137,14 @@ cmie_start(n) ==
 
 tie_start(n) ==
   /\ CatN[n] = TimerIntermediateEvent
-  /\ \E e \in intype(SeqFlowType, n) : edgemarks[e] >= 1
-  /\ edgemarks' = [ e \in DOMAIN edgemarks |->
-                      IF e \in intype(SeqFlowType, n) THEN edgemarks[e] - 1
+  /\ \E ein \in intype(SeqFlowType, n) :
+     /\ edgemarks[ein] >= 1
+     /\ edgemarks' = [ e \in DOMAIN edgemarks |->
+                      IF e = ein THEN edgemarks[e] - 1
                       ELSE IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
-  /\ UNCHANGED nodemarks
-  /\ Network!unchanged
+     /\ UNCHANGED nodemarks
+     /\ Network!unchanged
 
 (* ---- message boundary event ---- *)
 
