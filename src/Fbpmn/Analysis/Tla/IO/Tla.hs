@@ -369,7 +369,7 @@ encodeBpmnGraphHeaderToTla g =
 
   EXTENDS TLC, PWSTypes
 
-  VARIABLES nodemarks, edgemarks, net
+  VARIABLES nodemarks, edgemarks, net, lifecycle
 
   |]
   where

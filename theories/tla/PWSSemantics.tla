@@ -6,9 +6,10 @@ CONSTANT Constraint
 VARIABLES
   edgemarks,
   nodemarks,
-  net
+  net,
+  lifecycle
 
-var == <<nodemarks, edgemarks, net>>
+var == <<nodemarks, edgemarks, net, lifecycle>>
 
 LOCAL Network == INSTANCE Network
 
@@ -17,6 +18,7 @@ NoReEnter == TRUE
 TypeInvariant ==
   /\ edgemarks \in [ Edge -> Nat ]
   /\ nodemarks \in [ Node -> Nat ]
+  /\ lifecycle \in [ {n \in Node : CatN[n] \in ActivityType} -> [ {"started","finished","active"} -> BOOLEAN ]]
   /\ Network!TypeInvariant
 
 (* ---- conditions ---- *)
@@ -48,12 +50,14 @@ LOCAL noneortimerstart_complete(n) ==
 nonestart_complete(n) ==
   /\ CatN[n] = NoneStartEvent
   /\ noneortimerstart_complete(n)
+  /\ UNCHANGED lifecycle
 
 (* ---- timer start event ---- *)
 
 timerstart_complete(n) ==
   /\ CatN[n] = TimerStartEvent
   /\ noneortimerstart_complete(n)
+  /\ UNCHANGED lifecycle
 
 (* ---- message start event ---- *)
 
@@ -71,6 +75,7 @@ messagestart_complete(n) ==
      /\ n \in ContainRel[p]
      /\ nodemarks[p] = 0  \* No multi-instance
      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
+  /\ UNCHANGED lifecycle
 
 (* ---- none end event, terminate end event ---- *)
 
@@ -81,6 +86,7 @@ noneend_start(n) ==
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
   /\ Network!unchanged
+  /\ UNCHANGED lifecycle
 
 terminateend_start(n) == \* Terminate End Event clears all token in the process/subprocess (except for the n node).
   /\ CatN[n] = TerminateEndEvent
@@ -96,6 +102,7 @@ terminateend_start(n) == \* Terminate End Event clears all token in the process/
                              ELSE IF nn \in includedNodes THEN 0
                              ELSE nodemarks[nn] ]
   /\ Network!unchanged
+  /\ UNCHANGED lifecycle
 
 (* ---- message end event ---- *)
 
@@ -106,6 +113,7 @@ messageend_start(n) ==
      /\ Network!send(ProcessOf(n), ProcessOf(target[e2]), msgtype[e2])
      /\ edgemarks' = [ edgemarks EXCEPT ![e1] = @ - 1, ![e2] = @ + 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
+  /\ UNCHANGED lifecycle
 
 (* ---- TMIE / CMIE ---- *)
 
@@ -120,6 +128,7 @@ tmie_start(n) ==
                            ELSE IF ee = eout THEN edgemarks[ee] + 1
                            ELSE edgemarks[ee] ]
       /\ UNCHANGED nodemarks
+      /\ UNCHANGED lifecycle
 
 cmie_start(n) ==
   /\ CatN[n] = CatchMessageIntermediateEvent
@@ -132,6 +141,7 @@ cmie_start(n) ==
                         ELSE IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                         ELSE edgemarks[e] ]
      /\ UNCHANGED nodemarks
+     /\ UNCHANGED lifecycle
 
 (* ---- timer intermediate event ---- *)
 
@@ -145,6 +155,7 @@ tie_start(n) ==
                       ELSE edgemarks[e] ]
      /\ UNCHANGED nodemarks
      /\ Network!unchanged
+     /\ UNCHANGED lifecycle
 
 (* ---- message boundary event ---- *)
 
@@ -203,6 +214,7 @@ mbe_start(n) ==
   /\ \/ mbe_start_subprocess_interrupting(n)
      \/ mbe_start_subprocess_noninterrupting(n)
      \/ mbe_start_other(n)
+  /\ UNCHANGED lifecycle
 
 (* ---- timer boundary event ---- *)
 
@@ -252,6 +264,7 @@ tbe_start(n) ==
      \/ tbe_start_subprocess_noninterrupting(n)
      \/ tbe_start_other(n)
   /\ Network!unchanged
+  /\ UNCHANGED lifecycle
 
 ----------------------------------------------------------------
 
@@ -263,6 +276,7 @@ LOCAL xor_complete_out(n,eout) ==
        /\ edgemarks' = [ edgemarks EXCEPT ![ein] = @ - 1, ![eout] = @ + 1 ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
+  /\ UNCHANGED lifecycle
 
 xor_complete(n) ==
   /\ CatN[n] = ExclusiveOr
@@ -284,6 +298,7 @@ parallel_complete(n) ==
                       ELSE edgemarks[e] ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
+  /\ UNCHANGED lifecycle
 
 (* ---- Inclusive Or / OR ---- *)
 
@@ -307,6 +322,7 @@ or_complete(n) ==
   /\ CatN[n] = InclusiveOr
   /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : or_complete_outs(n, eouts)
      \/ \E eout \in outtype({ DefaultSeqFlow }, n) : or_complete_outs(n, {eout})
+  /\ UNCHANGED lifecycle
 
 LOCAL or_fairness(n) == \* fairness is also applied on DefaultSeqFlow
    Cardinality(outtype(SeqFlowType, n)) > 1 =>
@@ -322,6 +338,7 @@ LOCAL eventbased_complete_out(n, eout) ==
       /\ edgemarks' = [ edgemarks EXCEPT ![ein] = @ - 1, ![eout] = @ + 1 ]
   /\ UNCHANGED nodemarks
   /\ Network!unchanged
+  /\ UNCHANGED lifecycle
 
 eventbased_complete(n) ==
   /\ CatN[n] = EventBased
@@ -342,6 +359,7 @@ abstract_start(n) ==
        /\ edgemarks[e] >= 1
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.started = TRUE, !.active = TRUE ]]
   /\ Network!unchanged
 
 abstract_complete(n) ==
@@ -351,6 +369,7 @@ abstract_complete(n) ==
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE ]]
   /\ Network!unchanged
 
 (* ---- send task ---- *)
@@ -362,6 +381,7 @@ send_start(n) ==
        /\ edgemarks[e] >= 1
        /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.started = TRUE, !.active = TRUE ]]
   /\ Network!unchanged
 
 send_complete(n) ==
@@ -374,6 +394,7 @@ send_complete(n) ==
                            IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                            ELSE IF ee = e THEN edgemarks[ee] + 1
                            ELSE edgemarks[ee] ]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE ]]
 
 (* ---- receive task ---- *)
 
@@ -385,6 +406,7 @@ receive_start(n) ==
      /\ edgemarks' = [ edgemarks EXCEPT ![e] = @ - 1 ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ + 1 ]
   /\ Network!unchanged
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.started = TRUE, !.active = TRUE ]]
 
 receive_complete(n) ==
   /\ CatN[n] = ReceiveTask
@@ -397,6 +419,7 @@ receive_complete(n) ==
                           ELSE IF ee = e THEN edgemarks[ee] - 1
                           ELSE edgemarks[ee] ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE ]]
 
 (* ---- SubProcess ---- *)
 
@@ -411,6 +434,7 @@ subprocess_start(n) ==
                        ELSE IF nn \in ContainRel[n] /\ CatN[nn] \in StartEventType THEN nodemarks[nn] + 1
                        ELSE nodemarks[nn] ]
   /\ Network!unchanged
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.started = TRUE, !.active = TRUE ]]
 
 subprocess_complete(n) ==
   /\ CatN[n] = SubProcess
@@ -428,6 +452,7 @@ subprocess_complete(n) ==
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
   /\ Network!unchanged
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE ]]
 
 (* ---- Top level Process ---- *)
 
@@ -464,6 +489,7 @@ Init ==
                      IF CatN[n] \in StartEventType /\ (\E p \in Processes : n \in ContainRel[p]) THEN 1
                      ELSE 0 ]
   /\ edgemarks = [ e \in Edge |-> 0 ]
+  /\ lifecycle = [ n \in {nn \in Node : CatN[nn] \in ActivityType} |-> [ started |-> FALSE, finished |-> FALSE, active |-> FALSE ]]
   /\ Network!init
 
 Fairness_Next == \A n \in Node : WF_var(step(n))

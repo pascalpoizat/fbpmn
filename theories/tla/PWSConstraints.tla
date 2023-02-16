@@ -12,8 +12,7 @@
 
 EXTENDS Naturals, PWSTypes
 
-CONSTANT Constraint,                          \* TRUE = none
-         ConstraintNode, ConstraintEdge,      \* TRUE = none
+CONSTANT ConstraintNode, ConstraintEdge,      \* TRUE = none
          Node, Edge, Message, CatN, CatE, msgtype
 
 VARIABLES
