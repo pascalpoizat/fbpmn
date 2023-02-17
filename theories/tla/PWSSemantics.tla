@@ -1,7 +1,7 @@
 ---------------- MODULE PWSSemantics ----------------
 EXTENDS Naturals, PWSTypes, PWSDefs, FiniteSets
 
-CONSTANT Constraint
+CONSTANT Constraint, IntervalConstraint
 
 VARIABLES
   edgemarks,
@@ -369,7 +369,7 @@ abstract_complete(n) ==
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE ]]
   /\ Network!unchanged
 
 (* ---- send task ---- *)
@@ -394,7 +394,7 @@ send_complete(n) ==
                            IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                            ELSE IF ee = e THEN edgemarks[ee] + 1
                            ELSE edgemarks[ee] ]
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE  ]]
 
 (* ---- receive task ---- *)
 
@@ -419,7 +419,7 @@ receive_complete(n) ==
                           ELSE IF ee = e THEN edgemarks[ee] - 1
                           ELSE edgemarks[ee] ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE  ]]
 
 (* ---- SubProcess ---- *)
 
@@ -452,7 +452,7 @@ subprocess_complete(n) ==
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
   /\ Network!unchanged
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE  ]]
 
 (* ---- Top level Process ---- *)
 
@@ -501,7 +501,7 @@ Fairness_Gateway ==
 
 Fairness == Fairness_Next /\ Fairness_Gateway
 
-Spec == Init /\ [][Next /\ Constraint']_var /\ Fairness
+Spec == Init /\ [][Next /\ Constraint' /\ IntervalConstraint']_var /\ Fairness
 
 (* ---------------------------------------------------------------- *)
 
