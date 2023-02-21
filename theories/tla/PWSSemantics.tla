@@ -18,7 +18,7 @@ NoReEnter == TRUE
 TypeInvariant ==
   /\ edgemarks \in [ Edge -> Nat ]
   /\ nodemarks \in [ Node -> Nat ]
-  /\ lifecycle \in [ {n \in Node : CatN[n] \in ActivityType} -> [ {"started","finished","active"} -> BOOLEAN ]]
+  /\ lifecycle \in [ {n \in Node : CatN[n] \in ActivityType} -> [ {"started","completed","active"} -> BOOLEAN ]]
   /\ Network!TypeInvariant
 
 (* ---- conditions ---- *)
@@ -369,7 +369,7 @@ abstract_complete(n) ==
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.completed = TRUE, !.active = FALSE ]]
   /\ Network!unchanged
 
 (* ---- send task ---- *)
@@ -394,7 +394,7 @@ send_complete(n) ==
                            IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                            ELSE IF ee = e THEN edgemarks[ee] + 1
                            ELSE edgemarks[ee] ]
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE  ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.completed = TRUE, !.active = FALSE  ]]
 
 (* ---- receive task ---- *)
 
@@ -419,7 +419,7 @@ receive_complete(n) ==
                           ELSE IF ee = e THEN edgemarks[ee] - 1
                           ELSE edgemarks[ee] ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE  ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.completed = TRUE, !.active = FALSE  ]]
 
 (* ---- SubProcess ---- *)
 
@@ -452,7 +452,7 @@ subprocess_complete(n) ==
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
   /\ Network!unchanged
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE  ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.completed = TRUE, !.active = FALSE  ]]
 
 (* ---- Top level Process ---- *)
 
@@ -489,7 +489,7 @@ Init ==
                      IF CatN[n] \in StartEventType /\ (\E p \in Processes : n \in ContainRel[p]) THEN 1
                      ELSE 0 ]
   /\ edgemarks = [ e \in Edge |-> 0 ]
-  /\ lifecycle = [ n \in {nn \in Node : CatN[nn] \in ActivityType} |-> [ started |-> FALSE, finished |-> FALSE, active |-> FALSE ]]
+  /\ lifecycle = [ n \in {nn \in Node : CatN[nn] \in ActivityType} |-> [ started |-> FALSE, completed |-> FALSE, active |-> FALSE ]]
   /\ Network!init
 
 Fairness_Next == \A n \in Node : WF_var(step(n))
