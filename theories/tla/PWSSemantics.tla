@@ -75,7 +75,9 @@ messagestart_complete(n) ==
      /\ n \in ContainRel[p]
      /\ nodemarks[p] = 0  \* No multi-instance
      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
-  /\ UNCHANGED lifecycle
+     /\ lifecycle' = [ nn \in DOMAIN lifecycle |->
+                          IF nn \in ContainRel[p] THEN [ started |-> FALSE, completed |-> FALSE, active |-> FALSE ]
+                          ELSE lifecycle[nn] ]
 
 (* ---- none end event, terminate end event ---- *)
 
@@ -434,7 +436,10 @@ subprocess_start(n) ==
                        ELSE IF nn \in ContainRel[n] /\ CatN[nn] \in StartEventType THEN nodemarks[nn] + 1
                        ELSE nodemarks[nn] ]
   /\ Network!unchanged
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.started = TRUE, !.active = TRUE ]]
+  /\ lifecycle' = [ nn \in DOMAIN lifecycle |->
+                       IF nn = n THEN [ started |-> TRUE, completed |-> FALSE, active |-> TRUE ]
+                       ELSE IF nn \in ContainRel[n] THEN [ started |-> FALSE, completed |-> FALSE, active |-> FALSE ]
+                       ELSE lifecycle[nn] ]
 
 subprocess_complete(n) ==
   /\ CatN[n] = SubProcess
