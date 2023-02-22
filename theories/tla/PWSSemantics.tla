@@ -75,9 +75,7 @@ messagestart_complete(n) ==
      /\ n \in ContainRel[p]
      /\ nodemarks[p] = 0  \* No multi-instance
      /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1, ![p] = @ + 1 ]
-     /\ lifecycle' = [ nn \in DOMAIN lifecycle |->
-                          IF nn \in ContainRel[p] THEN [ started |-> FALSE, completed |-> FALSE, active |-> FALSE ]
-                          ELSE lifecycle[nn] ]
+  /\ UNCHANGED lifecycle
 
 (* ---- none end event, terminate end event ---- *)
 
