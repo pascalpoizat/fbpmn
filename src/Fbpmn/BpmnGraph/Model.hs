@@ -10,10 +10,39 @@ import Data.Map.Strict
     keys,
     (!?),
   )
-import qualified Data.Map.Strict as M
+import Data.Map.Strict qualified as M
   ( empty,
   )
 import Fbpmn.Helper (Id, allIn', allKeyIn', filter', listFixpoint)
+import Relude
+  ( All (All, getAll),
+    Applicative (pure, (<*>)),
+    Bool (..),
+    Eq (..),
+    Foldable (foldMap),
+    Generic,
+    Int,
+    Map,
+    Maybe (..),
+    Monoid (mempty),
+    Ord,
+    Semigroup ((<>)),
+    Show,
+    String,
+    Text,
+    and,
+    concat,
+    elem,
+    filter,
+    fst,
+    snd,
+    ($),
+    (&&),
+    (++),
+    (.),
+    (<$>),
+    (||),
+  )
 
 --
 -- Node types
@@ -379,16 +408,16 @@ isValidMessageFlow g mf =
       ( cs
           == SendTask
           || cs
-          == ThrowMessageIntermediateEvent
+            == ThrowMessageIntermediateEvent
           || cs
-          == MessageEndEvent
+            == MessageEndEvent
       )
         && ( ct
                == ReceiveTask
                || ct
-               == CatchMessageIntermediateEvent
+                 == CatchMessageIntermediateEvent
                || ct
-               == MessageStartEvent
+                 == MessageStartEvent
            )
         && isValidMessage g m
 
@@ -415,5 +444,5 @@ preE g n e = listFixpoint step $ predecessorEdgesSuchThat g p e
         n
           /= n' -- else we want that it is not n
           && c
-          /= MessageFlow -- end that the edge is a Message Flow
+            /= MessageFlow -- end that the edge is a Message Flow
     step es = es <> foldMap (predecessorEdgesSuchThat g p) es

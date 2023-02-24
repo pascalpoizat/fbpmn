@@ -13,6 +13,7 @@ import Fbpmn.Analysis.Tla.Model
 import Fbpmn.BpmnGraph.Model
 import Fbpmn.Helper (parseIdentifier, parseInteger, parseString)
 import NeatInterpolation (text)
+import Relude
 import Test.Tasty
 import Test.Tasty.HUnit
 import Test.Tasty.Runners.Html

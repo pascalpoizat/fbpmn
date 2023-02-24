@@ -2,30 +2,108 @@
 
 module Fbpmn.Analysis.Tla.IO.Tla where
 
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
--- import           Data.List                      ( intercalate )
-import Data.Map.Strict (foldrWithKey, keys, (!?), mapWithKey, union)
-import Data.Map.Strict as M (fromList)
-import qualified Data.Text as T
-import Fbpmn.BpmnGraph.Model
-import Fbpmn.BpmnGraph.SpaceModel
-import Fbpmn.Helper
-import NeatInterpolation (text)
 import Data.Containers.ListUtils (nubOrd)
+import Data.Map.Strict (foldrWithKey, keys, mapWithKey, union, (!?))
+import Data.Map.Strict as M (fromList)
+import Data.Text qualified as T
+import Fbpmn.BpmnGraph.Model
+  ( BpmnGraph
+      ( attached,
+        catE,
+        catN,
+        containN,
+        edges,
+        isInterrupt,
+        messageE,
+        messages,
+        name,
+        nodes,
+        sourceE,
+        targetE
+      ),
+    Edge,
+    EdgeType (..),
+    Node,
+    NodeType (..),
+    edgesT,
+    inNTs,
+    nodesT,
+    nodesTs,
+    preE,
+    sequenceFlow,
+  )
+import Fbpmn.BpmnGraph.SpaceModel
+  ( BaseLocation,
+    FormulaKind (SFAll, SFAny),
+    SpaceAction (SAMove, SAPass, SAUpdate),
+    SpaceBpmnGraph
+      ( actions,
+        cFormulas,
+        cKinds,
+        cVariables,
+        graph,
+        initial,
+        spacestructure,
+        variables
+      ),
+    SpaceConfiguration (initialLocations, initialSpace),
+    SpaceFormula (..),
+    SpaceStructure
+      ( baseLocations,
+        groupLocations,
+        sEdges,
+        sSourceE,
+        sTargetE
+      ),
+    isMoveSpaceAction,
+    isUpdateSpaceAction,
+    neighbours,
+    saSpaceFormula,
+  )
+import Fbpmn.Helper
+  ( FWriter (FW),
+    Id,
+    filterValue,
+    listFixpoint,
+    mapMap,
+    mapMaybes,
+  )
+import NeatInterpolation (text)
+import Relude
+  ( Applicative ((<*>)),
+    Bool (..),
+    Eq ((/=), (==)),
+    FilePath,
+    Foldable (foldr, null),
+    Functor (fmap),
+    IO,
+    Map,
+    Maybe (..),
+    Ord,
+    Semigroup ((<>)),
+    Show,
+    String,
+    Text,
+    ToString (toString),
+    ToText (toText),
+    any,
+    concat,
+    concatMap,
+    elem,
+    hashNub,
+    intercalate,
+    maybe,
+    show,
+    unlines,
+    writeFile,
+    zip,
+    ($),
+    (++),
+    (.),
+    (<$>),
+    (=<<),
+    (||),
+  )
 
 -- | FWriter from BPMN Graph to TLA+.
 writer :: FWriter BpmnGraph
@@ -123,9 +201,10 @@ encodeLocVar s = encodeMap show show "locvar" vs (M.fromList $ zip vs ns)
 
 -- TODO: optimize
 encodeReachability :: SpaceBpmnGraph -> Text
-encodeReachability g = unlines
-    [ encodeMap show (setTla show) "Reachable" (locs g) (computeReachabilityMap g)
-    , encodeReachabilityDefs
+encodeReachability g =
+  unlines
+    [ encodeMap show (setTla show) "Reachable" (locs g) (computeReachabilityMap g),
+      encodeReachabilityDefs
     ]
   where
     computeReachabilityMap :: SpaceBpmnGraph -> Map BaseLocation [BaseLocation]
@@ -145,32 +224,33 @@ encodeReachability g = unlines
     locs = baseLocations . spacestructure
 
 encodeReachabilityDefs :: Text
-encodeReachabilityDefs = [text|
+encodeReachabilityDefs =
+  [text|
   reachFrom(b) == UNION {Reachable[x] : x \in b}
 |]
 
 -- encodeReachability _ = [text|
---   outgoingSpace(n) == { e \in SpaceEdge : SpaceSource[e] = n } 
+--   outgoingSpace(n) == { e \in SpaceEdge : SpaceSource[e] = n }
 
---   succSpa(n) == { SpaceTarget[e] : e \in outgoingSpace(n) } 
+--   succSpa(n) == { SpaceTarget[e] : e \in outgoingSpace(n) }
 
 --   RECURSIVE succsNew(_, _, _)
 --   succsNew (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
 --                                 ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
---                                     IN succsNew(n, UNION{A \union {s}}, UNION{B \union UNION{succSpa(s)}}) 
+--                                     IN succsNew(n, UNION{A \union {s}}, UNION{B \union UNION{succSpa(s)}})
 
 --   succsSpace == [b \in BaseLocation |-> succsNew (b, {b}, succSpa(b))]
 
 --   RECURSIVE nextLocs(_, _, _)
 --   nextLocs (n, A, B) == IF UNION{B} \ UNION{A} = {} THEN B
 --                                 ELSE LET s == CHOOSE s \in UNION{UNION{B} \ UNION{A}} : TRUE
---                                     IN nextLocs(n, UNION{A \union {s}}, UNION{B \union UNION{succsSpace[s]}}) 
+--                                     IN nextLocs(n, UNION{A \union {s}}, UNION{B \union UNION{succsSpace[s]}})
 
 --   reach(v,p) == nextLocs (v[varloc[p]], {v[varloc[p]]} , succsSpace[v[varloc[p]]])
 
 --   reachFrom(v,p,x) == nextLocs (v[x], {v[x]} , succsSpace[v[x]])
--- |]
 
+-- | ]
 encodeSConditions :: SpaceBpmnGraph -> Text
 encodeSConditions g =
   unlines $
@@ -218,21 +298,21 @@ encodeAUpdateVar g = encodeMap show f "aUpdateVar" (keys . filterValue isUpdateS
   where
     f SAPass = ""
     f SAMove {} = ""
-    f (SAUpdate v _ _ ) = show v
+    f (SAUpdate v _ _) = show v
 
 encodeAUpdateGMinus :: SpaceBpmnGraph -> Text
 encodeAUpdateGMinus g = encodeMap show f "aUpdateGMinus" (keys . filterValue isUpdateSpaceAction . actions $ g) (actions g)
   where
     f SAPass = ""
     f SAMove {} = ""
-    f (SAUpdate _ gm _ ) = setTla show gm
+    f (SAUpdate _ gm _) = setTla show gm
 
 encodeAUpdateGPlus :: SpaceBpmnGraph -> Text
 encodeAUpdateGPlus g = encodeMap show f "aUpdateGPlus" (keys . filterValue isUpdateSpaceAction . actions $ g) (actions g)
   where
     f SAPass = ""
     f SAMove {} = ""
-    f (SAUpdate _ _ gp ) = setTla show gp
+    f (SAUpdate _ _ gp) = setTla show gp
 
 encodeAFormula :: SpaceBpmnGraph -> Text
 encodeAFormula g = unlines $ encodeActionFormulaDef g <$> (keys . filterValue isMoveSpaceAction . actions $ g)
@@ -249,7 +329,8 @@ encodeACond :: SpaceBpmnGraph -> Text
 encodeACond = encodeCond "aCond" (keys . filterValue isMoveSpaceAction . actions) identifiedAFormulas
 
 encodeOrdering :: SpaceBpmnGraph -> Text
-encodeOrdering _ = [text|
+encodeOrdering _ =
+  [text|
   orderingSet == { }
   order(a,b) == <<a,b>> \in orderingSet
 |]
@@ -276,24 +357,29 @@ encodeFormula :: SpaceFormula -> Text
 encodeFormula SFTrue = trueTla
 encodeFormula SFHere = [text|v[varloc[p]]|]
 encodeFormula (SFVar v) = [text|v[$sv]|]
-  where sv = show v
+  where
+    sv = show v
 encodeFormula (SFBase v) = [text|{ $vs }|]
-  where vs = show v
+  where
+    vs = show v
 encodeFormula (SFGroup v) = [text|s[$vs]|]
-  where vs = show v
+  where
+    vs = show v
 encodeFormula (SFNot f) = [text|(BaseLocation - $sf)|]
-  where sf = encodeFormula f
-encodeFormula (SFOr f1 f2 ) = [text|($sf1 \union $sf2)|]
+  where
+    sf = encodeFormula f
+encodeFormula (SFOr f1 f2) = [text|($sf1 \union $sf2)|]
   where
     sf1 = encodeFormula f1
     sf2 = encodeFormula f2
-encodeFormula (SFAnd f1 f2 ) = [text|($sf1 \intersect $sf2)|]
+encodeFormula (SFAnd f1 f2) = [text|($sf1 \intersect $sf2)|]
   where
     sf1 = encodeFormula f1
     sf2 = encodeFormula f2
 encodeFormula SFReach = [text|reachFrom(v[varloc[p]])|]
 encodeFormula (SFReachFrom x) = [text|reachFrom(v[$xs])|]
-  where xs = show x
+  where
+    xs = show x
 
 identifiedCFormulas :: SpaceBpmnGraph -> Map Id SpaceFormula
 identifiedCFormulas = cFormulas
@@ -307,17 +393,16 @@ identifiedFormulas s = identifiedCFormulas s `union` identifiedAFormulas s
 encodeSEvalF :: SpaceBpmnGraph -> Text
 encodeSEvalF s =
   if null $ keys idfs
-  then
-    [text|evalF(v,s,p,f) == $emptySetTla|]
-  else
-    [text|evalF(v,s,p,f) ==
+    then [text|evalF(v,s,p,f) == $emptySetTla|]
+    else
+      [text|evalF(v,s,p,f) ==
         $ifs
         ELSE $emptySetTla
     |]
-      where
-        idfs = identifiedFormulas s
-        ifs = toText $ intercalate "ELSE " $ f <$> keys idfs
-        f e = toString [text|IF f = "$se" THEN def_$se(v,s,p)|] where se = genCode . toText $ e
+  where
+    idfs = identifiedFormulas s
+    ifs = toText $ intercalate "ELSE " $ f <$> keys idfs
+    f e = toString [text|IF f = "$se" THEN def_$se(v,s,p)|] where se = genCode . toText $ e
 
 encodeCodeConditions :: SpaceBpmnGraph -> Text
 encodeCodeConditions s = encodeList show "CodeCondition" . fmap genCode $ ids
@@ -327,8 +412,8 @@ encodeCodeConditions s = encodeList show "CodeCondition" . fmap genCode $ ids
 encodeSInit :: SpaceBpmnGraph -> Text
 encodeSInit s =
   unlines $
-    [ encodeGMap show show "startloc" ((`nodesT` Process) . graph) (initialLocations . initial)
-    , encodeGMap show (setTla show) "startsub" (groupLocations . spacestructure) (initialSpace . initial)
+    [ encodeGMap show show "startloc" ((`nodesT` Process) . graph) (initialLocations . initial),
+      encodeGMap show (setTla show) "startsub" (groupLocations . spacestructure) (initialSpace . initial)
     ]
       <*> [s]
 

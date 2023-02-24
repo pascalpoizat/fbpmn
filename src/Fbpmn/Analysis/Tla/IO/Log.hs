@@ -4,7 +4,35 @@ module Fbpmn.Analysis.Tla.IO.Log where
 
 import Data.Attoparsec.Text (Parser, anyChar, endOfLine, many1, manyTill, space, string)
 import Fbpmn.Analysis.Tla.Model
-import Fbpmn.Helper (TEither, FReader (FR), eitherResult, parse, parseContainer, parseIdentifier, parseInteger, parseString, parseTerminal)
+  ( CounterExampleState (CounterExampleState),
+    Log (Log),
+    Status (..),
+    Value (..),
+    Variable,
+  )
+import Fbpmn.Helper (FReader (FR), TEither, eitherResult, parse, parseContainer, parseIdentifier, parseInteger, parseString, parseTerminal)
+import Relude
+  ( Alternative (many, (<|>)),
+    Applicative (pure, (*>), (<*)),
+    Either (Left, Right),
+    Eq ((/=)),
+    FilePath,
+    IO,
+    IsList (fromList),
+    Maybe (Just, Nothing),
+    Monad (return, (>>)),
+    Semigroup ((<>)),
+    Text,
+    ToText (toText),
+    otherwise,
+    putStrLn,
+    putTextLn,
+    readFile,
+    takeWhile,
+    ($),
+    (.),
+    (<$>),
+  )
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -94,11 +122,11 @@ readLOG p = (Right . toText <$> readFile p) `catchIOError` handler
     handler :: IOError -> IO (TEither Text)
     handler e
       | isDoesNotExistError e = do
-        putTextLn "file not found"
-        pure $ Left "file not found"
+          putTextLn "file not found"
+          pure $ Left "file not found"
       | otherwise = do
-        putTextLn "unknown error"
-        pure $ Left "unknown error"
+          putTextLn "unknown error"
+          pure $ Left "unknown error"
 
 -- | FReader from TLA Log file to TLA LOG.
 reader :: FReader Log

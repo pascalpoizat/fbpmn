@@ -3,10 +3,34 @@
 
 module Fbpmn.BpmnGraph.SpaceModel where
 
-import Data.Map as M (elems, keys, empty, lookup)
+import Data.Map as M (elems, empty, keys, lookup)
 import Data.Set as S (elems, empty, insert)
 import Fbpmn.BpmnGraph.Model (BpmnGraph, Edge, Node, isValidGraph)
 import Fbpmn.Helper (Id, allDifferent, allIn', disjoint')
+import Relude
+  ( Applicative ((<*>)),
+    Bool (..),
+    Eq ((==)),
+    IsList (fromList),
+    Map,
+    Maybe (..),
+    Monoid (mempty),
+    Semigroup ((<>)),
+    Set,
+    Show,
+    all,
+    and,
+    bisequence,
+    catMaybes,
+    elem,
+    filter,
+    fst,
+    map,
+    snd,
+    ($),
+    (.),
+    (<$>),
+  )
 import Relude.Extra.Lens (Lens', lens)
 
 -- | Base Locations
@@ -248,7 +272,7 @@ isValidSGraph g =
 -- | Checks if formulas on conditional edges are valid
 -- - variables are in the graph variables
 -- - base locations are in the space structure base locations
--- - group locations are in the space structure group locationss 
+-- - group locations are in the space structure group locationss
 hasValidCFormulas :: SpaceBpmnGraph -> Bool
 hasValidCFormulas g =
   all
@@ -261,7 +285,8 @@ hasValidCFormulas g =
             <*> [g]
             <*> [x]
     )
-    $ M.elems . cFormulas $ g
+    $ M.elems . cFormulas
+    $ g
 
 hasValidFVariables :: [Variable] -> SpaceFormula -> Bool
 hasValidFVariables vs = all (`elem` vs) . fVariables

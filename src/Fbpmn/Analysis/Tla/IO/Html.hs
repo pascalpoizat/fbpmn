@@ -3,13 +3,43 @@
 module Fbpmn.Analysis.Tla.IO.Html where
 
 import Data.Map.Strict ((!?))
-import qualified Data.Map.Strict as M
+import Data.Map.Strict qualified as M
   ( toList,
   )
-import qualified Data.Text as T
+import Data.Text qualified as T
 import Fbpmn.Analysis.Tla.Model
+  ( CounterExampleState (sid, sinfo, svalue),
+    Log (Log, lmodel),
+    Status (Failure, Success),
+    Value (..),
+    Variable,
+  )
 import Fbpmn.Helper (FWriter (FW))
 import NeatInterpolation (text)
+import Relude
+  ( Eq ((/=)),
+    FilePath,
+    Foldable (foldMap),
+    IO,
+    Integer,
+    Integral (div),
+    Maybe (Just, Nothing),
+    Text,
+    ToString (toString),
+    ToText (toText),
+    concat,
+    fromMaybe,
+    id,
+    maybe,
+    show,
+    sum,
+    unlines,
+    unwords,
+    writeFile,
+    ($),
+    (.),
+    (<$>),
+  )
 
 -- | FWriter from TLA Log to HTML.
 writer :: [Extension] -> FWriter Log
@@ -97,9 +127,10 @@ data Extension = Communication | Space
 extensionInit :: Extension -> [Text]
 extensionInit Communication = [[text|var net;|]]
 extensionInit Space =
-  [[text|
+  [ [text|
   var subs;
-  var sigma;|]]
+  var sigma;|]
+  ]
 
 extensionCss :: Extension -> [Text]
 extensionCss Communication = [", #network"]
@@ -110,7 +141,8 @@ extensionDivInfo Communication = [("network", "Network")]
 extensionDivInfo Space = [("sigma", "Sigma"), ("subs", "Subs")]
 
 extensionDiv :: (Text, Text) -> Text
-extensionDiv (ident, title) = [text|
+extensionDiv (ident, title) =
+  [text|
       <div id="$ident">
         <div id="title">$title status</div>
         <div id="status"></div>
@@ -131,8 +163,8 @@ extensionWork' :: (a -> Text) -> (Extension -> [a]) -> [Extension] -> Text
 extensionWork' f g xts = unwords $ f <$> concat (g <$> xts)
 
 extensionGetvaluesInfo :: Extension -> [(Text, Text)]
-extensionGetvaluesInfo Communication = [("net", "2")];
-extensionGetvaluesInfo Space = [("sigma", "3"), ("subs", "4")];
+extensionGetvaluesInfo Communication = [("net", "2")]
+extensionGetvaluesInfo Space = [("sigma", "3"), ("subs", "4")]
 
 extensionGetvalues :: (Text, Text) -> Text
 extensionGetvalues (ident, index) = [text|$ident = csteps[step][$index];|]

@@ -8,6 +8,7 @@ import Data.Aeson
   )
 import qualified Data.Map.Strict as M (filter, mapWithKey)
 import Fbpmn.Helper (Id)
+import Relude
 
 type Variable = Id
 data Status

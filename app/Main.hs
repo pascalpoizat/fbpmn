@@ -1,7 +1,7 @@
 import Colourista (errorMessage, successMessage)
 import Fbpmn.Analysis.Alloy.IO.Alloy as BGAlloy (writer)
 import Fbpmn.Analysis.Tla.IO.Dot as LogDot (writer)
-import Fbpmn.Analysis.Tla.IO.Html as LogHtml (writer, Extension (Communication, Space))
+import Fbpmn.Analysis.Tla.IO.Html as LogHtml (Extension (Communication, Space), writer)
 import Fbpmn.Analysis.Tla.IO.Json as LogJson (writer)
 import Fbpmn.Analysis.Tla.IO.Log as LogLog (reader)
 import Fbpmn.Analysis.Tla.IO.Tla as BGTla (writer, writerS)
@@ -13,6 +13,38 @@ import Fbpmn.BpmnGraph.Model (isValidGraph)
 import Fbpmn.BpmnGraph.SpaceModel (isValidSGraph)
 import Fbpmn.Helper (FReader (..), FWriter (..))
 import Options.Applicative
+  ( Applicative (pure, (<*>)),
+    Parser,
+    argument,
+    command,
+    execParser,
+    fullDesc,
+    header,
+    help,
+    helper,
+    info,
+    metavar,
+    progDesc,
+    str,
+    subparser,
+    (<$>),
+    (<**>),
+  )
+import Relude
+  ( Bool (..),
+    Either (Left, Right),
+    IO,
+    Semigroup ((<>)),
+    Text,
+    ToString (toString),
+    id,
+    not,
+    putStrLn,
+    ($),
+    (.),
+    (=<<),
+    (||),
+  )
 
 fversion :: Text
 fversion = "0.3.8"
@@ -364,7 +396,8 @@ main = run =<< execParser opts
     opts =
       info
         (parserOptions <**> helper)
-        ( fullDesc <> progDesc "formal transformations for BPMN models"
+        ( fullDesc
+            <> progDesc "formal transformations for BPMN models"
             <> header
               (toString toolversion)
         )

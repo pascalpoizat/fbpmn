@@ -1,34 +1,79 @@
 {-# LANGUAGE QuasiQuotes #-}
+
 module Fbpmn.BpmnGraph.IO.Dot where
 
-import           Fbpmn.BpmnGraph.Model
-import           NeatInterpolation (text)
--- import           Data.List                      ( intercalate )
-import           Data.Map.Strict   ((!?))
-import Fbpmn.Helper (FWriter(FW))
+import Data.Map.Strict ((!?))
+import Fbpmn.BpmnGraph.Model
+  ( BpmnGraph
+      ( catE,
+        catN,
+        edges,
+        name,
+        nameN,
+        nodes,
+        sourceE,
+        targetE
+      ),
+    EdgeType (MessageFlow),
+    Node,
+    NodeType
+      ( AndGateway,
+        CatchMessageIntermediateEvent,
+        EventBasedGateway,
+        MessageEndEvent,
+        MessageStartEvent,
+        NoneEndEvent,
+        NoneStartEvent,
+        OrGateway,
+        SendTask,
+        TerminateEndEvent,
+        ThrowMessageIntermediateEvent,
+        TimerIntermediateEvent,
+        TimerStartEvent,
+        XorGateway
+      ),
+  )
+import Fbpmn.Helper (FWriter (FW))
+import NeatInterpolation (text)
+import Relude
+  ( Applicative (pure, (<*>)),
+    Eq ((==)),
+    FilePath,
+    IO,
+    Maybe (..),
+    Semigroup ((<>)),
+    String,
+    Text,
+    ToString (toString),
+    fromMaybe,
+    show,
+    unlines,
+    writeFile,
+    ($),
+    (.),
+    (<$>),
+  )
 
 -- | FWriter from BPMN Graph to DOT.
 writer :: FWriter BpmnGraph
-writer = FW writeToDOT ".dot" 
+writer = FW writeToDOT ".dot"
 
-{-|
-Write a BPMN Graph to a DOT file.
--}
+-- |
+-- Write a BPMN Graph to a DOT file.
 writeToDOT :: FilePath -> BpmnGraph -> IO ()
 writeToDOT p = writeFile p . toString . encodeBpmnGraphToDot
 
-{-|
-Transform a BPMN Graph to a TLA specification.
--}
+-- |
+-- Transform a BPMN Graph to a TLA specification.
 encodeBpmnGraphToDot :: BpmnGraph -> Text
 encodeBpmnGraphToDot g =
-  unlines
-    $   [ encodeBpmnGraphHeaderToDot    -- header
-        , encodeBpmnGraphNodeDeclToDot  -- nodes
-        , encodeBpmnGraphEdgeDeclToDot  -- edges
-        , encodeBpmnGraphFooterToDot    -- footer
-        ]
-    <*> [g]
+  unlines $
+    [ encodeBpmnGraphHeaderToDot, -- header
+      encodeBpmnGraphNodeDeclToDot, -- nodes
+      encodeBpmnGraphEdgeDeclToDot, -- edges
+      encodeBpmnGraphFooterToDot -- footer
+    ]
+      <*> [g]
 
 encodeBpmnGraphHeaderToDot :: BpmnGraph -> Text
 encodeBpmnGraphHeaderToDot g =
@@ -60,7 +105,7 @@ encodeBpmnGraphNodeDeclToDot g =
 nodeRepresentation :: Maybe NodeType -> (Node, String) -> Text
 nodeRepresentation (Just AndGateway) _ = [text|label = "+", shape = "diamond"|]
 nodeRepresentation (Just XorGateway) _ = [text|label = "x", shape = "diamond"|]
-nodeRepresentation (Just OrGateway ) _ = [text|label = "o", shape = "diamond"|]
+nodeRepresentation (Just OrGateway) _ = [text|label = "o", shape = "diamond"|]
 nodeRepresentation (Just EventBasedGateway) _ =
   [text|label = "@", shape = "diamond"|]
 nodeRepresentation (Just NoneStartEvent) _ =
@@ -81,11 +126,14 @@ nodeRepresentation (Just MessageEndEvent) _ =
 nodeRepresentation (Just TerminateEndEvent) _ =
   [text|label = "T", shape = "circle"|]
 nodeRepresentation (Just SendTask) (_, x) = [text|label = $l, shape = "box" |]
-  where l = show $ "!! " <> x
+  where
+    l = show $ "!! " <> x
 nodeRepresentation (Just _) (_, x) = [text|label = $sx, shape = "box"|]
-  where sx = show x
+  where
+    sx = show x
 nodeRepresentation Nothing (_, x) = [text|label = $sx, shape = "box"|]
-  where sx = show x
+  where
+    sx = show x
 
 nameOrElseIdForNode :: BpmnGraph -> Node -> (Node, String)
 nameOrElseIdForNode g n = (n, fromMaybe n $ nameN g !? n)
@@ -98,22 +146,18 @@ encodeBpmnGraphEdgeDeclToDot g =
   where
     tes = unlines $ toDot <$> edges g
     toDot e =
-      case
-        do
-          source <- sourceE g !? e
-          target <- targetE g !? e
-          cat <- catE g !? e
-          pure (source, target, cat)
-        of
-          Nothing -> ""
-          Just (s,t,c) -> edgeToDot s t c
+      case do
+        source <- sourceE g !? e
+        target <- targetE g !? e
+        cat <- catE g !? e
+        pure (source, target, cat) of
+        Nothing -> ""
+        Just (s, t, c) -> edgeToDot s t c
 
 edgeToDot :: Node -> Node -> EdgeType -> Text
 edgeToDot s t c =
-          let
-              ss = show s
-              st = show t
-          in
-              if c == MessageFlow
-                then [text|$ss -> $st [style=dashed];|]
-                else [text|$ss -> $st;|]
+  let ss = show s
+      st = show t
+   in if c == MessageFlow
+        then [text|$ss -> $st [style=dashed];|]
+        else [text|$ss -> $st;|]

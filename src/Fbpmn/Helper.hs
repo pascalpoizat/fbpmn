@@ -4,12 +4,51 @@ module Fbpmn.Helper
   )
 where
 
-import Data.Attoparsec.Text (Parser, Result, anyChar, char, decimal, digit, letter, manyTill, sepBy, space, string, parse, parseOnly, eitherResult, endOfLine, atEnd, inClass, satisfy)
-import qualified Data.Attoparsec.Text as A (takeWhile)
+import Data.Attoparsec.Text (Parser, Result, anyChar, atEnd, char, decimal, digit, eitherResult, endOfLine, inClass, letter, manyTill, parse, parseOnly, satisfy, sepBy, space, string)
+import Data.Attoparsec.Text qualified as A (takeWhile)
 import Data.Containers.ListUtils (nubOrd)
 import Data.Map.Strict (keys, (!?))
-import qualified Data.Set as S (fromList)
-import qualified Data.Map.Strict as M (fromList, toList)
+import Data.Map.Strict qualified as M (fromList, toList)
+import Data.Set qualified as S (fromList)
+import Relude
+  ( Alternative (many),
+    Applicative ((*>)),
+    Bool,
+    Either (..),
+    Eq ((==)),
+    FilePath,
+    Foldable (length, null, toList),
+    IO,
+    Integer,
+    Map,
+    Maybe (..),
+    Monad (return),
+    Natural,
+    Num ((+)),
+    Ord,
+    Semigroup ((<>)),
+    Set,
+    String,
+    Text,
+    ToString (toString),
+    all,
+    any,
+    catMaybes,
+    elem,
+    filter,
+    flip,
+    fst,
+    isJust,
+    not,
+    otherwise,
+    show,
+    snd,
+    uncurry,
+    ($),
+    (&&&),
+    (.),
+    (<$>),
+  )
 
 type TEither = Either Text
 
@@ -42,7 +81,7 @@ mapMapElement :: Ord a => (a -> Maybe b -> Maybe c) -> Map a b -> a -> Maybe c
 mapMapElement g m k = g k (m !? k)
 
 liftMaybe1 :: (Maybe a, b) -> Maybe (a, b)
-liftMaybe1 (Just a, b) = Just (a,b)
+liftMaybe1 (Just a, b) = Just (a, b)
 liftMaybe1 (Nothing, _) = Nothing
 
 liftMaybe2 :: (a, Maybe b) -> Maybe (a, b)
@@ -169,8 +208,8 @@ parseInteger = many space *> decimal
 -- | Converts a maybe into an either using a possible error message.
 validate :: a -> Maybe b -> Either a b
 validate errorMessage m = case m of
-            Nothing -> Left errorMessage
-            Just v  -> Right v
+  Nothing -> Left errorMessage
+  Just v -> Right v
 
 -- | Converts a maybe into an either using a possible error message.
 -- Practical to be used in infix form.

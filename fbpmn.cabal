@@ -9,12 +9,12 @@ license:             Apache-2.0
 license-file:        LICENSE
 author:              The fBPMN Team
 maintainer:          pascal.poizat@gmail.com
-copyright:           2018-2021 The fBPMN Team (see contributors on GitHub)
+copyright:           2018-2023 The fBPMN Team (see contributors on GitHub)
 category:            Utility
 build-type:          Simple
 extra-doc-files:     README.md
                    , CHANGELOG.md
-tested-with:         GHC == 8.8.4
+tested-with:         GHC == 9.2.5
 
 source-repository head
   type:                git
@@ -48,8 +48,8 @@ library
                        -fwarn-name-shadowing
                        -fwrite-ide-info
                        -hiedir=.hie
-  build-depends:       base-noprelude
-                     , relude
+  build-depends:       relude >= 1.1.0.0
+                     , base
                      , aeson
                      , aeson-pretty
                      , attoparsec
@@ -64,7 +64,9 @@ library
   default-language:    Haskell2010
   default-extensions:  DeriveGeneric
                        GeneralizedNewtypeDeriving
+                       ImportQualifiedPost
                        LambdaCase
+                       NoImplicitPrelude
                        OverloadedStrings
                        RecordWildCards
                        ScopedTypeVariables
@@ -84,8 +86,7 @@ executable fbpmn
                        -fwarn-missing-signatures
                        -fwarn-name-shadowing
   build-depends:       fbpmn
-                     , base-noprelude
-                     , relude
+                     , relude >= 1.1.0.0
                      , aeson
                      , aeson-pretty
                      , attoparsec
@@ -100,7 +101,9 @@ executable fbpmn
   default-language:    Haskell2010
   default-extensions:  DeriveGeneric
                        GeneralizedNewtypeDeriving
+                       ImportQualifiedPost
                        LambdaCase
+                       NoImplicitPrelude
                        OverloadedStrings
                        RecordWildCards
                        ScopedTypeVariables
@@ -121,8 +124,7 @@ test-suite fbpmn-test
                        -fwarn-missing-signatures
                        -fwarn-name-shadowing
   build-depends:       fbpmn
-                     , base-noprelude
-                     , relude
+                     , relude >= 1.1.0.0
                      , aeson
                      , aeson-pretty
                      , attoparsec
@@ -143,7 +145,9 @@ test-suite fbpmn-test
   default-language:    Haskell2010
   default-extensions:  DeriveGeneric
                        GeneralizedNewtypeDeriving
+                       ImportQualifiedPost
                        LambdaCase
+                       NoImplicitPrelude
                        OverloadedStrings
                        RecordWildCards
                        ScopedTypeVariables
@@ -165,8 +169,7 @@ benchmark fbpmn-benchmark
                        -fwarn-name-shadowing
   build-depends:       criterion
                      , fbpmn
-                     , base-noprelude
-                     , relude
+                     , relude >= 1.1.0.0
                      , aeson
                      , aeson-pretty
                      , attoparsec
@@ -177,7 +180,9 @@ benchmark fbpmn-benchmark
   default-language:    Haskell2010
   default-extensions:  DeriveGeneric
                        GeneralizedNewtypeDeriving
+                       ImportQualifiedPost
                        LambdaCase
+                       NoImplicitPrelude
                        OverloadedStrings
                        RecordWildCards
                        ScopedTypeVariables

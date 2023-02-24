@@ -4,13 +4,24 @@ import Data.Aeson
   ( decode,
   )
 import Data.Aeson.Encode.Pretty (encodePretty)
-import qualified Data.ByteString.Lazy as BS
+import Data.ByteString.Lazy qualified as BS
   ( ByteString,
     readFile,
     writeFile,
   )
-import Fbpmn.BpmnGraph.Model
-import Fbpmn.Helper (TEither, FReader (FR), FWriter (FW), validate)
+import Fbpmn.BpmnGraph.Model (BpmnGraph)
+import Fbpmn.Helper (FReader (FR), FWriter (FW), TEither, validate)
+import Relude
+  ( Applicative (pure),
+    Either (Left),
+    FilePath,
+    IO,
+    otherwise,
+    putTextLn,
+    ($),
+    (.),
+    (<$>),
+  )
 import System.IO.Error
   ( IOError,
     catchIOError,
@@ -24,7 +35,7 @@ genJSON = encodePretty
 
 -- | FReader from JSON to BPMN Graph.
 reader :: FReader BpmnGraph
-reader = FR readFromJSON ".json" 
+reader = FR readFromJSON ".json"
 
 -- |
 -- Read a BPMN Graph from a JSON file.
@@ -34,11 +45,11 @@ readFromJSON p = (validate "could not load JSON" . decode <$> BS.readFile p) `ca
     handler :: IOError -> IO (TEither BpmnGraph)
     handler e
       | isDoesNotExistError e = do
-        putTextLn "file not found"
-        pure $ Left "file not found"
+          putTextLn "file not found"
+          pure $ Left "file not found"
       | otherwise = do
-        putTextLn "unknown error"
-        pure $ Left "unknown error"
+          putTextLn "unknown error"
+          pure $ Left "unknown error"
 
 -- | FWriter from BPMN Graph to JSON.
 writer :: FWriter BpmnGraph

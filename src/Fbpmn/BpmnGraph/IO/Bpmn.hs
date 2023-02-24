@@ -2,27 +2,101 @@
 
 module Fbpmn.BpmnGraph.IO.Bpmn where
 
-import qualified Data.ByteString.Lazy as BS
+import Data.ByteString.Lazy qualified as BS
   ( readFile,
   )
-import qualified Data.Map as M
-  ( empty,
+import Data.Map qualified as M
+  ( elems,
+    empty,
     fromList,
-    singleton, map, elems
+    map,
+    singleton,
   )
 import Fbpmn.BpmnGraph.Model
+  ( BpmnGraph (BpmnGraph),
+    Edge,
+    EdgeType (..),
+    Node,
+    NodeType (..),
+    TimerDefinitionType (..),
+    TimerEventDefinition (TimerEventDefinition),
+    TimerValue,
+    nodesT,
+  )
 import Fbpmn.BpmnGraph.SpaceModel
-import Fbpmn.Helper (Id, Parser, TEither, parse, parseContainer, parseCouple, parseIdentifier, parseList, withPrefixedIndex, (?#), parseTerminal, FReader (FR), eitherResult, ith1, ith2, ith3)
+  ( FormulaKind (..),
+    SpaceAction (..),
+    SpaceBpmnGraph (SpaceBpmnGraph, cFormulas, cVariables, graph),
+    SpaceConfiguration (SpaceConfiguration),
+    SpaceFormula (..),
+    SpaceStructure (SpaceStructure, baseLocations, groupLocations),
+    Variable,
+    fVariables,
+    variablesL,
+  )
+import Fbpmn.Helper (FReader (FR), Id, Parser, TEither, eitherResult, ith1, ith2, ith3, parse, parseContainer, parseCouple, parseIdentifier, parseList, parseTerminal, withPrefixedIndex, (?#))
+import Relude
+  ( Alternative ((<|>)),
+    Any (Any, getAny),
+    Applicative (pure, (<*>)),
+    Bifunctor (bimap, first),
+    Bool (..),
+    Either (Left, Right),
+    Eq ((==)),
+    FilePath,
+    Foldable (foldMap, null),
+    IO,
+    IsList (fromList),
+    Map,
+    Maybe (..),
+    Monad (return, (>>), (>>=)),
+    Monoid (mconcat, mempty),
+    Ord,
+    Semigroup ((<>)),
+    String,
+    Text,
+    ToString (toString),
+    ToText (toText),
+    Traversable (sequence),
+    any,
+    bisequence,
+    concatMap,
+    elem,
+    fromMaybe,
+    fst,
+    hashNub,
+    head,
+    isJust,
+    isRight,
+    listToMaybe,
+    nonEmpty,
+    not,
+    ordNub,
+    otherwise,
+    putTextLn,
+    rights,
+    show,
+    snd,
+    unlines,
+    ($),
+    (&),
+    (&&),
+    (++),
+    (.),
+    (<$>),
+    (=<<),
+  )
+import Relude.Extra.Lens ((.~))
 import System.IO.Error
   ( IOError,
     catchIOError,
     isDoesNotExistError,
   )
 import Text.XML.Light
-  ( Content (..),
+  ( CData (..),
+    Content (..),
     Element (..),
     QName (..),
-    CData (..),
     cdData,
     elChildren,
     filterChildren,
@@ -31,9 +105,8 @@ import Text.XML.Light
     findChildren,
     onlyElems,
     parseXML,
-    ppElement
+    ppElement,
   )
-import Relude.Extra.Lens ((.~))
 
 --
 -- helpers for building QNames
@@ -411,8 +484,8 @@ pEdge es e = e `oneOf` [pSF es, pMF es]
 dump :: [Element] -> Text
 dump es = unlines $ toText . ppElement <$> es
 
--- | Parse a string given a parser.
--- Whitespace is added to the string to deal with a bug with identifier parsing.
+-- |  Parse a string given a parser.
+--  Whitespace is added to the string to deal with a bug with identifier parsing.
 xParseWith :: Parser a -> String -> TEither a
 xParseWith p s = first toText $ eitherResult $ parse p (toText $ s ++ " ")
 
@@ -559,9 +632,9 @@ decodeS cs = do
   where
     computeUsedVariables sg =
       ["here", "_"]
-      <> (M.elems . cVariables $ sg)
-      <> mconcat (fVariables <$> (M.elems . cFormulas $ sg))
-      <> (genLocName <$> ((`nodesT` Process) . graph $ sg))
+        <> (M.elems . cVariables $ sg)
+        <> mconcat (fVariables <$> (M.elems . cFormulas $ sg))
+        <> (genLocName <$> ((`nodesT` Process) . graph $ sg))
     genLocName p = "loc" <> p
 
 decodeCSFOrder :: Element -> TEither [Edge]
@@ -613,49 +686,49 @@ parseFKind =
 -- A "." is required at the end of formulas.
 parseSFormula :: SpaceStructure -> Parser SpaceFormula
 parseSFormula s =
-      (parseTerminal "true" >> return SFTrue)
-  <|> (parseTerminal "here" >> return SFHere)
-  <|> (parseTerminal "reachable" >> return SFReach )
-  <|> do
-        _ <- parseTerminal "reachable-from"
-        SFReachFrom <$> parseIdentifier
-  <|> do
-        i <- parseIdentifier
-        return $ (if i `elem` baseLocations s then SFBase else if i `elem` groupLocations s then SFGroup else SFVar) i
-  <|> do
-        _ <- parseTerminal "("
-        _ <- parseTerminal "not"
-        f <- parseSFormula s
-        _ <- parseTerminal ")"
-        return $ SFNot f
-  <|> do
-        _ <- parseTerminal "("
-        f1 <- parseSFormula s
-        _ <- parseTerminal "or"
-        f2 <- parseSFormula s
-        _ <- parseTerminal ")"
-        return $ SFOr f1 f2
-  <|> do
-        _ <- parseTerminal "("
-        f1 <- parseSFormula s
-        _ <- parseTerminal "and"
-        f2 <- parseSFormula s
-        _ <- parseTerminal ")"
-        return $ SFAnd f1 f2
+  (parseTerminal "true" >> return SFTrue)
+    <|> (parseTerminal "here" >> return SFHere)
+    <|> (parseTerminal "reachable" >> return SFReach)
+    <|> do
+      _ <- parseTerminal "reachable-from"
+      SFReachFrom <$> parseIdentifier
+    <|> do
+      i <- parseIdentifier
+      return $ (if i `elem` baseLocations s then SFBase else if i `elem` groupLocations s then SFGroup else SFVar) i
+    <|> do
+      _ <- parseTerminal "("
+      _ <- parseTerminal "not"
+      f <- parseSFormula s
+      _ <- parseTerminal ")"
+      return $ SFNot f
+    <|> do
+      _ <- parseTerminal "("
+      f1 <- parseSFormula s
+      _ <- parseTerminal "or"
+      f2 <- parseSFormula s
+      _ <- parseTerminal ")"
+      return $ SFOr f1 f2
+    <|> do
+      _ <- parseTerminal "("
+      f1 <- parseSFormula s
+      _ <- parseTerminal "and"
+      f2 <- parseSFormula s
+      _ <- parseTerminal ")"
+      return $ SFAnd f1 f2
 
 computeS :: SpaceStructure -> Element -> TEither SpaceBpmnGraph
 computeS ss e = do
-  ces <- computeMap pCSF (bEdgeInfo $ decodeF ss ) e
+  ces <- computeMap pCSF (bEdgeInfo $ decodeF ss) e
   as <- computeMap pAT (bNodeInfo $ decodeA ss) e
   co <- computeMap pXor (bNodeInfo decodeCSFOrder) e
   -- initial location for processes only (not for sub processes)
-  il <- if pP [] e
-        then
-          do
-            pid <- e </. "id"
-            loc <- e </: "extensionElements" /:: "properties" /! "initial-location" /. "value" @@ parseIdentifier
-            pure $ M.singleton pid loc
-        else pure M.empty
+  il <-
+    if pP [] e
+      then do
+        pid <- e </. "id"
+        loc <- e </: "extensionElements" /:: "properties" /! "initial-location" /. "value" @@ parseIdentifier
+        pure $ M.singleton pid loc
+      else pure M.empty
   let graph =
         SpaceBpmnGraph
           mempty -- the graph is read at the collaboration level
@@ -760,11 +833,12 @@ decode cs = do
 -- - f is a transformation of an element into a couple element id x element information
 computeMap :: Ord k => ([Element] -> Element -> Bool) -> (Element -> (TEither k, TEither a)) -> Element -> TEither (Map k a)
 computeMap p f e =
-    case ks of
-      [] -> Right M.empty -- if no elements are selected by p then OK with empty map
-      _  -> do -- else possibly KO
-              mappedKeys <- sequence $ combine . f <$> ks
-              pure $ M.fromList mappedKeys
+  case ks of
+    [] -> Right M.empty -- if no elements are selected by p then OK with empty map
+    _ -> do
+      -- else possibly KO
+      mappedKeys <- sequence $ combine . f <$> ks
+      pure $ M.fromList mappedKeys
   where
     ks = filterChildren (p $ elChildren e) e
     combine :: (TEither a, TEither b) -> TEither (a, b)
@@ -778,7 +852,7 @@ computeMap p f e =
 -- - f is a transformation of an element into a couple element id x element information
 computeMap' :: Ord k => ([Element] -> Element -> Bool) -> (Element -> (TEither k, TEither a)) -> Element -> Map k a
 computeMap' p f e =
-    M.fromList $ rights $ bisequence . f <$> ks
+  M.fromList $ rights $ bisequence . f <$> ks
   where
     ks = filterChildren (p $ elChildren e) e
 
@@ -871,8 +945,8 @@ bcatN xs e = f e preds
     f :: Element -> [Element -> Maybe NodeType] -> (TEither Node, TEither NodeType)
     f e' [] = (e' </. "id", Left "unknown node category")
     f e' (p : r) = case p e' of
-                      Just t -> (e' </. "id", Right t)
-                      Nothing -> f e' r
+      Just t -> (e' </. "id", Right t)
+      Nothing -> f e' r
 
 bcatE :: [Element] -> Element -> (TEither Edge, TEither EdgeType)
 bcatE xs e = f e preds
@@ -888,11 +962,11 @@ bcatE xs e = f e preds
         (pMF xs, MessageFlow)
       ]
 
--- | FReader from BPMN to BPMN Graph.
+-- |  FReader from BPMN to BPMN Graph.
 reader :: FReader BpmnGraph
 reader = FR (readFromXML decode) ".bpmn"
 
--- | FReader from BPMN to Space BPMN Graph.
+-- |  FReader from BPMN to Space BPMN Graph.
 readerS :: FReader SpaceBpmnGraph
 readerS = FR (readFromXML decodeS) ".bpmn"
 
@@ -903,8 +977,8 @@ readFromXML d p = (d . parseXML <$> BS.readFile p) `catchIOError` handler
     handler :: IOError -> IO (TEither a)
     handler e
       | isDoesNotExistError e = do
-        putTextLn "file not found"
-        pure $ Left "file not found"
+          putTextLn "file not found"
+          pure $ Left "file not found"
       | otherwise = do
-        putTextLn "unknown error"
-        pure $ Left "unknown error"
+          putTextLn "unknown error"
+          pure $ Left "unknown error"
