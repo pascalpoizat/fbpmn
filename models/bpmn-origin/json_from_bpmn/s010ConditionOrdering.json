@@ -1,0 +1,89 @@
+{
+    "attached": {},
+    "catE": {
+        "Flow_09a8um7": "NormalSequenceFlow",
+        "Flow_1bc6u3c": "NormalSequenceFlow",
+        "Flow_1ddop94": "NormalSequenceFlow",
+        "default_flow": "DefaultSequenceFlow",
+        "flow_to_f2": "ConditionalSequenceFlow",
+        "flow_to_f3": "ConditionalSequenceFlow"
+    },
+    "catN": {
+        "Activity_071wli2": "AbstractTask",
+        "Activity_18vh6pp": "AbstractTask",
+        "PId": "Process",
+        "StartEvent_1": "NoneStartEvent",
+        "endF2": "NoneEndEvent",
+        "endF3": "NoneEndEvent",
+        "endInPlace": "NoneEndEvent",
+        "xor": "XorGateway"
+    },
+    "containE": {
+        "PId": [
+            "Flow_09a8um7",
+            "flow_to_f2",
+            "default_flow",
+            "flow_to_f3",
+            "Flow_1bc6u3c",
+            "Flow_1ddop94"
+        ]
+    },
+    "containN": {
+        "PId": [
+            "endF2",
+            "endInPlace",
+            "endF3",
+            "xor",
+            "StartEvent_1",
+            "Activity_071wli2",
+            "Activity_18vh6pp"
+        ]
+    },
+    "edges": [
+        "Flow_09a8um7",
+        "flow_to_f2",
+        "default_flow",
+        "flow_to_f3",
+        "Flow_1bc6u3c",
+        "Flow_1ddop94"
+    ],
+    "isInterrupt": {},
+    "messageE": {},
+    "messages": [],
+    "name": "s010ConditionOrdering",
+    "nameN": {
+        "Activity_071wli2": "move to f2",
+        "Activity_18vh6pp": "move to f3",
+        "StartEvent_1": "start (in f1)\n",
+        "endF2": "end (in f2)\n\n",
+        "endF3": "end (in f3)",
+        "endInPlace": "end (in place)\n\n"
+    },
+    "nodes": [
+        "PId",
+        "endF2",
+        "endInPlace",
+        "endF3",
+        "xor",
+        "StartEvent_1",
+        "Activity_071wli2",
+        "Activity_18vh6pp"
+    ],
+    "sourceE": {
+        "Flow_09a8um7": "StartEvent_1",
+        "Flow_1bc6u3c": "Activity_071wli2",
+        "Flow_1ddop94": "Activity_18vh6pp",
+        "default_flow": "xor",
+        "flow_to_f2": "xor",
+        "flow_to_f3": "xor"
+    },
+    "targetE": {
+        "Flow_09a8um7": "xor",
+        "Flow_1bc6u3c": "endF2",
+        "Flow_1ddop94": "endF3",
+        "default_flow": "endInPlace",
+        "flow_to_f2": "Activity_071wli2",
+        "flow_to_f3": "Activity_18vh6pp"
+    },
+    "timeInformation": {}
+}
