@@ -17,6 +17,9 @@ Processes == { n \in Node : CatN[n] = Process }
 
 ProcessOf(n) == CHOOSE p \in Node : CatN[p] = Process /\ n \in ContainRelPlus(p)
 
+(* Nodes with a lifecycle (tasks and subprocesses) *)
+ActivableNode == {n \in Node : CatN[n] \in ActivityType}
+
 WellTyped == /\ source \in [ Edge -> Node ]
              /\ target \in [ Edge -> Node ]
              /\ CatN \in [ Node -> NodeType ]

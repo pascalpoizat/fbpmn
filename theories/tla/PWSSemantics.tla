@@ -18,7 +18,7 @@ NoReEnter == TRUE
 TypeInvariant ==
   /\ edgemarks \in [ Edge -> Nat ]
   /\ nodemarks \in [ Node -> Nat ]
-  /\ lifecycle \in [ {n \in Node : CatN[n] \in ActivityType} -> [ {"started","completed","active"} -> BOOLEAN ]]
+  /\ lifecycle \in [ ActivableNode -> [ {"started","finished","active"} -> BOOLEAN ]]
   /\ Network!TypeInvariant
 
 (* ---- conditions ---- *)
@@ -101,8 +101,10 @@ terminateend_start(n) == \* Terminate End Event clears all token in the process/
                              IF nn = n THEN 1
                              ELSE IF nn \in includedNodes THEN 0
                              ELSE nodemarks[nn] ]
+           /\ lifecycle' = [ nn \in DOMAIN lifecycle |->
+                             IF nn \in includedNodes /\ lifecycle[nn].active THEN [ started |-> TRUE, finished |-> TRUE, active |-> FALSE ]
+                             ELSE lifecycle[nn] ]
   /\ Network!unchanged
-  /\ UNCHANGED lifecycle
 
 (* ---- message end event ---- *)
 
@@ -178,6 +180,10 @@ LOCAL mbe_start_subprocess_interrupting(n) ==
                                     ELSE IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                                     ELSE IF source[ee] \in includedNodes /\ target[ee] \in includedNodes THEN 0
                                     ELSE edgemarks[ee] ]
+                  /\ lifecycle' = [ nn \in DOMAIN lifecycle |->
+                                    IF nn = act THEN [ started |-> TRUE, finished |-> TRUE, active |-> FALSE ]
+                                    ELSE IF nn \in includedNodes /\ lifecycle[nn].active THEN [ started |-> TRUE, finished |-> TRUE, active |-> FALSE ]
+                                    ELSE lifecycle[nn] ]
      
 LOCAL mbe_start_subprocess_noninterrupting(n) ==
   /\ ~ BoundaryEvent[n].cancelActivity (* non-interrupting *)
@@ -192,6 +198,7 @@ LOCAL mbe_start_subprocess_noninterrupting(n) ==
                                 ELSE IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                                 ELSE edgemarks[ee] ]
         /\ UNCHANGED nodemarks
+        /\ UNCHANGED lifecycle
 
 LOCAL mbe_start_other(n) ==
   /\ LET act == BoundaryEvent[n].attachedTo IN
@@ -205,16 +212,16 @@ LOCAL mbe_start_other(n) ==
                                 ELSE IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                                 ELSE edgemarks[ee] ]
         /\ IF BoundaryEvent[n].cancelActivity THEN (* interrupting *)
-             nodemarks' = [ nodemarks EXCEPT ![act] = 0 ]
+             /\ nodemarks' = [ nodemarks EXCEPT ![act] = 0 ]
+             /\ lifecycle' = [ lifecycle EXCEPT ![act] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE ] ]
             ELSE (* non interrupting *)
-              UNCHANGED nodemarks
+              UNCHANGED <<nodemarks, lifecycle>>
 
 mbe_start(n) ==
   /\ CatN[n] = MessageBoundaryEvent
   /\ \/ mbe_start_subprocess_interrupting(n)
      \/ mbe_start_subprocess_noninterrupting(n)
      \/ mbe_start_other(n)
-  /\ UNCHANGED lifecycle
 
 (* ---- timer boundary event ---- *)
 
@@ -235,6 +242,10 @@ LOCAL tbe_start_subprocess_interrupting(n) ==
                                     IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                                     ELSE IF source[ee] \in includedNodes /\ target[ee] \in includedNodes THEN 0
                                     ELSE edgemarks[ee] ]
+                  /\ lifecycle' = [ nn \in DOMAIN lifecycle |->
+                                    IF nn = act THEN [ started |-> TRUE, finished |-> TRUE, active |-> FALSE ]
+                                    ELSE IF nn \in includedNodes /\ lifecycle[nn].active THEN [ started |-> TRUE, finished |-> TRUE, active |-> FALSE ]
+                                    ELSE lifecycle[nn] ]
 
 LOCAL tbe_start_subprocess_noninterrupting(n) ==
   /\ ~ BoundaryEvent[n].cancelActivity (* non-interrupting *)
@@ -245,6 +256,7 @@ LOCAL tbe_start_subprocess_noninterrupting(n) ==
                                 IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                                 ELSE edgemarks[ee] ]
         /\ UNCHANGED nodemarks
+        /\ UNCHANGED lifecycle
 
 LOCAL tbe_start_other(n) ==
   /\ LET act == BoundaryEvent[n].attachedTo IN
@@ -254,9 +266,10 @@ LOCAL tbe_start_other(n) ==
                                 IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                                 ELSE edgemarks[ee] ]
       /\ IF BoundaryEvent[n].cancelActivity THEN (* interrupting *)
-             nodemarks' = [ nodemarks EXCEPT ![act] = 0 ]
+             /\ nodemarks' = [ nodemarks EXCEPT ![act] = 0 ]
+             /\ lifecycle' = [ lifecycle EXCEPT ![act] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE ] ]
          ELSE (* non interrupting *)
-              UNCHANGED nodemarks
+              UNCHANGED <<nodemarks, lifecycle>>
 
 tbe_start(n) ==
   /\ CatN[n] = TimerBoundaryEvent
@@ -264,7 +277,6 @@ tbe_start(n) ==
      \/ tbe_start_subprocess_noninterrupting(n)
      \/ tbe_start_other(n)
   /\ Network!unchanged
-  /\ UNCHANGED lifecycle
 
 ----------------------------------------------------------------
 
@@ -369,7 +381,7 @@ abstract_complete(n) ==
   /\ edgemarks' = [ e \in DOMAIN edgemarks |->
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.completed = TRUE, !.active = FALSE ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE ]]
   /\ Network!unchanged
 
 (* ---- send task ---- *)
@@ -394,7 +406,7 @@ send_complete(n) ==
                            IF ee \in outtype(SeqFlowType, n) THEN edgemarks[ee] + 1
                            ELSE IF ee = e THEN edgemarks[ee] + 1
                            ELSE edgemarks[ee] ]
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.completed = TRUE, !.active = FALSE  ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE  ]]
 
 (* ---- receive task ---- *)
 
@@ -419,7 +431,7 @@ receive_complete(n) ==
                           ELSE IF ee = e THEN edgemarks[ee] - 1
                           ELSE edgemarks[ee] ]
   /\ nodemarks' = [ nodemarks EXCEPT ![n] = @ - 1 ]
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.completed = TRUE, !.active = FALSE  ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE  ]]
 
 (* ---- SubProcess ---- *)
 
@@ -435,8 +447,8 @@ subprocess_start(n) ==
                        ELSE nodemarks[nn] ]
   /\ Network!unchanged
   /\ lifecycle' = [ nn \in DOMAIN lifecycle |->
-                       IF nn = n THEN [ started |-> TRUE, completed |-> FALSE, active |-> TRUE ]
-                       ELSE IF nn \in ContainRel[n] THEN [ started |-> FALSE, completed |-> FALSE, active |-> FALSE ]
+                       IF nn = n THEN [ started |-> TRUE, finished |-> FALSE, active |-> TRUE ]
+                       ELSE IF nn \in ContainRel[n] THEN [ started |-> FALSE, finished |-> FALSE, active |-> FALSE ]
                        ELSE lifecycle[nn] ]
 
 subprocess_complete(n) ==
@@ -455,7 +467,7 @@ subprocess_complete(n) ==
                       IF e \in outtype(SeqFlowType, n) THEN edgemarks[e] + 1
                       ELSE edgemarks[e] ]
   /\ Network!unchanged
-  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.completed = TRUE, !.active = FALSE  ]]
+  /\ lifecycle' = [ lifecycle EXCEPT ![n] = [ @ EXCEPT !.finished = TRUE, !.active = FALSE  ]]
 
 (* ---- Top level Process ---- *)
 
@@ -492,7 +504,7 @@ Init ==
                      IF CatN[n] \in StartEventType /\ (\E p \in Processes : n \in ContainRel[p]) THEN 1
                      ELSE 0 ]
   /\ edgemarks = [ e \in Edge |-> 0 ]
-  /\ lifecycle = [ n \in {nn \in Node : CatN[nn] \in ActivityType} |-> [ started |-> FALSE, completed |-> FALSE, active |-> FALSE ]]
+  /\ lifecycle = [ n \in ActivableNode |-> [ started |-> FALSE, finished |-> FALSE, active |-> FALSE ]]
   /\ Network!init
 
 Fairness_Next == \A n \in Node : WF_var(step(n))
