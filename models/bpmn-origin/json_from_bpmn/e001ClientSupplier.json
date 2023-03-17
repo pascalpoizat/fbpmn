@@ -1,92 +1,51 @@
 {
-    "isInterrupt": {},
+    "attached": {},
+    "catE": {
+        "cE1": "NormalSequenceFlow",
+        "cE2": "NormalSequenceFlow",
+        "cE3": "NormalSequenceFlow",
+        "cE4": "NormalSequenceFlow",
+        "cE5": "NormalSequenceFlow",
+        "mf1": "MessageFlow",
+        "mf2": "MessageFlow",
+        "mf3": "MessageFlow",
+        "sE1": "NormalSequenceFlow",
+        "sE2": "NormalSequenceFlow",
+        "sE3": "NormalSequenceFlow",
+        "sE4": "NormalSequenceFlow",
+        "sE5": "NormalSequenceFlow",
+        "sE6": "NormalSequenceFlow",
+        "sE7": "NormalSequenceFlow",
+        "sE8": "NormalSequenceFlow",
+        "sE9": "NormalSequenceFlow"
+    },
     "catN": {
-        "sReceiveCommand": "ReceiveTask",
-        "sPrepareCommand": "AbstractTask",
-        "cStoreRequest": "AbstractTask",
-        "Supplier_": "Process",
-        "sStart": "NoneStartEvent",
-        "cStart": "NoneStartEvent",
         "Client_": "Process",
+        "Supplier_": "Process",
+        "cEnd": "NoneEndEvent",
+        "cReceiveGoods": "ReceiveTask",
+        "cReceiveInvoice": "ReceiveTask",
+        "cSendCommand": "SendTask",
+        "cStart": "NoneStartEvent",
+        "cStoreRequest": "AbstractTask",
+        "sEnd": "NoneEndEvent",
+        "sInvoiceManagement": "AbstractTask",
+        "sPar1": "AndGateway",
+        "sPar2": "AndGateway",
+        "sPrepareCommand": "AbstractTask",
+        "sReceiveCommand": "ReceiveTask",
         "sSendInvoice": "SendTask",
         "sShipCommand": "SendTask",
-        "cReceiveInvoice": "ReceiveTask",
-        "sPar1": "AndGateway",
-        "sInvoiceManagement": "AbstractTask",
-        "cEnd": "NoneEndEvent",
-        "sEnd": "NoneEndEvent",
-        "sPar2": "AndGateway",
-        "cReceiveGoods": "ReceiveTask",
-        "cSendCommand": "SendTask"
+        "sStart": "NoneStartEvent"
     },
-    "catE": {
-        "cE2": "NormalSequenceFlow",
-        "sE2": "NormalSequenceFlow",
-        "sE9": "NormalSequenceFlow",
-        "sE4": "NormalSequenceFlow",
-        "cE4": "NormalSequenceFlow",
-        "mf1": "MessageFlow",
-        "sE3": "NormalSequenceFlow",
-        "cE3": "NormalSequenceFlow",
-        "cE5": "NormalSequenceFlow",
-        "sE5": "NormalSequenceFlow",
-        "sE1": "NormalSequenceFlow",
-        "cE1": "NormalSequenceFlow",
-        "mf3": "MessageFlow",
-        "sE6": "NormalSequenceFlow",
-        "sE8": "NormalSequenceFlow",
-        "mf2": "MessageFlow",
-        "sE7": "NormalSequenceFlow"
-    },
-    "containN": {
-        "Supplier_": [
-            "sStart",
-            "sShipCommand",
-            "sSendInvoice",
-            "sReceiveCommand",
-            "sInvoiceManagement",
-            "sPrepareCommand",
-            "sEnd",
-            "sPar1",
-            "sPar2"
-        ],
-        "Client_": [
-            "cStart",
-            "cSendCommand",
-            "cEnd",
-            "cReceiveInvoice",
-            "cReceiveGoods",
-            "cStoreRequest"
-        ]
-    },
-    "messageE": {
-        "mf1": "command",
-        "mf3": "goods",
-        "mf2": "invoice"
-    },
-    "timeInformation": {},
-    "targetE": {
-        "cE2": "cStoreRequest",
-        "sE2": "sPar1",
-        "sE9": "sEnd",
-        "sE4": "sInvoiceManagement",
-        "cE4": "cReceiveGoods",
-        "mf1": "sReceiveCommand",
-        "sE3": "sPrepareCommand",
-        "cE3": "cReceiveInvoice",
-        "cE5": "cEnd",
-        "sE5": "sPar2",
-        "sE1": "sReceiveCommand",
-        "cE1": "cSendCommand",
-        "mf3": "cReceiveGoods",
-        "sE6": "sPar2",
-        "sE8": "sSendInvoice",
-        "mf2": "cReceiveInvoice",
-        "sE7": "sShipCommand"
-    },
-    "name": "e001ClientSupplier",
-    "attached": {},
     "containE": {
+        "Client_": [
+            "cE1",
+            "cE2",
+            "cE3",
+            "cE4",
+            "cE5"
+        ],
         "Supplier_": [
             "sE1",
             "sE2",
@@ -97,13 +56,27 @@
             "sE7",
             "sE8",
             "sE9"
-        ],
+        ]
+    },
+    "containN": {
         "Client_": [
-            "cE1",
-            "cE2",
-            "cE3",
-            "cE4",
-            "cE5"
+            "cStart",
+            "cSendCommand",
+            "cEnd",
+            "cReceiveInvoice",
+            "cReceiveGoods",
+            "cStoreRequest"
+        ],
+        "Supplier_": [
+            "sStart",
+            "sShipCommand",
+            "sSendInvoice",
+            "sReceiveCommand",
+            "sInvoiceManagement",
+            "sPrepareCommand",
+            "sEnd",
+            "sPar1",
+            "sPar2"
         ]
     },
     "edges": [
@@ -125,29 +98,28 @@
         "cE4",
         "cE5"
     ],
+    "isInterrupt": {},
+    "messageE": {
+        "mf1": "command",
+        "mf2": "invoice",
+        "mf3": "goods"
+    },
     "messages": [
         "command",
         "goods",
         "invoice"
     ],
-    "sourceE": {
-        "cE2": "cSendCommand",
-        "sE2": "sReceiveCommand",
-        "sE9": "sSendInvoice",
-        "sE4": "sPar1",
-        "cE4": "cReceiveInvoice",
-        "mf1": "cSendCommand",
-        "sE3": "sPar1",
-        "cE3": "cStoreRequest",
-        "cE5": "cReceiveGoods",
-        "sE5": "sPrepareCommand",
-        "sE1": "sStart",
-        "cE1": "cStart",
-        "mf3": "sShipCommand",
-        "sE6": "sInvoiceManagement",
-        "sE8": "sShipCommand",
-        "mf2": "sSendInvoice",
-        "sE7": "sPar2"
+    "name": "e001ClientSupplier",
+    "nameN": {
+        "cReceiveGoods": "Receive Goods",
+        "cReceiveInvoice": "Receive Invoice",
+        "cSendCommand": "Send Command",
+        "cStoreRequest": "Store Request",
+        "sInvoiceManagement": "Invoice Management",
+        "sPrepareCommand": "Prepare Command",
+        "sReceiveCommand": "Receive Command",
+        "sSendInvoice": "Send Invoice",
+        "sShipCommand": "Ship Command"
     },
     "nodes": [
         "Supplier_",
@@ -168,15 +140,43 @@
         "cReceiveGoods",
         "cStoreRequest"
     ],
-    "nameN": {
-        "sReceiveCommand": "Receive Command",
-        "sPrepareCommand": "Prepare Command",
-        "cStoreRequest": "Store Request",
-        "sSendInvoice": "Send Invoice",
-        "sShipCommand": "Ship Command",
-        "cReceiveInvoice": "Receive Invoice",
-        "sInvoiceManagement": "Invoice Management",
-        "cReceiveGoods": "Receive Goods",
-        "cSendCommand": "Send Command"
-    }
+    "sourceE": {
+        "cE1": "cStart",
+        "cE2": "cSendCommand",
+        "cE3": "cStoreRequest",
+        "cE4": "cReceiveInvoice",
+        "cE5": "cReceiveGoods",
+        "mf1": "cSendCommand",
+        "mf2": "sSendInvoice",
+        "mf3": "sShipCommand",
+        "sE1": "sStart",
+        "sE2": "sReceiveCommand",
+        "sE3": "sPar1",
+        "sE4": "sPar1",
+        "sE5": "sPrepareCommand",
+        "sE6": "sInvoiceManagement",
+        "sE7": "sPar2",
+        "sE8": "sShipCommand",
+        "sE9": "sSendInvoice"
+    },
+    "targetE": {
+        "cE1": "cSendCommand",
+        "cE2": "cStoreRequest",
+        "cE3": "cReceiveInvoice",
+        "cE4": "cReceiveGoods",
+        "cE5": "cEnd",
+        "mf1": "sReceiveCommand",
+        "mf2": "cReceiveInvoice",
+        "mf3": "cReceiveGoods",
+        "sE1": "sReceiveCommand",
+        "sE2": "sPar1",
+        "sE3": "sPrepareCommand",
+        "sE4": "sInvoiceManagement",
+        "sE5": "sPar2",
+        "sE6": "sPar2",
+        "sE7": "sShipCommand",
+        "sE8": "sSendInvoice",
+        "sE9": "sEnd"
+    },
+    "timeInformation": {}
 }

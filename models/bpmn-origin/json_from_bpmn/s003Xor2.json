@@ -1,40 +1,20 @@
 {
-    "isInterrupt": {},
+    "attached": {},
+    "catE": {
+        "Flow_09a8um7": "NormalSequenceFlow",
+        "Flow_0evvsn6": "NormalSequenceFlow",
+        "Flow_0ipe2sk": "NormalSequenceFlow",
+        "Flow_11sy0ae": "DefaultSequenceFlow",
+        "Flow_18ptpdh": "ConditionalSequenceFlow"
+    },
     "catN": {
-        "StartEvent_1": "NoneStartEvent",
-        "Event_01pf838": "NoneEndEvent",
-        "PId": "Process",
         "Activity_0z782bb": "AbstractTask",
         "Activity_11g6ot8": "AbstractTask",
-        "Gateway_0bb8o1z": "XorGateway"
+        "Gateway_0bb8o1z": "XorGateway",
+        "PId": "Process",
+        "StartEvent_1": "NoneStartEvent",
+        "end": "NoneEndEvent"
     },
-    "catE": {
-        "Flow_18ptpdh": "ConditionalSequenceFlow",
-        "Flow_0evvsn6": "NormalSequenceFlow",
-        "Flow_11sy0ae": "DefaultSequenceFlow",
-        "Flow_09a8um7": "NormalSequenceFlow",
-        "Flow_0ipe2sk": "NormalSequenceFlow"
-    },
-    "containN": {
-        "PId": [
-            "StartEvent_1",
-            "Gateway_0bb8o1z",
-            "Activity_0z782bb",
-            "Activity_11g6ot8",
-            "Event_01pf838"
-        ]
-    },
-    "messageE": {},
-    "timeInformation": {},
-    "targetE": {
-        "Flow_18ptpdh": "Activity_0z782bb",
-        "Flow_0evvsn6": "Gateway_0bb8o1z",
-        "Flow_11sy0ae": "Event_01pf838",
-        "Flow_09a8um7": "Gateway_0bb8o1z",
-        "Flow_0ipe2sk": "Activity_11g6ot8"
-    },
-    "name": "s003Xor2",
-    "attached": {},
     "containE": {
         "PId": [
             "Flow_09a8um7",
@@ -44,6 +24,15 @@
             "Flow_11sy0ae"
         ]
     },
+    "containN": {
+        "PId": [
+            "StartEvent_1",
+            "Gateway_0bb8o1z",
+            "Activity_0z782bb",
+            "Activity_11g6ot8",
+            "end"
+        ]
+    },
     "edges": [
         "Flow_09a8um7",
         "Flow_18ptpdh",
@@ -51,13 +40,15 @@
         "Flow_0evvsn6",
         "Flow_11sy0ae"
     ],
+    "isInterrupt": {},
+    "messageE": {},
     "messages": [],
-    "sourceE": {
-        "Flow_18ptpdh": "Gateway_0bb8o1z",
-        "Flow_0evvsn6": "Activity_11g6ot8",
-        "Flow_11sy0ae": "Gateway_0bb8o1z",
-        "Flow_09a8um7": "StartEvent_1",
-        "Flow_0ipe2sk": "Activity_0z782bb"
+    "name": "s003Xor2",
+    "nameN": {
+        "Activity_0z782bb": "move to some zone in z",
+        "Activity_11g6ot8": "plant here and mark it to be sprayed",
+        "StartEvent_1": "start\n",
+        "end": "end"
     },
     "nodes": [
         "PId",
@@ -65,12 +56,21 @@
         "Gateway_0bb8o1z",
         "Activity_0z782bb",
         "Activity_11g6ot8",
-        "Event_01pf838"
+        "end"
     ],
-    "nameN": {
-        "StartEvent_1": "start\n",
-        "Event_01pf838": "end",
-        "Activity_0z782bb": "move to some zone in z",
-        "Activity_11g6ot8": "plant here and mark it to be sprayed"
-    }
+    "sourceE": {
+        "Flow_09a8um7": "StartEvent_1",
+        "Flow_0evvsn6": "Activity_11g6ot8",
+        "Flow_0ipe2sk": "Activity_0z782bb",
+        "Flow_11sy0ae": "Gateway_0bb8o1z",
+        "Flow_18ptpdh": "Gateway_0bb8o1z"
+    },
+    "targetE": {
+        "Flow_09a8um7": "Gateway_0bb8o1z",
+        "Flow_0evvsn6": "Gateway_0bb8o1z",
+        "Flow_0ipe2sk": "Activity_11g6ot8",
+        "Flow_11sy0ae": "end",
+        "Flow_18ptpdh": "Activity_0z782bb"
+    },
+    "timeInformation": {}
 }

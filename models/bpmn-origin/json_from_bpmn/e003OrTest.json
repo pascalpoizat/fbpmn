@@ -1,78 +1,39 @@
 {
-    "isInterrupt": {},
-    "catN": {
-        "Process_": "Process",
-        "Or1": "OrGateway",
-        "AT2": "AbstractTask",
-        "Xor2": "XorGateway",
-        "AT5": "AbstractTask",
-        "NSE": "NoneStartEvent",
-        "AT4": "AbstractTask",
-        "Xor1": "XorGateway",
-        "AT1": "AbstractTask",
-        "Or2": "OrGateway",
-        "Xor0": "XorGateway",
-        "AT3": "AbstractTask",
-        "Xor3": "XorGateway",
-        "NEE": "NoneEndEvent"
-    },
+    "attached": {},
     "catE": {
+        "e0": "NormalSequenceFlow",
         "e1": "NormalSequenceFlow",
         "e10": "NormalSequenceFlow",
-        "e7": "NormalSequenceFlow",
         "e11": "NormalSequenceFlow",
-        "e0": "NormalSequenceFlow",
-        "e6": "NormalSequenceFlow",
-        "e3": "ConditionalSequenceFlow",
         "e12": "DefaultSequenceFlow",
-        "e9": "ConditionalSequenceFlow",
         "e13": "ConditionalSequenceFlow",
-        "e2": "NormalSequenceFlow",
-        "e8": "DefaultSequenceFlow",
         "e14": "NormalSequenceFlow",
-        "e5": "NormalSequenceFlow",
+        "e15": "DefaultSequenceFlow",
+        "e2": "NormalSequenceFlow",
+        "e3": "ConditionalSequenceFlow",
         "e4": "ConditionalSequenceFlow",
-        "e15": "DefaultSequenceFlow"
+        "e5": "NormalSequenceFlow",
+        "e6": "NormalSequenceFlow",
+        "e7": "NormalSequenceFlow",
+        "e8": "DefaultSequenceFlow",
+        "e9": "ConditionalSequenceFlow"
     },
-    "containN": {
-        "Process_": [
-            "AT1",
-            "Or1",
-            "Xor1",
-            "AT3",
-            "AT2",
-            "Xor2",
-            "Or2",
-            "Xor3",
-            "AT4",
-            "AT5",
-            "NEE",
-            "NSE",
-            "Xor0"
-        ]
+    "catN": {
+        "AT1": "AbstractTask",
+        "AT2": "AbstractTask",
+        "AT3": "AbstractTask",
+        "AT4": "AbstractTask",
+        "AT5": "AbstractTask",
+        "NEE": "NoneEndEvent",
+        "NSE": "NoneStartEvent",
+        "Or1": "OrGateway",
+        "Or2": "OrGateway",
+        "Process_": "Process",
+        "Xor0": "XorGateway",
+        "Xor1": "XorGateway",
+        "Xor2": "XorGateway",
+        "Xor3": "XorGateway"
     },
-    "messageE": {},
-    "timeInformation": {},
-    "targetE": {
-        "e1": "AT1",
-        "e10": "AT4",
-        "e7": "Xor2",
-        "e11": "Xor3",
-        "e0": "Xor0",
-        "e6": "AT2",
-        "e3": "Xor1",
-        "e12": "Or2",
-        "e9": "Or2",
-        "e13": "AT5",
-        "e2": "Or1",
-        "e8": "Xor1",
-        "e14": "NEE",
-        "e5": "Or2",
-        "e4": "AT3",
-        "e15": "Xor0"
-    },
-    "name": "e003OrTest",
-    "attached": {},
     "containE": {
         "Process_": [
             "e15",
@@ -93,6 +54,23 @@
             "e0"
         ]
     },
+    "containN": {
+        "Process_": [
+            "AT1",
+            "Or1",
+            "Xor1",
+            "AT3",
+            "AT2",
+            "Xor2",
+            "Or2",
+            "Xor3",
+            "AT4",
+            "AT5",
+            "NEE",
+            "NSE",
+            "Xor0"
+        ]
+    },
     "edges": [
         "e15",
         "e1",
@@ -111,24 +89,16 @@
         "e2",
         "e0"
     ],
+    "isInterrupt": {},
+    "messageE": {},
     "messages": [],
-    "sourceE": {
-        "e1": "Xor0",
-        "e10": "Or2",
-        "e7": "AT2",
-        "e11": "AT4",
-        "e0": "NSE",
-        "e6": "Xor1",
-        "e3": "Or1",
-        "e12": "Xor3",
-        "e9": "Xor2",
-        "e13": "Xor3",
-        "e2": "AT1",
-        "e8": "Xor2",
-        "e14": "AT5",
-        "e5": "AT3",
-        "e4": "Or1",
-        "e15": "Or1"
+    "name": "e003OrTest",
+    "nameN": {
+        "AT1": "AT1",
+        "AT2": "AT2",
+        "AT3": "AT3",
+        "AT4": "AT4",
+        "AT5": "AT5"
     },
     "nodes": [
         "Process_",
@@ -146,11 +116,41 @@
         "NSE",
         "Xor0"
     ],
-    "nameN": {
-        "AT2": "AT2",
-        "AT5": "AT5",
-        "AT4": "AT4",
-        "AT1": "AT1",
-        "AT3": "AT3"
-    }
+    "sourceE": {
+        "e0": "NSE",
+        "e1": "Xor0",
+        "e10": "Or2",
+        "e11": "AT4",
+        "e12": "Xor3",
+        "e13": "Xor3",
+        "e14": "AT5",
+        "e15": "Or1",
+        "e2": "AT1",
+        "e3": "Or1",
+        "e4": "Or1",
+        "e5": "AT3",
+        "e6": "Xor1",
+        "e7": "AT2",
+        "e8": "Xor2",
+        "e9": "Xor2"
+    },
+    "targetE": {
+        "e0": "Xor0",
+        "e1": "AT1",
+        "e10": "AT4",
+        "e11": "Xor3",
+        "e12": "Or2",
+        "e13": "AT5",
+        "e14": "NEE",
+        "e15": "Xor0",
+        "e2": "Or1",
+        "e3": "Xor1",
+        "e4": "AT3",
+        "e5": "Or2",
+        "e6": "AT2",
+        "e7": "Xor2",
+        "e8": "Xor1",
+        "e9": "Or2"
+    },
+    "timeInformation": {}
 }

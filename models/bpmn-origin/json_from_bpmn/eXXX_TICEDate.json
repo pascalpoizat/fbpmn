@@ -1,14 +1,20 @@
 {
-    "isInterrupt": {},
-    "catN": {
-        "ti": "TimerIntermediateEvent",
-        "se": "NoneStartEvent",
-        "Pid": "Process",
-        "ee": "NoneEndEvent"
-    },
+    "attached": {},
     "catE": {
         "SequenceFlow_04jhviy": "NormalSequenceFlow",
         "SequenceFlow_0b689qw": "NormalSequenceFlow"
+    },
+    "catN": {
+        "Pid": "Process",
+        "ee": "NoneEndEvent",
+        "se": "NoneStartEvent",
+        "ti": "TimerIntermediateEvent"
+    },
+    "containE": {
+        "Pid": [
+            "SequenceFlow_04jhviy",
+            "SequenceFlow_0b689qw"
+        ]
     },
     "containN": {
         "Pid": [
@@ -17,33 +23,16 @@
             "ti"
         ]
     },
-    "messageE": {},
-    "timeInformation": {
-        "ti": {
-            "timerDefinitionValue": "1970-01-01T01:01:01Z",
-            "timerDefinitionType": "TimeDate"
-        }
-    },
-    "targetE": {
-        "SequenceFlow_04jhviy": "ti",
-        "SequenceFlow_0b689qw": "ee"
-    },
-    "name": "eXXX_TICEDate",
-    "attached": {},
-    "containE": {
-        "Pid": [
-            "SequenceFlow_04jhviy",
-            "SequenceFlow_0b689qw"
-        ]
-    },
     "edges": [
         "SequenceFlow_04jhviy",
         "SequenceFlow_0b689qw"
     ],
+    "isInterrupt": {},
+    "messageE": {},
     "messages": [],
-    "sourceE": {
-        "SequenceFlow_04jhviy": "se",
-        "SequenceFlow_0b689qw": "ti"
+    "name": "eXXX_TICEDate",
+    "nameN": {
+        "ti": "1970-01-01 T 01:01:01Z"
     },
     "nodes": [
         "Pid",
@@ -51,7 +40,18 @@
         "ee",
         "ti"
     ],
-    "nameN": {
-        "ti": "1970-01-01 T 01:01:01Z"
+    "sourceE": {
+        "SequenceFlow_04jhviy": "se",
+        "SequenceFlow_0b689qw": "ti"
+    },
+    "targetE": {
+        "SequenceFlow_04jhviy": "ti",
+        "SequenceFlow_0b689qw": "ee"
+    },
+    "timeInformation": {
+        "ti": {
+            "timerDefinitionType": "TimeDate",
+            "timerDefinitionValue": "1970-01-01T01:01:01Z"
+        }
     }
 }

@@ -1,23 +1,34 @@
 {
-    "isInterrupt": {
-        "BoundaryEvent_02b1vw4": true
-    },
-    "catN": {
-        "StartEvent_1": "NoneStartEvent",
-        "Process_1": "Process",
-        "BoundaryEvent_02b1vw4": "TimerBoundaryEvent",
-        "EndEvent_111i3i3": "NoneEndEvent",
-        "Task_0m7n5xk": "AbstractTask",
-        "Task_0mfb6xu": "AbstractTask",
-        "StartEvent_0hi510e": "NoneStartEvent",
-        "SubProcess_0h2vtyo": "SubProcess"
+    "attached": {
+        "BoundaryEvent_02b1vw4": "SubProcess_0h2vtyo"
     },
     "catE": {
-        "SequenceFlow_19ibfph": "NormalSequenceFlow",
         "SequenceFlow_038z5pz": "NormalSequenceFlow",
-        "SequenceFlow_1tuej2e": "NormalSequenceFlow",
         "SequenceFlow_05shv4u": "NormalSequenceFlow",
+        "SequenceFlow_19ibfph": "NormalSequenceFlow",
+        "SequenceFlow_1tuej2e": "NormalSequenceFlow",
         "SequenceFlow_1y9pakp": "NormalSequenceFlow"
+    },
+    "catN": {
+        "BoundaryEvent_02b1vw4": "TimerBoundaryEvent",
+        "EndEvent_111i3i3": "NoneEndEvent",
+        "Process_1": "Process",
+        "StartEvent_0hi510e": "NoneStartEvent",
+        "StartEvent_1": "NoneStartEvent",
+        "SubProcess_0h2vtyo": "SubProcess",
+        "Task_0m7n5xk": "AbstractTask",
+        "Task_0mfb6xu": "AbstractTask"
+    },
+    "containE": {
+        "Process_1": [
+            "SequenceFlow_1tuej2e",
+            "SequenceFlow_05shv4u"
+        ],
+        "SubProcess_0h2vtyo": [
+            "SequenceFlow_1y9pakp",
+            "SequenceFlow_19ibfph",
+            "SequenceFlow_038z5pz"
+        ]
     },
     "containN": {
         "Process_1": [
@@ -32,35 +43,6 @@
             "Task_0m7n5xk"
         ]
     },
-    "messageE": {},
-    "timeInformation": {
-        "BoundaryEvent_02b1vw4": {
-            "timerDefinitionValue": null,
-            "timerDefinitionType": null
-        }
-    },
-    "targetE": {
-        "SequenceFlow_19ibfph": "Task_0m7n5xk",
-        "SequenceFlow_038z5pz": "Task_0mfb6xu",
-        "SequenceFlow_1tuej2e": "EndEvent_111i3i3",
-        "SequenceFlow_05shv4u": "SubProcess_0h2vtyo",
-        "SequenceFlow_1y9pakp": "Task_0mfb6xu"
-    },
-    "name": "e055TBE",
-    "attached": {
-        "BoundaryEvent_02b1vw4": "SubProcess_0h2vtyo"
-    },
-    "containE": {
-        "Process_1": [
-            "SequenceFlow_1tuej2e",
-            "SequenceFlow_05shv4u"
-        ],
-        "SubProcess_0h2vtyo": [
-            "SequenceFlow_1y9pakp",
-            "SequenceFlow_19ibfph",
-            "SequenceFlow_038z5pz"
-        ]
-    },
     "edges": [
         "SequenceFlow_1tuej2e",
         "SequenceFlow_05shv4u",
@@ -68,14 +50,13 @@
         "SequenceFlow_19ibfph",
         "SequenceFlow_038z5pz"
     ],
-    "messages": [],
-    "sourceE": {
-        "SequenceFlow_19ibfph": "Task_0mfb6xu",
-        "SequenceFlow_038z5pz": "Task_0m7n5xk",
-        "SequenceFlow_1tuej2e": "BoundaryEvent_02b1vw4",
-        "SequenceFlow_05shv4u": "StartEvent_1",
-        "SequenceFlow_1y9pakp": "StartEvent_0hi510e"
+    "isInterrupt": {
+        "BoundaryEvent_02b1vw4": true
     },
+    "messageE": {},
+    "messages": [],
+    "name": "e055TBE",
+    "nameN": {},
     "nodes": [
         "Process_1",
         "SubProcess_0h2vtyo",
@@ -86,5 +67,24 @@
         "Task_0mfb6xu",
         "Task_0m7n5xk"
     ],
-    "nameN": {}
+    "sourceE": {
+        "SequenceFlow_038z5pz": "Task_0m7n5xk",
+        "SequenceFlow_05shv4u": "StartEvent_1",
+        "SequenceFlow_19ibfph": "Task_0mfb6xu",
+        "SequenceFlow_1tuej2e": "BoundaryEvent_02b1vw4",
+        "SequenceFlow_1y9pakp": "StartEvent_0hi510e"
+    },
+    "targetE": {
+        "SequenceFlow_038z5pz": "Task_0mfb6xu",
+        "SequenceFlow_05shv4u": "SubProcess_0h2vtyo",
+        "SequenceFlow_19ibfph": "Task_0m7n5xk",
+        "SequenceFlow_1tuej2e": "EndEvent_111i3i3",
+        "SequenceFlow_1y9pakp": "Task_0mfb6xu"
+    },
+    "timeInformation": {
+        "BoundaryEvent_02b1vw4": {
+            "timerDefinitionType": null,
+            "timerDefinitionValue": null
+        }
+    }
 }

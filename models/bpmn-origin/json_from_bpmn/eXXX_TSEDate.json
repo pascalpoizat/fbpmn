@@ -1,14 +1,20 @@
 {
-    "isInterrupt": {},
-    "catN": {
-        "se": "TimerStartEvent",
-        "Pid": "Process",
-        "ta": "AbstractTask",
-        "ee": "NoneEndEvent"
-    },
+    "attached": {},
     "catE": {
         "SequenceFlow_04jhviy": "NormalSequenceFlow",
         "SequenceFlow_0b689qw": "NormalSequenceFlow"
+    },
+    "catN": {
+        "Pid": "Process",
+        "ee": "NoneEndEvent",
+        "se": "TimerStartEvent",
+        "ta": "AbstractTask"
+    },
+    "containE": {
+        "Pid": [
+            "SequenceFlow_04jhviy",
+            "SequenceFlow_0b689qw"
+        ]
     },
     "containN": {
         "Pid": [
@@ -17,33 +23,17 @@
             "ta"
         ]
     },
-    "messageE": {},
-    "timeInformation": {
-        "se": {
-            "timerDefinitionValue": "1970-01-01T01:01:01Z",
-            "timerDefinitionType": "TimeDate"
-        }
-    },
-    "targetE": {
-        "SequenceFlow_04jhviy": "ta",
-        "SequenceFlow_0b689qw": "ee"
-    },
-    "name": "eXXX_TSEDate",
-    "attached": {},
-    "containE": {
-        "Pid": [
-            "SequenceFlow_04jhviy",
-            "SequenceFlow_0b689qw"
-        ]
-    },
     "edges": [
         "SequenceFlow_04jhviy",
         "SequenceFlow_0b689qw"
     ],
+    "isInterrupt": {},
+    "messageE": {},
     "messages": [],
-    "sourceE": {
-        "SequenceFlow_04jhviy": "se",
-        "SequenceFlow_0b689qw": "ta"
+    "name": "eXXX_TSEDate",
+    "nameN": {
+        "se": "1970-01-01 T 01:01:01Z",
+        "ta": "T"
     },
     "nodes": [
         "Pid",
@@ -51,8 +41,18 @@
         "se",
         "ta"
     ],
-    "nameN": {
-        "se": "1970-01-01 T 01:01:01Z",
-        "ta": "T"
+    "sourceE": {
+        "SequenceFlow_04jhviy": "se",
+        "SequenceFlow_0b689qw": "ta"
+    },
+    "targetE": {
+        "SequenceFlow_04jhviy": "ta",
+        "SequenceFlow_0b689qw": "ee"
+    },
+    "timeInformation": {
+        "se": {
+            "timerDefinitionType": "TimeDate",
+            "timerDefinitionValue": "1970-01-01T01:01:01Z"
+        }
     }
 }

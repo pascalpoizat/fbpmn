@@ -1,14 +1,20 @@
 {
-    "isInterrupt": {},
-    "catN": {
-        "StartEvent_1": "TimerStartEvent",
-        "Process_1": "Process",
-        "Task_0r3p2er": "AbstractTask",
-        "EndEvent_14srvev": "NoneEndEvent"
-    },
+    "attached": {},
     "catE": {
         "SequenceFlow_0yeopwj": "NormalSequenceFlow",
         "SequenceFlow_1tn9sj7": "NormalSequenceFlow"
+    },
+    "catN": {
+        "EndEvent_14srvev": "NoneEndEvent",
+        "Process_1": "Process",
+        "StartEvent_1": "TimerStartEvent",
+        "Task_0r3p2er": "AbstractTask"
+    },
+    "containE": {
+        "Process_1": [
+            "SequenceFlow_0yeopwj",
+            "SequenceFlow_1tn9sj7"
+        ]
     },
     "containN": {
         "Process_1": [
@@ -17,39 +23,33 @@
             "StartEvent_1"
         ]
     },
-    "messageE": {},
-    "timeInformation": {
-        "StartEvent_1": {
-            "timerDefinitionValue": null,
-            "timerDefinitionType": null
-        }
-    },
-    "targetE": {
-        "SequenceFlow_0yeopwj": "Task_0r3p2er",
-        "SequenceFlow_1tn9sj7": "EndEvent_14srvev"
-    },
-    "name": "e052TSE",
-    "attached": {},
-    "containE": {
-        "Process_1": [
-            "SequenceFlow_0yeopwj",
-            "SequenceFlow_1tn9sj7"
-        ]
-    },
     "edges": [
         "SequenceFlow_0yeopwj",
         "SequenceFlow_1tn9sj7"
     ],
+    "isInterrupt": {},
+    "messageE": {},
     "messages": [],
-    "sourceE": {
-        "SequenceFlow_0yeopwj": "StartEvent_1",
-        "SequenceFlow_1tn9sj7": "Task_0r3p2er"
-    },
+    "name": "e052TSE",
+    "nameN": {},
     "nodes": [
         "Process_1",
         "EndEvent_14srvev",
         "Task_0r3p2er",
         "StartEvent_1"
     ],
-    "nameN": {}
+    "sourceE": {
+        "SequenceFlow_0yeopwj": "StartEvent_1",
+        "SequenceFlow_1tn9sj7": "Task_0r3p2er"
+    },
+    "targetE": {
+        "SequenceFlow_0yeopwj": "Task_0r3p2er",
+        "SequenceFlow_1tn9sj7": "EndEvent_14srvev"
+    },
+    "timeInformation": {
+        "StartEvent_1": {
+            "timerDefinitionType": null,
+            "timerDefinitionValue": null
+        }
+    }
 }

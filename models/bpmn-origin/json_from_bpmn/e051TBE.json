@@ -1,19 +1,26 @@
 {
-    "isInterrupt": {
-        "BoundaryEvent_0r0bcez": true
-    },
-    "catN": {
-        "StartEvent_1": "NoneStartEvent",
-        "Task_1s6tj7r": "AbstractTask",
-        "Process_1": "Process",
-        "BoundaryEvent_0r0bcez": "TimerBoundaryEvent",
-        "EndEvent_14srvev": "TerminateEndEvent",
-        "EndEvent_08uegvd": "NoneEndEvent"
+    "attached": {
+        "BoundaryEvent_0r0bcez": "Task_1s6tj7r"
     },
     "catE": {
         "SequenceFlow_0yeopwj": "NormalSequenceFlow",
-        "SequenceFlow_1co9zfu": "NormalSequenceFlow",
-        "SequenceFlow_1131nmm": "NormalSequenceFlow"
+        "SequenceFlow_1131nmm": "NormalSequenceFlow",
+        "SequenceFlow_1co9zfu": "NormalSequenceFlow"
+    },
+    "catN": {
+        "BoundaryEvent_0r0bcez": "TimerBoundaryEvent",
+        "EndEvent_08uegvd": "NoneEndEvent",
+        "EndEvent_14srvev": "TerminateEndEvent",
+        "Process_1": "Process",
+        "StartEvent_1": "NoneStartEvent",
+        "Task_1s6tj7r": "AbstractTask"
+    },
+    "containE": {
+        "Process_1": [
+            "SequenceFlow_0yeopwj",
+            "SequenceFlow_1131nmm",
+            "SequenceFlow_1co9zfu"
+        ]
     },
     "containN": {
         "Process_1": [
@@ -24,40 +31,18 @@
             "EndEvent_14srvev"
         ]
     },
-    "messageE": {},
-    "timeInformation": {
-        "BoundaryEvent_0r0bcez": {
-            "timerDefinitionValue": null,
-            "timerDefinitionType": null
-        }
-    },
-    "targetE": {
-        "SequenceFlow_0yeopwj": "Task_1s6tj7r",
-        "SequenceFlow_1co9zfu": "EndEvent_08uegvd",
-        "SequenceFlow_1131nmm": "EndEvent_14srvev"
-    },
-    "name": "e051TBE",
-    "attached": {
-        "BoundaryEvent_0r0bcez": "Task_1s6tj7r"
-    },
-    "containE": {
-        "Process_1": [
-            "SequenceFlow_0yeopwj",
-            "SequenceFlow_1131nmm",
-            "SequenceFlow_1co9zfu"
-        ]
-    },
     "edges": [
         "SequenceFlow_0yeopwj",
         "SequenceFlow_1131nmm",
         "SequenceFlow_1co9zfu"
     ],
-    "messages": [],
-    "sourceE": {
-        "SequenceFlow_0yeopwj": "StartEvent_1",
-        "SequenceFlow_1co9zfu": "BoundaryEvent_0r0bcez",
-        "SequenceFlow_1131nmm": "Task_1s6tj7r"
+    "isInterrupt": {
+        "BoundaryEvent_0r0bcez": true
     },
+    "messageE": {},
+    "messages": [],
+    "name": "e051TBE",
+    "nameN": {},
     "nodes": [
         "Process_1",
         "StartEvent_1",
@@ -66,5 +51,20 @@
         "EndEvent_08uegvd",
         "EndEvent_14srvev"
     ],
-    "nameN": {}
+    "sourceE": {
+        "SequenceFlow_0yeopwj": "StartEvent_1",
+        "SequenceFlow_1131nmm": "Task_1s6tj7r",
+        "SequenceFlow_1co9zfu": "BoundaryEvent_0r0bcez"
+    },
+    "targetE": {
+        "SequenceFlow_0yeopwj": "Task_1s6tj7r",
+        "SequenceFlow_1131nmm": "EndEvent_14srvev",
+        "SequenceFlow_1co9zfu": "EndEvent_08uegvd"
+    },
+    "timeInformation": {
+        "BoundaryEvent_0r0bcez": {
+            "timerDefinitionType": null,
+            "timerDefinitionValue": null
+        }
+    }
 }

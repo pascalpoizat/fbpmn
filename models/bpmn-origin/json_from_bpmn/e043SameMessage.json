@@ -1,46 +1,54 @@
 {
-    "isInterrupt": {},
+    "attached": {},
+    "catE": {
+        "MessageFlow_08078h0": "MessageFlow",
+        "MessageFlow_0ethk5r": "MessageFlow",
+        "MessageFlow_1i8pa9a": "MessageFlow",
+        "MessageFlow_1sbztdc": "MessageFlow",
+        "SequenceFlow_0ul5cp9": "NormalSequenceFlow",
+        "SequenceFlow_0ww2wl4": "NormalSequenceFlow",
+        "SequenceFlow_0x0ua9p": "NormalSequenceFlow",
+        "SequenceFlow_136ue2u": "NormalSequenceFlow",
+        "SequenceFlow_19mve9z": "NormalSequenceFlow",
+        "SequenceFlow_1ajd21l": "NormalSequenceFlow",
+        "SequenceFlow_1e8j5gg": "NormalSequenceFlow",
+        "SequenceFlow_1gr5udw": "NormalSequenceFlow",
+        "SequenceFlow_1kr124p": "NormalSequenceFlow",
+        "SequenceFlow_1u8e5ni": "NormalSequenceFlow"
+    },
     "catN": {
-        "SendTask_1ukbqce": "ReceiveTask",
-        "Task_1640yub": "SendTask",
-        "StartEvent_1": "NoneStartEvent",
-        "Task_125lbbu": "SendTask",
-        "StartEvent_131stvt": "NoneStartEvent",
-        "ReceiveTask_12v7zb0": "SendTask",
-        "Task_1dr6jww": "ReceiveTask",
-        "EndEvent_15dkjc7": "NoneEndEvent",
         "EndEvent_0z166lz": "NoneEndEvent",
-        "Qid": "Process",
+        "EndEvent_15dkjc7": "NoneEndEvent",
         "Pid": "Process",
-        "Task_1jdqb88": "SendTask",
+        "Qid": "Process",
+        "ReceiveTask_12v7zb0": "SendTask",
+        "SendTask_1ukbqce": "ReceiveTask",
+        "StartEvent_1": "NoneStartEvent",
+        "StartEvent_131stvt": "NoneStartEvent",
         "Task_0rim1ab": "ReceiveTask",
+        "Task_125lbbu": "SendTask",
+        "Task_1640yub": "SendTask",
+        "Task_1dr6jww": "ReceiveTask",
+        "Task_1jdqb88": "SendTask",
         "Task_1yxycrc": "ReceiveTask"
     },
-    "catE": {
-        "MessageFlow_1i8pa9a": "MessageFlow",
-        "SequenceFlow_0ww2wl4": "NormalSequenceFlow",
-        "SequenceFlow_19mve9z": "NormalSequenceFlow",
-        "SequenceFlow_0x0ua9p": "NormalSequenceFlow",
-        "SequenceFlow_1kr124p": "NormalSequenceFlow",
-        "MessageFlow_0ethk5r": "MessageFlow",
-        "SequenceFlow_136ue2u": "NormalSequenceFlow",
-        "SequenceFlow_1e8j5gg": "NormalSequenceFlow",
-        "SequenceFlow_0ul5cp9": "NormalSequenceFlow",
-        "MessageFlow_1sbztdc": "MessageFlow",
-        "SequenceFlow_1gr5udw": "NormalSequenceFlow",
-        "SequenceFlow_1ajd21l": "NormalSequenceFlow",
-        "SequenceFlow_1u8e5ni": "NormalSequenceFlow",
-        "MessageFlow_08078h0": "MessageFlow"
+    "containE": {
+        "Pid": [
+            "SequenceFlow_1e8j5gg",
+            "SequenceFlow_0ul5cp9",
+            "SequenceFlow_1gr5udw",
+            "SequenceFlow_0x0ua9p",
+            "SequenceFlow_136ue2u"
+        ],
+        "Qid": [
+            "SequenceFlow_1kr124p",
+            "SequenceFlow_1ajd21l",
+            "SequenceFlow_1u8e5ni",
+            "SequenceFlow_0ww2wl4",
+            "SequenceFlow_19mve9z"
+        ]
     },
     "containN": {
-        "Qid": [
-            "StartEvent_131stvt",
-            "SendTask_1ukbqce",
-            "ReceiveTask_12v7zb0",
-            "EndEvent_0z166lz",
-            "Task_1dr6jww",
-            "Task_1jdqb88"
-        ],
         "Pid": [
             "StartEvent_1",
             "Task_1640yub",
@@ -48,47 +56,14 @@
             "EndEvent_15dkjc7",
             "Task_125lbbu",
             "Task_0rim1ab"
-        ]
-    },
-    "messageE": {
-        "MessageFlow_1i8pa9a": "Info",
-        "MessageFlow_0ethk5r": "Info",
-        "MessageFlow_1sbztdc": "Info",
-        "MessageFlow_08078h0": "Info"
-    },
-    "timeInformation": {},
-    "targetE": {
-        "MessageFlow_1i8pa9a": "Task_0rim1ab",
-        "SequenceFlow_0ww2wl4": "Task_1jdqb88",
-        "SequenceFlow_19mve9z": "EndEvent_0z166lz",
-        "SequenceFlow_0x0ua9p": "Task_0rim1ab",
-        "SequenceFlow_1kr124p": "SendTask_1ukbqce",
-        "MessageFlow_0ethk5r": "Task_1yxycrc",
-        "SequenceFlow_136ue2u": "EndEvent_15dkjc7",
-        "SequenceFlow_1e8j5gg": "Task_1640yub",
-        "SequenceFlow_0ul5cp9": "Task_1yxycrc",
-        "MessageFlow_1sbztdc": "Task_1dr6jww",
-        "SequenceFlow_1gr5udw": "Task_125lbbu",
-        "SequenceFlow_1ajd21l": "ReceiveTask_12v7zb0",
-        "SequenceFlow_1u8e5ni": "Task_1dr6jww",
-        "MessageFlow_08078h0": "SendTask_1ukbqce"
-    },
-    "name": "e043SameMessage",
-    "attached": {},
-    "containE": {
-        "Qid": [
-            "SequenceFlow_1kr124p",
-            "SequenceFlow_1ajd21l",
-            "SequenceFlow_1u8e5ni",
-            "SequenceFlow_0ww2wl4",
-            "SequenceFlow_19mve9z"
         ],
-        "Pid": [
-            "SequenceFlow_1e8j5gg",
-            "SequenceFlow_0ul5cp9",
-            "SequenceFlow_1gr5udw",
-            "SequenceFlow_0x0ua9p",
-            "SequenceFlow_136ue2u"
+        "Qid": [
+            "StartEvent_131stvt",
+            "SendTask_1ukbqce",
+            "ReceiveTask_12v7zb0",
+            "EndEvent_0z166lz",
+            "Task_1dr6jww",
+            "Task_1jdqb88"
         ]
     },
     "edges": [
@@ -107,25 +82,18 @@
         "SequenceFlow_0ww2wl4",
         "SequenceFlow_19mve9z"
     ],
+    "isInterrupt": {},
+    "messageE": {
+        "MessageFlow_08078h0": "Info",
+        "MessageFlow_0ethk5r": "Info",
+        "MessageFlow_1i8pa9a": "Info",
+        "MessageFlow_1sbztdc": "Info"
+    },
     "messages": [
         "Info"
     ],
-    "sourceE": {
-        "MessageFlow_1i8pa9a": "Task_1jdqb88",
-        "SequenceFlow_0ww2wl4": "Task_1dr6jww",
-        "SequenceFlow_19mve9z": "Task_1jdqb88",
-        "SequenceFlow_0x0ua9p": "Task_125lbbu",
-        "SequenceFlow_1kr124p": "StartEvent_131stvt",
-        "MessageFlow_0ethk5r": "ReceiveTask_12v7zb0",
-        "SequenceFlow_136ue2u": "Task_0rim1ab",
-        "SequenceFlow_1e8j5gg": "StartEvent_1",
-        "SequenceFlow_0ul5cp9": "Task_1640yub",
-        "MessageFlow_1sbztdc": "Task_125lbbu",
-        "SequenceFlow_1gr5udw": "Task_1yxycrc",
-        "SequenceFlow_1ajd21l": "SendTask_1ukbqce",
-        "SequenceFlow_1u8e5ni": "ReceiveTask_12v7zb0",
-        "MessageFlow_08078h0": "Task_1640yub"
-    },
+    "name": "e043SameMessage",
+    "nameN": {},
     "nodes": [
         "Pid",
         "Qid",
@@ -142,5 +110,37 @@
         "Task_1dr6jww",
         "Task_1jdqb88"
     ],
-    "nameN": {}
+    "sourceE": {
+        "MessageFlow_08078h0": "Task_1640yub",
+        "MessageFlow_0ethk5r": "ReceiveTask_12v7zb0",
+        "MessageFlow_1i8pa9a": "Task_1jdqb88",
+        "MessageFlow_1sbztdc": "Task_125lbbu",
+        "SequenceFlow_0ul5cp9": "Task_1640yub",
+        "SequenceFlow_0ww2wl4": "Task_1dr6jww",
+        "SequenceFlow_0x0ua9p": "Task_125lbbu",
+        "SequenceFlow_136ue2u": "Task_0rim1ab",
+        "SequenceFlow_19mve9z": "Task_1jdqb88",
+        "SequenceFlow_1ajd21l": "SendTask_1ukbqce",
+        "SequenceFlow_1e8j5gg": "StartEvent_1",
+        "SequenceFlow_1gr5udw": "Task_1yxycrc",
+        "SequenceFlow_1kr124p": "StartEvent_131stvt",
+        "SequenceFlow_1u8e5ni": "ReceiveTask_12v7zb0"
+    },
+    "targetE": {
+        "MessageFlow_08078h0": "SendTask_1ukbqce",
+        "MessageFlow_0ethk5r": "Task_1yxycrc",
+        "MessageFlow_1i8pa9a": "Task_0rim1ab",
+        "MessageFlow_1sbztdc": "Task_1dr6jww",
+        "SequenceFlow_0ul5cp9": "Task_1yxycrc",
+        "SequenceFlow_0ww2wl4": "Task_1jdqb88",
+        "SequenceFlow_0x0ua9p": "Task_0rim1ab",
+        "SequenceFlow_136ue2u": "EndEvent_15dkjc7",
+        "SequenceFlow_19mve9z": "EndEvent_0z166lz",
+        "SequenceFlow_1ajd21l": "ReceiveTask_12v7zb0",
+        "SequenceFlow_1e8j5gg": "Task_1640yub",
+        "SequenceFlow_1gr5udw": "Task_125lbbu",
+        "SequenceFlow_1kr124p": "SendTask_1ukbqce",
+        "SequenceFlow_1u8e5ni": "Task_1dr6jww"
+    },
+    "timeInformation": {}
 }

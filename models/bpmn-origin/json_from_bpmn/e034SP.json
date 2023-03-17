@@ -1,23 +1,35 @@
 {
-    "isInterrupt": {},
+    "attached": {},
+    "catE": {
+        "SequenceFlow_00j4ong": "NormalSequenceFlow",
+        "SequenceFlow_04a621f": "NormalSequenceFlow",
+        "SequenceFlow_12utbfs": "NormalSequenceFlow",
+        "SequenceFlow_19k9u87": "NormalSequenceFlow",
+        "SequenceFlow_1t5jo8c": "NormalSequenceFlow",
+        "SequenceFlow_1uo79pd": "NormalSequenceFlow"
+    },
     "catN": {
-        "ExclusiveGateway_0vdfgj4": "XorGateway",
         "EndEvent_0a59w28": "NoneEndEvent",
-        "StartEvent_1": "NoneStartEvent",
-        "StartEvent_09ojxru": "NoneStartEvent",
-        "P_": "Process",
         "EndEvent_0atuxkh": "NoneEndEvent",
+        "ExclusiveGateway_0vdfgj4": "XorGateway",
+        "P_": "Process",
+        "StartEvent_09ojxru": "NoneStartEvent",
         "StartEvent_0p1e2cq": "NoneStartEvent",
+        "StartEvent_1": "NoneStartEvent",
         "SubProcess_1glz8ii": "SubProcess",
         "Task_1x5zvyz": "AbstractTask"
     },
-    "catE": {
-        "SequenceFlow_1t5jo8c": "NormalSequenceFlow",
-        "SequenceFlow_04a621f": "NormalSequenceFlow",
-        "SequenceFlow_12utbfs": "NormalSequenceFlow",
-        "SequenceFlow_00j4ong": "NormalSequenceFlow",
-        "SequenceFlow_19k9u87": "NormalSequenceFlow",
-        "SequenceFlow_1uo79pd": "NormalSequenceFlow"
+    "containE": {
+        "P_": [
+            "SequenceFlow_12utbfs",
+            "SequenceFlow_00j4ong"
+        ],
+        "SubProcess_1glz8ii": [
+            "SequenceFlow_19k9u87",
+            "SequenceFlow_1t5jo8c",
+            "SequenceFlow_04a621f",
+            "SequenceFlow_1uo79pd"
+        ]
     },
     "containN": {
         "P_": [
@@ -33,30 +45,6 @@
             "ExclusiveGateway_0vdfgj4"
         ]
     },
-    "messageE": {},
-    "timeInformation": {},
-    "targetE": {
-        "SequenceFlow_1t5jo8c": "ExclusiveGateway_0vdfgj4",
-        "SequenceFlow_04a621f": "Task_1x5zvyz",
-        "SequenceFlow_12utbfs": "SubProcess_1glz8ii",
-        "SequenceFlow_00j4ong": "EndEvent_0a59w28",
-        "SequenceFlow_19k9u87": "ExclusiveGateway_0vdfgj4",
-        "SequenceFlow_1uo79pd": "EndEvent_0atuxkh"
-    },
-    "name": "e034SP",
-    "attached": {},
-    "containE": {
-        "P_": [
-            "SequenceFlow_12utbfs",
-            "SequenceFlow_00j4ong"
-        ],
-        "SubProcess_1glz8ii": [
-            "SequenceFlow_19k9u87",
-            "SequenceFlow_1t5jo8c",
-            "SequenceFlow_04a621f",
-            "SequenceFlow_1uo79pd"
-        ]
-    },
     "edges": [
         "SequenceFlow_12utbfs",
         "SequenceFlow_00j4ong",
@@ -65,14 +53,12 @@
         "SequenceFlow_04a621f",
         "SequenceFlow_1uo79pd"
     ],
+    "isInterrupt": {},
+    "messageE": {},
     "messages": [],
-    "sourceE": {
-        "SequenceFlow_1t5jo8c": "StartEvent_0p1e2cq",
-        "SequenceFlow_04a621f": "ExclusiveGateway_0vdfgj4",
-        "SequenceFlow_12utbfs": "StartEvent_1",
-        "SequenceFlow_00j4ong": "SubProcess_1glz8ii",
-        "SequenceFlow_19k9u87": "StartEvent_09ojxru",
-        "SequenceFlow_1uo79pd": "Task_1x5zvyz"
+    "name": "e034SP",
+    "nameN": {
+        "SubProcess_1glz8ii": "SP"
     },
     "nodes": [
         "P_",
@@ -85,7 +71,21 @@
         "EndEvent_0atuxkh",
         "ExclusiveGateway_0vdfgj4"
     ],
-    "nameN": {
-        "SubProcess_1glz8ii": "SP"
-    }
+    "sourceE": {
+        "SequenceFlow_00j4ong": "SubProcess_1glz8ii",
+        "SequenceFlow_04a621f": "ExclusiveGateway_0vdfgj4",
+        "SequenceFlow_12utbfs": "StartEvent_1",
+        "SequenceFlow_19k9u87": "StartEvent_09ojxru",
+        "SequenceFlow_1t5jo8c": "StartEvent_0p1e2cq",
+        "SequenceFlow_1uo79pd": "Task_1x5zvyz"
+    },
+    "targetE": {
+        "SequenceFlow_00j4ong": "EndEvent_0a59w28",
+        "SequenceFlow_04a621f": "Task_1x5zvyz",
+        "SequenceFlow_12utbfs": "SubProcess_1glz8ii",
+        "SequenceFlow_19k9u87": "ExclusiveGateway_0vdfgj4",
+        "SequenceFlow_1t5jo8c": "ExclusiveGateway_0vdfgj4",
+        "SequenceFlow_1uo79pd": "EndEvent_0atuxkh"
+    },
+    "timeInformation": {}
 }

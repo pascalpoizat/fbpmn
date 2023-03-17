@@ -1,14 +1,20 @@
 {
-    "isInterrupt": {},
-    "catN": {
-        "Event_0fkborc": "NoneEndEvent",
-        "StartEvent_1": "NoneStartEvent",
-        "PId": "Process",
-        "Activity_0z782bb": "AbstractTask"
-    },
+    "attached": {},
     "catE": {
-        "Flow_0llicsy": "NormalSequenceFlow",
-        "Flow_09a8um7": "NormalSequenceFlow"
+        "Flow_09a8um7": "NormalSequenceFlow",
+        "Flow_0llicsy": "NormalSequenceFlow"
+    },
+    "catN": {
+        "Activity_0z782bb": "AbstractTask",
+        "Event_0fkborc": "NoneEndEvent",
+        "PId": "Process",
+        "StartEvent_1": "NoneStartEvent"
+    },
+    "containE": {
+        "PId": [
+            "Flow_09a8um7",
+            "Flow_0llicsy"
+        ]
     },
     "containN": {
         "PId": [
@@ -17,28 +23,18 @@
             "Activity_0z782bb"
         ]
     },
-    "messageE": {},
-    "timeInformation": {},
-    "targetE": {
-        "Flow_0llicsy": "Event_0fkborc",
-        "Flow_09a8um7": "Activity_0z782bb"
-    },
-    "name": "s001SimpleMove",
-    "attached": {},
-    "containE": {
-        "PId": [
-            "Flow_09a8um7",
-            "Flow_0llicsy"
-        ]
-    },
     "edges": [
         "Flow_09a8um7",
         "Flow_0llicsy"
     ],
+    "isInterrupt": {},
+    "messageE": {},
     "messages": [],
-    "sourceE": {
-        "Flow_0llicsy": "Activity_0z782bb",
-        "Flow_09a8um7": "StartEvent_1"
+    "name": "s001SimpleMove",
+    "nameN": {
+        "Activity_0z782bb": "move to some reachable zone to plant",
+        "Event_0fkborc": "stop",
+        "StartEvent_1": "start\n"
     },
     "nodes": [
         "PId",
@@ -46,9 +42,13 @@
         "Event_0fkborc",
         "Activity_0z782bb"
     ],
-    "nameN": {
-        "Event_0fkborc": "stop",
-        "StartEvent_1": "start\n",
-        "Activity_0z782bb": "move to some reachable zone to plant"
-    }
+    "sourceE": {
+        "Flow_09a8um7": "StartEvent_1",
+        "Flow_0llicsy": "Activity_0z782bb"
+    },
+    "targetE": {
+        "Flow_09a8um7": "Activity_0z782bb",
+        "Flow_0llicsy": "Event_0fkborc"
+    },
+    "timeInformation": {}
 }

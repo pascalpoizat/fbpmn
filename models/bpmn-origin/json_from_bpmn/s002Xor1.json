@@ -1,38 +1,19 @@
 {
-    "isInterrupt": {},
-    "catN": {
-        "Event_1hpd68d": "NoneEndEvent",
-        "Event_0fkborc": "NoneEndEvent",
-        "StartEvent_1": "NoneStartEvent",
-        "PId": "Process",
-        "Activity_0z782bb": "AbstractTask",
-        "Gateway_0bb8o1z": "XorGateway"
-    },
-    "catE": {
-        "Flow_18ptpdh": "ConditionalSequenceFlow",
-        "Flow_14b309w": "DefaultSequenceFlow",
-        "Flow_0llicsy": "NormalSequenceFlow",
-        "Flow_09a8um7": "NormalSequenceFlow"
-    },
-    "containN": {
-        "PId": [
-            "StartEvent_1",
-            "Event_0fkborc",
-            "Gateway_0bb8o1z",
-            "Event_1hpd68d",
-            "Activity_0z782bb"
-        ]
-    },
-    "messageE": {},
-    "timeInformation": {},
-    "targetE": {
-        "Flow_18ptpdh": "Activity_0z782bb",
-        "Flow_14b309w": "Event_1hpd68d",
-        "Flow_0llicsy": "Event_0fkborc",
-        "Flow_09a8um7": "Gateway_0bb8o1z"
-    },
-    "name": "s002Xor1",
     "attached": {},
+    "catE": {
+        "Flow_09a8um7": "NormalSequenceFlow",
+        "Flow_0llicsy": "NormalSequenceFlow",
+        "Flow_14b309w": "DefaultSequenceFlow",
+        "Flow_18ptpdh": "ConditionalSequenceFlow"
+    },
+    "catN": {
+        "Activity_0z782bb": "AbstractTask",
+        "Gateway_0bb8o1z": "XorGateway",
+        "PId": "Process",
+        "StartEvent_1": "NoneStartEvent",
+        "end_in_place": "NoneEndEvent",
+        "end_moved": "NoneEndEvent"
+    },
     "containE": {
         "PId": [
             "Flow_09a8um7",
@@ -41,31 +22,50 @@
             "Flow_14b309w"
         ]
     },
+    "containN": {
+        "PId": [
+            "StartEvent_1",
+            "end_moved",
+            "Gateway_0bb8o1z",
+            "end_in_place",
+            "Activity_0z782bb"
+        ]
+    },
     "edges": [
         "Flow_09a8um7",
         "Flow_0llicsy",
         "Flow_18ptpdh",
         "Flow_14b309w"
     ],
+    "isInterrupt": {},
+    "messageE": {},
     "messages": [],
-    "sourceE": {
-        "Flow_18ptpdh": "Gateway_0bb8o1z",
-        "Flow_14b309w": "Gateway_0bb8o1z",
-        "Flow_0llicsy": "Activity_0z782bb",
-        "Flow_09a8um7": "StartEvent_1"
+    "name": "s002Xor1",
+    "nameN": {
+        "Activity_0z782bb": "move to some zone in z",
+        "StartEvent_1": "start\n",
+        "end_in_place": "end (in place)\n\n",
+        "end_moved": "end (moved)\n\n"
     },
     "nodes": [
         "PId",
         "StartEvent_1",
-        "Event_0fkborc",
+        "end_moved",
         "Gateway_0bb8o1z",
-        "Event_1hpd68d",
+        "end_in_place",
         "Activity_0z782bb"
     ],
-    "nameN": {
-        "Event_1hpd68d": "end (in place)\n\n",
-        "Event_0fkborc": "end (moved)\n\n",
-        "StartEvent_1": "start\n",
-        "Activity_0z782bb": "move to some zone in z"
-    }
+    "sourceE": {
+        "Flow_09a8um7": "StartEvent_1",
+        "Flow_0llicsy": "Activity_0z782bb",
+        "Flow_14b309w": "Gateway_0bb8o1z",
+        "Flow_18ptpdh": "Gateway_0bb8o1z"
+    },
+    "targetE": {
+        "Flow_09a8um7": "Gateway_0bb8o1z",
+        "Flow_0llicsy": "end_moved",
+        "Flow_14b309w": "end_in_place",
+        "Flow_18ptpdh": "Activity_0z782bb"
+    },
+    "timeInformation": {}
 }
