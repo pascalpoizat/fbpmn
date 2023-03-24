@@ -328,13 +328,13 @@ LOCAL or_complete_outs(n, eouts) ==
                                    ELSE IF e \in eouts THEN edgemarks[e] + 1
                                    ELSE edgemarks[e] ]
         /\ UNCHANGED nodemarks
+        /\ UNCHANGED lifecycle
         /\ Network!unchanged
 
 or_complete(n) ==
   /\ CatN[n] = InclusiveOr
   /\ \/ \E eouts \in SUBSET outtype({ NormalSeqFlow, ConditionalSeqFlow }, n) : or_complete_outs(n, eouts)
      \/ \E eout \in outtype({ DefaultSeqFlow }, n) : or_complete_outs(n, {eout})
-  /\ UNCHANGED lifecycle
 
 LOCAL or_fairness(n) == \* fairness is also applied on DefaultSeqFlow
    Cardinality(outtype(SeqFlowType, n)) > 1 =>
