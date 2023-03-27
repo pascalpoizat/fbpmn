@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1790ic3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.1">
+  <bpmn:collaboration id="ti23Comm">
+    <bpmn:documentation>from  https://doi.org/10.1016/j.scico.2018.05.008</bpmn:documentation>
+    <bpmn:participant id="Customer" name="Customer" processRef="Customer_" />
+    <bpmn:participant id="TravelAgency" name="Travel Agency" processRef="TravelAgency_" />
+    <bpmn:participant id="Airline" name="Airline" processRef="Airline_" />
+    <bpmn:messageFlow id="MessageFlow_1j3ru8z" name="order" sourceRef="Order_Ticket" targetRef="Ticket_Order_Received" />
+    <bpmn:messageFlow id="MessageFlow_01l3u25" name="offer" sourceRef="Make_Travel_Offer" targetRef="StartEvent_1" />
+    <bpmn:messageFlow id="MessageFlow_0jtu5yc" name="travel" sourceRef="Book_Travel" targetRef="Booking_Received" />
+    <bpmn:messageFlow id="MessageFlow_1p97q31" name="rejection" sourceRef="Reject_Offer" targetRef="Offer_Rejection_Received" />
+    <bpmn:messageFlow id="MessageFlow_0y2wjrm" name="payment" sourceRef="Pay_Travel" targetRef="IntermediateThrowEvent_0kagqq2" />
+    <bpmn:messageFlow id="MessageFlow_08bo5ej" name="confirmation" sourceRef="Confirm_Booking" targetRef="Booking_Confirmed" />
+    <bpmn:messageFlow id="MessageFlow_15n7wk4" name="payment confirmation" sourceRef="Confirm_Payment" targetRef="Payment_Confirmation_Received" />
+  </bpmn:collaboration>
+  <bpmn:process id="Customer_" name="Customer" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_037u61c</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:startEvent>
+    <bpmn:task id="Check_Offer" name="Check Offer">
+      <bpmn:incoming>SequenceFlow_037u61c</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0dfevt9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="SequenceFlow_037u61c" sourceRef="StartEvent_1" targetRef="Check_Offer" />
+    <bpmn:exclusiveGateway id="Is_the_Offer_Interesting" name="Is the Offer Interesting?">
+      <bpmn:incoming>SequenceFlow_0dfevt9</bpmn:incoming>
+      <bpmn:outgoing>Offer_is_not_Interesting</bpmn:outgoing>
+      <bpmn:outgoing>Offer_is_Interesting</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0dfevt9" sourceRef="Check_Offer" targetRef="Is_the_Offer_Interesting" />
+    <bpmn:sequenceFlow id="Offer_is_not_Interesting" name="no" sourceRef="Is_the_Offer_Interesting" targetRef="Reject_Offer" />
+    <bpmn:sendTask id="Reject_Offer" name="Reject Offer">
+      <bpmn:incoming>Offer_is_not_Interesting</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qo309k</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Offer_is_Interesting" name="yes" sourceRef="Is_the_Offer_Interesting" targetRef="Book_Travel" />
+    <bpmn:sendTask id="Book_Travel" name="Book Travel">
+      <bpmn:incoming>Offer_is_Interesting</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1y19v10</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="Offer_Rejected" name="Offer Rejected">
+      <bpmn:incoming>SequenceFlow_1qo309k</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1qo309k" sourceRef="Reject_Offer" targetRef="Offer_Rejected" />
+    <bpmn:sequenceFlow id="SequenceFlow_1y19v10" sourceRef="Book_Travel" targetRef="Booking_Confirmed" />
+    <bpmn:sequenceFlow id="SequenceFlow_1p9f9nn" sourceRef="Booking_Confirmed" targetRef="Pay_Travel" />
+    <bpmn:sendTask id="Pay_Travel" name="Pay Travel">
+      <bpmn:incoming>SequenceFlow_1p9f9nn</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0rbkpuc</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:intermediateCatchEvent id="Booking_Confirmed" name="Booking Confirmed">
+      <bpmn:incoming>SequenceFlow_1y19v10</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1p9f9nn</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0rbkpuc" sourceRef="Pay_Travel" targetRef="Payment_Confirmation_Received" />
+    <bpmn:intermediateCatchEvent id="Payment_Confirmation_Received" name="Payment Confirmation Received">
+      <bpmn:incoming>SequenceFlow_0rbkpuc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1fm8n43</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="Travel_Paid" name="Travel Paid">
+      <bpmn:incoming>SequenceFlow_1fm8n43</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1fm8n43" sourceRef="Payment_Confirmation_Received" targetRef="Travel_Paid" />
+  </bpmn:process>
+  <bpmn:process id="TravelAgency_" name="Travel Agency" isExecutable="false">
+    <bpmn:sequenceFlow id="SequenceFlow_1b9yiqz" sourceRef="Order_Ticket" targetRef="Ticket_Ordered" />
+    <bpmn:sequenceFlow id="SequenceFlow_10id4f8" sourceRef="IntermediateThrowEvent_0kagqq2" targetRef="Order_Ticket" />
+    <bpmn:sequenceFlow id="SequenceFlow_1wbphor" sourceRef="Confirm_Booking" targetRef="IntermediateThrowEvent_0kagqq2" />
+    <bpmn:sequenceFlow id="SequenceFlow_1l28um0" sourceRef="Booking_Received" targetRef="Confirm_Booking" />
+    <bpmn:sequenceFlow id="SequenceFlow_02xdetn" sourceRef="Offer_Rejection_Received" targetRef="Offer_Cancelled" />
+    <bpmn:sequenceFlow id="SequenceFlow_06mgtsm" sourceRef="Status_Waiting" targetRef="Offer_Rejection_Received" />
+    <bpmn:sequenceFlow id="SequenceFlow_0wyug2s" sourceRef="Status_Waiting" targetRef="Booking_Received" />
+    <bpmn:sequenceFlow id="SequenceFlow_1bhdal8" sourceRef="Make_Travel_Offer" targetRef="Status_Waiting" />
+    <bpmn:sequenceFlow id="SequenceFlow_1bxiri7" sourceRef="Offer_Needed" targetRef="Make_Travel_Offer" />
+    <bpmn:endEvent id="Offer_Cancelled" name="Offer Cancelled">
+      <bpmn:incoming>SequenceFlow_02xdetn</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:intermediateCatchEvent id="Offer_Rejection_Received" name="Offer Rejection Received">
+      <bpmn:incoming>SequenceFlow_06mgtsm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_02xdetn</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:eventBasedGateway id="Status_Waiting">
+      <bpmn:incoming>SequenceFlow_1bhdal8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0wyug2s</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_06mgtsm</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:sendTask id="Make_Travel_Offer" name="Make Travel Offer">
+      <bpmn:incoming>SequenceFlow_1bxiri7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1bhdal8</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:startEvent id="Offer_Needed" name="Offer Needed">
+      <bpmn:outgoing>SequenceFlow_1bxiri7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Ticket_Ordered" name="Ticket Ordered">
+      <bpmn:incoming>SequenceFlow_1b9yiqz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="Order_Ticket" name="Order Ticket">
+      <bpmn:incoming>SequenceFlow_10id4f8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1b9yiqz</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_0kagqq2" name="Payment Received">
+      <bpmn:incoming>SequenceFlow_1wbphor</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_10id4f8</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sendTask id="Confirm_Booking" name="Confirm Booking">
+      <bpmn:incoming>SequenceFlow_1l28um0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1wbphor</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:intermediateCatchEvent id="Booking_Received" name="Booking Received">
+      <bpmn:incoming>SequenceFlow_0wyug2s</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1l28um0</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateCatchEvent>
+  </bpmn:process>
+  <bpmn:process id="Airline_" name="Airline" isExecutable="false">
+    <bpmn:startEvent id="Ticket_Order_Received" name="Ticket Order Received">
+      <bpmn:outgoing>SequenceFlow_09iuwhk</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:startEvent>
+    <bpmn:task id="Handle_Payment" name="Handle Payment">
+      <bpmn:incoming>SequenceFlow_09iuwhk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ybfy8r</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Was_Payment_Made" name="Was Payment Made?">
+      <bpmn:incoming>SequenceFlow_1ybfy8r</bpmn:incoming>
+      <bpmn:outgoing>Payment_Was_Made</bpmn:outgoing>
+      <bpmn:outgoing>Payment_Was_Not_Made</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Payment_Confirmed" name="Payment Confirmed">
+      <bpmn:incoming>SequenceFlow_1di11xa</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Payment_Refused" name="Payment Refused">
+      <bpmn:incoming>Payment_Was_Not_Made</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="Confirm_Payment" name="Confirm Payment">
+      <bpmn:incoming>Payment_Was_Made</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1di11xa</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="SequenceFlow_09iuwhk" sourceRef="Ticket_Order_Received" targetRef="Handle_Payment" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ybfy8r" sourceRef="Handle_Payment" targetRef="Was_Payment_Made" />
+    <bpmn:sequenceFlow id="Payment_Was_Made" name="yes" sourceRef="Was_Payment_Made" targetRef="Confirm_Payment" />
+    <bpmn:sequenceFlow id="Payment_Was_Not_Made" name="no" sourceRef="Was_Payment_Made" targetRef="Payment_Refused" />
+    <bpmn:sequenceFlow id="SequenceFlow_1di11xa" sourceRef="Confirm_Payment" targetRef="Payment_Confirmed" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ti23Comm">
+      <bpmndi:BPMNShape id="Participant_04iyng9_di" bpmnElement="Customer" isHorizontal="true">
+        <dc:Bounds x="129" y="81" width="1032" height="257" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_0pklb8w_di" bpmnElement="TravelAgency" isHorizontal="true">
+        <dc:Bounds x="129" y="351" width="1034" height="261" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_1bfuf4t_di" bpmnElement="Airline" isHorizontal="true">
+        <dc:Bounds x="129" y="637" width="600" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_06ffkll_di" bpmnElement="Ticket_Order_Received">
+        <dc:Bounds x="182" y="732" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="170" y="775" width="61" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0cben82_di" bpmnElement="Handle_Payment">
+        <dc:Bounds x="250" y="710" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0l0dhd0_di" bpmnElement="Was_Payment_Made" isMarkerVisible="true">
+        <dc:Bounds x="378" y="725" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="417.5" y="767" width="69" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1sw9wri_di" bpmnElement="Payment_Confirmed">
+        <dc:Bounds x="632" y="677" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="625" y="720" width="51" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0ih4szm_di" bpmnElement="Payment_Refused">
+        <dc:Bounds x="632" y="804" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="606" y="847" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_09iuwhk_di" bpmnElement="SequenceFlow_09iuwhk">
+        <di:waypoint x="218" y="750" />
+        <di:waypoint x="250" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ybfy8r_di" bpmnElement="SequenceFlow_1ybfy8r">
+        <di:waypoint x="350" y="750" />
+        <di:waypoint x="378" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_14kv46w_di" bpmnElement="Payment_Was_Made">
+        <di:waypoint x="403" y="725" />
+        <di:waypoint x="403" y="695" />
+        <di:waypoint x="490" y="695" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="409" y="707" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1erf9ov_di" bpmnElement="Payment_Was_Not_Made">
+        <di:waypoint x="403" y="775" />
+        <di:waypoint x="403" y="822" />
+        <di:waypoint x="632" y="822" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="412" y="796" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1di11xa_di" bpmnElement="SequenceFlow_1di11xa">
+        <di:waypoint x="590" y="695" />
+        <di:waypoint x="632" y="695" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_06zywpb_di" bpmnElement="Offer_Needed">
+        <dc:Bounds x="178" y="450" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="163" y="493" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendTask_0xe28i0_di" bpmnElement="Confirm_Payment">
+        <dc:Bounds x="490" y="655" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bxiri7_di" bpmnElement="SequenceFlow_1bxiri7">
+        <di:waypoint x="214" y="468" />
+        <di:waypoint x="242" y="468" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_1wy4qyu_di" bpmnElement="Make_Travel_Offer">
+        <dc:Bounds x="242" y="428" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bhdal8_di" bpmnElement="SequenceFlow_1bhdal8">
+        <di:waypoint x="342" y="468" />
+        <di:waypoint x="364" y="468" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EventBasedGateway_14r5fri_di" bpmnElement="Status_Waiting">
+        <dc:Bounds x="364" y="443" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="355" y="500" width="71" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_081ab22_di" bpmnElement="Booking_Received">
+        <dc:Bounds x="493" y="383" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="467" y="426" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0s06gnp_di" bpmnElement="Offer_Rejection_Received">
+        <dc:Bounds x="439" y="522" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="420" y="565" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wyug2s_di" bpmnElement="SequenceFlow_0wyug2s">
+        <di:waypoint x="389" y="443" />
+        <di:waypoint x="389" y="401" />
+        <di:waypoint x="493" y="401" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06mgtsm_di" bpmnElement="SequenceFlow_06mgtsm">
+        <di:waypoint x="389" y="493" />
+        <di:waypoint x="389" y="540" />
+        <di:waypoint x="439" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_01y0u3z_di" bpmnElement="Offer_Cancelled">
+        <dc:Bounds x="632" y="522" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="612" y="565" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_02xdetn_di" bpmnElement="SequenceFlow_02xdetn">
+        <di:waypoint x="475" y="540" />
+        <di:waypoint x="632" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1l28um0_di" bpmnElement="SequenceFlow_1l28um0">
+        <di:waypoint x="529" y="401" />
+        <di:waypoint x="628" y="401" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_1nvyhrk_di" bpmnElement="Confirm_Booking">
+        <dc:Bounds x="628" y="361" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wbphor_di" bpmnElement="SequenceFlow_1wbphor">
+        <di:waypoint x="728" y="401" />
+        <di:waypoint x="814" y="401" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_00zsm51_di" bpmnElement="IntermediateThrowEvent_0kagqq2">
+        <dc:Bounds x="814" y="383" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="810" y="426" width="46" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_10id4f8_di" bpmnElement="SequenceFlow_10id4f8">
+        <di:waypoint x="850" y="401" />
+        <di:waypoint x="919" y="401" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_07bipd5_di" bpmnElement="Order_Ticket">
+        <dc:Bounds x="919" y="361" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1pjabnv_di" bpmnElement="Ticket_Ordered">
+        <dc:Bounds x="1074" y="383" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1056" y="426" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1b9yiqz_di" bpmnElement="SequenceFlow_1b9yiqz">
+        <di:waypoint x="1019" y="401" />
+        <di:waypoint x="1074" y="401" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1j3ru8z_di" bpmnElement="MessageFlow_1j3ru8z">
+        <di:waypoint x="969" y="441" />
+        <di:waypoint x="969" y="624" />
+        <di:waypoint x="200" y="624" />
+        <di:waypoint x="200" y="732" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="978" y="617" width="26" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_0ocrd05_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="178" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_01l3u25_di" bpmnElement="MessageFlow_01l3u25">
+        <di:waypoint x="292" y="428" />
+        <di:waypoint x="292" y="341" />
+        <di:waypoint x="196" y="341" />
+        <di:waypoint x="196" y="225" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="201" y="322" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0yuxyzo_di" bpmnElement="Check_Offer">
+        <dc:Bounds x="243" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_037u61c_di" bpmnElement="SequenceFlow_037u61c">
+        <di:waypoint x="214" y="207" />
+        <di:waypoint x="243" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_09645e4_di" bpmnElement="Is_the_Offer_Interesting" isMarkerVisible="true">
+        <dc:Bounds x="368" y="182" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="423" y="193" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dfevt9_di" bpmnElement="SequenceFlow_0dfevt9">
+        <di:waypoint x="343" y="207" />
+        <di:waypoint x="368" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kft0g7_di" bpmnElement="Offer_is_not_Interesting">
+        <di:waypoint x="393" y="182" />
+        <di:waypoint x="393" y="130" />
+        <di:waypoint x="461" y="130" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="402" y="153" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_0thinoj_di" bpmnElement="Reject_Offer">
+        <dc:Bounds x="461" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0m1fdhm_di" bpmnElement="Offer_is_Interesting">
+        <di:waypoint x="393" y="232" />
+        <di:waypoint x="393" y="278" />
+        <di:waypoint x="461" y="278" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="399" y="252" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_0xlslsd_di" bpmnElement="Book_Travel">
+        <dc:Bounds x="461" y="238" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_0jtu5yc_di" bpmnElement="MessageFlow_0jtu5yc">
+        <di:waypoint x="511" y="318" />
+        <di:waypoint x="511" y="383" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="521" y="320" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1p97q31_di" bpmnElement="MessageFlow_1p97q31">
+        <di:waypoint x="558" y="166" />
+        <di:waypoint x="577" y="181" />
+        <di:waypoint x="577" y="512" />
+        <di:waypoint x="474" y="536" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="582" y="469" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_14h22g2_di" bpmnElement="Offer_Rejected">
+        <dc:Bounds x="628" y="112" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="611" y="155" width="71" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qo309k_di" bpmnElement="SequenceFlow_1qo309k">
+        <di:waypoint x="561" y="130" />
+        <di:waypoint x="628" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1y19v10_di" bpmnElement="SequenceFlow_1y19v10">
+        <di:waypoint x="561" y="278" />
+        <di:waypoint x="666" y="278" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_111zlm5_di" bpmnElement="Pay_Travel">
+        <dc:Bounds x="782" y="238" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_0y2wjrm_di" bpmnElement="MessageFlow_0y2wjrm">
+        <di:waypoint x="832" y="318" />
+        <di:waypoint x="832" y="383" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="839" y="352" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1p9f9nn_di" bpmnElement="SequenceFlow_1p9f9nn">
+        <di:waypoint x="702" y="278" />
+        <di:waypoint x="782" y="278" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1lo4kwr_di" bpmnElement="Booking_Confirmed">
+        <dc:Bounds x="666" y="260" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="658" y="222.5" width="51" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_08bo5ej_di" bpmnElement="MessageFlow_08bo5ej">
+        <di:waypoint x="684" y="361" />
+        <di:waypoint x="684" y="296" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="691" y="318" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rbkpuc_di" bpmnElement="SequenceFlow_0rbkpuc">
+        <di:waypoint x="882" y="278" />
+        <di:waypoint x="952" y="278" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0z9w4q1_di" bpmnElement="Payment_Confirmation_Received">
+        <dc:Bounds x="952" y="260" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="938" y="210" width="63" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_15n7wk4_di" bpmnElement="MessageFlow_15n7wk4">
+        <di:waypoint x="590" y="682" />
+        <di:waypoint x="712" y="652" />
+        <di:waypoint x="712" y="476" />
+        <di:waypoint x="1042" y="476" />
+        <di:waypoint x="1042" y="324" />
+        <di:waypoint x="985" y="288" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="743" y="482" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_12gep4w_di" bpmnElement="Travel_Paid">
+        <dc:Bounds x="1073" y="260" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1063" y="303" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fm8n43_di" bpmnElement="SequenceFlow_1fm8n43">
+        <di:waypoint x="988" y="278" />
+        <di:waypoint x="1073" y="278" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
