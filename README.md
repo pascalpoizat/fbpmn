@@ -42,7 +42,7 @@ Note: the old fBPMN Web application, available [here](http://vacs.enseeiht.fr/bp
 
 ---
 
-**NEW: BPMN extension for temporal intervals **
+**NEW: BPMN extension for temporal intervals**
 
 To use it:
 
