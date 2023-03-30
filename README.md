@@ -42,7 +42,19 @@ Note: the old fBPMN Web application, available [here](http://vacs.enseeiht.fr/bp
 
 ---
 
-**NEW: sBPMN, BPMN extension for spatial information (since v0.3.6)**
+**NEW: BPMN extension for temporal intervals **
+
+To use it:
+
+- install `fbpmn` as explained below.
+- design your model (`M.bpmn`) or reuse one of the samples from the `time-interval` directory.
+- verify your model without temporal intervals as above with the docker support.
+- to use temporal intervals, convert your model to TLA+ (`fbpmn bpmn2tla M M`), and write a TLA+ module `M_interval.tla` and its config file `M_interval.cfg` as the samples in `time-interval`.
+- run the TLC model checker on `M_interval`, either from the command line (see [TLA+ Tools](https://lamport.azurewebsites.net/tla/tools.html)) or from [the TLA+ Toolbox](https://lamport.azurewebsites.net/tla/toolbox.html).
+
+---
+
+**sBPMN, BPMN extension for spatial information (since v0.3.6)**
 
 To use it:
 
