@@ -86,11 +86,11 @@ for seven different communication semantics:
 
 ### References
 
+- Sara Houhou, Souheib Baarir, Pascal Poizat, Philippe Quéinnec, and Laïd Kahloul. **A First-Order Logic Verification Framework for Communication-Parametric and Time-Aware BPMN Collaborations**. _Information Systems_, 2022.
+
 - Rim Saddem-Yagoubi, Pascal Poizat, and Sara Houhou. **Business Processes Meet Spatial Concerns: the sBPMN Verification Framework.** In: _24th International Symposium on Formal Methods (FM)_, 2021.
 
 - Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A Direct Formal Semantics for BPMN Time-Related Constructs.** In: _16th International Conference on Evaluation of Novel Approaches to Software Engineering (ENASE)_, 2021.
-
-- Sara Houhou, Souheib Baarir, Pascal Poizat, Philippe Quéinnec, and Laïd Kahloul. **A First-Order Logic Verification Framework for Communication-Parametric and Time-Aware BPMN Collaborations**. _Information Systems_, 2021.
 
 - Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Order Logic Semantics for Communication-Parametric BPMN Collaborations**. In: _17th International Conference on Business Process Management (BPM)_, Springer, 2019.
 
