@@ -1,0 +1,28 @@
+# workflow to build and test fbpmn
+
+# actions/checkout@v4 https://github.com/actions/checkout
+# haskell-actions/setup@v2 https://github.com/haskell-actions/setup
+
+# documentation
+# https://github.com/mihaimaruseac/hindent/blob/master/.github/workflows/presubmit-stack.yaml
+
+on:
+    push:
+        tags:
+            - 'v*'
+jobs:
+    build:
+        name: build ${{ matrix.os }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macOS-latest, windows-latest]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: haskell-actions/setup@v2
+              with:
+                ghc-version: '9.2.8'
+                cabal-version: 'latest'
+                enable-stack: true
+                stack-version: '3.3.1' # 'latest'
+            - run: stack build --test
