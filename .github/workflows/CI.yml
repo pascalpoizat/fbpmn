@@ -1,34 +1,43 @@
 # workflow to build and test fbpmn
 
-# actions/checkout@v4 https://github.com/actions/checkout
-# haskell-actions/setup@v2 https://github.com/haskell-actions/setup
+# version 0.1 without cache
+# (issue with stack not being installed in the .ghcup sub-directories)
 
-# some documentation / examples
-# https://github.com/haskell-actions/setup/blob/main/docs/examples.md
-# https://github.com/juhp/fedora-releases/blob/main/.github/workflows/build.yml
-# https://github.com/mihaimaruseac/hindent/tree/master/.github/workflows
-# https://github.com/actions/cache/blob/main/examples.md#haskell---stack
-# https://github.com/commercialhaskell/stack/issues/5754#issuecomment-1696156869
+name: fbpmn CI
 
 on:
-    push:
-        tags:
-            - 'v*'
+  push:
+    branches: [master] 
+  # schedule:
+  #   - cron: '0 0 * * 0'
+  # workflow_dispatch:
+
 jobs:
-    build:
-        name: build ${{ matrix.os }}
-        runs-on: ${{ matrix.os }}
-        strategy:
-            fail-fast: false
-            matrix:
-                os: [ubuntu-latest, macOS-latest, windows-latest]
-                # resolver: [lts-20.26]
-        steps:
-            - uses: actions/checkout@v4
-            - uses: haskell-actions/setup@v2
-              with:
-                ghc-version: '9.2.8'
-                cabal-version: 'latest'
-                enable-stack: true
-                stack-version: '3.3.1' # 'latest'
-            - run: stack build --test
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+
+    env:
+      GHC_VERSION: '9.2.8'
+      STACK_LTS: '20.26'
+      STACK_VERSION: '3.5.1'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install ghc ${{ env.GHC_VERSION }}
+        uses: haskell-actions/setup@v2
+        with:
+          ghc-version: ${{ env.GHC_VERSION }}
+          # cabal-version: 'latest' # 'latest' is default
+          enable-stack: "true"
+          stack-version: ${{ env.STACK_VERSION }} # 'latest' is default
+
+      - name: build and test
+        run: |
+          stack build --test --system-ghc --no-terminal

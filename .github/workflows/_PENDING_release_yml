@@ -1,0 +1,38 @@
+# workflow to release fbpmn
+
+name: fbpmn release
+
+on:
+    push:
+        tags:
+            - 'v*'
+jobs:
+
+    create_release:
+        name: create GitHub release
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/create-release@1.1.4
+              id: create_release
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                tag_name: ${{ github.ref }}
+                release_name: ${{ github.ref }}
+                draft: true
+                prerelease: false
+
+            - run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+
+            - uses: actions/upload-artifact@v4.6.2
+              with:
+                name: release_url
+                path: release_url.txt
+
+    build_artifact:
+        needs: [create_release]
+        name: ${{ matrix.os }}/${{ github.ref }}
+        runs-on: ${{ matrix.os }}
+
