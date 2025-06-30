@@ -1,8 +1,7 @@
 # run these three commands:
-
-# docker build -f Dockerfile.arm -t fbpmn-cli-java21 .
-# docker run -it fbpmn-cli-java21
-# fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+#   docker build -f Dockerfile.arm -t fbpmn-cli-java21 .
+#   docker run -it fbpmn-cli-java21
+#   fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
 
 # tested on macOS 15.5 / M1 Max
 

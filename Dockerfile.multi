@@ -1,0 +1,82 @@
+# run one of these two commands:
+#   docker buildx build -f Dockerfile.multi --platform linux/amd64 -t fbpmn-cli-java21-multi . --load
+#   docker buildx build -f Dockerfile.multi --platform linux/arm64 -t fbpmn-cli-java21-multi . --load
+# then run these two commands:
+#   docker run -it fbpmn-cli-java21-multi
+#   fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+
+# --platform linux/arm64: tested on macOS 15.5 / M1 Max
+# --platform linux/amd64: tested on ...
+
+# side notes.
+# docker buildx create --f Dockerfile.multi --name multiarch-builder --use
+# docker buildx inspect --bootstrap
+# docker buildx build --platform linux/amd64,linux/arm64 -t fbpmn-cli-java21 . --push
+
+FROM --platform=$BUILDPLATFORM haskell:9.2
+
+ARG TARGETARCH
+
+RUN echo "$TARGETARCH"
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    wget \
+    unzip \
+    xz-utils \
+    libicu-dev \
+    libssl-dev \
+    libkrb5-dev \
+    libcurl4-openssl-dev \
+    liblttng-ust-dev \
+    libunwind8 \
+    ca-certificates \
+    apt-transport-https \
+    software-properties-common \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+      POWERSHELL_URL="https://github.com/PowerShell/PowerShell/releases/download/v7.5.2/powershell-7.5.2-linux-arm64.tar.gz"; \
+    else \
+      POWERSHELL_URL="https://github.com/PowerShell/PowerShell/releases/download/v7.5.2/powershell-7.5.2-linux-x64.tar.gz"; \
+    fi && \
+    wget "$POWERSHELL_URL" -O /tmp/powershell.tar.gz && \
+    mkdir -p /opt/microsoft/powershell/7 && \
+    tar -xzf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
+    chmod +x /opt/microsoft/powershell/7/pwsh && \
+    ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh && \
+    rm /tmp/powershell.tar.gz
+
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+      JAVA_URL="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jdk_aarch64_linux_hotspot_21.0.1_12.tar.gz"; \
+    else \
+      JAVA_URL="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz"; \
+    fi && \
+    mkdir -p /opt/java && \
+    wget "$JAVA_URL" -O /tmp/java.tar.gz && \
+    tar -xzf /tmp/java.tar.gz -C /opt/java --strip-components=1 && \
+    rm /tmp/java.tar.gz
+
+ENV JAVA_HOME=/opt/java
+ENV PATH="${JAVA_HOME}/bin:$PATH"
+
+WORKDIR /opt/fbpmn
+RUN git clone --branch feat-intervals https://github.com/pascalpoizat/fbpmn.git .
+
+ENV FBPMN_HOME=/opt/fbpmn
+
+RUN stack setup && \
+    stack build --only-dependencies && \
+    stack build && \
+    stack install
+
+RUN curl -L -o tla2tools.jar https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+
+RUN cp scripts/fbpmn-check scripts/fbpmn-log-transform /usr/local/bin/ && \
+    chmod +x /usr/local/bin/fbpmn-check /usr/local/bin/fbpmn-log-transform
+
+ENV TLA2TOOLS_HOME=/opt/fbpmn
+ENV PATH="/root/.local/bin:${PATH}"
+
+CMD ["/bin/bash"]
