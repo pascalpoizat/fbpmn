@@ -34,15 +34,18 @@
 
 **NEW: Docker files**
 
-We wrote Docker files for our tools (`Dockerfile.arm` and `Dockerfile.multi`).
-This is quite experimental / ongoing work, use at your own risk. Some very basic documentation on how to run these is inside the files.
+We provide Docker files for our tools (`Dockerfile.arm` for macOS and `Dockerfile.multi` for macOS, Linux, and Windows with WSL2).
+This is quite experimental / ongoing work, but it should help you in quickly having a first look at our tools without the installation process below.
+
+Some very basic documentation on how to run these (build containers and run them) is inside the files.
+The containers are for the easy "installation" and command line usage of our tools (no relation with the containers for the Web application, below).
 
 - `DockerFile.arm` has been tested on:
-  - n/a
+  - macOS 15.7 / M1 MAX (2026-03-04)
 - `DockerFile.multi` with `--platform linux/amd64` has been tested on:
   - n/a
 - `DockerFile.multi` with `--platform linux/arm64` has been tested on:
-  - n/a
+  - macOS 15.7 / M1 MAX (2026-03-04)
 
 ---
 

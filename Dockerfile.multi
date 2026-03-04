@@ -1,14 +1,28 @@
 # run one of these two commands:
-#   docker buildx build -f Dockerfile.multi --platform linux/amd64 -t fbpmn-cli-java21-multi . --load
-#   docker buildx build -f Dockerfile.multi --platform linux/arm64 -t fbpmn-cli-java21-multi . --load
+#
+#   1. (ONCE TO BUILD THE CONTAINER)
+#     1a. (ON AMD ARCH)
+#       docker buildx build --no-cache -f Dockerfile.multi --platform linux/amd64 -t fbpmn-cli-java21-multi . --load
+#     1b. (ON ARM ARCH)
+#       docker buildx build --no-cache -f Dockerfile.multi --platform linux/arm64 -t fbpmn-cli-java21-multi . --load
+#
+#   --no-cache is used to avoid having docker cache the cloning of the fbpmn repository
+#   this is not very efficient ... (TODO: other strategies are possible)
+#
 # then run these two commands:
-#   docker run -it fbpmn-cli-java21-multi
-#   fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+#
+#   2. (EACH TIME YOU WANT TO USE THE CONTAINER)
+#
+#     docker run -it fbpmn-cli-java21-multi
+#
+#   3. (IN THE CONTAINER, TO PERFORM A VERIFICATION)
+#
+#     fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
 
 # - `--platform linux/amd64`: tested on:
 #   - n/a
 # - `--platform linux/arm64`: tested on:
-#   - n/a
+#   - macOS 15.7 / M1 MAX (2026-03-04)
 
 # side notes.
 # docker buildx create --f Dockerfile.multi --name multiarch-builder --use
