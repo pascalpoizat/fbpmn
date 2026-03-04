@@ -1,7 +1,9 @@
 # fbpmn
 
 [![Build status (main branch)](https://github.com/pascalpoizat/fbpmn-private/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/pascalpoizat/fbpmn-private/actions/workflows/CI.yml)
+<!--
 [![Build status (develop branch)](https://github.com/pascalpoizat/fbpmn-private/actions/workflows/CI.yml/badge.svg?branch=develop)](https://github.com/pascalpoizat/fbpmn-private/actions/workflows/CI.yml)
+-->
 [![Apache-2.0 license](https://img.shields.io/github/license/pascalpoizat/veca-haskell.svg)](LICENSE)
 [![Version](https://img.shields.io/github/tag/pascalpoizat/fbpmn.svg)](fbpmn.cabal)
 
