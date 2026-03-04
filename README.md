@@ -102,13 +102,13 @@ for seven different communication semantics:
 
 ### References
 
-- Rim Saddem-Yagoubi, Pascal Poizat, and Sara Houhou. **Business Processes Meet Spatial Concerns: the sBPMN Verification Framework.** In: _24th International Symposium on Formal Methods (FM)_, 2021.
+- Rim Saddem-Yagoubi, Pascal Poizat, and Sara Houhou. **Business Processes Meet Spatial Concerns: the sBPMN Verification Framework.** In: _24th International Symposium on Formal Methods (FM)_, 2021. [PDF (preprint)](https://cnrs.hal.science/hal-03289951/document)
 
-- Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A Direct Formal Semantics for BPMN Time-Related Constructs.** In: _16th International Conference on Evaluation of Novel Approaches to Software Engineering (ENASE)_, 2021.
+- Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A Direct Formal Semantics for BPMN Time-Related Constructs.** In: _16th International Conference on Evaluation of Novel Approaches to Software Engineering (ENASE)_, 2021. [PDF (preprint)](https://hal.science/hal-03170814/document)
 
-- Sara Houhou, Souheib Baarir, Pascal Poizat, Philippe Quéinnec, and Laïd Kahloul. **A First-Order Logic Verification Framework for Communication-Parametric and Time-Aware BPMN Collaborations**. _Information Systems_, 2022.
+- Sara Houhou, Souheib Baarir, Pascal Poizat, Philippe Quéinnec, and Laïd Kahloul. **A First-Order Logic Verification Framework for Communication-Parametric and Time-Aware BPMN Collaborations**. _Information Systems_, 2022. [PDF (preprint)](https://hal.science/hal-03170863/document)
 
-- Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Order Logic Semantics for Communication-Parametric BPMN Collaborations**. In: _17th International Conference on Business Process Management (BPM)_, Springer, 2019.
+- Sara Houhou, Souheib Baarir, Pascal Poizat, and Philippe Quéinnec. **A First-Order Logic Semantics for Communication-Parametric BPMN Collaborations**. In: _17th International Conference on Business Process Management (BPM)_, Springer, 2019. [PDF (preprint)](https://cnrs.hal.science/hal-02138366/document)
 
 ### TL;DR for the impatient
 
