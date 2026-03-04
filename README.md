@@ -37,7 +37,9 @@
 We provide Docker files for our tools (`Dockerfile.arm` for macOS and `Dockerfile.multi` for macOS, Linux, and Windows with WSL2).
 This is quite experimental / ongoing work, but it should help you in quickly having a first look at our tools without the installation process below.
 
-Some very basic documentation on how to run these (build containers and run them) is inside the files.
+First, you need of course to install [Docker](https://www.docker.com) on your computer.
+
+Some very basic documentation on how to run these (commands to build containers and run them) is inside the files, [here](Dockerfile.arm) for `Dockerfile.arm`, and [here](Dockerfile.multi) for `Dockerfile.multi`.
 The containers are for the easy "installation" and command line usage of our tools (no relation with the containers for the Web application, below).
 
 - `DockerFile.arm` has been tested on:
@@ -182,7 +184,14 @@ To verify your BPMN models, you will need:
 
 :warning: `fbpmn` is known to be working with:
 
-- Java 12 and TLA+ tools version 1.6.0 (not 1.5.7)
+- Java 21 and TLA+ tools [Xenophanes / 1.7.4](https://github.com/tlaplus/tlaplus/releases/tag/v1.7.4)
+- Java 21 and TLA+ tools [Ulpian / 1.7.3](https://github.com/tlaplus/tlaplus/releases/tag/v1.7.3)
+
+By now TLA+ tools [Clarke / 1.8.0](https://github.com/tlaplus/tlaplus/releases/tag/v1.7.3) **is not working** (there seems to be a bug in this version).
+
+Using old versions is not recommended. But this used to work at some point:
+
+- Java 12 and TLA+ tools version 1.6.0 (**not 1.5.7**)
 - Java 8 and TLA+ tools version 1.5.7 or 1.6.0
 
 If you build `fbpmn` from sources (not required in most situations since binaries are available, see Sect. 3a), you will also need:

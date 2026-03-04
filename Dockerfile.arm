@@ -73,7 +73,7 @@ RUN stack setup && \
     stack install
 
 RUN curl -L -o tla2tools.jar \
-    https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+    https://github.com/tlaplus/tlaplus/releases/download/v1.7.4/tla2tools.jar
 
 RUN cp scripts/fbpmn-check scripts/fbpmn-log-transform /usr/local/bin/ && \
     chmod +x /usr/local/bin/fbpmn-check /usr/local/bin/fbpmn-log-transform
