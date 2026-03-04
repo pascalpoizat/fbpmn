@@ -9,12 +9,12 @@ license:             Apache-2.0
 license-file:        LICENSE
 author:              The fBPMN Team
 maintainer:          pascal.poizat@gmail.com
-copyright:           2018-2023 The fBPMN Team (see contributors on GitHub)
+copyright:           2018-2026 The fBPMN Team (see contributors on GitHub)
 category:            Utility
 build-type:          Simple
 extra-doc-files:     README.md
                    , CHANGELOG.md
-tested-with:         GHC == 9.2.5
+tested-with:         GHC == 9.6.7
 
 source-repository head
   type:                git
