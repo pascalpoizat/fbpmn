@@ -1,10 +1,19 @@
 # run these three commands:
-#   docker build -f Dockerfile.arm -t fbpmn-cli-java21 .
-#   docker run -it fbpmn-cli-java21
-#   fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
+#
+#   1. (ONCE TO BUILD THE CONTAINER)
+#       docker build --no-cache -f Dockerfile.arm -t fbpmn-cli-java21 .
+#
+#   --no-cache is used to avoid having docker cache the cloning of the fbpmn repository
+#   this is not very efficient ... (TODO: other strategies are possible)
+#
+#   2. (EACH TIME YOU WANT TO USE THE CONTAINER)
+#       docker run -it fbpmn-cli-java21
+#
+#   3. (IN THE CONTAINER, TO PERFORM A VERIFICATION)
+#       fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
 
 # tested on:
-# - n/a
+# - macOS 15.7 / M1 MAX (2026-03-04)
 
 FROM haskell:9.6
 
