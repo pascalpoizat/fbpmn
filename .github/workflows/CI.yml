@@ -23,9 +23,9 @@ jobs:
         os: [ubuntu-latest, macOS-latest, windows-latest]
 
     env:
-      GHC_VERSION: '9.2.8'
-      STACK_LTS: '20.26'
-      STACK_VERSION: '3.5.1'
+      GHC_VERSION: '9.6.7'
+      STACK_LTS: '22.44'
+      STACK_VERSION: '3.7.1'
 
     steps:
       - uses: actions/checkout@v4
