@@ -3,7 +3,8 @@
 #   docker run -it fbpmn-cli-java21
 #   fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
 
-# tested on macOS 15.5 / M1 Max
+# tested on:
+# - n/a
 
 FROM haskell:9.2
 
@@ -53,7 +54,7 @@ ENV JAVA_HOME=/opt/java
 ENV PATH="${JAVA_HOME}/bin:$PATH"
 
 WORKDIR /opt/fbpmn
-RUN git clone --branch feat-intervals https://github.com/pascalpoizat/fbpmn.git .
+RUN git clone --branch master https://github.com/pascalpoizat/fbpmn.git .
 
 ENV FBPMN_HOME=/opt/fbpmn
 

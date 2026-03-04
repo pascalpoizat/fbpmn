@@ -1,7 +1,7 @@
 # fbpmn
 
-[![Build status](https://travis-ci.com/pascalpoizat/fbpmn.svg?branch=master)](https://travis-ci.com/github/pascalpoizat/fbpmn)
-[![Windows build status](https://ci.appveyor.com/api/projects/status/github/pascalpoizat/fbpmn?branch=master&svg=true)](https://ci.appveyor.com/project/pascalpoizat/fbpmn)
+[![Build status (main branch)](https://github.com/pascalpoizat/fbpmn-private/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/pascalpoizat/fbpmn-private/actions/workflows/CI.yml)
+[![Build status (develop branch)](https://github.com/pascalpoizat/fbpmn-private/actions/workflows/CI.yml/badge.svg?branch=develop)](https://github.com/pascalpoizat/fbpmn-private/actions/workflows/CI.yml)
 [![Apache-2.0 license](https://img.shields.io/github/license/pascalpoizat/veca-haskell.svg)](LICENSE)
 [![Version](https://img.shields.io/github/tag/pascalpoizat/fbpmn.svg)](fbpmn.cabal)
 
@@ -23,7 +23,31 @@
 
 ---
 
-**NEW: fBPMN Web Application (since v0.3.8)**
+**In next releases**
+
+- containers (ONGOING)
+- more documentation on associating time information to time-related BPMN constructs (available since v0.3.4)
+- more documentation on sBPMN extension fields (available since v0.3.6)
+- alignment between the `fbpmn-check` and `sfbpmn-check` verification scripts
+- support for sBPMN in the Web application (LOW PRIORITY, since animation via generated HTML file works)
+
+---
+
+**NEW: Docker files**
+
+We wrote Docker files for our tools (`Dockerfile.arm` and `Dockerfile.multi`).
+This is quite experimental / ongoing work, use at your own risk. Some very basic documentation on how to run these is inside the files.
+
+- `DockerFile.arm` has been tested on:
+  - n/a
+- `DockerFile.multi` with `--platform linux/amd64` has been tested on:
+  - n/a
+- `DockerFile.multi` with `--platform linux/arm64` has been tested on:
+  - n/a
+
+--
+
+**fBPMN Web Application (since v0.3.8)**
 
 We provide the user with a Web application of `fbpmn` so that its installation and use is made easier.
 
@@ -42,7 +66,7 @@ Note: the old fBPMN Web application, available [here](http://vacs.enseeiht.fr/bp
 
 ---
 
-**NEW: sBPMN, BPMN extension for spatial information (since v0.3.6)**
+**sBPMN, BPMN extension for spatial information (since v0.3.6)**
 
 To use it:
 
@@ -50,16 +74,6 @@ To use it:
 - in addition to steps _1. -- 5._ below, ensure `sfbpmn-check` from the `scripts/` directory is found on your command `PATH`
 - design your model (`M.bpmn`), user definitions (`M.userdefs`, optional), user specific properties (`M.userprops`, optional), and boundedness constraints (`M.constraint`, optional); see models with ids `s0xx` in the `models/bpmn-origin/src` for examples
 - verify your model with `sfbpmn-check M.bpmn cores` (the script will check if the optional files are there or not, `cores` is the number of cores to uses)
-
----
-
-**In next releases**
-
-- more documentation on associating time information to time-related BPMN constructs (available since v0.3.4)
-- more documentation on sBPMN extension fields (available since v0.3.6)
-- alignment between the `fbpmn-check` and `sfbpmn-check` verification scripts
-- support for sBPMN in the Web application
-- pre-built Docker image
 
 ---
 

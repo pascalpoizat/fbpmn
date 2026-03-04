@@ -5,8 +5,10 @@
 #   docker run -it fbpmn-cli-java21-multi
 #   fbpmn-check $FBPMN_HOME/models/bpmn-origin/src/e033MBE.bpmn 2
 
-# --platform linux/arm64: tested on macOS 15.5 / M1 Max
-# --platform linux/amd64: tested on ...
+# - `--platform linux/amd64`: tested on:
+#   - n/a
+# - `--platform linux/arm64`: tested on:
+#   - n/a
 
 # side notes.
 # docker buildx create --f Dockerfile.multi --name multiarch-builder --use
@@ -62,7 +64,7 @@ ENV JAVA_HOME=/opt/java
 ENV PATH="${JAVA_HOME}/bin:$PATH"
 
 WORKDIR /opt/fbpmn
-RUN git clone --branch feat-intervals https://github.com/pascalpoizat/fbpmn.git .
+RUN git clone --branch master https://github.com/pascalpoizat/fbpmn.git .
 
 ENV FBPMN_HOME=/opt/fbpmn
 
