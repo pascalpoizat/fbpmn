@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 
 const localhost = "http://localhost:3000";
-const urlVerification = "http://localhost:5000/api/verifications/";
+const urlVerification = "/api/verifications/";
 const columns = [
   { field: "comm", headerName: "Network", width: 110 },
   { field: "prop", headerName: "Property", width: 145 },

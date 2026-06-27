@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { BsTrash } from "react-icons/bs";
 
-const urlVerification = "http://localhost:5000/api/verifications";
+const urlVerification = "/api/verifications";
 
 function createData(id, status, value, date) {
   return { id, status, value, date };

@@ -1,0 +1,27 @@
+# Inherit directly from the native fbpmn CLI image built from the top-level Dockerfile.arm
+FROM fbpmn-cli-java21
+
+WORKDIR /api
+
+# 1. Install python3, pip, and mysql compiler requirements
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    default-libmysqlclient-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Ensure wfbpmn-check is executable and available in PATH
+RUN ln -s /opt/fbpmn/scripts/wfbpmn-check /usr/local/bin/wfbpmn-check && \
+    chmod +x /opt/fbpmn/scripts/wfbpmn-check /usr/local/bin/wfbpmn-check
+
+# 2. Copy Flask application codebase and configurations
+COPY requirements.txt config.py .flaskenv ./
+COPY ./app app/
+COPY ./data data/
+
+# 3. Install Python dependencies
+RUN pip3 install --no-cache-dir -r ./requirements.txt
+
+EXPOSE 5000
+CMD ["python3", "-m", "gunicorn", "-b", "0.0.0.0:5000", "app.routes:app", "--timeout", "120", "-w", "1", "--threads", "12"]

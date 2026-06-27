@@ -4,7 +4,7 @@ import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 import Results from "./Results";
 
-const urlVerification = "http://localhost:5000/api/verifications/";
+const urlVerification = "/api/verifications/";
 
 class VerificationDetail extends Component {
   constructor(props) {
