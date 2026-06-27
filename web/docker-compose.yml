@@ -4,9 +4,10 @@ services:
   api:
     build:
       context: ./backend
+      dockerfile: Dockerfile.arm
     image: fbpmn-api
     ports:
-      - "5000:5000"
+      - "5001:5000"
   client:
     build:
       context: ./frontend

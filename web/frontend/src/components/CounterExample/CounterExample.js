@@ -6,7 +6,7 @@ import $ from "jquery";
 
 import "./CounterExample.css";
 
-const urlCounterExample = "http://localhost:5000/api/counter_examples/";
+const urlCounterExample = "/api/counter_examples/";
 
 function code_comm_to_name(comm) {
   switch (comm) {
@@ -69,14 +69,14 @@ class CounterExample extends Component {
           lcex: data.lcex,
         });
         this.parseJSON(this.state.lcex);
-        fetch(`http://localhost:5000${data.result}`)
+        fetch(`${data.result}`)
           .then((res) => res.json())
           .then((context) => {
             this.setState({
               comm: code_comm_to_name(context.communication),
               prop: context.property,
             });
-            fetch(`http://localhost:5000${data.result}/verification`)
+            fetch(`${data.result}/verification`)
               .then((res) => res.json())
               .then((verif) => {
                 this.setState({

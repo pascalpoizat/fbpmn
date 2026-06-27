@@ -9,7 +9,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 let version;
 
 function setVersion() {
-  fetch("http://localhost:5000/version")
+  fetch("/version")
     .then((res) => res.json())
     .then((data) => {
       version = data.major + "." + data.minor + "." + data.patch;

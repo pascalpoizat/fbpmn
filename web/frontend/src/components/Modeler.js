@@ -10,7 +10,7 @@ import About from "./About.js";
 import Verifications from "./Verifications.js";
 import VerificationOptions from "./VerificationOptions.js";
 
-const urlVerification = "http://localhost:5000/api/verifications";
+const urlVerification = "/api/verifications";
 
 export const sleep = async (waitTime) =>
   new Promise((resolve) => setTimeout(resolve, waitTime));
